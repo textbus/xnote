@@ -90,7 +90,7 @@ export const rootComponent = defineComponent({
                 return (
                   <div ref={contentRef as any}
                        class="xnote-content"
-                       data-placeholder={slots.get(1)?.isEmpty ? '请输入标题' : ''}
+                       data-placeholder={slots.get(1)?.isEmpty ? '请输入内容' : ''}
                   >{children}</div>
                 )
               })

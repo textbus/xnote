@@ -3,17 +3,19 @@ import {
   paragraphComponent,
   paragraphComponentLoader,
   rootComponent,
-  rootComponentLoader
+  rootComponentLoader, todolistComponent, todolistComponentLoader
 } from '@/textbus/components/_api';
 
 export class XNote extends Viewer {
   constructor() {
     super(rootComponent, rootComponentLoader, {
       components: [
-        paragraphComponent
+        paragraphComponent,
+        todolistComponent
       ],
       componentLoaders: [
-        paragraphComponentLoader
+        paragraphComponentLoader,
+        todolistComponentLoader
       ]
     })
   }
