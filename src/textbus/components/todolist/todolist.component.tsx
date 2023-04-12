@@ -1,7 +1,7 @@
-import { ComponentInstance, ContentType, defineComponent, Injector, Slot, useSlots } from '@textbus/core';
+import { ComponentInstance, ContentType, defineComponent, Injector, Slot, useSlots } from '@textbus/core'
 
 import './todolist.component.scss'
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser';
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 
 export const todolistComponent = defineComponent({
   type: ContentType.BlockComponent,

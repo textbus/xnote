@@ -1,20 +1,21 @@
 import {
   ComponentInstance,
   ContentType,
-  defineComponent,
+  defineComponent, fromEvent,
   Injector,
   onBreak, onCompositionStart,
-  onContentInsert,
-  onSlotRemove,
+  onContentInsert, onDestroy,
+  onSlotRemove, onViewInit, Renderer,
   Selection,
-  Slot,
-  useContext, useRef,
+  Slot, Subscription,
+  useContext, useRef, useSelf,
   useSlots
-} from '@textbus/core';
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser';
+} from '@textbus/core'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 
 import './root.component.scss'
-import { paragraphComponent } from '@/textbus/components/paragraph/paragraph.component';
+import { paragraphComponent } from '@/textbus/components/paragraph/paragraph.component'
+import { LeftToolbarService } from '@/services/left-toolbar.service'
 
 export const rootComponent = defineComponent({
   name: 'RootComponent',
@@ -50,6 +51,7 @@ export const rootComponent = defineComponent({
         ev.preventDefault()
       }
     })
+
     onContentInsert(ev => {
       if (ev.target === slots.get(1) && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
         const p = paragraphComponent.createInstance(injector)
@@ -69,6 +71,31 @@ export const rootComponent = defineComponent({
       } else {
         contentRef.current!.dataset.placeholder = ''
       }
+    })
+
+    const subscription = new Subscription()
+    const renderer = injector.get(Renderer)
+    const leftToolbarService = injector.get(LeftToolbarService)
+    const self = useSelf()
+    onViewInit(() => {
+      subscription.add(
+        fromEvent<MouseEvent>(contentRef.current!, 'mousemove').subscribe((ev) => {
+          let currentNode = ev.target as Node | null
+          while (currentNode) {
+            const locationByNativeNode = renderer.getLocationByNativeNode(currentNode)
+            const componentInstance = locationByNativeNode?.slot.parent
+            if (componentInstance) {
+              leftToolbarService.updateActivatedComponent(componentInstance === self ? null : componentInstance)
+              break
+            }
+            currentNode = currentNode.parentNode
+          }
+        })
+      )
+    })
+
+    onDestroy(() => {
+      subscription.unsubscribe()
     })
 
     return {

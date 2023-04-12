@@ -8,8 +8,8 @@ import {
   Slot,
   useContext, useSelf,
   useSlots
-} from '@textbus/core';
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser';
+} from '@textbus/core'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 
 export const paragraphComponent = defineComponent({
   name: 'ParagraphComponent',
