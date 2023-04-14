@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@tanbo/vue-di-plugin": "^1.0.5",
-    "@textbus/core": "^3.1.21",
-    "@textbus/platform-browser": "^3.1.21",
+    "@textbus/core": "^3.2.0",
+    "@textbus/platform-browser": "^3.2.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {

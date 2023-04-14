@@ -1,4 +1,5 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { XNote } from '@/editor'
 
-createApp(App).mount('#app')
+const xNote = new XNote()
+
+xNote.mount(document.getElementById('app')!)

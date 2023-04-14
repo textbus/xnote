@@ -82,8 +82,7 @@ export const rootComponent = defineComponent({
         fromEvent<MouseEvent>(contentRef.current!, 'mousemove').subscribe((ev) => {
           let currentNode = ev.target as Node | null
           while (currentNode) {
-            const locationByNativeNode = renderer.getLocationByNativeNode(currentNode)
-            const componentInstance = locationByNativeNode?.slot.parent
+            const componentInstance = renderer.getComponentByNativeNode(currentNode)
             if (componentInstance) {
               leftToolbarService.updateActivatedComponent(componentInstance === self ? null : componentInstance)
               break

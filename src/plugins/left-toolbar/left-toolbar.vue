@@ -5,14 +5,14 @@ import { LeftToolbarService } from '@/services/left-toolbar.service'
 import { Renderer } from '@textbus/core'
 
 const injector = useReflectiveInjector()
-const selection = injector.get(LeftToolbarService)
+const leftToolbarService = injector.get(LeftToolbarService)
 const renderer = injector.get(Renderer)
 const position = reactive({
   left: 0,
   top: 0,
   display: false
 })
-const subscription = selection.onComponentActive.subscribe((c) => {
+const subscription = leftToolbarService.onComponentActive.subscribe((c) => {
   if (!c) {
     position.display = false
     return
