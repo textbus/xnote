@@ -4,12 +4,15 @@ import {
   ContentType,
   defineComponent,
   Injector,
-  onBreak, Selection,
+  onBreak,
+  Selection,
   Slot,
-  useContext, useSelf,
+  useContext,
+  useSelf,
   useSlots
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import './paragraph.component.scss'
 
 export const paragraphComponent = defineComponent({
   name: 'ParagraphComponent',
@@ -39,7 +42,7 @@ export const paragraphComponent = defineComponent({
     return {
       render(slotRender) {
         return (
-          <div data-component={paragraphComponent.name}>
+          <div class="xnote-paragraph" data-component={paragraphComponent.name}>
             {
               slotRender(slots.get(0)!, children => {
                 return (

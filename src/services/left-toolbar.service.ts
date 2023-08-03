@@ -2,6 +2,7 @@ import { ComponentInstance, distinctUntilChanged, Injectable, Observable, Subjec
 
 @Injectable()
 export class LeftToolbarService {
+  onRefresh = new Subject<void>()
   onComponentActive: Observable<null | ComponentInstance>
 
   private componentActiveEvent = new Subject<null | ComponentInstance>()
