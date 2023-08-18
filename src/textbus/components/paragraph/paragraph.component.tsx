@@ -1,9 +1,8 @@
 import {
   Commander,
   ComponentInstance,
-  ContentType,
+  ContentType, createVNode,
   defineComponent,
-  Injector,
   onBreak,
   Selection,
   Slot,
@@ -11,7 +10,10 @@ import {
   useSelf,
   useSlots
 } from '@textbus/core'
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
+import { ViewComponentProps } from '@textbus/adapter-viewfly'
+import { inject, Injector } from '@viewfly/core'
+
 import './paragraph.component.scss'
 
 export const paragraphComponent = defineComponent({
@@ -22,7 +24,7 @@ export const paragraphComponent = defineComponent({
     const injector = useContext()
     const commander = injector.get(Commander)
     const selection = injector.get(Selection)
-    const slots = useSlots([
+    useSlots([
       new Slot([
         ContentType.Text,
         ContentType.InlineComponent
@@ -38,30 +40,32 @@ export const paragraphComponent = defineComponent({
       selection.setPosition(slot, 0)
       ev.preventDefault()
     })
-
-    return {
-      render(slotRender) {
-        return (
-          <div class="xnote-paragraph" data-component={paragraphComponent.name}>
-            {
-              slotRender(slots.get(0)!, children => {
-                return (
-                  <p>{children}</p>
-                )
-              })
-            }
-          </div>
-        )
-      }
-    }
   }
 })
+
+export function Paragraph(props: ViewComponentProps<typeof paragraphComponent>) {
+  const adapter = inject(DomAdapter)
+  return () => {
+    const slot = props.component.slots.first!
+    return (
+      <div class="xnote-paragraph" ref={props.rootRef} data-component={paragraphComponent.name}>
+        {
+          adapter.slotRender(slot, children => {
+            return (
+              createVNode('p', null, children)
+            )
+          })
+        }
+      </div>
+    )
+  }
+}
 
 export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.compoment === paragraphComponent.name
   },
-  read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
+  read(element: HTMLElement, injector: Injector): ComponentInstance | Slot {
     return paragraphComponent.createInstance(injector)
   }
 }

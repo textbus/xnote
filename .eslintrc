@@ -17,6 +17,7 @@
     "linebreak-style": 0,
     "no-console": 0,
     "no-debugger": 0,
+    "no-irregular-whitespace": "off",
     "no-useless-escape": "off",
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-empty-interface": 0,
@@ -31,8 +32,7 @@
     "no-multi-spaces": 1,
     "no-multiple-empty-lines": 1,
     "quotes": [1, "single"],
-    "array-callback-return": 1,
-    "max-len": [1, 140]
+    "array-callback-return": 1
   },
-  "ignorePatterns": ["bundles", "node_modules"]
+  "ignorePatterns": ["node_modules"]
 }

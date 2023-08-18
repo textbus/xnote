@@ -1,4 +1,5 @@
-import { ComponentInstance, distinctUntilChanged, Injectable, Observable, Subject } from '@textbus/core'
+import { ComponentInstance, distinctUntilChanged, Observable, Subject } from '@textbus/core'
+import { Injectable } from '@viewfly/core'
 
 @Injectable()
 export class LeftToolbarService {

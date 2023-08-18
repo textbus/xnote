@@ -1,21 +1,22 @@
 import {
-  ComponentInstance,
-  ContentType,
-  defineComponent, fromEvent,
-  Injector,
+  ComponentInstance, CompositionStartEventData,
+  ContentType, createVNode,
+  defineComponent, Event,
   onBreak, onCompositionStart,
-  onContentInsert, onDestroy,
-  onSlotRemove, onViewInit, Renderer,
+  onContentInsert,
+  onSlotRemove,
   Selection,
-  Slot, Subscription,
-  useContext, useRef, useSelf,
+  Slot, Subject,
+  useContext,
   useSlots
 } from '@textbus/core'
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { inject, Injector, useRef } from '@viewfly/core'
 
 import './root.component.scss'
-import { paragraphComponent } from '@/textbus/components/paragraph/paragraph.component'
-import { LeftToolbarService } from '@/services/left-toolbar.service'
+import { paragraphComponent } from '../paragraph/paragraph.component'
+import { ViewComponentProps } from '@textbus/adapter-viewfly'
+import { LeftToolbarService } from '../../../services/left-toolbar.service'
 
 export const rootComponent = defineComponent({
   name: 'RootComponent',
@@ -63,76 +64,85 @@ export const rootComponent = defineComponent({
       }
     })
 
-    const titleRef = useRef<HTMLElement>()
-    const contentRef = useRef<HTMLElement>()
+    const compositionStartEvent = new Subject<Event<Slot, CompositionStartEventData>>()
     onCompositionStart(ev => {
-      if (ev.target === slots.get(0)) {
-        titleRef.current!.dataset.placeholder = ''
-      } else {
-        contentRef.current!.dataset.placeholder = ''
-      }
-    })
-
-    const subscription = new Subscription()
-    const renderer = injector.get(Renderer)
-    const leftToolbarService = injector.get(LeftToolbarService)
-    const self = useSelf()
-    onViewInit(() => {
-      subscription.add(
-        fromEvent<MouseEvent>(contentRef.current!, 'mousemove').subscribe((ev) => {
-          let currentNode = ev.target as Node | null
-          while (currentNode) {
-            const componentInstance = renderer.getComponentByNativeNode(currentNode)
-            if (componentInstance) {
-              leftToolbarService.updateActivatedComponent(componentInstance === self ? null : componentInstance)
-              break
-            }
-            currentNode = currentNode.parentNode
-          }
-        })
-      )
-    })
-
-    onDestroy(() => {
-      subscription.unsubscribe()
+      compositionStartEvent.next(ev)
     })
 
     return {
-      render(slotRender) {
-        return (
-          <div class="xnote-root">
-            {
-              slotRender(slots.get(0)!, children => {
-                return (
-                  <div ref={titleRef as any}
-                       class="xnote-title"
-                       data-placeholder={slots.get(0)?.isEmpty ? '请输入标题' : ''}
-                  >{children}</div>
-                )
-              })
-            }
-            {
-              slotRender(slots.get(1)!, children => {
-                return (
-                  <div ref={contentRef as any}
-                       class="xnote-content"
-                       data-placeholder={slots.get(1)?.isEmpty ? '请输入内容' : ''}
-                  >{children}</div>
-                )
-              })
-            }
-          </div>
-        )
-      }
+      onCompositionStart: compositionStartEvent
     }
   }
 })
 
+export function Root(props: ViewComponentProps<typeof rootComponent>) {
+  const adapter = inject(DomAdapter)
+  const { first, last } = props.component.slots
+
+  const ref = useRef<HTMLDivElement>(node => {
+    const sub = props.component.extends.onCompositionStart.subscribe(ev => {
+      if (ev.target === props.component.slots.get(0)) {
+        (node.children[0] as HTMLElement).dataset.placeholder = ''
+      } else {
+        (node.children[1] as HTMLElement).dataset.placeholder = ''
+      }
+    })
+    return () => {
+      sub.unsubscribe()
+    }
+  })
+
+
+  const leftToolbarService = inject(LeftToolbarService)
+
+  function move(ev: MouseEvent) {
+    let currentNode = ev.target as Node | null
+    while (currentNode) {
+      const componentInstance = adapter.getComponentByNativeNode(currentNode as HTMLElement)
+      if (componentInstance) {
+        leftToolbarService.updateActivatedComponent(componentInstance === props.component ? null : componentInstance)
+        break
+      }
+      currentNode = currentNode.parentNode
+    }
+  }
+
+  return () => {
+    const { component, rootRef } = props
+
+    return (
+      <div class="xnote-root" ref={[rootRef, ref]}>
+        {
+          adapter.slotRender(first!, children => {
+            return (createVNode('div', {
+                class: 'xnote-title',
+                'data-placeholder': first.isEmpty ? '请输入标题' : ''
+              }, children)
+            )
+          })
+        }
+        {
+          adapter.slotRender(component.slots.last!, children => {
+            return (
+              createVNode('div', {
+                class: 'xnote-content',
+                onMousemove: move,
+                'data-placeholder': last.isEmpty ? '请输入内容' : ''
+              }, children)
+            )
+          })
+        }
+      </div>
+    )
+  }
+}
+
 export const rootComponentLoader: ComponentLoader = {
-  match(element: HTMLElement): boolean {
+  match(): boolean {
     return true
   },
   read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
+    slotParser
     return rootComponent.createInstance(injector)
   }
 }

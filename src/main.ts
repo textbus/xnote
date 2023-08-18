@@ -1,5 +1,5 @@
-import { XNote } from '@/editor'
+import 'reflect-metadata'
+import { createXNote } from './editor'
 
-const xNote = new XNote()
+createXNote(document.getElementById('app')!)
 
-xNote.mount(document.getElementById('app')!)

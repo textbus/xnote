@@ -1,15 +1,15 @@
-import { Injector } from '@tanbo/di'
 import {
   ComponentInitData,
   ComponentInstance,
-  ContentType,
+  ContentType, createVNode,
   defineComponent,
   Slot,
-  SlotRender,
   useSlots,
-  VElement
 } from '@textbus/core'
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { ViewComponentProps } from '@textbus/adapter-viewfly'
+import { inject, Injector } from '@viewfly/core'
+
 import './blockquote.component.scss'
 
 export const blockquoteComponent = defineComponent({
@@ -41,15 +41,21 @@ export const blockquoteComponent = defineComponent({
         ContentType.BlockComponent
       ]))
     }
-    return {
-      render(slotRender: SlotRender): VElement {
-        return slotRender(slots.get(0)!, children => {
-          return <div class="xnote-blockquote">{children}</div>
-        })
-      }
-    }
   }
 })
+
+export function Blockquote(props: ViewComponentProps<typeof blockquoteComponent>) {
+  const adapter = inject(DomAdapter)
+  return () => {
+    const slot = props.component.slots.first!
+    return adapter.slotRender(slot, children => {
+      return createVNode('div', {
+        class: 'xnote-blockquote',
+        ref: props.rootRef
+      }, children)
+    })
+  }
+}
 
 export const blockquoteComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {

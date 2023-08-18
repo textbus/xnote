@@ -1,4 +1,4 @@
-import { Formatter, FormatValue, RenderMode, VElement, VTextNode } from '@textbus/core'
+import { Formatter, FormatValue, VElement, VTextNode } from '@textbus/core'
 import { FormatLoader } from '@textbus/platform-browser'
 
 import { Matcher } from '../_utils/matcher'
@@ -25,13 +25,13 @@ export class LinkFormatter implements Formatter<any> {
 
   columned = false
 
-  render(children: Array<VElement | VTextNode>, formatValue: Record<string, string>, renderMode: RenderMode): VElement {
-    if (renderMode !== RenderMode.Editing) {
-      return new VElement('a', {
-        target: formatValue.target,
-        href: formatValue.href || formatValue['data-href']
-      }, children)
-    }
+  render(children: Array<VElement | VTextNode>, formatValue: Record<string, string>): VElement {
+    // if (renderMode !== RenderMode.Editing) {
+    //   return new VElement('a', {
+    //     target: formatValue.target,
+    //     href: formatValue.href || formatValue['data-href']
+    //   }, children)
+    // }
     return new VElement('a', {
       target: formatValue.target,
       'data-href': formatValue.href || formatValue['data-href']
