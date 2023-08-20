@@ -1,7 +1,7 @@
 import { Adapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
-import { BrowserModule } from '@textbus/platform-browser'
-import { Textbus } from '@textbus/core'
+import { BrowserModule, Parser } from '@textbus/platform-browser'
+import { ComponentInstance, Textbus } from '@textbus/core'
 
 import {
   Blockquote,
@@ -12,15 +12,26 @@ import {
   paragraphComponentLoader,
   Root,
   rootComponent,
+  rootComponentLoader,
   Todolist,
   todolistComponent,
   todolistComponentLoader
 } from './textbus/components/_api'
 import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
-import { boldFormatLoader, boldFormatter } from './textbus/formatters/inline-element.formatter'
+import {
+  boldFormatLoader,
+  boldFormatter,
+  italicFormatLoader, italicFormatter,
+  strikeThroughFormatLoader, strikeThroughFormatter,
+  underlineFormatLoader, underlineFormatter
+} from './textbus/formatters/_api'
 
-export async function createXNote(host: HTMLElement) {
+export interface XNoteConfig {
+  content?: string
+}
+
+export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
   const adapter = new Adapter({
     [paragraphComponent.name]: Paragraph,
     [rootComponent.name]: Root,
@@ -37,12 +48,15 @@ export async function createXNote(host: HTMLElement) {
   const browserModule = new BrowserModule(host, {
     adapter,
     componentLoaders: [
+      paragraphComponentLoader,
       todolistComponentLoader,
       blockquoteComponentLoader,
-      paragraphComponentLoader
     ],
     formatLoaders: [
-      boldFormatLoader
+      boldFormatLoader,
+      italicFormatLoader,
+      strikeThroughFormatLoader,
+      underlineFormatLoader
     ]
   })
   const textbus = new Textbus({
@@ -55,7 +69,10 @@ export async function createXNote(host: HTMLElement) {
       todolistComponent
     ],
     formatters: [
-      boldFormatter
+      boldFormatter,
+      italicFormatter,
+      strikeThroughFormatter,
+      underlineFormatter
     ],
     providers: [
       LeftToolbarService
@@ -65,7 +82,16 @@ export async function createXNote(host: HTMLElement) {
       new LeftToolbarPlugin()
     ]
   })
-  const rootComp = rootComponent.createInstance(textbus)
+  let rootComp: ComponentInstance
+  if (config.content) {
+    const parser = textbus.get(Parser)
+    const doc = parser.parseDoc(config.content, rootComponentLoader)
+    rootComp = doc instanceof ComponentInstance ? doc : rootComponent.createInstance(textbus, {
+      slots: doc ? [doc] : []
+    })
+  } else {
+    rootComp = rootComponent.createInstance(textbus)
+  }
   await textbus.render(rootComp)
   return textbus
 }

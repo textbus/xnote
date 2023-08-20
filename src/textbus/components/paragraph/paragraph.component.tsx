@@ -1,7 +1,8 @@
 import {
   Commander,
   ComponentInstance,
-  ContentType, createVNode,
+  ContentType,
+  createVNode,
   defineComponent,
   onBreak,
   Selection,
@@ -10,7 +11,7 @@ import {
   useSelf,
   useSlots
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, Injector } from '@viewfly/core'
 
@@ -19,13 +20,13 @@ import './paragraph.component.scss'
 export const paragraphComponent = defineComponent({
   name: 'ParagraphComponent',
   type: ContentType.BlockComponent,
-  setup() {
+  setup(initData) {
     const self = useSelf()
     const injector = useContext()
     const commander = injector.get(Commander)
     const selection = injector.get(Selection)
     useSlots([
-      new Slot([
+      initData?.slots?.[0] || new Slot([
         ContentType.Text,
         ContentType.InlineComponent
       ])
@@ -63,9 +64,15 @@ export function Paragraph(props: ViewComponentProps<typeof paragraphComponent>) 
 
 export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.dataset.compoment === paragraphComponent.name
+    return element.dataset.compoment === paragraphComponent.name || element.tagName === 'P'
   },
-  read(element: HTMLElement, injector: Injector): ComponentInstance | Slot {
-    return paragraphComponent.createInstance(injector)
+  read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
+    const slot = slotParser(new Slot([
+      ContentType.Text,
+      ContentType.InlineComponent
+    ]), element)
+    return paragraphComponent.createInstance(injector, {
+      slots: [slot]
+    })
   }
 }

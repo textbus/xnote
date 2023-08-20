@@ -4,7 +4,7 @@ import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Button } from '../../components/button'
 import { RefreshService } from '../../services/refresh.service'
-import { boldFormatter } from '../../textbus/formatters/inline-element.formatter'
+import { boldFormatter } from '../../textbus/formatters/_api'
 
 export function Bold() {
   const query = inject(Query)

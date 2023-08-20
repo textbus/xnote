@@ -4,7 +4,7 @@ import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Button } from '../../components/button'
 import { RefreshService } from '../../services/refresh.service'
-import { italicFormatter } from '../../textbus/formatters/inline-element.formatter'
+import { italicFormatter } from '../../textbus/formatters/_api'
 
 export function Italic() {
   const query = inject(Query)

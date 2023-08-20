@@ -4,7 +4,7 @@ import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Button } from '../../components/button'
 import { RefreshService } from '../../services/refresh.service'
-import { strikeThroughFormatter } from '../../textbus/formatters/inline-element.formatter'
+import { strikeThroughFormatter } from '../../textbus/formatters/_api'
 
 export function StrikeThrough() {
   const query = inject(Query)

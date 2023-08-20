@@ -1,12 +1,17 @@
 import {
-  ComponentInstance, CompositionStartEventData,
-  ContentType, createVNode,
-  defineComponent, Event,
-  onBreak, onCompositionStart,
+  ComponentInstance,
+  CompositionStartEventData,
+  ContentType,
+  createVNode,
+  defineComponent,
+  Event,
+  onBreak,
+  onCompositionStart,
   onContentInsert,
   onSlotRemove,
   Selection,
-  Slot, Subject,
+  Slot,
+  Subject,
   useContext,
   useSlots
 } from '@textbus/core'
@@ -21,14 +26,14 @@ import { LeftToolbarService } from '../../../services/left-toolbar.service'
 export const rootComponent = defineComponent({
   name: 'RootComponent',
   type: ContentType.BlockComponent,
-  setup() {
+  setup(initData) {
     const injector = useContext()
     const selection = injector.get(Selection)
     const slots = useSlots([
       new Slot([
         ContentType.Text
       ]),
-      new Slot([
+      initData?.slots?.[0] || new Slot([
         ContentType.BlockComponent,
         ContentType.InlineComponent,
         ContentType.Text
@@ -142,7 +147,13 @@ export const rootComponentLoader: ComponentLoader = {
     return true
   },
   read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
-    slotParser
-    return rootComponent.createInstance(injector)
+    const slot = slotParser(new Slot([
+      ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
+    ]), element)
+    return rootComponent.createInstance(injector, {
+      slots: [slot]
+    })
   }
 }
