@@ -28,5 +28,10 @@
   display: flex;
   font-size: 18px;
   text-align: left;
-  //display: none;
+  pointer-events: none;
+  opacity: 0;
+  transition-property: all;
+  transition-duration: 0.4ms;
+  transition-timing-function: ease;
+  transform: translateX(-50%);
 }
