@@ -1,6 +1,8 @@
 import { inject } from '@viewfly/core'
 import { Commander, ContentType, Slot } from '@textbus/core'
+import { withScopedCSS } from '@viewfly/scoped-css'
 
+import css from './block-tool.scoped.scss'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { Button } from '../../components/button/button'
 import { Dropdown } from '../../components/dropdown/dropdown'
@@ -55,7 +57,7 @@ export function BlockTool() {
     }
   }
 
-  return () => {
+  return withScopedCSS(css, () => {
     return (
       <Dropdown onCheck={toBlock} trigger={'hover'} menu={[
         {
@@ -80,12 +82,18 @@ export function BlockTool() {
           label: <MenuItem>标题 6</MenuItem>,
           value: 'h6'
         }, {
-          label: <MenuItem><span class="xnote-icon-checkbox-checked"></span> 待办事项</MenuItem>,
+          label: <MenuItem><span class="xnote-icon-checkbox-checked icon"></span> 待办事项</MenuItem>,
           value: 'todolist'
+        }, {
+          label: <MenuItem><span class="xnote-icon-list-numbered icon"></span> 有序列表</MenuItem>,
+          value: 'ol'
+        }, {
+          label: <MenuItem><span class="xnote-icon-list icon"></span> 无序列表</MenuItem>,
+          value: 'ul'
         }
       ]}>
         <Button arrow={true} highlight={false}>H1</Button>
       </Dropdown>
     )
-  }
+  })
 }

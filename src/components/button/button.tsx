@@ -24,14 +24,17 @@ export function Button(props: ButtonProps) {
   }
   return withScopedCSS(css, () => {
     return (
-      <button type="button" class="btn" {...props}>
+      <button type="button" class={[
+        'btn',
+        {
+          active: isActive()
+        }
+      ]} {...props}>
         <span>
           {props.children}
         </span>
         {
-          props.arrow && <span class={['btn-arrow', 'xnote-icon-arrow-bottom', {
-            active: isActive()
-          }]}/>
+          props.arrow && <span class={['btn-arrow', 'xnote-icon-arrow-bottom']}/>
         }
       </button>
     )

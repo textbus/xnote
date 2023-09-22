@@ -11,6 +11,7 @@ import { StrikeThrough } from '../_common/strike-through'
 import { Underline } from '../_common/underline'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from './block-tool'
+// import { Code } from '../_common/code'
 
 export function Toolbar() {
   provide(RefreshService)

@@ -1,16 +1,11 @@
 .xnote-todolist {
   display: flex;
   margin: 8px 0;
+  align-items: center;
 
   &-icon {
     margin-right: 6px;
     cursor: pointer;
-  }
-
-  &-checkbox {
-    width: 18px;
-    height: 18px;
-    border-radius: 3px;
     color: #296eff;
   }
 

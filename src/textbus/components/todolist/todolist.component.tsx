@@ -69,14 +69,11 @@ export function Todolist(props: ViewComponentProps<typeof todolistComponent>) {
 
   return () => {
     const first = props.component.slots.first!
+    const checked = props.component.state.checked
     return (
       <div data-component={todolistComponent.name} ref={props.rootRef} class="xnote-todolist">
-        <div class="xnote-todolist-icon">
-          <div class={['xnote-todolist-checkbox', {
-            checked: props.component.state.checked
-          }]} onClick={toggle}>
-            {props.component.state.checked ? <span class="xnote-icon-checkbox-checked"/> : <span class="xnote-icon-checkbox-unchecked"/>}
-          </div>
+        <div class="xnote-todolist-icon" onClick={toggle}>
+          <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']}/>
         </div>
         {
           adapter.slotRender(first, children => {
@@ -102,7 +99,7 @@ export const todolistComponentLoader: ComponentLoader = {
     return todolistComponent.createInstance(injector, {
       slots: [slot],
       state: {
-        checked: element.querySelector('.xnote-todolist-checkbox')!.classList.contains('checked')
+        checked: element.children[0]!.hasAttribute('checked')
       }
     })
   }
