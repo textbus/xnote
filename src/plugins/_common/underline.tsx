@@ -2,7 +2,7 @@ import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 
-import { Button } from '../../components/button'
+import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { underlineFormatter } from '../../textbus/formatters/_api'
 
@@ -39,6 +39,8 @@ export function Underline() {
 
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}>下划线</Button>
+    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}>
+      <span class="xnote-icon-underline"></span>
+    </Button>
   }
 }

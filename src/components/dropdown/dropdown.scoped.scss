@@ -1,0 +1,30 @@
+.dropdown {
+  position: relative;
+
+  &-btn {
+    display: flex;
+  }
+
+  &-menu {
+    position: absolute;
+    border: 1px solid #ddd;
+    width: 200px;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, .1);
+    border-radius: 5px;
+    background: #fff;
+    left: -10px;
+    top: 36px;
+    opacity: 0;
+    padding: 6px;
+    pointer-events: none;
+    user-select: none;
+    transform: translateY(10px);
+
+    &.active {
+      transition: .3s;
+      pointer-events: auto;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

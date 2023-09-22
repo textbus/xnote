@@ -27,6 +27,8 @@ import {
   underlineFormatLoader, underlineFormatter
 } from './textbus/formatters/_api'
 
+import './textbus/doc.scss'
+
 export interface XNoteConfig {
   content?: string
 }
@@ -78,8 +80,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       LeftToolbarService
     ],
     plugins: [
+      new LeftToolbarPlugin(),
       new ToolbarPlugin(),
-      new LeftToolbarPlugin()
     ]
   })
   let rootComp: ComponentInstance

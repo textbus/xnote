@@ -1,4 +1,4 @@
-import { ComponentInstance, ContentType, createVNode, defineComponent, Slot, useSlots } from '@textbus/core'
+import { ComponentInstance, ContentType, createVNode, defineComponent, Slot } from '@textbus/core'
 
 import './todolist.component.scss'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
@@ -8,13 +8,15 @@ import { inject, Injector } from '@viewfly/core'
 export const todolistComponent = defineComponent({
   type: ContentType.BlockComponent,
   name: 'TodoListComponent',
-  setup() {
-    useSlots([
-      new Slot([
-        ContentType.InlineComponent,
-        ContentType.Text
-      ])
-    ])
+  validate(initData) {
+    return {
+      slots: [
+        initData?.slots?.[0] || new Slot([
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+      ]
+    }
   }
 })
 
@@ -32,7 +34,7 @@ export function Todolist(props: ViewComponentProps<typeof todolistComponent>) {
             return createVNode('div', {
               class: 'xnote-todolist-content'
             }, children)
-          })
+          }, false)
         }
       </div>
     )

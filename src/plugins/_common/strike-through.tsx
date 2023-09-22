@@ -2,7 +2,7 @@ import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 
-import { Button } from '../../components/button'
+import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { strikeThroughFormatter } from '../../textbus/formatters/_api'
 
@@ -39,6 +39,6 @@ export function StrikeThrough() {
 
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}>删除线</Button>
+    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-strikethrough"></span></Button>
   }
 }

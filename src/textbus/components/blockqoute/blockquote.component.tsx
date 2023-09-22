@@ -1,10 +1,9 @@
 import {
-  ComponentInitData,
   ComponentInstance,
-  ContentType, createVNode,
+  ContentType,
+  createVNode,
   defineComponent,
   Slot,
-  useSlots,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -28,20 +27,15 @@ export const blockquoteComponent = defineComponent({
       }
     }
   },
-  setup(data?: ComponentInitData) {
-    const slots = useSlots(data?.slots || [new Slot([
-      ContentType.Text,
-      ContentType.InlineComponent,
-      ContentType.BlockComponent
-    ])])
-    if (!slots.length) {
-      slots.push(new Slot([
+  validate(data) {
+    return {
+      slots: data?.slots || [new Slot([
         ContentType.Text,
         ContentType.InlineComponent,
         ContentType.BlockComponent
-      ]))
+      ])]
     }
-  }
+  },
 })
 
 export function Blockquote(props: ViewComponentProps<typeof blockquoteComponent>) {
@@ -53,7 +47,7 @@ export function Blockquote(props: ViewComponentProps<typeof blockquoteComponent>
         class: 'xnote-blockquote',
         ref: props.rootRef
       }, children)
-    })
+    }, false)
   }
 }
 

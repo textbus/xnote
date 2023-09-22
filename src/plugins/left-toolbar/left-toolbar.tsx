@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { inject, onUnmounted, provide } from '@viewfly/core'
+import { inject, onUnmounted, provide, useSignal } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 import { Selection, throttleTime } from '@textbus/core'
 
@@ -54,6 +54,8 @@ export function LeftToolbar() {
     subscription.unsubscribe()
   })
 
+  const isEmptyBlock = useSignal(true)
+
   return withScopedCSS(css, () => {
     const position = positionSignal()
     return (
@@ -64,15 +66,24 @@ export function LeftToolbar() {
           display: position.display ? 'block' : 'none'
         }}>
           <button type="button" class="editor-left-btn">
-            <span></span>
-            <span></span>
+            {
+              isEmptyBlock() ?
+                <span>
+                  <i style="font-size: 18px" class="textbus-icon-components"></i>
+                  <i style="font-size: 12px" class="textbus-icon-setting"></i>
+                </span>
+                :
+                <span>
+                  <i class="bi bi-plus"></i>
+                </span>
+            }
           </button>
-        </div>
-        <div>
-          <Bold/>
-          <Italic/>
-          <StrikeThrough/>
-          <Underline/>
+          <div class={['tools']}>
+            <Bold/>
+            <Italic/>
+            <StrikeThrough/>
+            <Underline/>
+          </div>
         </div>
       </div>
     )

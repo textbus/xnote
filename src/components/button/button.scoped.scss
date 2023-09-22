@@ -1,0 +1,26 @@
+.btn {
+  border: none;
+  background: none;
+  outline: none;
+  padding: 6px 5px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    background: rgba(0, 0, 0, .1);
+  }
+
+  &-arrow {
+    position: relative;
+    width: 1em;
+    transform: rotate(0);
+    transform-origin: 50%;
+
+    &.active {
+      transform: rotate(180deg);
+    }
+  }
+}

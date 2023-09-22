@@ -13,7 +13,7 @@ import {
   Slot,
   Subject,
   useContext,
-  useSlots
+  useSelf,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { inject, Injector, useRef } from '@viewfly/core'
@@ -26,19 +26,24 @@ import { LeftToolbarService } from '../../../services/left-toolbar.service'
 export const rootComponent = defineComponent({
   name: 'RootComponent',
   type: ContentType.BlockComponent,
-  setup(initData) {
+  validate(initData) {
+    return {
+      slots: [
+        new Slot([
+          ContentType.Text
+        ]),
+        initData?.slots?.[0] || new Slot([
+          ContentType.BlockComponent,
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+      ]
+    }
+  },
+  setup() {
     const injector = useContext()
     const selection = injector.get(Selection)
-    const slots = useSlots([
-      new Slot([
-        ContentType.Text
-      ]),
-      initData?.slots?.[0] || new Slot([
-        ContentType.BlockComponent,
-        ContentType.InlineComponent,
-        ContentType.Text
-      ])
-    ])
+    const slots = useSelf().slots
 
     onSlotRemove(ev => {
       ev.preventDefault()
@@ -124,7 +129,7 @@ export function Root(props: ViewComponentProps<typeof rootComponent>) {
                 'data-placeholder': first.isEmpty ? '请输入标题' : ''
               }, children)
             )
-          })
+          }, false)
         }
         {
           adapter.slotRender(component.slots.last!, children => {
@@ -135,7 +140,7 @@ export function Root(props: ViewComponentProps<typeof rootComponent>) {
                 'data-placeholder': last.isEmpty ? '请输入内容' : ''
               }, children)
             )
-          })
+          }, false)
         }
       </div>
     )

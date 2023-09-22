@@ -9,7 +9,6 @@ import {
   Slot,
   useContext,
   useSelf,
-  useSlots
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -20,17 +19,21 @@ import './paragraph.component.scss'
 export const paragraphComponent = defineComponent({
   name: 'ParagraphComponent',
   type: ContentType.BlockComponent,
-  setup(initData) {
+  validate(initData) {
+    return {
+      slots: [
+        initData?.slots?.[0] || new Slot([
+          ContentType.Text,
+          ContentType.InlineComponent
+        ])
+      ]
+    }
+  },
+  setup() {
     const self = useSelf()
     const injector = useContext()
     const commander = injector.get(Commander)
     const selection = injector.get(Selection)
-    useSlots([
-      initData?.slots?.[0] || new Slot([
-        ContentType.Text,
-        ContentType.InlineComponent
-      ])
-    ])
 
     onBreak(ev => {
       const afterContentDelta = ev.target.cut(ev.data.index).toDelta()
@@ -55,7 +58,7 @@ export function Paragraph(props: ViewComponentProps<typeof paragraphComponent>) 
             return (
               createVNode('p', null, children)
             )
-          })
+          }, false)
         }
       </div>
     )
