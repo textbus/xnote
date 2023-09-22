@@ -11,7 +11,6 @@ import { StrikeThrough } from '../_common/strike-through'
 import { Underline } from '../_common/underline'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from './block-tool'
-// import { Code } from '../_common/code'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -40,10 +39,11 @@ export function Toolbar() {
   })
 
   let mouseupSubscription = new Subscription()
-  const containerRef = useStaticRef<HTMLElement>()
+  const toolbarRef = useStaticRef<HTMLElement>()
 
   function getTop() {
-    const containerRect = viewDocument.getBoundingClientRect()
+    const docRect = viewDocument.getBoundingClientRect()
+    const toolbarRect = toolbarRef.current!.getBoundingClientRect()
     const documentHeight = document.documentElement.clientHeight
     const selectionFocusRect = bridge.getRect({
       slot: selection.focusSlot!,
@@ -51,13 +51,15 @@ export function Toolbar() {
     })!
 
     const centerLeft = selectionFocusRect.left
-    const toTop = selectionFocusRect.top + selectionFocusRect.height < documentHeight - 50
-    const top = toTop ? selectionFocusRect.top - containerRect.top : selectionFocusRect.top - containerRect.top - 80
+    const toBottom = documentHeight - selectionFocusRect.top - selectionFocusRect.height > toolbarRect.height + 10
+    const top = toBottom ?
+      selectionFocusRect.top + selectionFocusRect.height - docRect.top + 10 :
+      selectionFocusRect.top - toolbarRect.height - 10
 
     updateViewPosition(draft => {
       draft.isHide = false
       draft.transitionDuration = .15
-      draft.left = centerLeft - containerRect.left
+      draft.left = centerLeft - docRect.left
       draft.top = top + 10
     })
     return top
@@ -79,7 +81,7 @@ export function Toolbar() {
   function bindMouseup() {
     mouseupSubscription = fromEvent<MouseEvent>(viewDocument, 'mouseup').pipe(
       filter(ev => {
-        return !ev.composedPath().includes(containerRef.current!)
+        return !ev.composedPath().includes(toolbarRef.current!)
       }),
       delay(100),
       filter(() => {
@@ -96,7 +98,7 @@ export function Toolbar() {
   }
 
   const mousedownSubscription = fromEvent<MouseEvent>(document, 'mousedown').subscribe((ev) => {
-    if (ev.composedPath().includes(containerRef.current!)) {
+    if (ev.composedPath().includes(toolbarRef.current!)) {
       return
     }
     mouseupSubscription.unsubscribe()
@@ -115,9 +117,9 @@ export function Toolbar() {
   return withScopedCSS(css, () => {
     const p = viewPosition()
     return (
-      <div class="editor-toolbar" ref={containerRef} style={{
+      <div class="editor-toolbar" ref={toolbarRef} style={{
         left: p.left + 'px',
-        top: p.top + 36 + 'px',
+        top: p.top + 'px',
         pointerEvents: p.isHide ? 'none' : 'initial',
         opacity: p.opacity,
         transitionDuration: p.transitionDuration + 's'

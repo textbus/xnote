@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@ant-design/colors": "^7.0.0",
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.9",
-    "@textbus/core": "^4.0.0-alpha.8",
-    "@textbus/platform-browser": "^4.0.0-alpha.8",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.10",
+    "@textbus/core": "^4.0.0-alpha.10",
+    "@textbus/platform-browser": "^4.0.0-alpha.10",
     "@viewfly/core": "^0.3.0",
     "@viewfly/hooks": "^0.3.0",
     "@viewfly/platform-browser": "^0.3.0",
