@@ -13,18 +13,28 @@
     border-radius: 5px;
     background: #fff;
     left: -10px;
-    top: 36px;
+    top: 100%;
     opacity: 0;
     padding: 6px;
     pointer-events: none;
     user-select: none;
-    transform: translateY(10px);
+    transform: translateY(20px);
+
+    &.to-top {
+      top: initial;
+      bottom: 100%;
+      transform: translateY(0);
+
+      &.active {
+        transform: translateY(-10px);
+      }
+    }
 
     &.active {
       transition: .3s;
       pointer-events: auto;
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(10px);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { getCurrentInstance, Injectable, JSXNode, onMounted, onUnmounted, Props, provide, Scope, useSignal } from '@viewfly/core'
+import { getCurrentInstance, Injectable, JSXNode, onMounted, onUnmounted, Props, provide, Scope, useEffect, useSignal } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
 import css from './dropdown.scoped.scss'
@@ -33,6 +33,7 @@ export class DropdownService {
 
 export function Dropdown(props: DropdownProps) {
   const isShow = useSignal(false)
+  const toTop = useSignal(false)
   provide(DropdownService)
 
   const component = getCurrentInstance()
@@ -41,11 +42,21 @@ export function Dropdown(props: DropdownProps) {
   const toggle = () => {
     const next = !isShow()
     isShow.set(next)
-    dropdownService.onOpenStateChange.next(next)
   }
 
   const menuRef = useStaticRef<HTMLElement>()
   const triggerRef = useStaticRef<HTMLElement>()
+
+  useEffect(isShow, (newValue) => {
+    if (newValue && menuRef.current) {
+      const menuRect = menuRef.current.getBoundingClientRect()
+      const triggerRect = triggerRef.current!.getBoundingClientRect()
+      const documentClientHeight = document.documentElement.clientHeight
+
+      toTop.set(triggerRect.bottom + menuRect.height > documentClientHeight - 10)
+    }
+    dropdownService.onOpenStateChange.next(newValue)
+  })
 
   const subscription = new Subscription()
   onMounted(() => {
@@ -54,7 +65,6 @@ export function Dropdown(props: DropdownProps) {
       const bindLeave = function () {
         leaveSub = merge(fromEvent(triggerRef.current!, 'mouseleave'), fromEvent(menuRef.current!, 'mouseleave')).pipe(delay(200)).subscribe(() => {
           isShow.set(false)
-          dropdownService.onOpenStateChange.next(false)
         })
       }
       bindLeave()
@@ -65,7 +75,6 @@ export function Dropdown(props: DropdownProps) {
           }
           bindLeave()
           isShow.set(true)
-          dropdownService.onOpenStateChange.next(true)
         })
       )
     } else {
@@ -87,7 +96,8 @@ export function Dropdown(props: DropdownProps) {
           <div class="dropdown-btn-arrow"/>
         </div>
         <div ref={menuRef} class={['dropdown-menu', {
-          active: isShow()
+          active: isShow(),
+          'to-top': toTop()
         }]}>
           {
             props.menu.map(menu => {

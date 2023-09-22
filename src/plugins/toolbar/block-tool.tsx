@@ -8,6 +8,7 @@ import { headingAttr } from '../../textbus/attributes/heading.attr'
 
 export function BlockTool() {
   const commander = inject(Commander)
+
   function toBlock(value: any) {
     switch (value) {
       case 'h1':
@@ -20,6 +21,7 @@ export function BlockTool() {
         break
     }
   }
+
   return () => {
     return (
       <Dropdown onCheck={toBlock} trigger={'hover'} menu={[
@@ -35,6 +37,12 @@ export function BlockTool() {
         }, {
           label: <MenuItem>标题 4</MenuItem>,
           value: 'h4'
+        }, {
+          label: <MenuItem>标题 5</MenuItem>,
+          value: 'h5'
+        }, {
+          label: <MenuItem>标题 6</MenuItem>,
+          value: 'h6'
         },
       ]}>
         <Button arrow={true} highlight={false}>H1</Button>

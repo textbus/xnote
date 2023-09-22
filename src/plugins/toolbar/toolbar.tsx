@@ -43,14 +43,15 @@ export function Toolbar() {
 
   function getTop() {
     const containerRect = viewDocument.getBoundingClientRect()
+    const documentHeight = document.documentElement.clientHeight
     const selectionFocusRect = bridge.getRect({
       slot: selection.focusSlot!,
       offset: selection.focusOffset!
     })!
 
-    const centerLeft = selectionFocusRect.left // (selectionFocusRect.left + selectionAnchorRect.left) / 2
-    const focusEnd = selection.focusSlot === selection.endSlot && selection.focusOffset === selection.endOffset
-    const top = focusEnd ? selectionFocusRect.top - containerRect.top : selectionFocusRect.top - containerRect.top - 80
+    const centerLeft = selectionFocusRect.left
+    const toTop = selectionFocusRect.top + selectionFocusRect.height < documentHeight - 50
+    const top = toTop ? selectionFocusRect.top - containerRect.top : selectionFocusRect.top - containerRect.top - 80
 
     updateViewPosition(draft => {
       draft.isHide = false
