@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'textbus';
   src:
-    url('fonts/textbus.ttf?92d57q') format('truetype'),
-    url('fonts/textbus.woff?92d57q') format('woff'),
-    url('fonts/textbus.svg?92d57q#textbus') format('svg');
+    url('fonts/textbus.ttf?ay7ps7') format('truetype'),
+    url('fonts/textbus.woff?ay7ps7') format('woff'),
+    url('fonts/textbus.svg?ay7ps7#textbus') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -245,4 +245,10 @@
 }
 .xnote-icon-terminal:before {
   content: "\ea81";
+}
+.xnote-icon-checkbox-checked:before {
+  content: "\ea52";
+}
+.xnote-icon-checkbox-unchecked:before {
+  content: "\ea53";
 }

@@ -1,10 +1,12 @@
 import { inject } from '@viewfly/core'
-import { Commander } from '@textbus/core'
+import { Commander, ContentType, Slot } from '@textbus/core'
 
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { Button } from '../../components/button/button'
 import { Dropdown } from '../../components/dropdown/dropdown'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
+import { paragraphComponent } from '../../textbus/components/paragraph/paragraph.component'
+import { todolistComponent } from '../../textbus/components/todolist/todolist.component'
 
 export function BlockTool() {
   const commander = inject(Commander)
@@ -19,6 +21,37 @@ export function BlockTool() {
       case 'h6':
         commander.applyAttribute(headingAttr, value)
         break
+      case 'paragraph':
+        commander.unApplyAttribute(headingAttr)
+        commander.transform({
+          target: paragraphComponent,
+          multipleSlot: false,
+          slotFactory() {
+            return new Slot([
+              ContentType.InlineComponent,
+              ContentType.Text
+            ])
+          }
+        })
+        break
+      case 'todolist':
+        commander.unApplyAttribute(headingAttr)
+        commander.transform({
+          target: todolistComponent,
+          multipleSlot: false,
+          slotFactory() {
+            return new Slot([
+              ContentType.InlineComponent,
+              ContentType.Text
+            ])
+          },
+          stateFactory() {
+            return {
+              checked: false
+            }
+          }
+        })
+        break
     }
   }
 
@@ -26,6 +59,9 @@ export function BlockTool() {
     return (
       <Dropdown onCheck={toBlock} trigger={'hover'} menu={[
         {
+          label: <MenuItem>正文</MenuItem>,
+          value: 'paragraph'
+        }, {
           label: <MenuItem>标题 1</MenuItem>,
           value: 'h1'
         }, {
@@ -43,7 +79,10 @@ export function BlockTool() {
         }, {
           label: <MenuItem>标题 6</MenuItem>,
           value: 'h6'
-        },
+        }, {
+          label: <MenuItem><span class="xnote-icon-checkbox-checked"></span> 待办事项</MenuItem>,
+          value: 'todolist'
+        }
       ]}>
         <Button arrow={true} highlight={false}>H1</Button>
       </Dropdown>
