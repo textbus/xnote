@@ -6,7 +6,7 @@ import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { italicFormatter } from '../../textbus/formatters/_api'
 
-export function Italic() {
+export function ItalicTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)

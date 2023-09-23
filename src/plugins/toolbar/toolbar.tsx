@@ -5,13 +5,14 @@ import { SelectionBridge, VIEW_DOCUMENT } from '@textbus/platform-browser'
 import { useProduce, useStaticRef } from '@viewfly/hooks'
 
 import css from './toolbar.scoped.scss'
-import { Bold } from '../_common/bold'
-import { Italic } from '../_common/italic'
-import { StrikeThrough } from '../_common/strike-through'
-import { Underline } from '../_common/underline'
+import { BoldTool } from '../_common/bold.tool'
+import { ItalicTool } from '../_common/italic.tool'
+import { StrikeThroughTool } from '../_common/strike-through.tool'
+import { UnderlineTool } from '../_common/underline.tool'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from './block-tool'
-import { Code } from '../_common/code'
+import { CodeTool } from '../_common/code.tool'
+import { ColorTool } from '../_common/color.tool'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -130,19 +131,22 @@ export function Toolbar() {
           <BlockTool/>
         </div>
         <div class="editor-toolbar-item">
-          <Bold/>
+          <BoldTool/>
         </div>
         <div class="editor-toolbar-item">
-          <Italic/>
+          <ItalicTool/>
         </div>
         <div class="editor-toolbar-item">
-          <StrikeThrough/>
+          <StrikeThroughTool/>
         </div>
         <div class="editor-toolbar-item">
-          <Underline/>
+          <UnderlineTool/>
         </div>
         <div class="editor-toolbar-item">
-          <Code/>
+          <CodeTool/>
+        </div>
+        <div class="editor-toolbar-item">
+          <ColorTool/>
         </div>
       </div>
     )

@@ -14,7 +14,7 @@ export interface DropdownMenu {
 
 export interface DropdownProps extends Props {
   trigger?: DropdownTriggerTypes
-  menu: DropdownMenu[]
+  menu: DropdownMenu[] | JSXNode
 
   onCheck?(value: any): void
 }
@@ -100,13 +100,15 @@ export function Dropdown(props: DropdownProps) {
           'to-top': toTop()
         }]}>
           {
-            props.menu.map(menu => {
-              return (
-                <div class="dropdown-menu-item" onClick={() => {
-                  props.onCheck?.(menu.value)
-                }}>{menu.label}</div>
-              )
-            })
+            Array.isArray(props.menu) ?
+              props.menu.map(menu => {
+                return (
+                  <div class="dropdown-menu-item" onClick={() => {
+                    props.onCheck?.(menu.value)
+                  }}>{menu.label}</div>
+                )
+              }) :
+              props.menu
           }
         </div>
       </div>

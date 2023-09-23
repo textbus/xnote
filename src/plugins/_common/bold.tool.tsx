@@ -4,9 +4,9 @@ import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { underlineFormatter } from '../../textbus/formatters/_api'
+import { boldFormatter } from '../../textbus/formatters/_api'
 
-export function Underline() {
+export function BoldTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)
@@ -17,17 +17,17 @@ export function Underline() {
   })
 
   function toggle() {
-    const state = query.queryFormat(underlineFormatter)
+    const state = query.queryFormat(boldFormatter)
 
     if (state.state === QueryStateType.Normal) {
-      commander.applyFormat(underlineFormatter, true)
+      commander.applyFormat(boldFormatter, true)
     } else {
-      commander.unApplyFormat(underlineFormatter)
+      commander.unApplyFormat(boldFormatter)
     }
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    const state = query.queryFormat(underlineFormatter)
+    const state = query.queryFormat(boldFormatter)
     update(draft => {
       draft.highlight = state.state === QueryStateType.Enabled
     })
@@ -39,8 +39,6 @@ export function Underline() {
 
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}>
-      <span class="xnote-icon-underline"></span>
-    </Button>
+    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-bold"></span></Button>
   }
 }

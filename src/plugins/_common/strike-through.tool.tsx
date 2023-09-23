@@ -6,7 +6,7 @@ import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { strikeThroughFormatter } from '../../textbus/formatters/_api'
 
-export function StrikeThrough() {
+export function StrikeThroughTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)

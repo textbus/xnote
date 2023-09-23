@@ -6,10 +6,10 @@ import { Selection, throttleTime } from '@textbus/core'
 import css from './left-toolbar.scoped.scss'
 import { RefreshService } from '../../services/refresh.service'
 import { LeftToolbarService } from '../../services/left-toolbar.service'
-import { Bold } from '../_common/bold'
-import { Italic } from '../_common/italic'
-import { StrikeThrough } from '../_common/strike-through'
-import { Underline } from '../_common/underline'
+import { BoldTool } from '../_common/bold.tool'
+import { ItalicTool } from '../_common/italic.tool'
+import { StrikeThroughTool } from '../_common/strike-through.tool'
+import { UnderlineTool } from '../_common/underline.tool'
 import { DomAdapter } from '@textbus/platform-browser'
 
 export function LeftToolbar() {
@@ -79,10 +79,10 @@ export function LeftToolbar() {
             }
           </button>
           <div class={['tools']}>
-            <Bold/>
-            <Italic/>
-            <StrikeThrough/>
-            <Underline/>
+            <BoldTool/>
+            <ItalicTool/>
+            <StrikeThroughTool/>
+            <UnderlineTool/>
           </div>
         </div>
       </div>

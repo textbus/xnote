@@ -4,9 +4,9 @@ import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { boldFormatter } from '../../textbus/formatters/_api'
+import { codeFormatter } from '../../textbus/formatters/_api'
 
-export function Bold() {
+export function CodeTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)
@@ -17,17 +17,17 @@ export function Bold() {
   })
 
   function toggle() {
-    const state = query.queryFormat(boldFormatter)
+    const state = query.queryFormat(codeFormatter)
 
     if (state.state === QueryStateType.Normal) {
-      commander.applyFormat(boldFormatter, true)
+      commander.applyFormat(codeFormatter, true)
     } else {
-      commander.unApplyFormat(boldFormatter)
+      commander.unApplyFormat(codeFormatter)
     }
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    const state = query.queryFormat(boldFormatter)
+    const state = query.queryFormat(codeFormatter)
     update(draft => {
       draft.highlight = state.state === QueryStateType.Enabled
     })
@@ -39,6 +39,6 @@ export function Bold() {
 
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-bold"></span></Button>
+    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-code"></span></Button>
   }
 }
