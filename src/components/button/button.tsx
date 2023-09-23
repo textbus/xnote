@@ -27,7 +27,8 @@ export function Button(props: ButtonProps) {
       <button type="button" class={[
         'btn',
         {
-          active: isActive()
+          active: isActive(),
+          highlight: props.highlight
         }
       ]} {...props}>
         <span>

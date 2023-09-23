@@ -11,6 +11,7 @@ import { StrikeThrough } from '../_common/strike-through'
 import { Underline } from '../_common/underline'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from './block-tool'
+import { Code } from '../_common/code'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -20,9 +21,10 @@ export function Toolbar() {
   const textbus = inject(Textbus)
   const refreshService = inject(RefreshService, null, InjectFlags.Default)!
 
-  const subscription = merge(textbus.onChange).pipe(
+  const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
   ).subscribe(() => {
+    console.log(434343)
     refreshService.onRefresh.next()
   })
 
@@ -138,6 +140,9 @@ export function Toolbar() {
         </div>
         <div class="editor-toolbar-item">
           <Underline/>
+        </div>
+        <div class="editor-toolbar-item">
+          <Code/>
         </div>
       </div>
     )

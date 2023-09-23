@@ -6,7 +6,19 @@
   transition: background-color .2s;
   border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+
   &:hover {
     background: #eee;
+  }
+}
+
+.menu-check {
+  display: none;
+
+  &.checked {
+    display: block;
+    color: #296eff;
   }
 }

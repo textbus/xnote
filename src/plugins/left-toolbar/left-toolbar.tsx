@@ -69,8 +69,8 @@ export function LeftToolbar() {
             {
               isEmptyBlock() ?
                 <span>
-                  <i style="font-size: 18px" class="textbus-icon-components"></i>
-                  <i style="font-size: 12px" class="textbus-icon-setting"></i>
+                  <i style="font-size: 18px" class="xnote-icon-components"></i>
+                  <i style="font-size: 12px" class="xnote-icon-more"></i>
                 </span>
                 :
                 <span>

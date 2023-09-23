@@ -1,3 +1,11 @@
 .icon {
-  margin-right: 10px;
+  display: inline-block;
+  width: 1.8em;
+}
+.heading-icon {
+  font-size: 1.2em;
+  font-weight: bold;
+  sub {
+    font-weight: normal;
+  }
 }
