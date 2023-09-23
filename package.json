@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "@ant-design/colors": "^7.0.0",
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.10",
-    "@textbus/core": "^4.0.0-alpha.10",
-    "@textbus/platform-browser": "^4.0.0-alpha.10",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.11",
+    "@textbus/core": "^4.0.0-alpha.11",
+    "@textbus/platform-browser": "^4.0.0-alpha.11",
+    "@types/prismjs": "^1.26.0",
     "@viewfly/core": "^0.3.0",
     "@viewfly/hooks": "^0.3.0",
     "@viewfly/platform-browser": "^0.3.0",
     "@viewfly/scoped-css": "^0.3.0",
+    "prismjs": "^1.29.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {

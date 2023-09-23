@@ -13,6 +13,7 @@ import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from './block-tool'
 import { CodeTool } from '../_common/code.tool'
 import { ColorTool } from '../_common/color.tool'
+import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -25,7 +26,6 @@ export function Toolbar() {
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
   ).subscribe(() => {
-    console.log(434343)
     refreshService.onRefresh.next()
   })
 
@@ -51,7 +51,10 @@ export function Toolbar() {
     const selectionFocusRect = bridge.getRect({
       slot: selection.focusSlot!,
       offset: selection.focusOffset!
-    })!
+    })
+    if (!selectionFocusRect) {
+      return null
+    }
 
     const centerLeft = selectionFocusRect.left
     const toBottom = documentHeight - selectionFocusRect.top - selectionFocusRect.height > toolbarRect.height + 10
@@ -71,9 +74,11 @@ export function Toolbar() {
   const sub = textbus.onChange.pipe(debounceTime(100)).subscribe(() => {
     if (!viewPosition().isHide) {
       const top = getTop()
-      updateViewPosition(draft => {
-        draft.top = top
-      })
+      if (top !== null) {
+        updateViewPosition(draft => {
+          draft.top = top
+        })
+      }
     }
   })
 
@@ -91,12 +96,14 @@ export function Toolbar() {
         return !selection.isCollapsed
       }),
       map(getTop),
-      delay(200)
+      delay(200),
     ).subscribe((top) => {
-      updateViewPosition(draft => {
-        draft.opacity = 1
-        draft.top = top
-      })
+      if (top !== null) {
+        updateViewPosition(draft => {
+          draft.opacity = 1
+          draft.top = top
+        })
+      }
     })
   }
 
@@ -120,34 +127,34 @@ export function Toolbar() {
   return withScopedCSS(css, () => {
     const p = viewPosition()
     return (
-      <div class="editor-toolbar" ref={toolbarRef} style={{
+      <div class="toolbar" ref={toolbarRef} style={{
         left: p.left + 'px',
         top: p.top + 'px',
         pointerEvents: p.isHide ? 'none' : 'initial',
         opacity: p.opacity,
         transitionDuration: p.transitionDuration + 's'
       }}>
-        <div class="editor-toolbar-item">
+        <ToolbarItem>
           <BlockTool/>
-        </div>
-        <div class="editor-toolbar-item">
+        </ToolbarItem>
+        <ToolbarItem>
           <BoldTool/>
-        </div>
-        <div class="editor-toolbar-item">
+        </ToolbarItem>
+        <ToolbarItem>
           <ItalicTool/>
-        </div>
-        <div class="editor-toolbar-item">
+        </ToolbarItem>
+        <ToolbarItem>
           <StrikeThroughTool/>
-        </div>
-        <div class="editor-toolbar-item">
+        </ToolbarItem>
+        <ToolbarItem>
           <UnderlineTool/>
-        </div>
-        <div class="editor-toolbar-item">
+        </ToolbarItem>
+        <ToolbarItem>
           <CodeTool/>
-        </div>
-        <div class="editor-toolbar-item">
+        </ToolbarItem>
+        <ToolbarItem>
           <ColorTool/>
-        </div>
+        </ToolbarItem>
       </div>
     )
   })

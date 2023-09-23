@@ -3,6 +3,7 @@ import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const strikeThroughFormatter: Formatter<boolean> = {
   name: 'strike',
+  columned: true,
   render(children: Array<VElement | VTextNode | ComponentInstance>): VElement | FormatHostBindingRender {
     return createVNode('del', null, children)
   }

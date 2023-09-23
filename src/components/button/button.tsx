@@ -6,7 +6,7 @@ import css from './button.scoped.scss'
 import { DropdownService } from '../dropdown/dropdown'
 
 export interface ButtonProps extends Props, ButtonHTMLAttributes<HTMLButtonElement> {
-  highlight: boolean
+  highlight?: boolean
   arrow?: boolean
 }
 

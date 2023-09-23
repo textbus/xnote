@@ -12,7 +12,7 @@ import {
   paragraphComponentLoader,
   Root,
   rootComponent,
-  rootComponentLoader,
+  rootComponentLoader, SourceCode, sourceCodeComponent,
   Todolist,
   todolistComponent,
   todolistComponentLoader
@@ -38,7 +38,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [paragraphComponent.name]: Paragraph,
     [rootComponent.name]: Root,
     [blockquoteComponent.name]: Blockquote,
-    [todolistComponent.name]: Todolist
+    [todolistComponent.name]: Todolist,
+    [sourceCodeComponent.name]: SourceCode
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus

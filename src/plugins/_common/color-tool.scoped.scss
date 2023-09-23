@@ -33,6 +33,7 @@
   font-size: 14px;
   overflow: hidden;
 
+
   div {
     float: left;
     width: 22px;
@@ -56,6 +57,8 @@
   .no-background {
     position: relative;
     overflow: hidden;
+    border: 1px solid #eee;
+    box-sizing: border-box;
     &:before {
       content: "";
       width: 100px;

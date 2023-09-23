@@ -13,6 +13,7 @@ import { todolistComponent } from '../../textbus/components/todolist/todolist.co
 import { Divider } from '../../components/divider/divider'
 import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { RefreshService } from '../../services/refresh.service'
+import { sourceCodeComponent, SourceCodeComponentState } from '../../textbus/components/source-code/source-code.component'
 
 export function BlockTool() {
   const commander = inject(Commander)
@@ -135,6 +136,39 @@ export function BlockTool() {
         }
       }
         break
+      case 'sourceCode': {
+        const state = query.queryComponent(sourceCodeComponent)
+        if (state.state === QueryStateType.Enabled) {
+          commander.transform({
+            target: paragraphComponent,
+            multipleSlot: false,
+            slotFactory() {
+              return new Slot([
+                ContentType.InlineComponent,
+                ContentType.Text
+              ])
+            }
+          })
+        } else {
+          commander.transform({
+            target: sourceCodeComponent,
+            multipleSlot: true,
+            slotFactory() {
+              return new Slot([
+                ContentType.Text
+              ])
+            },
+            stateFactory(): SourceCodeComponentState {
+              return {
+                lang: '',
+                theme: '',
+                lineNumber: true
+              }
+            }
+          })
+        }
+      }
+        break
     }
   }
 
@@ -180,7 +214,7 @@ export function BlockTool() {
           value: 'blockquote'
         }, {
           label: <MenuItem checked={states.blockquote}><span class="xnote-icon-source-code icon"></span> 代码块</MenuItem>,
-          value: 'blockquote'
+          value: 'sourceCode'
         }
       ]}>
         <Button arrow={true} highlight={false}>H1</Button>

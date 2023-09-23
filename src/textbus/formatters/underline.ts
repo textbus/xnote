@@ -3,6 +3,7 @@ import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const underlineFormatter: Formatter<boolean> = {
   name: 'underline',
+  columned: true,
   render(children: Array<VElement | VTextNode | ComponentInstance>): VElement | FormatHostBindingRender {
     return createVNode('u', null, children)
   }
