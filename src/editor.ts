@@ -12,7 +12,7 @@ import {
   paragraphComponentLoader,
   Root,
   rootComponent,
-  rootComponentLoader, SourceCode, sourceCodeComponent,
+  rootComponentLoader, SourceCode, sourceCodeComponent, sourceCodeComponentLoader,
   Todolist,
   todolistComponent,
   todolistComponentLoader
@@ -54,6 +54,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       paragraphComponentLoader,
       todolistComponentLoader,
       blockquoteComponentLoader,
+      sourceCodeComponentLoader
     ],
     formatLoaders: [
       boldFormatLoader,

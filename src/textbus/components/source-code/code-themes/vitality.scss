@@ -1,61 +1,61 @@
-.tb-pre[theme=vitality] .tb-hl-function {
+.xnote-source-code[data-theme=vitality] .xnote-hl-function {
   color: #5e5eb9;
 }
 
-.tb-pre[theme=vitality] .tb-pre-content {
+.xnote-source-code[data-theme=vitality] .xnote-source-code-container {
   //color: #a9aeb2;
   background-color: #fafafa;
   border: none;
 }
 
-.tb-pre[theme=vitality] .tb-color-content-highlight {
+.xnote-source-code[data-theme=vitality] .xnote-source-code-content-highlight {
   background: none;
 }
 
-.tb-pre[theme=vitality] .tb-color-content-highlight .tb-code-line-emphasize {
+.xnote-source-code[data-theme=vitality] .xnote-source-code-content-highlight .xnote-code-line-emphasize {
   opacity: 1;
   background-color: #fdfdfd
 }
 
-.tb-pre[theme=vitality] .tb-hl-keyword {
+.xnote-source-code[data-theme=vitality] .xnote-hl-keyword {
   color: #659311;
 }
 
-.tb-pre[theme=vitality] .tb-hl-tag {
+.xnote-source-code[data-theme=vitality] .xnote-hl-tag {
   color: #5e5eb9;
   font-weight: bold;
 }
 
-.tb-pre[theme=vitality] .tb-hl-comment {
+.xnote-source-code[data-theme=vitality] .xnote-hl-comment {
   //color: #4c5156;
 }
 
-.tb-pre[theme=vitality] .tb-hl-string {
+.xnote-source-code[data-theme=vitality] .xnote-hl-string {
   color: #f80;
 }
 
-.tb-pre[theme=vitality] .tb-hl-attr-name {
+.xnote-source-code[data-theme=vitality] .xnote-hl-attr-name {
   color: #659311;
 }
 
-.tb-pre[theme=vitality] .tb-hl-attr-value {
+.xnote-source-code[data-theme=vitality] .xnote-hl-attr-value {
   color: #f80;
 }
 
-.tb-pre[theme=vitality] .tb-hl-regex {
+.xnote-source-code[data-theme=vitality] .xnote-hl-regex {
   color: #af741d;
 }
 
-.tb-pre[theme=vitality] .tb-hl-selector {
+.xnote-source-code[data-theme=vitality] .xnote-hl-selector {
   color: #5e5eb9;
   font-weight: normal
 }
 
-.tb-pre[theme=vitality] .tb-code-line::before {
+.xnote-source-code[data-theme=vitality] .xnote-code-line::before {
   color: rgba(0, 0, 0, .3)
 }
 
-.tb-pre[theme=vitality] .tb-code-line-number-bg {
+.xnote-source-code[data-theme=vitality] .xnote-source-code-line-number-bg {
   background: none;
   border: none;
 }

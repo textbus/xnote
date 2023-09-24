@@ -1,81 +1,80 @@
-.tb-pre[theme=starry] .tb-hl-keyword {
+.xnote-source-code[data-theme=starry] .xnote-hl-keyword {
   color: #71b155;
   font-weight: bold;
 }
 
-.tb-pre[theme=starry] .tb-hl-string {
+.xnote-source-code[data-theme=starry] .xnote-hl-string {
   color: #dd7600;
 }
 
-.tb-pre[theme=starry] .tb-hl-function {
+.xnote-source-code[data-theme=starry] .xnote-hl-function {
   color: #2e89c1;
 }
 
-.tb-pre[theme=starry] .tb-hl-number {
+.xnote-source-code[data-theme=starry] .xnote-hl-number {
   color: #388138
 }
 
-.tb-pre[theme=starry] .tb-hl-tag {
+.xnote-source-code[data-theme=starry] .xnote-hl-tag {
   color: #2e89c1 //#79c0d7;
 }
 
-.tb-pre[theme=starry] .tb-hl-comment {
+.xnote-source-code[data-theme=starry] .xnote-hl-comment {
   color: #5c6d6e;
   font-style: italic;
 }
 
-.tb-pre[theme=starry] .tb-hl-boolean {
+.xnote-source-code[data-theme=starry] .xnote-hl-boolean {
   color: #388138;
   font-weight: bold
 }
 
-.tb-pre[theme=starry] .tb-hl-builtin {
+.xnote-source-code[data-theme=starry] .xnote-hl-builtin {
   color: #2e89c1;
 }
 
-.tb-pre[theme=starry] .tb-hl-regex {
+.xnote-source-code[data-theme=starry] .xnote-hl-regex {
   color: #f60;
 }
 
-.tb-pre[theme=starry] .tb-hl-attr-name {
+.xnote-source-code[data-theme=starry] .xnote-hl-attr-name {
   color: #71b155;
 }
 
-.tb-pre[theme=starry] .tb-hl-attr-value {
+.xnote-source-code[data-theme=starry] .xnote-hl-attr-value {
   color: #dd7600
 }
 
-.tb-pre[theme=starry] .tb-hl-class-name {
+.xnote-source-code[data-theme=starry] .xnote-hl-class-name {
   color: #2e89c1;
   font-weight: bold
 }
 
-.tb-pre[theme=starry] .tb-hl-selector {
+.xnote-source-code[data-theme=starry] .xnote-hl-selector {
   color: #2e89c1;
   font-weight: bold
 }
 
-
-.tb-pre[theme=starry] .tb-pre-content {
+.xnote-source-code[data-theme=starry] .xnote-source-code-container {
   color: #a9aeb2;
   background-color: #182324;
   border: none
 }
 
-.tb-pre[theme=starry] .tb-color-content-highlight {
+.xnote-source-code[data-theme=starry] .xnote-source-code-content-highlight {
   background: rgba(0, 0, 0, .2);
 }
 
-.tb-pre[theme=starry] .tb-color-content-highlight .tb-code-line-emphasize {
+.xnote-source-code[data-theme=starry] .xnote-source-code-content-highlight .xnote-source-code-line-emphasize {
   opacity: 1;
   background-color: #182324
 }
 
-.tb-pre[theme=starry] .tb-code-line::before {
+.xnote-source-code[data-theme=starry] .xnote-source-code-line::before {
   color: #536171
 }
 
-.tb-pre[theme=starry] .tb-code-line-number-bg {
+.xnote-source-code[data-theme=starry] .xnote-source-code-line-number-bg {
   background: none;
   border: none;
 }

@@ -22,6 +22,22 @@ import { Grammar, languages, Token, tokenize } from 'prismjs'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, onUnmounted, useSignal } from '@viewfly/core'
 
+import 'prismjs/components/prism-typescript'
+import 'prismjs/components/prism-java'
+import 'prismjs/components/prism-powershell'
+import 'prismjs/components/prism-swift'
+import 'prismjs/components/prism-json'
+import 'prismjs/components/prism-css'
+import 'prismjs/components/prism-less'
+import 'prismjs/components/prism-scss'
+import 'prismjs/components/prism-stylus'
+import 'prismjs/components/prism-c'
+import 'prismjs/components/prism-cpp'
+import 'prismjs/components/prism-csharp'
+import 'prismjs/components/prism-go'
+import 'prismjs/components/prism-jsx'
+import 'prismjs/components/prism-tsx'
+
 import './source-code.component.scss'
 import { paragraphComponent } from '../paragraph/paragraph.component'
 import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
@@ -115,7 +131,7 @@ export class CodeStyleFormatter implements Formatter<string> {
 
   render(children: Array<VElement | VTextNode>, formatValue: string) {
     return new VElement('span', {
-      class: 'tb-hl-' + formatValue
+      class: 'xnote-hl-' + formatValue
     }, children)
   }
 }
@@ -417,6 +433,7 @@ export const sourceCodeComponent = defineComponent({
         reformat(slots, slots.get(0)!, languageGrammar!, blockCommentStartString, blockCommentEndString, true)
       }
       isStop = false
+      console.log(434343)
     })
     let languageGrammar = getLanguageGrammar(self.state.lang)
     let [blockCommentStartString, blockCommentEndString] = getLanguageBlockCommentStart(self.state.lang)
@@ -656,6 +673,12 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
 
   return () => {
     const { state, slots } = props.component
+    let lang = ''
+    languageList.forEach(i => {
+      if (i.value === state.lang) {
+        lang = i.label
+      }
+    })
     const blockHighlight = slots.toArray().some(i => i.state?.emphasize === true)
     return (
       <pre ref={props.rootRef} class={{
@@ -674,7 +697,7 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
                 value: item.value
               }
             })}>
-              <Button arrow={true}>{state.lang || 'Plain Text'}</Button>
+              <Button arrow={true}>{lang || 'Plain Text'}</Button>
             </Dropdown>
           </ToolbarItem>
           <ToolbarItem>
@@ -703,10 +726,10 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
             行号：<Button onClick={toggleLineNumber}><span class={state.lineNumber ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked'}></span></Button>
           </ToolbarItem>
           <ToolbarItem>
-            <Button>强调</Button>
+            <Button onClick={props.component.extends.emphasize}>强调</Button>
           </ToolbarItem>
           <ToolbarItem>
-            <Button>取消强调</Button>
+            <Button onClick={props.component.extends.cancelEmphasize}>取消强调</Button>
           </ToolbarItem>
         </ComponentToolbar>
         <div class="xnote-source-code-container">
@@ -727,26 +750,26 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
               })
             }
           </div>
-          <span class="xnote-source-code-lang">{state.lang}</span>
+          <span class="xnote-source-code-lang">{lang}</span>
         </div>
       </pre>
     )
   }
 }
 
-export const preComponentLoader: ComponentLoader = {
+export const sourceCodeComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'PRE'
   },
   read(el: HTMLElement, textbus: Textbus): ComponentInstance {
-    const lines = el.querySelectorAll('.tb-code-line')
+    const lines = el.querySelectorAll('.xnote-source-code-line')
     let slots: Slot[] = []
     if (lines.length) {
       slots = Array.from(lines).map(i => {
         const code = (i as HTMLElement).innerText.replace(/[\s\n]+$/, '')
         const slot = createCodeSlot()
         slot.updateState(draft => {
-          draft.emphasize = i.classList.contains('tb-code-line-emphasize')
+          draft.emphasize = i.classList.contains('xnote-source-code-line-emphasize')
         })
         slot.insert(code)
         return slot
@@ -766,7 +789,7 @@ export const preComponentLoader: ComponentLoader = {
       state: {
         lang: el.getAttribute('lang') || '',
         theme: el.getAttribute('theme') || '',
-        lineNumber: !el.classList.contains('tb-pre-hide-line-number')
+        lineNumber: !el.classList.contains('xnote-source-code-hide-line-number')
       },
       slots
     })

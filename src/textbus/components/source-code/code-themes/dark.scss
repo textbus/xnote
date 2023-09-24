@@ -1,53 +1,53 @@
 
-.tb-pre[theme=dark] .tb-hl-keyword {
+.xnote-source-code[data-theme=dark] .xnote-hl-keyword {
   color: rgb(0, 134, 179);
 }
 
-.tb-pre[theme=dark] .tb-hl-tag {
+.xnote-source-code[data-theme=dark] .xnote-hl-tag {
   color: rgb(0, 134, 179);
 }
 
-.tb-pre[theme=dark] .tb-hl-comment {
+.xnote-source-code[data-theme=dark] .xnote-hl-comment {
   color: #4c5156;
 }
 
-.tb-pre[theme=dark] .tb-hl-string {
+.xnote-source-code[data-theme=dark] .xnote-hl-string {
   color: #ce5a70;
 }
 
-.tb-pre[theme=dark] .tb-hl-attr-value {
+.xnote-source-code[data-theme=dark] .xnote-hl-attr-value {
   color: #ce5a70;
 }
 
-.tb-pre[theme=dark] .tb-hl-regex {
+.xnote-source-code[data-theme=dark] .xnote-hl-regex {
   color: #af741d;
 }
 
-.tb-pre[theme=dark] .tb-hl-selector {
+.xnote-source-code[data-theme=dark] .xnote-hl-selector {
   color: #ce5a70;
   font-weight: normal
 }
 
-.tb-pre[theme=dark] .tb-pre-content {
+.xnote-source-code[data-theme=dark] .xnote-source-code-container {
   color: #a9aeb2;
   background-color: #1c2838;
   border-color: #353535
 }
 
-.tb-pre[theme=dark] .tb-color-content-highlight {
+.xnote-source-code[data-theme=dark] .xnote-source-code-content-highlight {
   background-color: #263140;
 }
 
-.tb-pre[theme=dark] .tb-color-content-highlight .tb-code-line-emphasize {
+.xnote-source-code[data-theme=dark] .xnote-source-code-content-highlight .xnote-source-code-line-emphasize {
   opacity: 1;
   background-color: #1c2838
 }
 
-.tb-pre[theme=dark] .tb-code-line::before {
+.xnote-source-code[data-theme=dark] .xnote-source-code-line::before {
   color: #536171
 }
 
-.tb-pre[theme=dark] .tb-code-line-number-bg {
+.xnote-source-code[data-theme=dark] .xnote-source-code-line-number-bg {
   background-color: #2d3a48;
   border-right-color: #292929;
 }
