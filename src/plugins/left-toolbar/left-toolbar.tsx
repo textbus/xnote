@@ -1,15 +1,15 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import {
+  createRef,
+  createSignal,
   getCurrentInstance,
   inject,
   JSXNode,
   onMounted,
   onUnmounted,
-  provide,
-  useEffect,
-  useSignal
+  provide, watch,
 } from '@viewfly/core'
-import { useProduce, useStaticRef } from '@viewfly/hooks'
+import { useProduce } from '@viewfly/hooks'
 import { delay, fromEvent, Selection, Slot, Subscription, throttleTime } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
 
@@ -36,7 +36,7 @@ export function LeftToolbar() {
 
   const checkStates = useActiveBlock()
   const toBlock = useBlockTransform()
-  const activeSlot = useSignal<Slot | null>(null)
+  const activeSlot = createSignal<Slot | null>(null)
 
   function transform(v: string) {
     const active = activeSlot()
@@ -86,10 +86,10 @@ export function LeftToolbar() {
     subscription.unsubscribe()
   })
 
-  const toolbarRef = useStaticRef<HTMLElement>()
-  const menuRef = useStaticRef<HTMLElement>()
-  const btnRef = useStaticRef<HTMLElement>()
-  const isShow = useSignal(false)
+  const toolbarRef = createRef<HTMLElement>()
+  const menuRef = createRef<HTMLElement>()
+  const btnRef = createRef<HTMLElement>()
+  const isShow = createSignal(false)
 
   function updateMenuHeight() {
     const menuEle = menuRef.current!
@@ -112,7 +112,7 @@ export function LeftToolbar() {
     menuEle.style.top = -offsetTop + 'px'
   }
 
-  useEffect(isShow, (newValue) => {
+  watch(isShow, (newValue) => {
     if (newValue && menuRef.current) {
       updateMenuHeight()
     }
@@ -138,7 +138,7 @@ export function LeftToolbar() {
   })
 
 
-  const isEmptyBlock = useSignal(true)
+  const isEmptyBlock = createSignal(true)
 
   return withScopedCSS(css, () => {
     const position = positionSignal()

@@ -1,8 +1,8 @@
-import { inject, InjectFlags, onUnmounted, provide } from '@viewfly/core'
+import { createRef, inject, InjectFlags, onUnmounted, provide } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { debounceTime, delay, filter, fromEvent, map, merge, Selection, Subscription, Textbus } from '@textbus/core'
 import { SelectionBridge, VIEW_DOCUMENT } from '@textbus/platform-browser'
-import { useProduce, useStaticRef } from '@viewfly/hooks'
+import { useProduce } from '@viewfly/hooks'
 
 import css from './toolbar.scoped.scss'
 import { BoldTool } from '../_common/bold.tool'
@@ -45,7 +45,7 @@ export function Toolbar() {
   })
 
   let mouseupSubscription = new Subscription()
-  const toolbarRef = useStaticRef<HTMLElement>()
+  const toolbarRef = createRef<HTMLElement>()
 
   function getTop() {
     const docRect = viewDocument.getBoundingClientRect()

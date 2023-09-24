@@ -1,4 +1,4 @@
-import { inject, onUnmounted, useSignal } from '@viewfly/core'
+import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Dropdown } from '../../components/dropdown/dropdown'
@@ -8,7 +8,7 @@ import { RefreshService } from '../../services/refresh.service'
 import { fontSizeFormatter } from '../../textbus/formatters/font-size'
 
 export function FontSizeTool() {
-  const currentFontSize = useSignal('')
+  const currentFontSize = createSignal('')
   const fontSizeOptions = [
     '',
     '12px',
@@ -35,7 +35,7 @@ export function FontSizeTool() {
   const refreshService = inject(RefreshService)
   const query = inject(Query)
 
-  const highlight = useSignal(false)
+  const highlight = createSignal(false)
 
   const subscription = refreshService.onRefresh.subscribe(() => {
     const result = query.queryFormat(fontSizeFormatter)

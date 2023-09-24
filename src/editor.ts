@@ -45,6 +45,11 @@ import './textbus/doc.scss'
 import { headingAttrLoader } from './textbus/attributes/heading.attr'
 import { textAlignAttrLoader } from './textbus/attributes/text-align.attr'
 import { textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
+import {
+  HighlightBox,
+  highlightBoxComponent,
+  highlightBoxComponentLoader
+} from './textbus/components/highlight-box/highlight-box.component'
 
 export interface XNoteConfig {
   content?: string
@@ -57,7 +62,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [blockquoteComponent.name]: Blockquote,
     [todolistComponent.name]: Todolist,
     [sourceCodeComponent.name]: SourceCode,
-    [tableComponent.name]: TableComponentView
+    [tableComponent.name]: TableComponentView,
+    [highlightBoxComponent.name]: HighlightBox
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus
@@ -72,11 +78,12 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     },
     adapter,
     componentLoaders: [
+      highlightBoxComponentLoader,
       blockquoteComponentLoader,
       paragraphComponentLoader,
       sourceCodeComponentLoader,
       todolistComponentLoader,
-      tableComponentLoader
+      tableComponentLoader,
     ],
     formatLoaders: [
       backgroundColorFormatLoader,

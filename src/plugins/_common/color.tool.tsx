@@ -1,5 +1,5 @@
 import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted, useSignal } from '@viewfly/core'
+import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
@@ -14,8 +14,8 @@ export function ColorTool() {
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)
 
-  const textColor = useSignal('')
-  const backgroundColor = useSignal('')
+  const textColor = createSignal('')
+  const backgroundColor = createSignal('')
 
   const [viewModel] = useProduce({
     highlight: false,

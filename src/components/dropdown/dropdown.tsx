@@ -1,7 +1,18 @@
-import { getCurrentInstance, Injectable, JSXNode, onMounted, onUnmounted, Props, provide, Scope, useEffect, useSignal } from '@viewfly/core'
+import {
+  createRef,
+  createSignal,
+  getCurrentInstance,
+  Injectable,
+  JSXNode,
+  onMounted,
+  onUnmounted,
+  Props,
+  provide,
+  Scope,
+  watch,
+} from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { delay, fromEvent, Subject, Subscription } from '@textbus/core'
-import { useStaticRef } from '@viewfly/hooks'
 
 import css from './dropdown.scoped.scss'
 
@@ -16,6 +27,7 @@ export interface DropdownMenu {
 export interface DropdownProps extends Props {
   trigger?: DropdownTriggerTypes
   menu: DropdownMenu[] | JSXNode
+  width?: string
 
   onCheck?(value: any): void
 }
@@ -33,8 +45,8 @@ export class DropdownService {
 }
 
 export function Dropdown(props: DropdownProps) {
-  const isShow = useSignal(false)
-  const toTop = useSignal(false)
+  const isShow = createSignal(false)
+  const toTop = createSignal(false)
   provide(DropdownService)
 
   const component = getCurrentInstance()
@@ -45,9 +57,9 @@ export function Dropdown(props: DropdownProps) {
     isShow.set(next)
   }
 
-  const menuRef = useStaticRef<HTMLElement>()
-  const triggerRef = useStaticRef<HTMLElement>()
-  const dropdownRef = useStaticRef<HTMLElement>()
+  const menuRef = createRef<HTMLElement>()
+  const triggerRef = createRef<HTMLElement>()
+  const dropdownRef = createRef<HTMLElement>()
 
   function updateMenuHeight() {
     if (menuRef.current) {
@@ -66,7 +78,7 @@ export function Dropdown(props: DropdownProps) {
     }
   }
 
-  useEffect(isShow, (newValue) => {
+  watch(isShow, (newValue) => {
     if (newValue && menuRef.current) {
       updateMenuHeight()
     }
@@ -101,37 +113,42 @@ export function Dropdown(props: DropdownProps) {
     subscription.unsubscribe()
   })
 
-  return withScopedCSS(css, () => {
-    return (
-      <div class="dropdown" ref={dropdownRef}>
-        <div class="dropdown-btn" ref={triggerRef}>
-          <div class="dropdown-btn-inner">
-            {props.children}
+  return {
+    isShow,
+    $render: withScopedCSS(css, () => {
+      return (
+        <div class="dropdown" ref={dropdownRef}>
+          <div class="dropdown-btn" ref={triggerRef}>
+            <div class="dropdown-btn-inner">
+              {props.children}
+            </div>
+            <div class="dropdown-btn-arrow"/>
           </div>
-          <div class="dropdown-btn-arrow"/>
+          <div ref={menuRef} style={{
+            width: props.width
+          }} class={['dropdown-menu', {
+            active: isShow(),
+            'to-top': toTop()
+          }]}>
+            {
+              Array.isArray(props.menu) ?
+                props.menu.map(menu => {
+                  return (
+                    <div class="dropdown-menu-item" onClick={() => {
+                      if (menu.disabled) {
+                        return
+                      }
+                      props.onCheck?.(menu.value)
+                    }}>{menu.label}</div>
+                  )
+                }) :
+                props.menu
+            }
+          </div>
         </div>
-        <div ref={menuRef} class={['dropdown-menu', {
-          active: isShow(),
-          'to-top': toTop()
-        }]}>
-          {
-            Array.isArray(props.menu) ?
-              props.menu.map(menu => {
-                return (
-                  <div class="dropdown-menu-item" onClick={() => {
-                    if (menu.disabled) {
-                      return
-                    }
-                    props.onCheck?.(menu.value)
-                  }}>{menu.label}</div>
-                )
-              }) :
-              props.menu
-          }
-        </div>
-      </div>
-    )
-  })
+      )
+    })
+  }
 }
 
 Dropdown.scope = new Scope('Dropdown')

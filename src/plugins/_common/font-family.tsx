@@ -1,4 +1,4 @@
-import { inject, onUnmounted, useSignal } from '@viewfly/core'
+import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { Dropdown } from '../../components/dropdown/dropdown'
@@ -38,7 +38,7 @@ export const isSupportFont = (function () {
 })()
 
 export function FontFamilyTool() {
-  const currentFontFamily = useSignal('')
+  const currentFontFamily = createSignal('')
   const fontFamilyOptions = [{
     label: '宋体',
     value: 'SimSun, STSong'
@@ -89,7 +89,7 @@ export function FontFamilyTool() {
   const refreshService = inject(RefreshService)
   const query = inject(Query)
 
-  const highlight = useSignal(false)
+  const highlight = createSignal(false)
 
   const subscription = refreshService.onRefresh.subscribe(() => {
     const result = query.queryFormat(fontFamilyFormatter)

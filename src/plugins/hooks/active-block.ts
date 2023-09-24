@@ -24,7 +24,8 @@ export function useActiveBlock() {
     table: false,
     todolist: false,
     blockquote: false,
-    sourceCode: false
+    sourceCode: false,
+    highlightBox: false
   })
 
   function updateCheckStates() {

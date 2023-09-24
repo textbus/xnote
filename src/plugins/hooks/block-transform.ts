@@ -7,6 +7,7 @@ import { todolistComponent } from '../../textbus/components/todolist/todolist.co
 import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { sourceCodeComponent, SourceCodeComponentState } from '../../textbus/components/source-code/source-code.component'
 import { tableComponent } from '../../textbus/components/table/table.component'
+import { highlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
 
 export function useBlockTransform() {
   const commander = inject(Commander)
@@ -131,6 +132,43 @@ export function useBlockTransform() {
               }
             }
           })
+        }
+      }
+        break
+      case 'highlightBox': {
+        const state = query.queryComponent(highlightBoxComponent)
+        if (state.state === QueryStateType.Enabled) {
+          const current = state.value!
+          const parent = current.parent!
+
+          const index = parent.indexOf(current)
+
+          parent.retain(index)
+
+          commander.removeComponent(current)
+
+          current.slots.get(0)!.sliceContent().forEach(i => {
+            parent.insert(i)
+          })
+        } else {
+          const block = highlightBoxComponent.createInstance(textbus)
+          const slot = block.slots.get(0)!
+          if (selection.startSlot === selection.endSlot) {
+            const parentComponent = selection.startSlot!.parent!
+            const parentSlot = parentComponent.parent!
+            const position = parentSlot.indexOf(parentComponent)
+            slot.insert(parentComponent)
+            parentSlot.retain(position)
+            parentSlot.insert(block)
+          } else {
+            const commonAncestorSlot = selection.commonAncestorSlot!
+            const scope = selection.getCommonAncestorSlotScope()!
+            commonAncestorSlot.cut(scope.startOffset, scope.endOffset).sliceContent().forEach(i => {
+              slot.insert(i)
+            })
+            commonAncestorSlot.retain(scope.startOffset)
+            commonAncestorSlot.insert(block)
+          }
         }
       }
         break

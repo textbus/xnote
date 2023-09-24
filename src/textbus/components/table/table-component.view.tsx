@@ -6,8 +6,8 @@ import {
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
-import { inject, onMounted, onUnmounted, onUpdated, useSignal } from '@viewfly/core'
-import { useProduce, useStaticRef } from '@viewfly/hooks'
+import { inject, onMounted, onUnmounted, onUpdated, createSignal, createRef } from '@viewfly/core'
+import { useProduce } from '@viewfly/hooks'
 
 import './table.component.scss'
 import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
@@ -17,7 +17,7 @@ import { TableCellConfig, tableComponent } from './table.component'
 
 export function TableComponentView(props: ViewComponentProps<typeof tableComponent>) {
   const adapter = inject(DomAdapter)
-  const isFocus = useSignal(false)
+  const isFocus = createSignal(false)
   const subscription = props.component.extends.focus.subscribe(b => {
     isFocus.set(b)
   })
@@ -26,11 +26,11 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     subscription.unsubscribe()
   })
 
-  const tableRef = useStaticRef<HTMLTableElement>()
-  const vBarRef = useStaticRef<HTMLTableElement>()
-  const scrollRef = useStaticRef<HTMLDivElement>()
-  const wrapperRef = useStaticRef<HTMLDivElement>()
-  const dragLineRef = useStaticRef<HTMLDivElement>()
+  const tableRef = createRef<HTMLTableElement>()
+  const vBarRef = createRef<HTMLTableElement>()
+  const scrollRef = createRef<HTMLDivElement>()
+  const wrapperRef = createRef<HTMLDivElement>()
+  const dragLineRef = createRef<HTMLDivElement>()
 
   let activeCol: number | null = null
 

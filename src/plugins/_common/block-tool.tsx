@@ -25,6 +25,7 @@ export function BlockTool() {
       [states.todolist, 'xnote-icon-checkbox-checked'],
       [states.blockquote, 'xnote-icon-quotes-right'],
       [states.sourceCode, 'xnote-icon-source-code'],
+      [states.highlightBox, 'xnote-icon-paint-bucket'],
     ]
 
     let currentType = 'xnote-icon-pilcrow'
@@ -77,6 +78,9 @@ export function BlockTool() {
         }, {
           label: <MenuItem icon={<span class="xnote-icon-source-code"/>} checked={states.sourceCode}>代码块</MenuItem>,
           value: 'sourceCode'
+        }, {
+          label: <MenuItem icon={<span class="xnote-icon-paint-bucket"/>} checked={states.highlightBox}>高亮块</MenuItem>,
+          value: 'highlightBox'
         }
       ]}>
         <Button arrow={true} highlight={false}><span class={currentType}/></Button>

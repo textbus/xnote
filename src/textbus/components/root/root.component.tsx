@@ -16,7 +16,7 @@ import {
   useSelf,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { inject, useRef } from '@viewfly/core'
+import { inject, createDynamicRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -89,7 +89,7 @@ export function Root(props: ViewComponentProps<typeof rootComponent>) {
   const adapter = inject(DomAdapter)
   const { first, last } = props.component.slots
 
-  const ref = useRef<HTMLDivElement>(node => {
+  const ref = createDynamicRef<HTMLDivElement>(node => {
     const sub = props.component.extends.onCompositionStart.subscribe(ev => {
       if (ev.target === props.component.slots.get(0)) {
         (node.children[0] as HTMLElement).dataset.placeholder = ''

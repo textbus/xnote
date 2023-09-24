@@ -1,0 +1,50 @@
+.xnote-highlight-box {
+  border-radius: 4px;
+  background: #fcf5ce;
+  border: 1px solid #f5c774;
+  margin: 8px 0;
+  display: flex;
+
+  &-left {
+    padding-top: 8px;
+    width: 40px;
+    text-align: center;
+  }
+
+  &-content {
+    flex: 1;
+  }
+
+  &-icon {
+    button {
+      font-size: 18px;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+      width: 30px;
+      height: 30px;
+
+      &:hover {
+        background: rgba(0, 0, 0, .1);
+      }
+    }
+  }
+}
+
+.xnote-highlight-box-icons {
+  text-align: left;
+  button {
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+    &:hover {
+      background: rgba(0, 0, 0, .1);
+    }
+  }
+}

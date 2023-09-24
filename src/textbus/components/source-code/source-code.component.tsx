@@ -19,7 +19,7 @@ import {
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject, onUnmounted, useSignal } from '@viewfly/core'
+import { inject, onUnmounted, createSignal } from '@viewfly/core'
 
 import './source-code.component.scss'
 import { paragraphComponent } from '../paragraph/paragraph.component'
@@ -341,7 +341,7 @@ export const sourceCodeComponent = defineComponent({
 
 export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>) {
   const adapter = inject(DomAdapter)
-  const isFocus = useSignal(false)
+  const isFocus = createSignal(false)
   const subscription = props.component.extends.focus.subscribe(b => {
     isFocus.set(b)
   })

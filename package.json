@@ -9,16 +9,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.18",
-    "@textbus/core": "^4.0.0-alpha.18",
-    "@textbus/platform-browser": "^4.0.0-alpha.18",
-    "@types/prismjs": "^1.26.0",
-    "@viewfly/core": "^0.4.1",
-    "@viewfly/hooks": "^0.4.1",
-    "@viewfly/platform-browser": "^0.4.1",
-    "@viewfly/scoped-css": "^0.4.1",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.19",
+    "@textbus/core": "^4.0.0-alpha.19",
+    "@textbus/platform-browser": "^4.0.0-alpha.19",
+    "@viewfly/core": "^0.5.0",
+    "@viewfly/hooks": "^0.5.0",
+    "@viewfly/platform-browser": "^0.5.0",
+    "@viewfly/scoped-css": "^0.5.0",
     "highlight.js": "^11.9.0",
-    "prismjs": "^1.29.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
@@ -27,7 +25,7 @@
     "@types/jest": "^29.5.2",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
-    "@viewfly/devtools": "^0.4.0",
+    "@viewfly/devtools": "^0.5.0",
     "autoprefixer": "^10.4.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "core-js": "^3.20.1",
