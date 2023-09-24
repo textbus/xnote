@@ -1,13 +1,13 @@
 import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted, useSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
+import { withScopedCSS } from '@viewfly/scoped-css'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { backgroundColorFormatter, colorFormatter } from '../../textbus/formatters/_api'
 import { Dropdown } from '../../components/dropdown/dropdown'
 import css from './color-tool.scoped.scss'
-import { withScopedCSS } from '@viewfly/scoped-css'
 
 export function ColorTool() {
   const query = inject(Query)
