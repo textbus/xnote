@@ -10,10 +10,11 @@ import { ItalicTool } from '../_common/italic.tool'
 import { StrikeThroughTool } from '../_common/strike-through.tool'
 import { UnderlineTool } from '../_common/underline.tool'
 import { RefreshService } from '../../services/refresh.service'
-import { BlockTool } from './block-tool'
+import { BlockTool } from '../_common/block-tool'
 import { CodeTool } from '../_common/code.tool'
 import { ColorTool } from '../_common/color.tool'
 import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
+import { AttrTool } from '../_common/attr-tool'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -136,6 +137,9 @@ export function Toolbar() {
       }}>
         <ToolbarItem>
           <BlockTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <AttrTool/>
         </ToolbarItem>
         <ToolbarItem>
           <BoldTool/>
