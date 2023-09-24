@@ -47,13 +47,26 @@ export function Dropdown(props: DropdownProps) {
   const menuRef = useStaticRef<HTMLElement>()
   const triggerRef = useStaticRef<HTMLElement>()
 
-  useEffect(isShow, (newValue) => {
-    if (newValue && menuRef.current) {
-      const menuRect = menuRef.current.getBoundingClientRect()
+  function updateMenuHeight() {
+    if (menuRef.current) {
       const triggerRect = triggerRef.current!.getBoundingClientRect()
       const documentClientHeight = document.documentElement.clientHeight
 
-      toTop.set(triggerRect.bottom + menuRect.height > documentClientHeight - 10)
+      const bottomDistance = documentClientHeight - triggerRect.bottom
+      const isToTop = bottomDistance < 200 && triggerRect.top > bottomDistance
+      toTop.set(isToTop)
+      const maxHeight = Math.max(menuRef.current.scrollHeight, menuRef.current.offsetHeight)
+      if (isToTop) {
+        menuRef.current.style.maxHeight = Math.min(triggerRect.top - 30, maxHeight) + 'px'
+      } else {
+        menuRef.current.style.maxHeight = bottomDistance - 30 + 'px'
+      }
+    }
+  }
+
+  useEffect(isShow, (newValue) => {
+    if (newValue && menuRef.current) {
+      updateMenuHeight()
     }
     dropdownService.onOpenStateChange.next(newValue)
   })

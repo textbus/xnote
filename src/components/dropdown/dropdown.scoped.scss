@@ -20,6 +20,7 @@
     pointer-events: none;
     user-select: none;
     transform: translateY(20px);
+    overflow-y: auto;
 
     &.to-top {
       top: initial;
