@@ -17,10 +17,10 @@ import {
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { inject, Injector, useRef } from '@viewfly/core'
+import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
 import { paragraphComponent } from '../paragraph/paragraph.component'
-import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { LeftToolbarService } from '../../../services/left-toolbar.service'
 
 export const rootComponent = defineComponent({
@@ -41,8 +41,8 @@ export const rootComponent = defineComponent({
     }
   },
   setup() {
-    const injector = useContext()
-    const selection = injector.get(Selection)
+    const textbus = useContext()
+    const selection = textbus.get(Selection)
     const slots = useSelf().slots
 
     onSlotRemove(ev => {
@@ -52,7 +52,7 @@ export const rootComponent = defineComponent({
     onBreak(ev => {
       if (ev.target === slots.get(0)!) {
         const afterContentDelta = ev.target.cut(ev.data.index).toDelta()
-        const p = paragraphComponent.createInstance(injector)
+        const p = paragraphComponent.createInstance(textbus)
         const slot = p.slots.get(0)!
         slot.insertDelta(afterContentDelta)
         const body = slots.get(1)!
@@ -65,7 +65,7 @@ export const rootComponent = defineComponent({
 
     onContentInsert(ev => {
       if (ev.target === slots.get(1) && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
-        const p = paragraphComponent.createInstance(injector)
+        const p = paragraphComponent.createInstance(textbus)
         const slot = p.slots.get(0)!
         slot.insert(ev.data.content)
         ev.target.insert(p)

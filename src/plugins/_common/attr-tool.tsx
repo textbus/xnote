@@ -102,7 +102,7 @@ export function AttrTool() {
           label: <Divider/>,
           value: ''
         }, {
-          label: <MenuItem><span class="xnote-icon-indent-plus icon"></span> 增加缩进</MenuItem>,
+          label: <MenuItem><span class="xnote-icon-indent-increase icon"></span> 增加缩进</MenuItem>,
           value: 'i+'
         }, {
           label: <MenuItem><span class="xnote-icon-indent-decrease icon"></span> 减少缩进</MenuItem>,
