@@ -17,7 +17,7 @@ import {
   VElement,
   VTextNode,
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import { Grammar, languages, Token, tokenize } from 'prismjs'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, onUnmounted, useSignal } from '@viewfly/core'
@@ -123,6 +123,7 @@ export interface SourceCodeComponentState {
   lang: string
   theme?: string
   lineNumber?: boolean
+  autoBreak?: boolean
 }
 
 export class CodeStyleFormatter implements Formatter<string> {
@@ -665,10 +666,26 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
     })
   }
 
-  function toggleLineNumber() {
-    props.component.updateState(draft => {
-      draft.lineNumber = !props.component.state.lineNumber
-    })
+  function setting(v: string) {
+    switch (v) {
+      case 'lineNumber':
+        props.component.updateState(draft => {
+          draft.lineNumber = !props.component.state.lineNumber
+        })
+        break
+      case 'autoBreak':
+        props.component.updateState(draft => {
+          draft.autoBreak = !props.component.state.autoBreak
+        })
+        break
+    }
+  }
+
+  const input = inject(Input)
+  function updateCaret() {
+    if (props.component.extends.focus) {
+      input.caret.refresh(false)
+    }
   }
 
   return () => {
@@ -683,9 +700,10 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
     return (
       <pre ref={props.rootRef} class={{
         'xnote-source-code': true,
-        'xnote-source-code-hide-line-number': !state.lineNumber
+        'xnote-source-code-line-number': state.lineNumber
       }}
            lang={state.lang}
+           data-auto-break={state.autoBreak}
            data-theme={state!.theme || null}
            data-line-number={state.lineNumber}
       >
@@ -702,28 +720,38 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
           </ToolbarItem>
           <ToolbarItem>
             主题：<Dropdown trigger={'hover'} onCheck={changeTheme} menu={[{
-              label: 'Light',
-              value: 'light'
-            }, {
-              label: 'Vitality',
-              value: 'vitality'
-            }, {
-              label: 'Dark',
-              value: 'dark'
-            }, {
-              label: 'Starry',
-              value: 'starry'
-            }].map(item => {
-              return {
-                label: <MenuItem>{item.label}</MenuItem>,
-                value: item.value
-              }
+            label: 'Light',
+            value: 'light'
+          }, {
+            label: 'Vitality',
+            value: 'vitality'
+          }, {
+            label: 'Dark',
+            value: 'dark'
+          }, {
+            label: 'Starry',
+            value: 'starry'
+          }].map(item => {
+            return {
+              label: <MenuItem>{item.label}</MenuItem>,
+              value: item.value
+            }
           })}>
               <Button arrow={true}>{state.theme || 'light'}</Button>
             </Dropdown>
           </ToolbarItem>
           <ToolbarItem>
-            行号：<Button onClick={toggleLineNumber}><span class={state.lineNumber ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked'}></span></Button>
+            <Dropdown onCheck={setting} menu={[
+              {
+                label: <MenuItem icon={<span class="xnote-icon-list-numbered"/>} checked={state.lineNumber}>行号</MenuItem>,
+                value: 'lineNumber'
+              }, {
+                label: <MenuItem icon={<span class="xnote-icon-text-wrap"/>} checked={state.autoBreak}>自动换行</MenuItem>,
+                value: 'autoBreak'
+              }
+            ]}>
+              <Button arrow={true}>设置</Button>
+            </Dropdown>
           </ToolbarItem>
           <ToolbarItem>
             <Button onClick={props.component.extends.emphasize}>强调</Button>
@@ -732,20 +760,30 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
             <Button onClick={props.component.extends.cancelEmphasize}>取消强调</Button>
           </ToolbarItem>
         </ComponentToolbar>
-        <div class="xnote-source-code-container">
+        <div class={[
+          'xnote-source-code-container',
+          {
+            'xnote-source-code-auto-break': state.autoBreak
+          }
+        ]}>
           <div class="xnote-source-code-line-number-bg" style={{
             width: Math.max(String(slots.length).length, 2.5) + 'em'
           }}/>
-          <div class={{
+          <div onScroll={updateCaret} class={{
             'xnote-source-code-content': true,
             'xnote-source-code-content-highlight': blockHighlight
+          }} style={{
+            'padding-left': Math.max(String(slots.length).length, 2.5) + 'em',
+            'margin-left': -Math.max(String(slots.length).length, 2.5) + 'em'
           }}>
             {
               slots.toArray().map(item => {
                 return adapter.slotRender(item, children => {
                   return createVNode('div', {
                     class: 'xnote-source-code-line' + (item.state?.emphasize ? ' xnote-source-code-line-emphasize' : '')
-                  }, children)
+                  }, [
+                    createVNode('div', { class: 'xnote-source-code-line-content' }, children)
+                  ])
                 }, false)
               })
             }

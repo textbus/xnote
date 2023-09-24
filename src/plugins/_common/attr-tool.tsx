@@ -85,27 +85,25 @@ export function AttrTool() {
     return (
       <Dropdown onCheck={updateAttr} trigger={'hover'} menu={[
         {
-          label: <MenuItem checked={states.textAlign === 'left'}><span class="xnote-icon-paragraph-left icon"></span>左对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} checked={states.textAlign === 'left'}>左对齐</MenuItem>,
           value: 't-l'
         }, {
-          label: <MenuItem checked={states.textAlign === 'right'}><span class="xnote-icon-paragraph-right icon"></span>右对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-right"/>} checked={states.textAlign === 'right'}>右对齐</MenuItem>,
           value: 't-r'
         }, {
-          label: <MenuItem checked={states.textAlign === 'center'}><span
-            class="xnote-icon-paragraph-center icon"></span>居中对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-center"/>} checked={states.textAlign === 'center'}>居中对齐</MenuItem>,
           value: 't-c'
         }, {
-          label: <MenuItem checked={states.textAlign === 'justify'}><span
-            class="xnote-icon-paragraph-justify icon"></span>分散对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-justify"/>} checked={states.textAlign === 'justify'}>分散对齐</MenuItem>,
           value: 't-j'
         }, {
           label: <Divider/>,
           value: ''
         }, {
-          label: <MenuItem><span class="xnote-icon-indent-increase icon"></span> 增加缩进</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-indent-increase"/>}>增加缩进</MenuItem>,
           value: 'i+'
         }, {
-          label: <MenuItem><span class="xnote-icon-indent-decrease icon"></span> 减少缩进</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-indent-decrease"/>}>减少缩进</MenuItem>,
           value: 'i-'
         }
       ]}>

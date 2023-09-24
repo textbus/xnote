@@ -177,43 +177,43 @@ export function BlockTool() {
     return (
       <Dropdown onCheck={toBlock} trigger={'hover'} menu={[
         {
-          label: <MenuItem checked={states.paragraph}><span class="xnote-icon-text-indent icon"></span>正文</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-text-indent"/>} checked={states.paragraph}>正文</MenuItem>,
           value: 'paragraph'
         }, {
-          label: <MenuItem checked={states.h1}><span class="heading-icon icon">H<sub>1</sub></span>一级标题</MenuItem>,
+          label: <MenuItem icon={<span class="heading-icon">H<sub>1</sub></span>} checked={states.h1}>一级标题</MenuItem>,
           value: 'h1'
         }, {
-          label: <MenuItem checked={states.h2}><span class="heading-icon icon">H<sub>2</sub></span>二级标题</MenuItem>,
+          label: <MenuItem icon={<span class="heading-icon">H<sub>2</sub></span>} checked={states.h2}>二级标题</MenuItem>,
           value: 'h2'
         }, {
-          label: <MenuItem checked={states.h3}><span class="heading-icon icon">H<sub>3</sub></span>三级标题</MenuItem>,
+          label: <MenuItem icon={<span class="heading-icon">H<sub>3</sub></span>} checked={states.h3}>三级标题</MenuItem>,
           value: 'h3'
         }, {
-          label: <MenuItem checked={states.h4}><span class="heading-icon icon">H<sub>4</sub></span>四级标题</MenuItem>,
+          label: <MenuItem icon={<span class="heading-icon">H<sub>4</sub></span>} checked={states.h4}>四级标题</MenuItem>,
           value: 'h4'
         }, {
-          label: <MenuItem checked={states.h5}><span class="heading-icon icon">H<sub>5</sub></span>五级标题</MenuItem>,
+          label: <MenuItem icon={<span class="heading-icon">H<sub>5</sub></span>} checked={states.h5}>五级标题</MenuItem>,
           value: 'h5'
         }, {
-          label: <MenuItem checked={states.h6}><span class="heading-icon icon">H<sub>6</sub></span>六级标题</MenuItem>,
+          label: <MenuItem icon={<span class="heading-icon">H<sub>6</sub></span>} checked={states.h6}>六级标题</MenuItem>,
           value: 'h6'
         }, {
           label: <Divider/>,
           value: ''
         }, {
-          label: <MenuItem checked={states.todolist}><span class="xnote-icon-checkbox-checked icon"></span> 待办事项</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-checkbox-checked"/>} checked={states.todolist}>待办事项</MenuItem>,
           value: 'todolist'
         }, {
-          label: <MenuItem><span class="xnote-icon-list-numbered icon"></span> 有序列表</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>,
           value: 'ol'
         }, {
-          label: <MenuItem><span class="xnote-icon-list icon"></span> 无序列表</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-list"/>}> 无序列表</MenuItem>,
           value: 'ul'
         }, {
-          label: <MenuItem checked={states.blockquote}><span class="xnote-icon-quotes-right icon"></span> 引用</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-quotes-right"/>} checked={states.blockquote}>引用</MenuItem>,
           value: 'blockquote'
         }, {
-          label: <MenuItem checked={states.blockquote}><span class="xnote-icon-source-code icon"></span> 代码块</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-source-code"/>} checked={states.blockquote}>代码块</MenuItem>,
           value: 'sourceCode'
         }
       ]}>

@@ -73,26 +73,26 @@ export function Dropdown(props: DropdownProps) {
 
   const subscription = new Subscription()
   onMounted(() => {
-    if (props.trigger === 'hover') {
-      let leaveSub: Subscription
-      const bindLeave = function () {
-        leaveSub = merge(fromEvent(triggerRef.current!, 'mouseleave'), fromEvent(menuRef.current!, 'mouseleave')).pipe(delay(200)).subscribe(() => {
-          isShow.set(false)
-        })
-      }
-      bindLeave()
-      subscription.add(
-        merge(fromEvent(triggerRef.current!, 'mouseenter'), fromEvent(menuRef.current!, 'mouseenter')).subscribe(() => {
-          if (leaveSub) {
-            leaveSub.unsubscribe()
-          }
-          bindLeave()
-          isShow.set(true)
-        })
-      )
-    } else {
+    if (props.trigger === 'click') {
       subscription.add(fromEvent(triggerRef.current!, 'click').subscribe(toggle))
+      return
     }
+    let leaveSub: Subscription
+    const bindLeave = function () {
+      leaveSub = merge(fromEvent(triggerRef.current!, 'mouseleave'), fromEvent(menuRef.current!, 'mouseleave')).pipe(delay(200)).subscribe(() => {
+        isShow.set(false)
+      })
+    }
+    bindLeave()
+    subscription.add(
+      merge(fromEvent(triggerRef.current!, 'mouseenter'), fromEvent(menuRef.current!, 'mouseenter')).subscribe(() => {
+        if (leaveSub) {
+          leaveSub.unsubscribe()
+        }
+        bindLeave()
+        isShow.set(true)
+      })
+    )
   })
 
   onUnmounted(() => {

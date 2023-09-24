@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'textbus';
   src:
-    url('fonts/textbus.ttf?7sgvio') format('truetype'),
-    url('fonts/textbus.woff?7sgvio') format('woff'),
-    url('fonts/textbus.svg?7sgvio#textbus') format('svg');
+    url('fonts/textbus.ttf?efdfdb') format('truetype'),
+    url('fonts/textbus.woff?efdfdb') format('woff'),
+    url('fonts/textbus.svg?efdfdb#textbus') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -26,6 +26,9 @@
 
 .xnote-icon-more:before {
   content: "\e921";
+}
+.xnote-icon-text-wrap:before {
+  content: "\e924";
 }
 .xnote-icon-checkmark:before {
   content: "\e922";
@@ -248,6 +251,24 @@
 }
 .xnote-icon-pushpin1:before {
   content: "\e947";
+}
+.xnote-icon-warning:before {
+  content: "\ea07";
+}
+.xnote-icon-notification:before {
+  content: "\ea08";
+}
+.xnote-icon-question:before {
+  content: "\ea09";
+}
+.xnote-icon-info:before {
+  content: "\ea0c";
+}
+.xnote-icon-cancel-circle:before {
+  content: "\ea0d";
+}
+.xnote-icon-blocked:before {
+  content: "\ea0e";
 }
 .xnote-icon-checkbox-checked:before {
   content: "\ea52";
