@@ -4,5 +4,7 @@ import { createXNote } from './editor'
 
 createXNote(document.getElementById('app')!, {
   content: document.getElementById('article')!.innerHTML
+}).then(textbus => {
+  console.log(textbus.getJSON())
 })
 

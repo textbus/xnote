@@ -108,9 +108,9 @@ export function Root(props: ViewComponentProps<typeof rootComponent>) {
   function move(ev: MouseEvent) {
     let currentNode = ev.target as Node | null
     while (currentNode) {
-      const componentInstance = adapter.getComponentByNativeNode(currentNode as HTMLElement)
-      if (componentInstance) {
-        leftToolbarService.updateActivatedComponent(componentInstance === props.component ? null : componentInstance)
+      const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
+      if (slot) {
+        leftToolbarService.updateActivatedSlot(slot.parent === props.component ? null : slot)
         break
       }
       currentNode = currentNode.parentNode

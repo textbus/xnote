@@ -1,9 +1,9 @@
 import { getCurrentInstance, Injectable, JSXNode, onMounted, onUnmounted, Props, provide, Scope, useEffect, useSignal } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
+import { delay, fromEvent, Subject, Subscription } from '@textbus/core'
+import { useStaticRef } from '@viewfly/hooks'
 
 import css from './dropdown.scoped.scss'
-import { delay, fromEvent, merge, Subject, Subscription } from '@textbus/core'
-import { useStaticRef } from '@viewfly/hooks'
 
 export type DropdownTriggerTypes = 'hover' | 'click'
 
@@ -46,6 +46,7 @@ export function Dropdown(props: DropdownProps) {
 
   const menuRef = useStaticRef<HTMLElement>()
   const triggerRef = useStaticRef<HTMLElement>()
+  const dropdownRef = useStaticRef<HTMLElement>()
 
   function updateMenuHeight() {
     if (menuRef.current) {
@@ -79,13 +80,13 @@ export function Dropdown(props: DropdownProps) {
     }
     let leaveSub: Subscription
     const bindLeave = function () {
-      leaveSub = merge(fromEvent(triggerRef.current!, 'mouseleave'), fromEvent(menuRef.current!, 'mouseleave')).pipe(delay(200)).subscribe(() => {
+      leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').pipe(delay(200)).subscribe(() => {
         isShow.set(false)
       })
     }
     bindLeave()
     subscription.add(
-      merge(fromEvent(triggerRef.current!, 'mouseenter'), fromEvent(menuRef.current!, 'mouseenter')).subscribe(() => {
+      fromEvent(dropdownRef.current!, 'mouseenter').subscribe(() => {
         if (leaveSub) {
           leaveSub.unsubscribe()
         }
@@ -101,7 +102,7 @@ export function Dropdown(props: DropdownProps) {
 
   return withScopedCSS(css, () => {
     return (
-      <div class="dropdown">
+      <div class="dropdown" ref={dropdownRef}>
         <div class="dropdown-btn" ref={triggerRef}>
           <div class="dropdown-btn-inner">
             {props.children}

@@ -2,6 +2,10 @@
   position: relative;
   display: inline-block;
 
+  &:hover {
+    z-index: 1;
+  }
+
   &-btn {
     display: flex;
   }

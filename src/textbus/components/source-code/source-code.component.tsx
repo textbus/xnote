@@ -387,7 +387,7 @@ export const sourceCodeComponent = defineComponent({
   }) {
     const state = {
       lang: data.state!.lang,
-      theme: data.state?.theme || 'Light',
+      theme: data.state?.theme || 'light',
       lineNumber: data.state?.lineNumber !== false
     }
     const languageGrammar = getLanguageGrammar(state.lang)
@@ -410,7 +410,6 @@ export const sourceCodeComponent = defineComponent({
       slots: slotList,
       state
     }
-
   },
   setup() {
     const self = useSelf<ExtractComponentInstanceType<typeof sourceCodeComponent>>()
@@ -434,7 +433,6 @@ export const sourceCodeComponent = defineComponent({
         reformat(slots, slots.get(0)!, languageGrammar!, blockCommentStartString, blockCommentEndString, true)
       }
       isStop = false
-      console.log(434343)
     })
     let languageGrammar = getLanguageGrammar(self.state.lang)
     let [blockCommentStartString, blockCommentEndString] = getLanguageBlockCommentStart(self.state.lang)
@@ -711,7 +709,7 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
           <ToolbarItem>
             <Dropdown onCheck={changeLang} trigger={'hover'} menu={languageList.map(item => {
               return {
-                label: <MenuItem>{item.label || 'Plain Text'}</MenuItem>,
+                label: <MenuItem checked={state.lang === item.value}>{item.label || 'Plain Text'}</MenuItem>,
                 value: item.value
               }
             })}>
@@ -733,7 +731,7 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
             value: 'starry'
           }].map(item => {
             return {
-              label: <MenuItem>{item.label}</MenuItem>,
+              label: <MenuItem checked={state.theme === item.value}>{item.label}</MenuItem>,
               value: item.value
             }
           })}>

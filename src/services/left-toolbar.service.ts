@@ -1,18 +1,18 @@
-import { ComponentInstance, distinctUntilChanged, Observable, Subject } from '@textbus/core'
+import { distinctUntilChanged, Observable, Slot, Subject } from '@textbus/core'
 import { Injectable } from '@viewfly/core'
 
 @Injectable()
 export class LeftToolbarService {
   onRefresh = new Subject<void>()
-  onComponentActive: Observable<null | ComponentInstance>
+  onSlotActive: Observable<null | Slot>
 
-  private componentActiveEvent = new Subject<null | ComponentInstance>()
+  private slotActiveEvent = new Subject<null | Slot>()
 
   constructor() {
-    this.onComponentActive = this.componentActiveEvent.asObservable().pipe(distinctUntilChanged())
+    this.onSlotActive = this.slotActiveEvent.asObservable().pipe(distinctUntilChanged())
   }
 
-  updateActivatedComponent(current: ComponentInstance | null) {
-    this.componentActiveEvent.next(current)
+  updateActivatedSlot(current: Slot | null) {
+    this.slotActiveEvent.next(current)
   }
 }

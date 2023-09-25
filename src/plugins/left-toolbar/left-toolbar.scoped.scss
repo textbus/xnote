@@ -1,4 +1,15 @@
-.editor-left-btn {
+.left-toolbar {
+  position: absolute;
+  left: -10px;
+  top: 0;
+}
+
+.left-toolbar-btn-wrap {
+  position: absolute;
+  transition: all .2s;
+}
+
+.left-toolbar-btn {
   border-radius: 5px;
   background: #fff;
   border: 1px solid #ddd;
@@ -7,41 +18,37 @@
   top: 0;
   cursor: pointer;
   height: 26px;
+
   span {
     display: inline-flex;
     align-items: center;
   }
 }
 
-.editor-left-btn-wrap {
-  position: absolute;
-  transition: all .2s;
-  &:hover {
-    .tools {
-      transform: scale(1);
-      opacity: 1;
-      transition-style: transform opacity;
-      transition-duration: .2s;
-    }
-  }
-}
-
-.editor-left-toolbar {
-  position: absolute;
-  left: -10px;
-  top: 0;
-}
-
-.tools {
+.left-toolbar-menu {
   position: absolute;
   top: 0;
-  right: 50px;
+  right: 46px;
   width: 200px;
-  height: 400px;
-  padding: 10px;
-  border: 1px solid #eee;
+  border: 1px solid #dee0e3;
   box-shadow: 2px 3px 5px rgba(0, 0, 0, .1);
   border-radius: 6px;
-  transform: translateX(20px);
+  transform: translateX(10px);
   opacity: 0;
+  user-select: none;
+  pointer-events: none;
+  overflow-y: auto;
+
+  &-items {
+    padding: 6px;
+  }
+
+  &.active {
+    pointer-events: auto;
+    transform: translateX(0);
+    opacity: 1;
+    //transition-style: transform opacity;
+    transition-property: opacity, transform;
+    transition-duration: .2s;
+  }
 }

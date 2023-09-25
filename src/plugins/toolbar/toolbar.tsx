@@ -61,7 +61,7 @@ export function Toolbar() {
     const toBottom = documentHeight - selectionFocusRect.top - selectionFocusRect.height > toolbarRect.height + 10
     const top = toBottom ?
       selectionFocusRect.top + selectionFocusRect.height - docRect.top + 10 :
-      selectionFocusRect.top - toolbarRect.height - 10
+      selectionFocusRect.top - docRect.top - toolbarRect.height - 10
 
     updateViewPosition(draft => {
       draft.isHide = false
