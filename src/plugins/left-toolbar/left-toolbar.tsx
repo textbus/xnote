@@ -1,5 +1,14 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { inject, JSXNode, onMounted, onUnmounted, provide, useEffect, useSignal } from '@viewfly/core'
+import {
+  getCurrentInstance,
+  inject,
+  JSXNode,
+  onMounted,
+  onUnmounted,
+  provide,
+  useEffect,
+  useSignal
+} from '@viewfly/core'
 import { useProduce, useStaticRef } from '@viewfly/hooks'
 import { delay, fromEvent, Selection, Slot, Subscription, throttleTime } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
@@ -22,9 +31,22 @@ export function LeftToolbar() {
   const adapter = inject(DomAdapter)
   const selection = inject(Selection)
   const leftToolbarService = inject(LeftToolbarService)
+  const currentInstance = getCurrentInstance()
+  const refreshService = currentInstance.get(RefreshService)
 
   const checkStates = useActiveBlock()
-  const transform = useBlockTransform()
+  const toBlock = useBlockTransform()
+  const activeSlot = useSignal<Slot | null>(null)
+
+  function transform(v: string) {
+    const active = activeSlot()
+    if (active) {
+      selection.setPosition(active, active.length)
+      toBlock(v)
+      activeSlot.set(selection.focusSlot)
+      refreshService.onRefresh.next()
+    }
+  }
 
   const [positionSignal, updatePosition] = useProduce({
     left: 0,
@@ -32,7 +54,6 @@ export function LeftToolbar() {
     display: false
   })
 
-  const activeSlot = useSignal<Slot | null>(null)
 
   let timer: any = 0
   const subscription = leftToolbarService.onSlotActive.subscribe((c) => {
@@ -198,8 +219,8 @@ export function LeftToolbar() {
               <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list"/>}> 无序列表</MenuItem>
               <MenuItem onClick={transform} value="blockquote" icon={<span class="xnote-icon-quotes-right"/>}
                         checked={states.blockquote}>引用</MenuItem>
-              <MenuItem onClick={transform} value="blockqoute" icon={<span class="xnote-icon-source-code"/>}
-                        checked={states.blockquote}>代码块</MenuItem>
+              <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}
+                        checked={states.sourceCode}>代码块</MenuItem>
             </div>
           </div>
         </div>
