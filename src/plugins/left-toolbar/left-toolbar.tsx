@@ -106,7 +106,7 @@ export function LeftToolbar() {
     if (bottomHeight > maxHeight) {
       offsetTop = 0
       if (btnRect.top < 10) {
-        offsetTop = -10
+        offsetTop = -(10 - btnRect.top)
       }
     }
     menuEle.style.top = -offsetTop + 'px'
