@@ -2,7 +2,7 @@ import { ComponentInstance, FormatHostBindingRender, Formatter, VElement, VTextN
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const backgroundColorFormatter: Formatter<string> = {
-  name: 'color',
+  name: 'backgroundColor',
   columned: true,
   render(children: Array<VElement | VTextNode | ComponentInstance>, formatValue: string): VElement | FormatHostBindingRender {
     return {

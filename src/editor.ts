@@ -20,14 +20,18 @@ import {
 import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
 import {
+  backgroundColorFormatLoader, backgroundColorFormatter,
   boldFormatLoader,
-  boldFormatter,
-  italicFormatLoader, italicFormatter,
+  boldFormatter, codeFormatLoader, codeFormatter, colorFormatLoader, colorFormatter,
+  italicFormatLoader, italicFormatter, linkFormatLoader, linkFormatter,
   strikeThroughFormatLoader, strikeThroughFormatter,
   underlineFormatLoader, underlineFormatter
 } from './textbus/formatters/_api'
 
 import './textbus/doc.scss'
+import { headingAttrLoader } from './textbus/attributes/heading.attr'
+import { textAlignAttrLoader } from './textbus/attributes/text-align.attr'
+import { textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
 
 export interface XNoteConfig {
   content?: string
@@ -51,16 +55,25 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
   const browserModule = new BrowserModule(host, {
     adapter,
     componentLoaders: [
-      paragraphComponentLoader,
-      todolistComponentLoader,
       blockquoteComponentLoader,
-      sourceCodeComponentLoader
+      paragraphComponentLoader,
+      sourceCodeComponentLoader,
+      todolistComponentLoader,
     ],
     formatLoaders: [
+      backgroundColorFormatLoader,
       boldFormatLoader,
+      codeFormatLoader,
+      colorFormatLoader,
       italicFormatLoader,
+      linkFormatLoader,
       strikeThroughFormatLoader,
       underlineFormatLoader
+    ],
+    attributeLoaders: [
+      headingAttrLoader,
+      textAlignAttrLoader,
+      textIndentAttrLoader
     ]
   })
   const textbus = new Textbus({
@@ -68,13 +81,18 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       browserModule
     ],
     components: [
-      paragraphComponent,
       blockquoteComponent,
+      paragraphComponent,
+      sourceCodeComponent,
       todolistComponent
     ],
     formatters: [
+      backgroundColorFormatter,
       boldFormatter,
+      codeFormatter,
+      colorFormatter,
       italicFormatter,
+      linkFormatter,
       strikeThroughFormatter,
       underlineFormatter
     ],
