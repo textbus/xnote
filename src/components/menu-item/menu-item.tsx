@@ -22,7 +22,7 @@ export function MenuItem(props: MenuItemProps) {
 
   return withScopedCSS(css, () => {
     return (
-      <div class={['menu-item', {disabled: props.disabled}]} onClick={click}>
+      <div class={['menu-item', { disabled: props.disabled }]} onClick={click}>
         <div>{
           props.icon && <span class="menu-icon">{props.icon}</span>
         }{props.children}</div>

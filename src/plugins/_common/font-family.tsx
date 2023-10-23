@@ -106,12 +106,14 @@ export function FontFamilyTool() {
     return (
       <Dropdown onCheck={check} menu={
         fontFamilyOptions.map(i => {
+          const disabled = !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v)
           return {
             label: <MenuItem
-              disabled={!i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v)}
+              disabled={disabled}
               checked={currentFontFamily() === i.value}>
               {i.label}
             </MenuItem>,
+            disabled,
             value: i.value,
           }
         })

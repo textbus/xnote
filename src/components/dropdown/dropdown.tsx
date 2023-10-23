@@ -8,6 +8,7 @@ import css from './dropdown.scoped.scss'
 export type DropdownTriggerTypes = 'hover' | 'click'
 
 export interface DropdownMenu {
+  disabled?: boolean
   label: JSXNode
   value: any
 }
@@ -118,6 +119,9 @@ export function Dropdown(props: DropdownProps) {
               props.menu.map(menu => {
                 return (
                   <div class="dropdown-menu-item" onClick={() => {
+                    if (menu.disabled) {
+                      return
+                    }
                     props.onCheck?.(menu.value)
                   }}>{menu.label}</div>
                 )
