@@ -97,5 +97,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     rootComp = rootComponent.createInstance(textbus)
   }
   await textbus.render(rootComp)
+  // textbus.onChange.subscribe(() => {
+  //   console.log(rootComp.toJSON())
+  // })
   return textbus
 }

@@ -216,7 +216,7 @@ export function LeftToolbar() {
               <MenuItem onClick={transform} value="todolist" icon={<span class="xnote-icon-checkbox-checked"/>}
                         checked={states.todolist}>待办事项</MenuItem>
               <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>
-              <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list"/>}> 无序列表</MenuItem>
+              <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list"/>}>无序列表</MenuItem>
               <MenuItem onClick={transform} value="blockquote" icon={<span class="xnote-icon-quotes-right"/>}
                         checked={states.blockquote}>引用</MenuItem>
               <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}

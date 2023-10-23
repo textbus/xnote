@@ -27,7 +27,7 @@ export function BlockTool() {
       [states.sourceCode, 'xnote-icon-source-code'],
     ]
 
-    let currentType = 'xnote-icon-heading'
+    let currentType = 'xnote-icon-pilcrow'
 
     for (const t of types) {
       if (t[0]) {
@@ -69,13 +69,13 @@ export function BlockTool() {
           label: <MenuItem icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>,
           value: 'ol'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-list"/>}> 无序列表</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-list"/>}>无序列表</MenuItem>,
           value: 'ul'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-quotes-right"/>} checked={states.blockquote}>引用</MenuItem>,
           value: 'blockquote'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-source-code"/>} checked={states.blockquote}>代码块</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-source-code"/>} checked={states.sourceCode}>代码块</MenuItem>,
           value: 'sourceCode'
         }
       ]}>

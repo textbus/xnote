@@ -70,12 +70,46 @@ export const paragraphComponentLoader: ComponentLoader = {
     return element.dataset.compoment === paragraphComponent.name || element.tagName === 'P'
   },
   read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
-    const slot = slotParser(new Slot([
+    const delta = slotParser(new Slot([
       ContentType.Text,
-      ContentType.InlineComponent
-    ]), element)
-    return paragraphComponent.createInstance(injector, {
-      slots: [slot]
+      ContentType.InlineComponent,
+      ContentType.BlockComponent
+    ]), element.tagName === 'P' ? element : element.children[0] as HTMLElement).toDelta()
+
+    const results: ComponentInstance[] = []
+
+    let slot: Slot | null = null
+    for (const item of delta) {
+      if (typeof item.insert === 'string' || item.insert.type === ContentType.InlineComponent) {
+        if (!slot) {
+          slot = new Slot([
+            ContentType.InlineComponent,
+            ContentType.Text
+          ])
+          delta.attributes.forEach((value, key) => {
+            slot!.setAttribute(key, value)
+          })
+          results.push(paragraphComponent.createInstance(injector, {
+            slots: [slot]
+          }))
+        }
+        slot.insert(item.insert, item.formats)
+      } else {
+        results.push(item.insert)
+        slot = null
+      }
+    }
+
+    if (results.length === 1) {
+      return results[0]
+    }
+    const containerSlot = new Slot([
+      ContentType.BlockComponent
+    ])
+
+    results.forEach(item => {
+      containerSlot.insert(item)
     })
+    return containerSlot
   }
 }
