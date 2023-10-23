@@ -20,12 +20,25 @@ import {
 import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
 import {
-  backgroundColorFormatLoader, backgroundColorFormatter,
+  backgroundColorFormatLoader,
+  backgroundColorFormatter,
   boldFormatLoader,
-  boldFormatter, codeFormatLoader, codeFormatter, colorFormatLoader, colorFormatter,
-  italicFormatLoader, italicFormatter, linkFormatLoader, linkFormatter,
-  strikeThroughFormatLoader, strikeThroughFormatter,
-  underlineFormatLoader, underlineFormatter
+  boldFormatter,
+  codeFormatLoader,
+  codeFormatter,
+  colorFormatLoader,
+  colorFormatter,
+  fontFamilyFormatLoader,
+  fontFamilyFormatter, fontSizeFormatLoader,
+  fontSizeFormatter,
+  italicFormatLoader,
+  italicFormatter,
+  linkFormatLoader,
+  linkFormatter,
+  strikeThroughFormatLoader,
+  strikeThroughFormatter,
+  underlineFormatLoader,
+  underlineFormatter
 } from './textbus/formatters/_api'
 
 import './textbus/doc.scss'
@@ -65,6 +78,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       boldFormatLoader,
       codeFormatLoader,
       colorFormatLoader,
+      fontFamilyFormatLoader,
+      fontSizeFormatLoader,
       italicFormatLoader,
       linkFormatLoader,
       strikeThroughFormatLoader,
@@ -91,6 +106,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       boldFormatter,
       codeFormatter,
       colorFormatter,
+      fontFamilyFormatter,
+      fontSizeFormatter,
       italicFormatter,
       linkFormatter,
       strikeThroughFormatter,

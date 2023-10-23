@@ -15,6 +15,8 @@ import { CodeTool } from '../_common/code.tool'
 import { ColorTool } from '../_common/color.tool'
 import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
 import { AttrTool } from '../_common/attr-tool'
+import { FontSizeTool } from '../_common/font-size.tool'
+import { FontFamilyTool } from '../_common/font-family'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -152,6 +154,12 @@ export function Toolbar() {
         </ToolbarItem>
         <ToolbarItem>
           <UnderlineTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <FontSizeTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <FontFamilyTool/>
         </ToolbarItem>
         <ToolbarItem>
           <CodeTool/>
