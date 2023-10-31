@@ -1,8 +1,7 @@
 import { ComponentInstance, FormatHostBindingRender, Formatter, VElement, VTextNode } from '@textbus/core'
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
-export const fontFamilyFormatter: Formatter<string> = {
-  name: 'fontFamily',
+export const fontFamilyFormatter = new Formatter<string>('fontFamily', {
   render(children: Array<VElement | VTextNode | ComponentInstance>, formatValue: string): VElement | FormatHostBindingRender {
     return {
       fallbackTagName: 'span',
@@ -11,7 +10,7 @@ export const fontFamilyFormatter: Formatter<string> = {
       }
     }
   }
-}
+})
 
 export const fontFamilyFormatLoader: FormatLoader<string> = {
   match(element: HTMLElement): boolean {

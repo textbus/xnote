@@ -1,8 +1,7 @@
 import { ComponentInstance, FormatHostBindingRender, Formatter, VElement, VTextNode } from '@textbus/core'
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
-export const colorFormatter: Formatter<string> = {
-  name: 'color',
+export const colorFormatter = new Formatter<string>('color', {
   render(children: Array<VElement | VTextNode | ComponentInstance>, formatValue: string): VElement | FormatHostBindingRender {
     return {
       fallbackTagName: 'span',
@@ -11,7 +10,7 @@ export const colorFormatter: Formatter<string> = {
       }
     }
   }
-}
+})
 
 export const colorFormatLoader: FormatLoader<string> = {
   match(element: HTMLElement): boolean {

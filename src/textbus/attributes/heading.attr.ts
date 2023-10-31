@@ -1,12 +1,11 @@
 import { Attribute, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 
-export const headingAttr: Attribute<string> = {
-  name: 'Heading',
+export const headingAttr = new Attribute<string>('Heading', {
   render(node: VElement, formatValue: string) {
     node.classes.add('xnote-' + formatValue)
   }
-}
+})
 
 export const headingAttrLoader: AttributeLoader<string> = {
   match(element: HTMLElement): boolean {

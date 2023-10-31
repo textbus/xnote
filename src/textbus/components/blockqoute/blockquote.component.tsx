@@ -4,10 +4,11 @@ import {
   createVNode,
   defineComponent,
   Slot,
+  Textbus,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject, Injector } from '@viewfly/core'
+import { inject } from '@viewfly/core'
 
 import './blockquote.component.scss'
 
@@ -27,7 +28,7 @@ export const blockquoteComponent = defineComponent({
       }
     }
   },
-  validate(data) {
+  validate(_, data) {
     return {
       slots: data?.slots || [new Slot([
         ContentType.Text,
@@ -55,7 +56,7 @@ export const blockquoteComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'BLOCKQUOTE'
   },
-  read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance {
+  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): ComponentInstance {
     const slot = slotParser(new Slot([
       ContentType.Text,
       ContentType.BlockComponent,

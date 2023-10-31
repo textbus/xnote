@@ -11,12 +11,12 @@ import {
   onSlotRemove,
   Selection,
   Slot,
-  Subject,
+  Subject, Textbus,
   useContext,
   useSelf,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { inject, Injector, useRef } from '@viewfly/core'
+import { inject, useRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -26,7 +26,7 @@ import { LeftToolbarService } from '../../../services/left-toolbar.service'
 export const rootComponent = defineComponent({
   name: 'RootComponent',
   type: ContentType.BlockComponent,
-  validate(initData) {
+  validate(_, initData) {
     return {
       slots: [
         new Slot([
@@ -151,7 +151,7 @@ export const rootComponentLoader: ComponentLoader = {
   match(): boolean {
     return true
   },
-  read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
+  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): ComponentInstance | Slot {
     const slot = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,

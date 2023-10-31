@@ -6,20 +6,20 @@ import {
   defineComponent,
   onBreak,
   Selection,
-  Slot,
+  Slot, Textbus,
   useContext,
   useSelf,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject, Injector } from '@viewfly/core'
+import { inject } from '@viewfly/core'
 
 import './paragraph.component.scss'
 
 export const paragraphComponent = defineComponent({
   name: 'ParagraphComponent',
   type: ContentType.BlockComponent,
-  validate(initData) {
+  validate(_, initData) {
     return {
       slots: [
         initData?.slots?.[0] || new Slot([
@@ -69,7 +69,7 @@ export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.compoment === paragraphComponent.name || element.tagName === 'P'
   },
-  read(element: HTMLElement, injector: Injector, slotParser: SlotParser): ComponentInstance | Slot {
+  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): ComponentInstance | Slot {
     const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent,

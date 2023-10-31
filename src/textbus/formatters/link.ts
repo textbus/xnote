@@ -6,15 +6,16 @@ export interface LinkFormatData {
   target?: '_blank' | '_self'
 }
 
-export const linkFormatter: Formatter<LinkFormatData> = {
-  name: 'link',
+export const linkFormatter = new Formatter<LinkFormatData>('link', {
+  priority: -1,
+  inheritable: false,
   render(children: Array<VElement | VTextNode | ComponentInstance>, formatValue: LinkFormatData): VElement | FormatHostBindingRender {
     return createVNode('a', {
       href: formatValue.href,
       target: formatValue.target
-    })
+    }, children)
   }
-}
+})
 
 export const linkFormatLoader: FormatLoader<LinkFormatData> = {
   match(element: HTMLElement): boolean {

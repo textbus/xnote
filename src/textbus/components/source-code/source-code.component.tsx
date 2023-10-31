@@ -126,18 +126,14 @@ export interface SourceCodeComponentState {
   autoBreak?: boolean
 }
 
-export class CodeStyleFormatter implements Formatter<string> {
-  name = 'code' + Math.random()
-  columned = false
-
+export const codeStyleFormatter = new Formatter<string>('code' + Math.random(), {
+  columned: false,
   render(children: Array<VElement | VTextNode>, formatValue: string) {
     return new VElement('span', {
       class: 'xnote-hl-' + formatValue
     }, children)
   }
-}
-
-export const codeStyleFormatter = new CodeStyleFormatter()
+})
 
 function getLanguageBlockCommentStart(lang: string): [string, string] {
   const types: Record<string, [string, string]> = {
@@ -378,7 +374,7 @@ export const sourceCodeComponent = defineComponent({
       }
     }
   },
-  validate(data: ComponentInitData<SourceCodeComponentState, CodeSlotState> = {
+  validate(_, data: ComponentInitData<SourceCodeComponentState, CodeSlotState> = {
     slots: [],
     state: {
       lang: '',
@@ -680,6 +676,7 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
   }
 
   const input = inject(Input)
+
   function updateCaret() {
     if (props.component.extends.focus) {
       input.caret.refresh(false)
