@@ -1,10 +1,11 @@
-@import "./code-themes/light";
-@import "./code-themes/dark";
-@import "./code-themes/vitality";
-@import "./code-themes/starry";
-code, .xnote-source-code {
-  background-color: #fefefe;
-}
+@import './theme/atom-one-dark.scss';
+@import './theme/foundation.scss';
+@import './theme/github.scss';
+@import './theme/idea.scss';
+@import './theme/intellij-light.scss';
+@import './theme/stackoverflow-light';
+@import './theme/vs2015';
+@import './theme/xcode';
 
 .xnote-source-code code {
   padding: 0;
@@ -14,20 +15,12 @@ code, .xnote-source-code {
   vertical-align: inherit;
 }
 
-code {
-  padding: 1px 5px;
-  border-radius: 3px;
-  vertical-align: middle;
-  border: 1px solid rgba(0, 0, 0, .08);
-}
-
 .xnote-source-code {
-  position: relative
+  position: relative;
 }
 
 .xnote-source-code-container {
   border-radius: 5px;
-  border: 1px solid #efefef;
   line-height: 1.418em;
   display: flex;
   position: relative;
@@ -45,8 +38,8 @@ code, kbd, pre, samp {
 }
 
 .xnote-source-code-line-number-bg {
-  background-color: #f9f9f9;
-  border-right: 1px solid #eee;
+  background-color: inherit;
+  //border-right: 1px solid #eee;
   width: 3em;
   display: none;
   position: relative;
@@ -70,12 +63,8 @@ code, kbd, pre, samp {
   position: relative;
 }
 
-.xnote-source-code-content-highlight {
-  background-color: #eee
-}
-
 .xnote-source-code-content-highlight .xnote-source-code-line {
-  opacity: 0.56;
+  opacity: 0.36;
 }
 
 .xnote-source-code-line {
@@ -87,25 +76,29 @@ code, kbd, pre, samp {
   padding: 0 20px;
 }
 
-.xnote-source-code-line-number .xnote-source-code-line::before {
-  counter-increment: codeNum;
-  content: counter(codeNum);
-  box-sizing: border-box;
-  position: sticky;
-  z-index: 2;
-  left: 0;
-  min-width: 4em;
-  transform: translateX(-4em);
-  text-align: right;
-  padding-right: 10px;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #aeaeae;
+.xnote-source-code-line-number {
+  .xnote-source-code-line-content {
+    padding: 0 20px 0 10px;
+  }
+  .xnote-source-code-line::before {
+    counter-increment: codeNum;
+    content: counter(codeNum);
+    box-sizing: border-box;
+    position: sticky;
+    z-index: 2;
+    left: 0;
+    min-width: 4em;
+    transform: translateX(-4em);
+    text-align: right;
+    padding-right: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: .5;
+  }
 }
 
 .xnote-source-code-content-highlight .xnote-source-code-line-emphasize {
   opacity: 1;
-  background-color: #fefefe
 }
 
 .xnote-source-code-lang {

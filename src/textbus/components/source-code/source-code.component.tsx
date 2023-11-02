@@ -2,41 +2,24 @@ import {
   BehaviorSubject,
   ComponentInitData,
   ComponentInstance,
-  ContentType, createVNode,
+  ContentType,
+  createVNode,
   defineComponent,
   ExtractComponentInstanceType,
-  Formatter, onBlur,
+  onBlur,
   onBreak, onFocus,
   onPaste,
   Selection,
   Slot,
-  Slots, Textbus,
+  Textbus,
   useContext,
-  useDynamicShortcut,
   useSelf,
-  VElement,
   VTextNode,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
-import { Grammar, languages, Token, tokenize } from 'prismjs'
+import highlightjs from 'highlight.js'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, onUnmounted, useSignal } from '@viewfly/core'
-
-import 'prismjs/components/prism-typescript'
-import 'prismjs/components/prism-java'
-import 'prismjs/components/prism-powershell'
-import 'prismjs/components/prism-swift'
-import 'prismjs/components/prism-json'
-import 'prismjs/components/prism-css'
-import 'prismjs/components/prism-less'
-import 'prismjs/components/prism-scss'
-import 'prismjs/components/prism-stylus'
-import 'prismjs/components/prism-c'
-import 'prismjs/components/prism-cpp'
-import 'prismjs/components/prism-csharp'
-import 'prismjs/components/prism-go'
-import 'prismjs/components/prism-jsx'
-import 'prismjs/components/prism-tsx'
 
 import './source-code.component.scss'
 import { paragraphComponent } from '../paragraph/paragraph.component'
@@ -45,26 +28,6 @@ import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
 import { Button } from '../../../components/button/button'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { MenuItem } from '../../../components/menu-item/menu-item'
-
-export const codeStyles = {
-  keyword: 'keyword',
-  string: 'string',
-  function: 'function',
-  number: 'number',
-  tag: 'tag',
-  comment: 'comment',
-  boolean: 'boolean',
-  operator: false,
-  builtin: 'builtin',
-  punctuation: false,
-  regex: 'regex',
-  selector: 'selector',
-  property: 'attr-name',
-  'class-name': 'class-name',
-  'attr-name': 'attr-name',
-  'attr-value': 'attr-value',
-  'template-punctuation': 'string',
-}
 
 export const languageList: Array<{ label: string, value: string }> = [{
   label: 'JavaScript',
@@ -109,15 +72,50 @@ export const languageList: Array<{ label: string, value: string }> = [{
   label: 'Stylus',
   value: 'Stylus',
 }, {
-  label: 'Jsx',
-  value: 'Jsx',
-}, {
-  label: 'Tsx',
+  label: 'Tsx/Jsx',
   value: 'Tsx',
+}, {
+  label: 'XML',
+  value: 'xml',
+}, {
+  label: 'Markdown',
+  value: 'markdown',
+}, {
+  label: 'Shell',
+  value: 'shell',
+}, {
+  label: 'Yaml',
+  value: 'yaml',
+}, {
+  label: 'Sql',
+  value: 'sql',
+}, {
+  label: 'Ruby',
+  value: 'ruby',
+}, {
+  label: 'Nginx',
+  value: 'nginx',
+}, {
+  label: 'Dockerfile',
+  value: 'dockerfile',
+}, {
+  label: 'Dart',
+  value: 'dart',
 }, {
   label: '',
   value: '',
 }]
+
+export const sourceCodeThemes = [
+  'github',
+  'atom-one-dark',
+  'foundation',
+  'stackoverflow-light',
+  'vs2015',
+  'xcode',
+  'intellij-light',
+  'idea'
+]
 
 export interface SourceCodeComponentState {
   lang: string
@@ -126,189 +124,7 @@ export interface SourceCodeComponentState {
   autoBreak?: boolean
 }
 
-export const codeStyleFormatter = new Formatter<string>('code' + Math.random(), {
-  columned: false,
-  render(children: Array<VElement | VTextNode>, formatValue: string) {
-    return new VElement('span', {
-      class: 'xnote-hl-' + formatValue
-    }, children)
-  }
-})
-
-function getLanguageBlockCommentStart(lang: string): [string, string] {
-  const types: Record<string, [string, string]> = {
-    HTML: ['<!--', '-->'],
-    JavaScript: ['/*', '*/'],
-    CSS: ['/*', '*/'],
-    TypeScript: ['/*', '*/'],
-    Java: ['/*', '*/'],
-    Swift: ['/*', '*/'],
-    Go: ['/*', '*/'],
-    JSON: ['', ''],
-    Less: ['/*', '*/'],
-    SCSS: ['/*', '*/'],
-    Stylus: ['/*', '*/'],
-    C: ['/*', '*/'],
-    CPP: ['/*', '*/'],
-    CSharp: ['/*', '*/'],
-    Tsx: ['/*', '*/'],
-    Jsx: ['/*', '*/']
-  }
-  return types[lang] || ['', '']
-}
-
-function getLanguageGrammar(lang: string): Grammar | null {
-  return {
-    HTML: languages.html,
-    JavaScript: languages.javascript,
-    CSS: languages.css,
-    TypeScript: languages.typescript,
-    Java: languages.java,
-    Swift: languages.swift,
-    JSON: languages.json,
-    Go: languages.go,
-    Ruby: languages.ruby,
-    Less: languages.less,
-    SCSS: languages.scss,
-    Stylus: languages.stylus,
-    C: languages.c,
-    CPP: languages.cpp,
-    CSharp: languages.csharp,
-    Jsx: languages.jsx,
-    Tsx: languages.tsx
-  }[lang] || null
-}
-
-function format(tokens: Array<string | Token>, slot: Slot, index: number) {
-  tokens.forEach(token => {
-    if (token instanceof Token) {
-      const styleName = codeStyles[token.type]
-      slot.retain(index)
-      slot.retain(token.length, codeStyleFormatter, styleName || null)
-      if (Array.isArray(token.content)) {
-        format(token.content, slot, index)
-      }
-    }
-    index += token.length
-  })
-}
-
-function formatCodeLines(
-  lines: Array<{ emphasize: boolean, code: string }>,
-  startBlock: boolean,
-  blockCommentStartString: string,
-  blockCommentEndString: string,
-  languageGrammar: Grammar | null) {
-  return lines.map(item => {
-    let i = item.code
-    const slot = createCodeSlot()
-    slot.updateState(draft => {
-      draft.blockCommentStart = startBlock
-      draft.emphasize = item.emphasize
-    })
-    if (slot.state!.blockCommentStart) {
-      i = blockCommentStartString + i
-    }
-    slot.insert(i)
-    if (languageGrammar) {
-      const tokens = tokenize(i, languageGrammar)
-      format(tokens, slot, 0)
-      if (slot.state!.blockCommentStart) {
-        slot.retain(0)
-        slot.delete(2)
-      }
-      const lastToken = tokens.pop()
-
-      if (lastToken && typeof lastToken !== 'string' &&
-        lastToken.type === 'comment' &&
-        (lastToken.content as string).indexOf(blockCommentStartString) === 0) {
-        const regString = blockCommentEndString.replace(new RegExp(`[${blockCommentEndString}]`, 'g'), i => '\\' + i)
-        slot.updateState(draft => {
-          draft.blockCommentEnd = new RegExp(regString + '$').test(lastToken.content as string)
-        })
-        startBlock = !slot.state!.blockCommentEnd
-      } else {
-        startBlock = false
-      }
-
-      // startBlock = !!lastToken && typeof lastToken !== 'string' &&
-      //   lastToken.type === 'comment' &&
-      //   (lastToken.content as string).indexOf(blockCommentStartString) === 0
-      // slot.blockCommentEnd = !startBlock
-    } else {
-      slot.updateState(draft => {
-        draft.blockCommentEnd = true
-      })
-    }
-    return slot
-  })
-}
-
-function reformat(
-  slots: Slots,
-  startSlot: Slot,
-  languageGrammar: Grammar,
-  blockCommentStartString: string,
-  blockCommentEndString: string,
-  forceFormat = false) {
-  const list = slots.toArray()
-  let i = list.indexOf(startSlot)
-  // if (list[0]) {
-  //   list[0].blockCommentStart = startSlot.blockCommentEnd
-  // }
-  for (; i < list.length; i++) {
-    const slot = list[i]
-    let code = slot.sliceContent()[0] as string
-    if (slot.state.blockCommentStart) {
-      code = blockCommentStartString + code
-    }
-
-    const shadow = new Slot([ContentType.Text])
-    shadow.insert(code)
-    const tokens = tokenize(code, languageGrammar)
-    format(tokens, shadow, 0)
-    if (slot.state.blockCommentStart) {
-      shadow.retain(0)
-      shadow.delete(2)
-    }
-
-    slot.retain(0)
-    slot.retain(slot.length, codeStyleFormatter, null)
-
-    shadow.getFormats().forEach(i => {
-      slot.retain(i.startIndex)
-      slot.retain(i.endIndex - i.startIndex, i.formatter, i.value)
-    })
-
-    const lastToken = tokens.pop()
-    if (lastToken && typeof lastToken !== 'string' &&
-      lastToken.type === 'comment' &&
-      (lastToken.content as string).indexOf(blockCommentStartString) === 0) {
-      const regString = blockCommentEndString.replace(new RegExp(`[${blockCommentEndString}]`, 'g'), i => '\\' + i)
-      slot.updateState(draft => {
-        draft.blockCommentEnd = new RegExp(regString + '$').test(lastToken.content as string)
-      })
-    } else {
-      slot.updateState(draft => {
-        draft.blockCommentEnd = true
-      })
-    }
-
-    const next = list[i + 1]
-    if (next) {
-      if (!forceFormat && next.state.blockCommentStart === !slot.state.blockCommentEnd) {
-        break
-      }
-      next.updateState(draft => {
-        draft.blockCommentStart = !slot.state.blockCommentEnd
-      })
-    }
-  }
-}
-
 export interface CodeSlotState {
-  blockCommentEnd: boolean
-  blockCommentStart: boolean
   emphasize: boolean
 }
 
@@ -316,8 +132,6 @@ export function createCodeSlot() {
   return new Slot<CodeSlotState>([
     ContentType.Text
   ], {
-    blockCommentEnd: true,
-    blockCommentStart: false,
     emphasize: false
   })
 }
@@ -383,119 +197,21 @@ export const sourceCodeComponent = defineComponent({
   }) {
     const state = {
       lang: data.state!.lang,
-      theme: data.state?.theme || 'light',
+      theme: data.state?.theme || 'github',
       lineNumber: data.state?.lineNumber !== false
     }
-    const languageGrammar = getLanguageGrammar(state.lang)
-    const [blockCommentStartString, blockCommentEndString] = getLanguageBlockCommentStart(state.lang)
-    const codeConfig = (data.slots || [createCodeSlot()]).map(i => {
-      return {
-        emphasize: i.state?.emphasize || false,
-        code: i.toString()
-      }
-    })
-    const slotList = formatCodeLines(
-      codeConfig,
-      false,
-      blockCommentStartString,
-      blockCommentEndString,
-      languageGrammar
-    )
 
     return {
-      slots: slotList,
+      slots: data.slots?.length ? data.slots : [createCodeSlot()],
       state
     }
   },
   setup() {
     const self = useSelf<ExtractComponentInstanceType<typeof sourceCodeComponent>>()
-    self.onStateChange.subscribe(() => {
-      languageGrammar = getLanguageGrammar(self.state.lang);
-
-      [blockCommentStartString, blockCommentEndString] = getLanguageBlockCommentStart(self.state.lang)
-      isStop = true
-      slots.toArray().forEach(i => {
-        i.updateState(draft => {
-          draft.blockCommentStart = false
-          draft.blockCommentEnd = false
-        })
-      })
-      if (!languageGrammar) {
-        slots.toArray().forEach(i => {
-          i.retain(0)
-          i.retain(i.length, codeStyleFormatter, null)
-        })
-      } else {
-        reformat(slots, slots.get(0)!, languageGrammar!, blockCommentStartString, blockCommentEndString, true)
-      }
-      isStop = false
-    })
-    let languageGrammar = getLanguageGrammar(self.state.lang)
-    let [blockCommentStartString, blockCommentEndString] = getLanguageBlockCommentStart(self.state.lang)
-
+    const slots = self.slots
     const textbus = useContext()
 
     const selection = useContext(Selection)
-
-    let isStop = false
-    const slots = self.slots
-
-    slots.onChildSlotChange.subscribe(slot => {
-      if (languageGrammar && !isStop) {
-        isStop = true
-        const index = slot.index
-        reformat(slots, slot, languageGrammar, blockCommentStartString, blockCommentEndString)
-        slot.retain(index)
-        isStop = false
-      }
-    })
-
-    useDynamicShortcut({
-      keymap: {
-        key: '/',
-        ctrlKey: true
-      },
-      action: () => {
-        const startIndex = slots.indexOf(selection.startSlot!)
-        const endIndex = slots.indexOf(selection.endSlot!)
-
-        const selectedSlots = slots.slice(startIndex, endIndex + 1)
-        const isAllComment = selectedSlots.every(f => {
-          return /^\s*\/\//.test(f.toString())
-        })
-        if (isAllComment) {
-          selectedSlots.forEach(f => {
-            const code = f.toString()
-            const index = code.indexOf('// ')
-            const index2 = code.indexOf('//')
-
-            if (index >= 0) {
-              f.cut(index, index + 3)
-              if (f === selection.anchorSlot) {
-                selection.setAnchor(f, selection.startOffset! - 3)
-              }
-              if (f === selection.focusSlot) {
-                selection.setFocus(f, selection.endOffset! - 3)
-              }
-            } else {
-              f.cut(index2, index2 + 2)
-              if (f === selection.anchorSlot) {
-                selection.setAnchor(f, selection.startOffset! - 2)
-              }
-              if (f === selection.focusSlot) {
-                selection.setFocus(f, selection.endOffset! - 2)
-              }
-            }
-          })
-        } else {
-          selectedSlots.forEach(f => {
-            f.retain(0)
-            f.insert('// ')
-          })
-          selection.setBaseAndExtent(selection.startSlot!, selection.startOffset! + 3, selection.endSlot!, selection.endOffset! + 3)
-        }
-      }
-    })
 
     onBreak(ev => {
       if (ev.target.isEmpty && ev.target === slots.last) {
@@ -518,13 +234,6 @@ export const sourceCodeComponent = defineComponent({
       }
       const nextSlot = ev.target.cutTo(createCodeSlot(), ev.data.index)
       slots.insertAfter(nextSlot, ev.target as Slot)
-      if (languageGrammar && !isStop) {
-        isStop = true
-        const index = nextSlot.index
-        reformat(slots, nextSlot, languageGrammar, blockCommentStartString, blockCommentEndString)
-        nextSlot.retain(index)
-        isStop = false
-      }
       selection.setPosition(nextSlot, 0)
       ev.preventDefault()
     })
@@ -598,18 +307,11 @@ export const sourceCodeComponent = defineComponent({
       const index = slots.indexOf(target)
       if (codeList.length) {
         slots.retain(index + 1)
-        const slotList = formatCodeLines(
-          codeList.map(i => {
-            return {
-              code: i,
-              emphasize: false
-            }
-          }),
-          !target.state.blockCommentEnd,
-          blockCommentStartString,
-          blockCommentEndString,
-          languageGrammar
-        )
+        const slotList = codeList.map(i => {
+          const slot = createCodeSlot()
+          slot.insert(i)
+          return slot
+        })
         const last = slotList[slotList.length - 1]
         slots.insert(...slotList)
         selection.setPosition(last, last.length)
@@ -685,6 +387,7 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
 
   return () => {
     const { state, slots } = props.component
+
     let lang = ''
     languageList.forEach(i => {
       if (i.value === state.lang) {
@@ -692,10 +395,65 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
       }
     })
     const blockHighlight = slots.toArray().some(i => i.state?.emphasize === true)
+    const results: DocumentFragment[] = []
+
+    if (state.lang) {
+      const str = slots.toArray().map(slot => {
+        return (slot.isEmpty ? '' : slot.toString()) + '\n'
+      }).join('')
+      const highlightResult = highlightjs.highlight(state.lang, str)
+
+      const dom = new DOMParser().parseFromString(highlightResult.value.replace(/\n/g, '<br>'), 'text/html').body
+
+      const range = new Range()
+      range.selectNodeContents(dom)
+
+      const brs = Array.from(dom.querySelectorAll('br'))
+
+      while (brs.length) {
+        const br = brs.shift()!
+        range.setEndBefore(br)
+        results.push(range.extractContents())
+        range.setStartAfter(br)
+        if (!brs.length) {
+          range.selectNodeContents(dom)
+          range.setStartAfter(br)
+          results.push(range.extractContents())
+        }
+      }
+    }
+
+    function nodesToVNodes(slot: Slot, nodes: Node[], index: number) {
+      return nodes.map(i => {
+        const location = {
+          slot,
+          startIndex: index,
+          endIndex: index + i.textContent!.length
+        }
+        if (i.nodeType === Node.ELEMENT_NODE) {
+          const childNodes = Array.from(i.childNodes)
+          const vEle = createVNode('span', {
+            class: (i as HTMLElement).className
+          }, nodesToVNodes(slot, childNodes, index))
+          index = location.endIndex
+
+          vEle.location = { ...location }
+          return vEle
+        }
+        index = location.endIndex
+
+        const textNode = new VTextNode(i.textContent!)
+        textNode.location = location
+        return textNode
+      })
+    }
+
+
     return (
       <pre ref={props.rootRef} class={{
         'xnote-source-code': true,
-        'xnote-source-code-line-number': state.lineNumber
+        'xnote-source-code-line-number': state.lineNumber,
+        [state.theme || 'github']: true
       }}
            lang={state.lang}
            data-auto-break={state.autoBreak}
@@ -714,25 +472,13 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
             </Dropdown>
           </ToolbarItem>
           <ToolbarItem>
-            主题：<Dropdown trigger={'hover'} onCheck={changeTheme} menu={[{
-            label: 'Light',
-            value: 'light'
-          }, {
-            label: 'Vitality',
-            value: 'vitality'
-          }, {
-            label: 'Dark',
-            value: 'dark'
-          }, {
-            label: 'Starry',
-            value: 'starry'
-          }].map(item => {
+            主题：<Dropdown trigger={'hover'} onCheck={changeTheme} menu={sourceCodeThemes.map(item => {
             return {
-              label: <MenuItem checked={state.theme === item.value}>{item.label}</MenuItem>,
-              value: item.value
+              label: <MenuItem checked={state.theme === item}>{item}</MenuItem>,
+              value: item
             }
           })}>
-              <Button arrow={true}>{state.theme || 'light'}</Button>
+              <Button arrow={true}>{state.theme || 'github'}</Button>
             </Dropdown>
           </ToolbarItem>
           <ToolbarItem>
@@ -758,6 +504,7 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
         <div class={[
           'xnote-source-code-container',
           {
+            'hljs': true,
             'xnote-source-code-auto-break': state.autoBreak
           }
         ]}>
@@ -773,7 +520,20 @@ export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>
           }}>
             {
               slots.toArray().map(item => {
-                return adapter.slotRender(item, children => {
+                return adapter.slotRender(item, (children) => {
+                  if (state.lang) {
+                    const nodes = Array.from(results.shift()!.childNodes)
+                    children = nodesToVNodes(item, nodes, 0)
+                    if (!children.length) {
+                      const br = createVNode('br')
+                      br.location = {
+                        slot: item,
+                        startIndex: 0,
+                        endIndex: 1
+                      }
+                      children.push(br)
+                    }
+                  }
                   return createVNode('div', {
                     class: 'xnote-source-code-line' + (item.state?.emphasize ? ' xnote-source-code-line-emphasize' : '')
                   }, [

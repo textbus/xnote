@@ -2,6 +2,7 @@ import { ComponentInstance, createVNode, FormatHostBindingRender, Formatter, VEl
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const codeFormatter = new Formatter<boolean>('code', {
+  inheritable: false,
   render(children: Array<VElement | VTextNode | ComponentInstance>): VElement | FormatHostBindingRender {
     return createVNode('code', {
       class: 'xnote-code'
