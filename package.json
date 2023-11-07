@@ -9,9 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.17",
-    "@textbus/core": "^4.0.0-alpha.17",
-    "@textbus/platform-browser": "^4.0.0-alpha.17",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.18",
+    "@textbus/core": "^4.0.0-alpha.18",
+    "@textbus/platform-browser": "^4.0.0-alpha.18",
     "@types/prismjs": "^1.26.0",
     "@viewfly/core": "^0.4.0",
     "@viewfly/hooks": "^0.4.0",

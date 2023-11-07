@@ -65,7 +65,10 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       app.destroy()
     }
   })
-  const browserModule = new BrowserModule(host, {
+  const browserModule = new BrowserModule({
+    renderTo(): HTMLElement {
+      return host
+    },
     adapter,
     componentLoaders: [
       blockquoteComponentLoader,
