@@ -12,7 +12,7 @@ import {
   paragraphComponentLoader,
   Root,
   rootComponent,
-  rootComponentLoader, SourceCode, sourceCodeComponent, sourceCodeComponentLoader,
+  rootComponentLoader, SourceCode, sourceCodeComponent, sourceCodeComponentLoader, tableComponent, tableComponentLoader, TableComponentView,
   Todolist,
   todolistComponent,
   todolistComponentLoader
@@ -56,7 +56,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [rootComponent.name]: Root,
     [blockquoteComponent.name]: Blockquote,
     [todolistComponent.name]: Todolist,
-    [sourceCodeComponent.name]: SourceCode
+    [sourceCodeComponent.name]: SourceCode,
+    [tableComponent.name]: TableComponentView
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus
@@ -75,6 +76,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       paragraphComponentLoader,
       sourceCodeComponentLoader,
       todolistComponentLoader,
+      tableComponentLoader
     ],
     formatLoaders: [
       backgroundColorFormatLoader,
@@ -102,7 +104,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       blockquoteComponent,
       paragraphComponent,
       sourceCodeComponent,
-      todolistComponent
+      todolistComponent,
+      tableComponent
     ],
     formatters: [
       backgroundColorFormatter,

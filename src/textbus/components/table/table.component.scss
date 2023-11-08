@@ -1,0 +1,128 @@
+.xnote-table {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.xnote-table-toolbar {
+  position: relative;
+  height: 0;
+  top: -10px;
+  table-layout: fixed;
+}
+
+.xnote-table-content {
+  border-spacing: 0;
+  border-collapse: collapse;
+
+  td {
+    border: 1px solid #ddd;
+    padding: 0 10px;
+  }
+}
+
+.xnote-table-bar {
+  border-spacing: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  td {
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    background: #eee;
+    cursor: pointer;
+
+    &:hover {
+      background: #dedede;
+    }
+  }
+}
+
+.xnote-table-wrapper {
+  position: relative;
+}
+
+.xnote-table-wrapper-h {
+  overflow-x: auto;
+  padding-top: 12px;
+
+  &.active {
+    &:before, &:after {
+      top: 0;
+    }
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 0;
+    left: 0;
+    width: 12px;
+    border-left: 1px solid #ddd;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, .1), rgba(0, 0, 0, 0));
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    border-right: 1px solid #ddd;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .1));
+  }
+
+  &.left-end {
+    &:before {
+      display: none;
+    }
+  }
+
+  &.right-end {
+    &:after {
+      display: none;
+    }
+  }
+}
+
+.xnote-table-bar-h {
+  display: none;
+  margin-top: -12px;
+  height: 12px;
+
+  &.active {
+    display: block;
+  }
+
+  td {
+    height: 12px;
+  }
+}
+
+.xnote-table-selector {
+  width: 12px;
+  height: 11px;
+  border: 1px solid #ddd;
+  border-top-left-radius: 4px;
+  margin-bottom: -1px;
+  background: #eee;
+}
+
+.xnote-table-bar-v {
+  overflow: hidden;
+  width: 12px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  margin-left: -12px;
+
+  &.active {
+    display: block;
+  }
+
+  table {
+    width: 14px
+  }
+}

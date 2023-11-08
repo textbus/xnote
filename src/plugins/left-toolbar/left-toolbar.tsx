@@ -213,6 +213,7 @@ export function LeftToolbar() {
               <MenuItem onClick={transform} value="h5" icon={<span class="xnote-icon-heading-h5"/>} checked={states.h5}>五级标题</MenuItem>
               <MenuItem onClick={transform} value="h6" icon={<span class="xnote-icon-heading-h6"/>} checked={states.h6}>六级标题</MenuItem>
               <Divider/>
+              <MenuItem onClick={transform} value="table" icon={<span class="xnote-icon-table"/>} checked={states.table}>表格</MenuItem>
               <MenuItem onClick={transform} value="todolist" icon={<span class="xnote-icon-checkbox-checked"/>}
                         checked={states.todolist}>待办事项</MenuItem>
               <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>

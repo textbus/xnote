@@ -6,6 +6,7 @@ import { paragraphComponent } from '../../textbus/components/paragraph/paragraph
 import { todolistComponent } from '../../textbus/components/todolist/todolist.component'
 import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { sourceCodeComponent, SourceCodeComponentState } from '../../textbus/components/source-code/source-code.component'
+import { tableComponent } from '../../textbus/components/table/table.component'
 
 export function useBlockTransform() {
   const commander = inject(Commander)
@@ -34,6 +35,16 @@ export function useBlockTransform() {
             ])
           }
         })
+        break
+      case 'table': {
+        const table = tableComponent.createInstance(textbus)
+        commander.insert(table)
+        if (selection.commonAncestorSlot?.isEmpty && selection.commonAncestorComponent?.name === paragraphComponent.name) {
+          commander.replaceComponent(selection.commonAncestorComponent, table)
+        } else {
+          commander.insert(table)
+        }
+      }
         break
       case 'todolist':
         commander.unApplyAttribute(headingAttr)

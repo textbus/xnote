@@ -8,6 +8,7 @@ import { todolistComponent } from '../../textbus/components/todolist/todolist.co
 import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { sourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { RefreshService } from '../../services/refresh.service'
+import { tableComponent } from '../../textbus/components/table/table.component'
 
 export function useActiveBlock() {
   const query = inject(Query)
@@ -20,6 +21,7 @@ export function useActiveBlock() {
     h4: false,
     h5: false,
     h6: false,
+    table: false,
     todolist: false,
     blockquote: false,
     sourceCode: false
@@ -34,6 +36,7 @@ export function useActiveBlock() {
         draft[heading.value as any] = true
         draft.paragraph = false
       }
+      draft.table = query.queryComponent(tableComponent).state === QueryStateType.Enabled
       draft.todolist = query.queryComponent(todolistComponent).state === QueryStateType.Enabled
       draft.blockquote = query.queryComponent(blockquoteComponent).state === QueryStateType.Enabled
       draft.sourceCode = query.queryComponent(sourceCodeComponent).state === QueryStateType.Enabled
