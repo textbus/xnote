@@ -52,6 +52,7 @@
   }
 
   &:before {
+    pointer-events: none;
     content: "";
     position: absolute;
     top: 12px;
@@ -63,6 +64,7 @@
   }
 
   &:after {
+    pointer-events: none;
     content: "";
     position: absolute;
     top: 12px;
@@ -124,5 +126,26 @@
 
   table {
     width: 14px
+  }
+}
+
+.xnote-table-drag-line {
+  box-sizing: content-box;
+  position: absolute;
+  width: 2px;
+  top: 12px;
+  bottom: 0;
+  border-width: 0 5px;
+  border-style: solid;
+  margin-left: -5px;
+  border-color: transparent;
+  display: none;
+  cursor: col-resize;
+
+  &:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #296eff;
   }
 }

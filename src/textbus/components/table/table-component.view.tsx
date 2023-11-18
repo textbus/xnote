@@ -29,11 +29,63 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
   const tableRef = useStaticRef<HTMLTableElement>()
   const vBarRef = useStaticRef<HTMLTableElement>()
   const scrollRef = useStaticRef<HTMLDivElement>()
+  const wrapperRef = useStaticRef<HTMLDivElement>()
+  const dragLineRef = useStaticRef<HTMLDivElement>()
+
+  let activeCol: number | null = null
 
   onMounted(() => {
+    let isDrag = false
     const subscription = fromEvent<MouseEvent>(tableRef.current!, 'mousemove').subscribe(ev => {
-      ev
-    })
+      if (isDrag) {
+        return
+      }
+      const tableRect = tableRef.current!.getBoundingClientRect()
+      const leftDistance = ev.clientX - tableRect.x
+      const state = props.component.state
+      let x = 0
+      for (let i = 0; i < state.layoutWidth.length; i++) {
+        const n = leftDistance - x
+        if (i > 0 && Math.abs(n) < 5) {
+          Object.assign(dragLineRef.current!.style, {
+            left: x - scrollRef.current!.scrollLeft + 'px',
+            display: 'block'
+          })
+          activeCol = i
+          break
+        }
+        activeCol = null
+        dragLineRef.current!.style.display = 'none'
+        x += state.layoutWidth[i]
+      }
+    }).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
+      isDrag = true
+      wrapperRef.current!.style.userSelect = 'none'
+
+      const x = downEvent.clientX
+      const layoutWidth = props.component.state.layoutWidth
+      const initWidth = layoutWidth[activeCol! - 1]
+
+      const initLeft = layoutWidth.slice(0, activeCol!).reduce((a, b) => a + b, 0)
+      const scrollLeft = scrollRef.current!.scrollLeft
+
+      const moveEvent = fromEvent<MouseEvent>(document, 'mousemove').subscribe(moveEvent => {
+        const distanceX = moveEvent.clientX - x
+
+        dragLineRef.current!.style.left = initLeft + distanceX - scrollLeft + 'px'
+        props.component.updateState(draft => {
+          draft.layoutWidth[activeCol! - 1] = initWidth + distanceX
+        }, false)
+      }).add(fromEvent<MouseEvent>(document, 'mouseup').subscribe(upEvent => {
+        isDrag = false
+        wrapperRef.current!.style.userSelect = 'auto'
+        moveEvent.unsubscribe()
+        const distanceX = upEvent.clientX - x
+        props.component.updateState(draft => {
+          draft.layoutWidth[activeCol! - 1] = initWidth + distanceX
+        })
+      }))
+    }))
 
     return () => {
       subscription.unsubscribe()
@@ -80,7 +132,6 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     for (let i = 0; i < state.rowCount; i++) {
       rows.push(slots.slice(i * state.colCount, (i + 1) * state.colCount))
     }
-    console.log(showShadow().leftEnd, showShadow().rightEnd)
     return (
       <div class="xnote-table" data-component={props.component.name} ref={props.rootRef}>
         <div class="xnote-table-toolbar">
@@ -90,7 +141,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
             </ToolbarItem>
           </ComponentToolbar>
         </div>
-        <div class="xnote-table-wrapper">
+        <div ref={wrapperRef} class="xnote-table-wrapper">
           <div class={['xnote-table-bar-v', { active: isFocus() }]}>
             <div class="xnote-table-selector"/>
             <table ref={vBarRef} class="xnote-table-bar">
@@ -153,6 +204,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
               </tbody>
             </table>
           </div>
+          <div ref={dragLineRef} class={['xnote-table-drag-line']}/>
         </div>
       </div>
     )
