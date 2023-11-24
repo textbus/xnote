@@ -69,12 +69,15 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
       const initLeft = layoutWidth.slice(0, activeCol!).reduce((a, b) => a + b, 0)
       const scrollLeft = scrollRef.current!.scrollLeft
 
+      const minWidth = 30
+      const minLeft = initLeft - initWidth + minWidth
+
       const moveEvent = fromEvent<MouseEvent>(document, 'mousemove').subscribe(moveEvent => {
         const distanceX = moveEvent.clientX - x
 
-        dragLineRef.current!.style.left = initLeft + distanceX - scrollLeft + 'px'
+        dragLineRef.current!.style.left = Math.max(initLeft + distanceX - scrollLeft, minLeft) + 'px'
         props.component.updateState(draft => {
-          draft.layoutWidth[activeCol! - 1] = initWidth + distanceX
+          draft.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
         }, false)
       }).add(fromEvent<MouseEvent>(document, 'mouseup').subscribe(upEvent => {
         isDrag = false
@@ -82,7 +85,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
         moveEvent.unsubscribe()
         const distanceX = upEvent.clientX - x
         props.component.updateState(draft => {
-          draft.layoutWidth[activeCol! - 1] = initWidth + distanceX
+          draft.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
         })
       }))
     }))
