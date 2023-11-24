@@ -47,7 +47,7 @@ export const paragraphComponent = defineComponent({
   }
 })
 
-export function Paragraph(props: ViewComponentProps<typeof paragraphComponent>) {
+export function ParagraphView(props: ViewComponentProps<typeof paragraphComponent>) {
   const adapter = inject(DomAdapter)
   return () => {
     const slot = props.component.slots.first!

@@ -4,18 +4,30 @@ import { BrowserModule, Parser } from '@textbus/platform-browser'
 import { ComponentInstance, Textbus } from '@textbus/core'
 
 import {
-  Blockquote,
+  BlockquoteView,
   blockquoteComponent,
   blockquoteComponentLoader,
-  Paragraph,
+  HighlightBoxView,
+  highlightBoxComponent,
+  highlightBoxComponentLoader,
+  listComponent,
+  ListComponentView,
+  ParagraphView,
   paragraphComponent,
   paragraphComponentLoader,
-  Root,
+  RootView,
   rootComponent,
-  rootComponentLoader, SourceCode, sourceCodeComponent, sourceCodeComponentLoader, tableComponent, tableComponentLoader, TableComponentView,
-  Todolist,
+  rootComponentLoader,
+  SourceCodeView,
+  sourceCodeComponent,
+  sourceCodeComponentLoader,
+  tableComponent,
+  tableComponentLoader,
+  TableComponentView,
+  TodolistView,
   todolistComponent,
-  todolistComponentLoader
+  todolistComponentLoader,
+  listComponentLoader
 } from './textbus/components/_api'
 import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
@@ -45,11 +57,6 @@ import './textbus/doc.scss'
 import { headingAttrLoader } from './textbus/attributes/heading.attr'
 import { textAlignAttrLoader } from './textbus/attributes/text-align.attr'
 import { textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
-import {
-  HighlightBox,
-  highlightBoxComponent,
-  highlightBoxComponentLoader
-} from './textbus/components/highlight-box/highlight-box.component'
 
 export interface XNoteConfig {
   content?: string
@@ -57,13 +64,14 @@ export interface XNoteConfig {
 
 export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
   const adapter = new Adapter({
-    [paragraphComponent.name]: Paragraph,
-    [rootComponent.name]: Root,
-    [blockquoteComponent.name]: Blockquote,
-    [todolistComponent.name]: Todolist,
-    [sourceCodeComponent.name]: SourceCode,
+    [paragraphComponent.name]: ParagraphView,
+    [rootComponent.name]: RootView,
+    [blockquoteComponent.name]: BlockquoteView,
+    [todolistComponent.name]: TodolistView,
+    [sourceCodeComponent.name]: SourceCodeView,
     [tableComponent.name]: TableComponentView,
-    [highlightBoxComponent.name]: HighlightBox
+    [highlightBoxComponent.name]: HighlightBoxView,
+    [listComponent.name]: ListComponentView
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus
@@ -84,6 +92,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       sourceCodeComponentLoader,
       todolistComponentLoader,
       tableComponentLoader,
+      listComponentLoader
     ],
     formatLoaders: [
       backgroundColorFormatLoader,

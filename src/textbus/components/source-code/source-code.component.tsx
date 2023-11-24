@@ -339,7 +339,7 @@ export const sourceCodeComponent = defineComponent({
   }
 })
 
-export function SourceCode(props: ViewComponentProps<typeof sourceCodeComponent>) {
+export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeComponent>) {
   const adapter = inject(DomAdapter)
   const isFocus = createSignal(false)
   const subscription = props.component.extends.focus.subscribe(b => {

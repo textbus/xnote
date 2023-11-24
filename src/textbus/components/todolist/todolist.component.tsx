@@ -59,7 +59,7 @@ export const todolistComponent = defineComponent({
   }
 })
 
-export function Todolist(props: ViewComponentProps<typeof todolistComponent>) {
+export function TodolistView(props: ViewComponentProps<typeof todolistComponent>) {
   const adapter = inject(DomAdapter)
 
   function toggle() {

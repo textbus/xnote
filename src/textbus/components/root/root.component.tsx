@@ -85,7 +85,7 @@ export const rootComponent = defineComponent({
   }
 })
 
-export function Root(props: ViewComponentProps<typeof rootComponent>) {
+export function RootView(props: ViewComponentProps<typeof rootComponent>) {
   const adapter = inject(DomAdapter)
   const { first, last } = props.component.slots
 

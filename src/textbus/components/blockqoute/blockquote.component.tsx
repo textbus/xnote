@@ -39,7 +39,7 @@ export const blockquoteComponent = defineComponent({
   },
 })
 
-export function Blockquote(props: ViewComponentProps<typeof blockquoteComponent>) {
+export function BlockquoteView(props: ViewComponentProps<typeof blockquoteComponent>) {
   const adapter = inject(DomAdapter)
   return () => {
     const slot = props.component.slots.first!

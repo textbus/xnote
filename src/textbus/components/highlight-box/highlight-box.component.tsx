@@ -68,7 +68,7 @@ export const highlightBoxComponent = defineComponent({
   }
 })
 
-export function HighlightBox(props: ViewComponentProps<typeof highlightBoxComponent>) {
+export function HighlightBoxView(props: ViewComponentProps<typeof highlightBoxComponent>) {
   const adapter = inject(DomAdapter)
   const emoji: number[] = []
   for (let i = 0x1F600; i <= 0x1F64F; i++) {
