@@ -1,6 +1,6 @@
 import {
   ComponentInstance,
-  createVNode, fromEvent,
+  createVNode, fromEvent, Selection,
   Slot,
   Textbus
 } from '@textbus/core'
@@ -17,6 +17,7 @@ import { TableCellConfig, tableComponent } from './table.component'
 
 export function TableComponentView(props: ViewComponentProps<typeof tableComponent>) {
   const adapter = inject(DomAdapter)
+  const selection = inject(Selection)
   const isFocus = createSignal(false)
   const subscription = props.component.extends.focus.subscribe(b => {
     isFocus.set(b)
@@ -128,13 +129,66 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     return () => s.unsubscribe()
   })
 
-  return () => {
+  const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
+
+  let isSelectColumn = false
+
+  function selectColumn(index: number, isMultiple: boolean) {
+    isSelectColumn = true
+    const currentSelectedColumnRange = selectedColumnRange()
+    if (isMultiple && currentSelectedColumnRange) {
+      selectedColumnRange.set({
+        startIndex: currentSelectedColumnRange.startIndex,
+        endIndex: index
+      })
+
+    } else {
+      selectedColumnRange.set({
+        startIndex: index, endIndex: index
+      })
+    }
+
+    const range = selectedColumnRange()!
+
+    const selectedSlots: Slot[] = []
+    const rows = toRows()
+    rows.forEach(row => {
+      selectedSlots.push(...row.slice(range.startIndex, range.endIndex + 1))
+    })
+    selection.setSelectedRanges(selectedSlots.map(i => {
+      return {
+        slot: i,
+        startIndex: 0,
+        endIndex: i.length
+      }
+    }))
+  }
+
+  const selectionChangeSubscription = selection.onChange.subscribe(() => {
+    selectedColumnRange.set(null)
+  })
+
+  onUnmounted(() => {
+    selectionChangeSubscription.unsubscribe()
+  })
+
+  function toRows() {
     const { slots, state } = props.component
     const rows: Slot<TableCellConfig>[][] = []
 
     for (let i = 0; i < state.rowCount; i++) {
       rows.push(slots.slice(i * state.colCount, (i + 1) * state.colCount))
     }
+
+    return rows
+  }
+
+  return () => {
+    const state = props.component.state
+    const rows = toRows()
+
+    const currentSelectedColumnRange = selectedColumnRange()
+    const currentSelectedColumnRangeSorted = currentSelectedColumnRange ? [currentSelectedColumnRange.startIndex, currentSelectedColumnRange.endIndex].sort((a, b) => a - b) : null
     return (
       <div class="xnote-table" data-component={props.component.name} ref={props.rootRef}>
         <div class="xnote-table-toolbar">
@@ -167,45 +221,62 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
               'active': isFocus()
             }
           ]}>
-            <div class={['xnote-table-bar-h', { active: isFocus() }]}>
-              <table class="xnote-table-bar">
-                <tbody>
-                <tr>
+            <div class="xnote-table-container">
+              <div class={['xnote-table-bar-h', { active: isFocus() }]}>
+                <table class="xnote-table-bar">
+                  <tbody>
+                  <tr>
+                    {
+                      state.layoutWidth.map((i, index) => {
+                        return <td onClick={ev => {
+                          selectColumn(index, ev.shiftKey)
+                        }} class={{
+                          active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
+                        }} style={{ width: i + 'px', minWidth: i + 'px' }}></td>
+                      })
+                    }
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <table ref={tableRef} class="xnote-table-content">
+                <colgroup>
                   {
-                    state.layoutWidth.map(i => {
-                      return <td style={{ width: i + 'px', minWidth: i + 'px' }}></td>
+                    state.layoutWidth.map(w => {
+                      return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
                     })
                   }
-                </tr>
-                </tbody>
-              </table>
-            </div>
-            <table ref={tableRef} class="xnote-table-content">
-              <colgroup>
+                </colgroup>
+                <tbody>
                 {
-                  state.layoutWidth.map(w => {
-                    return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                  rows.map((row, i) => {
+                    return (
+                      <tr style={{ height: state.layoutHeight[i] + 'px' }}>
+                        {
+                          row.map(cell => {
+                            return adapter.slotRender(cell, children => {
+                              return createVNode('td', null, children)
+                            }, false)
+                          })
+                        }
+                      </tr>
+                    )
                   })
                 }
-              </colgroup>
-              <tbody>
-              {
-                rows.map((row, i) => {
-                  return (
-                    <tr style={{ height: state.layoutHeight[i] + 'px' }}>
-                      {
-                        row.map(cell => {
-                          return adapter.slotRender(cell, children => {
-                            return createVNode('td', null, children)
-                          }, false)
-                        })
-                      }
-                    </tr>
-                  )
-                })
-              }
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+              <div class={[
+                'xnote-table-selection-mask',
+                {
+                  active: selectedColumnRange()
+                }
+              ]} style={isSelectColumn ? {
+                width: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(currentSelectedColumnRangeSorted[0], currentSelectedColumnRangeSorted[1] + 1).reduce((a, b) => a + b, 0) + 'px' : '',
+                top: 0,
+                bottom: 0,
+                left: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(0, currentSelectedColumnRangeSorted[0]).reduce((a, b) => a + b, 0) + 'px' : ''
+              } : null}/>
+            </div>
           </div>
           <div ref={dragLineRef} class={['xnote-table-drag-line']}/>
         </div>
