@@ -49,7 +49,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
         const n = leftDistance - x
         if (i > 0 && Math.abs(n) < 5) {
           Object.assign(dragLineRef.current!.style, {
-            left: x - scrollRef.current!.scrollLeft + 'px',
+            left: x + 'px',
             display: 'block'
           })
           activeCol = i
@@ -68,7 +68,6 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
       const initWidth = layoutWidth[activeCol! - 1]
 
       const initLeft = layoutWidth.slice(0, activeCol!).reduce((a, b) => a + b, 0)
-      const scrollLeft = scrollRef.current!.scrollLeft
 
       const minWidth = 30
       const minLeft = initLeft - initWidth + minWidth
@@ -76,7 +75,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
       const moveEvent = fromEvent<MouseEvent>(document, 'mousemove').subscribe(moveEvent => {
         const distanceX = moveEvent.clientX - x
 
-        dragLineRef.current!.style.left = Math.max(initLeft + distanceX - scrollLeft, minLeft) + 'px'
+        dragLineRef.current!.style.left = Math.max(initLeft + distanceX, minLeft) + 'px'
         props.component.updateState(draft => {
           draft.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
         }, false)
@@ -132,9 +131,11 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
   let isSelectColumn = false
+  let maskActive = false
 
   function selectColumn(index: number, isMultiple: boolean) {
     isSelectColumn = true
+    maskActive = true
     const currentSelectedColumnRange = selectedColumnRange()
     if (isMultiple && currentSelectedColumnRange) {
       selectedColumnRange.set({
@@ -149,11 +150,12 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     }
 
     const range = selectedColumnRange()!
+    const [startIndex, endIndex] = [range.startIndex, range.endIndex].sort((a, b) => a - b)
 
     const selectedSlots: Slot[] = []
     const rows = toRows()
     rows.forEach(row => {
-      selectedSlots.push(...row.slice(range.startIndex, range.endIndex + 1))
+      selectedSlots.push(...row.slice(startIndex, endIndex + 1))
     })
     selection.setSelectedRanges(selectedSlots.map(i => {
       return {
@@ -165,6 +167,10 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
   }
 
   const selectionChangeSubscription = selection.onChange.subscribe(() => {
+    if (maskActive) {
+      maskActive = false
+      return
+    }
     selectedColumnRange.set(null)
   })
 
@@ -186,6 +192,10 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
   return () => {
     const state = props.component.state
     const rows = toRows()
+
+    Promise.resolve().then(() => {
+      props.component.extends.afterContentCheck()
+    })
 
     const currentSelectedColumnRange = selectedColumnRange()
     const currentSelectedColumnRangeSorted = currentSelectedColumnRange ? [currentSelectedColumnRange.startIndex, currentSelectedColumnRange.endIndex].sort((a, b) => a - b) : null
@@ -218,7 +228,8 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
             {
               'left-end': showShadow().leftEnd,
               'right-end': showShadow().rightEnd,
-              'active': isFocus()
+              'active': isFocus(),
+              'hide-selection': selectedColumnRange()
             }
           ]}>
             <div class="xnote-table-container">
@@ -228,7 +239,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
                   <tr>
                     {
                       state.layoutWidth.map((i, index) => {
-                        return <td onClick={ev => {
+                        return <td onMousedown={ev => {
                           selectColumn(index, ev.shiftKey)
                         }} class={{
                           active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
@@ -276,9 +287,9 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
                 bottom: 0,
                 left: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(0, currentSelectedColumnRangeSorted[0]).reduce((a, b) => a + b, 0) + 'px' : ''
               } : null}/>
+              <div ref={dragLineRef} class={['xnote-table-drag-line']}/>
             </div>
           </div>
-          <div ref={dragLineRef} class={['xnote-table-drag-line']}/>
         </div>
       </div>
     )

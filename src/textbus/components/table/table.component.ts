@@ -1,4 +1,13 @@
-import { ComponentInitData, ContentType, defineComponent, onFocusIn, onFocusOut, Slot, Subject } from '@textbus/core'
+import {
+  ComponentInitData,
+  ContentType,
+  defineComponent,
+  onFocusIn,
+  onFocusOut,
+  onSlotRemove, Selection,
+  Slot,
+  Subject, useContext, useSelf
+} from '@textbus/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
 import { paragraphComponent } from '../paragraph/paragraph.component'
@@ -43,14 +52,37 @@ export const tableComponent = defineComponent({
   },
   setup() {
     const focus = new Subject<boolean>()
+    const textbus = useContext()
+    const self = useSelf()
+    const slots = self.slots
+    onSlotRemove(ev => {
+      ev.preventDefault()
+    })
     onFocusIn(() => {
       focus.next(true)
     })
     onFocusOut(() => {
       focus.next(false)
     })
+
+    const selection = useContext(Selection)
     return {
-      focus
+      focus,
+      afterContentCheck() {
+        slots.toArray().forEach(slot => {
+          if (slot.isEmpty) {
+            const p = paragraphComponent.createInstance(textbus)
+            slot.insert(p)
+            const childSlot = p.slots.first
+            if (slot === selection.anchorSlot) {
+              selection.setAnchor(childSlot, 0)
+            }
+            if (slot === selection.focusSlot) {
+              selection.setFocus(childSlot, 0)
+            }
+          }
+        })
+      }
     }
   }
 })

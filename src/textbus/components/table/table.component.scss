@@ -57,6 +57,12 @@
     }
   }
 
+  &.hide-selection {
+    * ::selection {
+      background: none;
+    }
+  }
+
   &:before {
     pointer-events: none;
     content: "";
@@ -139,7 +145,7 @@
   box-sizing: content-box;
   position: absolute;
   width: 2px;
-  top: 12px;
+  top: 0;
   bottom: 0;
   border-width: 0 5px;
   border-style: solid;
