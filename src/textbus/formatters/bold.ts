@@ -1,4 +1,15 @@
-import { ComponentInstance, createVNode, FormatHostBindingRender, Formatter, VElement, VTextNode } from '@textbus/core'
+import {
+  Commander,
+  ComponentInstance,
+  Controller,
+  createVNode,
+  FormatHostBindingRender,
+  Formatter,
+  Keyboard, Query, QueryStateType,
+  Textbus,
+  VElement,
+  VTextNode
+} from '@textbus/core'
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const boldFormatter = new Formatter<boolean>('bold', {
@@ -6,6 +17,36 @@ export const boldFormatter = new Formatter<boolean>('bold', {
     return createVNode('strong', null, children)
   }
 })
+
+export function toggleBold(textbus: Textbus) {
+  const controller = textbus.get(Controller)
+  if (controller.readonly) {
+    return
+  }
+  const query = textbus.get(Query)
+  const commander = textbus.get(Commander)
+
+  const state = query.queryFormat(boldFormatter)
+  if (state.state === QueryStateType.Normal) {
+    commander.applyFormat(boldFormatter, true)
+  } else {
+    commander.unApplyFormat(boldFormatter)
+  }
+}
+
+export function registerBoldShortcut(textbus: Textbus) {
+  const keyboard = textbus.get(Keyboard)
+
+  keyboard.addShortcut({
+    keymap: {
+      ctrlKey: true,
+      key: 'b'
+    },
+    action: () => {
+      toggleBold(textbus)
+    }
+  })
+}
 
 export const boldFormatLoader: FormatLoader<boolean> = {
   match(element: HTMLElement): boolean {

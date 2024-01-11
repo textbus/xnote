@@ -1,15 +1,15 @@
 import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted } from '@viewfly/core'
-import { Commander, Query, QueryStateType } from '@textbus/core'
+import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { codeFormatter } from '../../textbus/formatters/_api'
+import { codeFormatter, toggleCode } from '../../textbus/formatters/_api'
 
 export function CodeTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
-  const commander = inject(Commander)
+  const textbus = inject(Textbus)
 
   const [viewModel, update] = useProduce({
     highlight: false,
@@ -17,13 +17,7 @@ export function CodeTool() {
   })
 
   function toggle() {
-    const state = query.queryFormat(codeFormatter)
-
-    if (state.state === QueryStateType.Normal) {
-      commander.applyFormat(codeFormatter, true)
-    } else {
-      commander.unApplyFormat(codeFormatter)
-    }
+    toggleCode(textbus)
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {

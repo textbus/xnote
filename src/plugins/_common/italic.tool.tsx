@@ -1,15 +1,15 @@
 import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted } from '@viewfly/core'
-import { Commander, Query, QueryStateType } from '@textbus/core'
+import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { italicFormatter } from '../../textbus/formatters/_api'
+import { italicFormatter, toggleItalic } from '../../textbus/formatters/_api'
 
 export function ItalicTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
-  const commander = inject(Commander)
+  const textbus = inject(Textbus)
 
   const [viewModel, update] = useProduce({
     highlight: false,
@@ -17,13 +17,7 @@ export function ItalicTool() {
   })
 
   function toggle() {
-    const state = query.queryFormat(italicFormatter)
-
-    if (state.state === QueryStateType.Normal) {
-      commander.applyFormat(italicFormatter, true)
-    } else {
-      commander.unApplyFormat(italicFormatter)
-    }
+    toggleItalic(textbus)
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {

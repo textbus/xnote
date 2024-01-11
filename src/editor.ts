@@ -41,12 +41,18 @@ import {
   colorFormatLoader,
   colorFormatter,
   fontFamilyFormatLoader,
-  fontFamilyFormatter, fontSizeFormatLoader,
+  fontFamilyFormatter,
+  fontSizeFormatLoader,
   fontSizeFormatter,
   italicFormatLoader,
   italicFormatter,
   linkFormatLoader,
   linkFormatter,
+  registerBoldShortcut,
+  registerCodeShortcut,
+  registerItalicShortcut,
+  registerStrikeThroughShortcut,
+  registerUnderlineShortcut,
   strikeThroughFormatLoader,
   strikeThroughFormatter,
   underlineFormatLoader,
@@ -141,7 +147,14 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     plugins: [
       new LeftToolbarPlugin(),
       new ToolbarPlugin(),
-    ]
+    ],
+    setup(textbus: Textbus) {
+      registerBoldShortcut(textbus)
+      registerCodeShortcut(textbus)
+      registerItalicShortcut(textbus)
+      registerStrikeThroughShortcut(textbus)
+      registerUnderlineShortcut(textbus)
+    }
   })
   let rootComp: ComponentInstance
   if (config.content) {

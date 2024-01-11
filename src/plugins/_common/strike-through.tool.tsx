@@ -1,15 +1,15 @@
 import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted } from '@viewfly/core'
-import { Commander, Query, QueryStateType } from '@textbus/core'
+import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { strikeThroughFormatter } from '../../textbus/formatters/_api'
+import { strikeThroughFormatter, toggleStrikeThrough } from '../../textbus/formatters/_api'
 
 export function StrikeThroughTool() {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
-  const commander = inject(Commander)
+  const textbus = inject(Textbus)
 
   const [viewModel, update] = useProduce({
     highlight: false,
@@ -17,13 +17,7 @@ export function StrikeThroughTool() {
   })
 
   function toggle() {
-    const state = query.queryFormat(strikeThroughFormatter)
-
-    if (state.state === QueryStateType.Normal) {
-      commander.applyFormat(strikeThroughFormatter, true)
-    } else {
-      commander.unApplyFormat(strikeThroughFormatter)
-    }
+    toggleStrikeThrough(textbus)
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
