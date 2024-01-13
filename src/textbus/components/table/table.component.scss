@@ -1,6 +1,12 @@
 .xnote-table {
   margin-top: 8px;
   margin-bottom: 8px;
+
+  &:hover {
+    .xnote-table-bar-v, .xnote-table-bar-h {
+      display: block;
+    }
+  }
 }
 
 .xnote-table-toolbar {
