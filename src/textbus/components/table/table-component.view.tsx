@@ -13,11 +13,13 @@ import './table.component.scss'
 import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
 import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
 import { TableCellConfig, tableComponent } from './table.component'
+import { EditorService } from '../../../services/editor.service'
 
 
 export function TableComponentView(props: ViewComponentProps<typeof tableComponent>) {
   const adapter = inject(DomAdapter)
   const selection = inject(Selection)
+  const editorService = inject(EditorService)
   const isFocus = createSignal(false)
   const subscription = props.component.extends.focus.subscribe(b => {
     isFocus.set(b)
@@ -35,6 +37,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
 
   let activeCol: number | null = null
 
+  // 表格宽度调整 start
   onMounted(() => {
     let isDrag = false
     const subscription = fromEvent<MouseEvent>(tableRef.current!, 'mousemove').subscribe(ev => {
@@ -94,7 +97,9 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
       subscription.unsubscribe()
     }
   })
+  // 表格宽度调整 end
 
+  // 同步行高度
   onUpdated(() => {
     const vBarRows = vBarRef.current!.rows
     Array.from(tableRef.current!.rows).forEach((tr, i) => {
@@ -102,7 +107,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     })
   })
 
-
+  // 滚动阴影 start
   const [showShadow, updateShowShadow] = useProduce({
     leftEnd: false,
     rightEnd: false
@@ -127,13 +132,16 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     const s = fromEvent(el, 'scroll').subscribe(update)
     return () => s.unsubscribe()
   })
+  // 滚动阴影 end
 
+  // 列选择 start
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
   let isSelectColumn = false
   let maskActive = false
 
   function selectColumn(index: number, isMultiple: boolean) {
+    editorService.hideInlineToolbar = true
     isSelectColumn = true
     maskActive = true
     const currentSelectedColumnRange = selectedColumnRange()
@@ -166,17 +174,24 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     }))
   }
 
-  const selectionChangeSubscription = selection.onChange.subscribe(() => {
-    if (maskActive) {
-      maskActive = false
-      return
-    }
-    selectedColumnRange.set(null)
-  })
+  onMounted(() => {
+    const selectionChangeSubscription = selection.onChange.subscribe(() => {
+      if (maskActive) {
+        maskActive = false
+        return
+      }
+      selectedColumnRange.set(null)
+    })
 
-  onUnmounted(() => {
-    selectionChangeSubscription.unsubscribe()
+    return () => {
+      selectionChangeSubscription.unsubscribe()
+    }
   })
+  // 列选择 end
+
+  // 表格框选 start
+
+  // 表格框选 end
 
   function toRows() {
     const { slots, state } = props.component
@@ -216,7 +231,11 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
               {
                 state.layoutHeight.map(i => {
                   return <tr style={{ height: i + 'px' }}>
-                    <td/>
+                    <td>
+                      <div class="xnote-table-delete-btn-wrap">
+                        <button class="xnote-table-delete-btn"><span class="xnote-icon-bin"></span></button>
+                      </div>
+                    </td>
                   </tr>
                 })
               }
@@ -243,7 +262,11 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
                           selectColumn(index, ev.shiftKey)
                         }} class={{
                           active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
-                        }} style={{ width: i + 'px', minWidth: i + 'px' }}></td>
+                        }} style={{ width: i + 'px', minWidth: i + 'px' }}>
+                          <div class="xnote-table-delete-btn-wrap">
+                            <button class="xnote-table-delete-btn"><span class="xnote-icon-bin"></span></button>
+                          </div>
+                        </td>
                       })
                     }
                   </tr>

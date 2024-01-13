@@ -30,6 +30,7 @@
     border: 1px solid #ddd;
     background: #eee;
     cursor: pointer;
+    position: relative;
 
     &:hover {
       background: #dedede;
@@ -112,6 +113,22 @@
   td {
     height: 12px;
   }
+
+  .xnote-table-delete-btn-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+
+    &:hover {
+      top: -30px;
+      height: 50px;
+
+      .xnote-table-delete-btn {
+        display: block;
+      }
+    }
+  }
 }
 
 .xnote-table-selector {
@@ -124,7 +141,7 @@
 }
 
 .xnote-table-bar-v {
-  overflow: hidden;
+  //overflow: hidden;
   width: 12px;
   position: absolute;
   left: 0;
@@ -137,7 +154,22 @@
   }
 
   table {
-    width: 14px
+    width: 13px
+  }
+  .xnote-table-delete-btn-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      left: -30px;
+      width: 50px;
+
+      .xnote-table-delete-btn {
+        display: block;
+      }
+    }
   }
 }
 
@@ -175,5 +207,21 @@
 
   &.active {
     display: block;
+  }
+}
+
+.xnote-table-delete-btn {
+  background: #eee;
+  border-radius: 4px;
+  width: 24px;
+  height: 30px;
+  line-height: 30px;
+  color: #5c6370;
+  border: none;
+  cursor: pointer;
+  display: none;
+
+  &:hover {
+    color: #333;
   }
 }

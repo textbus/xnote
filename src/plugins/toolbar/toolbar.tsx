@@ -17,6 +17,7 @@ import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
 import { AttrTool } from '../_common/attr-tool'
 import { FontSizeTool } from '../_common/font-size.tool'
 import { FontFamilyTool } from '../_common/font-family'
+import { EditorService } from '../../services/editor.service'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -24,6 +25,7 @@ export function Toolbar() {
   const viewDocument = inject(VIEW_DOCUMENT)
   const bridge = inject(SelectionBridge)
   const textbus = inject(Textbus)
+  const editorService = inject(EditorService)
   const refreshService = inject(RefreshService, null, InjectFlags.Default)!
 
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
@@ -135,6 +137,7 @@ export function Toolbar() {
         top: p.top + 'px',
         pointerEvents: p.isHide ? 'none' : 'initial',
         opacity: p.opacity,
+        display: editorService.hideInlineToolbar ? 'none' : '',
         transitionDuration: p.transitionDuration + 's'
       }}>
         <ToolbarItem>

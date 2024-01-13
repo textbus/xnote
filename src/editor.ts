@@ -119,6 +119,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     ]
   })
   const textbus = new Textbus({
+    zenCoding: true,
     imports: [
       browserModule
     ],
