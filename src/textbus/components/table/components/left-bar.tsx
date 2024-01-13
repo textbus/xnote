@@ -4,6 +4,7 @@ import { ExtractComponentInstanceType } from '@textbus/core'
 
 import css from './left-bar.scoped.scss'
 import { tableComponent } from '../table.component'
+import { useProduce } from '@viewfly/hooks'
 
 export interface TopBarProps {
   tableRef: StaticRef<HTMLTableElement>
@@ -12,9 +13,15 @@ export interface TopBarProps {
 }
 
 export function LeftBar(props: TopBarProps) {
-  let mouseDownFromToolbar = false
+  // let mouseDownFromToolbar = false
   const vBarRef = createRef<HTMLTableElement>()
+  const [toolbarStyles, updateToolbarStyles] = useProduce({
+    left: 0,
+    top: 0,
+    visible: false
+  })
 
+  console.log(toolbarStyles)
   // 同步行高度
   onUpdated(() => {
     const vBarRows = vBarRef.current!.rows
@@ -32,18 +39,18 @@ export function LeftBar(props: TopBarProps) {
             props.component.state.layoutHeight.map(i => {
               return <tr style={{ height: i + 'px' }}>
                 <td onClick={ev => {
-                  mouseDownFromToolbar = true
-                  // if (!ev.shiftKey) {
-                  //   updateToolbarStyles(draft => {
-                  //     draft.top = (ev.target as HTMLTableCellElement).offsetTop + (ev.target as HTMLTableCellElement).offsetHeight / 2 + 18
-                  //     draft.left = -100
-                  //     draft.visible = true
-                  //   })
-                  // } else {
-                  //   updateToolbarStyles(draft => {
-                  //     draft.visible = false
-                  //   })
-                  // }
+                  // mouseDownFromToolbar = true
+                  if (!ev.shiftKey) {
+                    updateToolbarStyles(draft => {
+                      draft.top = (ev.target as HTMLTableCellElement).offsetTop + (ev.target as HTMLTableCellElement).offsetHeight / 2 + 18
+                      draft.left = -100
+                      draft.visible = true
+                    })
+                  } else {
+                    updateToolbarStyles(draft => {
+                      draft.visible = false
+                    })
+                  }
                 }}/>
               </tr>
             })
