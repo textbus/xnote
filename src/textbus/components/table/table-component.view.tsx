@@ -15,6 +15,7 @@ import { ComponentToolbar } from '../../../components/component-toolbar/componen
 import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
 import { TableComponent } from './table.component'
 import { EditorService } from '../../../services/editor.service'
+import { Button } from '../../../components/button/button'
 
 export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
@@ -191,6 +192,30 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
 
   // 表格框选 end
 
+  // 工具条 start
+  const [toolbarStyles, updateToolbarStyles] = useProduce({
+    left: 0,
+    top: 0,
+    visible: false
+  })
+
+  let mouseDownFromToolbar = false
+
+  onMounted(() => {
+    const sub = fromEvent(document, 'click').subscribe(() => {
+      if (mouseDownFromToolbar) {
+        mouseDownFromToolbar = false
+        return
+      }
+      updateToolbarStyles(draft => {
+        draft.visible = false
+      })
+    })
+    return () => sub.unsubscribe()
+  })
+
+  // 工具条 end
+
   return () => {
     const state = props.component.state
     const rows = state.rows
@@ -204,9 +229,15 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
     return (
       <div class="xnote-table" data-component={props.component.name} ref={props.rootRef}>
         <div class="xnote-table-toolbar">
-          <ComponentToolbar visible={isFocus()}>
+          <ComponentToolbar
+            style={{
+              display: 'inline-block',
+              left: toolbarStyles().left + 'px',
+              top: toolbarStyles().top + 'px',
+            }}
+            visible={toolbarStyles().visible}>
             <ToolbarItem>
-              fda
+              <Button><span class="xnote-icon-bin"></span></Button>
             </ToolbarItem>
           </ComponentToolbar>
         </div>
@@ -218,11 +249,20 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               {
                 state.rows.map(i => {
                   return <tr style={{ height: i.height + 'px' }}>
-                    <td>
-                      <div class="xnote-table-delete-btn-wrap">
-                        <button class="xnote-table-delete-btn"><span class="xnote-icon-bin"></span></button>
-                      </div>
-                    </td>
+                    <td onClick={ev => {
+                      mouseDownFromToolbar = true
+                      if (!ev.shiftKey) {
+                        updateToolbarStyles(draft => {
+                          draft.top = (ev.target as HTMLTableCellElement).offsetTop + (ev.target as HTMLTableCellElement).offsetHeight / 2 + 18
+                          draft.left = -100
+                          draft.visible = true
+                        })
+                      } else {
+                        updateToolbarStyles(draft => {
+                          draft.visible = false
+                        })
+                      }
+                    }}/>
                   </tr>
                 })
               }
@@ -245,15 +285,24 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
                   <tr>
                     {
                       state.layoutWidth.map((i, index) => {
-                        return <td onMousedown={ev => {
+                        return <td onClick={ev => {
+                          mouseDownFromToolbar = true
+                          if (!ev.shiftKey) {
+                            updateToolbarStyles(draft => {
+                              draft.left = (ev.target as HTMLTableCellElement).offsetLeft + i / 2 - scrollRef.current!.scrollLeft
+                              draft.top = -5
+                              draft.visible = true
+                            })
+                          } else {
+                            updateToolbarStyles(draft => {
+                              draft.visible = false
+                            })
+                          }
+                        }} onMousedown={ev => {
                           selectColumn(index, ev.shiftKey)
                         }} class={{
                           active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
-                        }} style={{ width: i + 'px', minWidth: i + 'px' }}>
-                          <div class="xnote-table-delete-btn-wrap">
-                            <button class="xnote-table-delete-btn"><span class="xnote-icon-bin"></span></button>
-                          </div>
-                        </td>
+                        }} style={{ width: i + 'px', minWidth: i + 'px' }}/>
                       })
                     }
                   </tr>
