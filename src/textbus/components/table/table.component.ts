@@ -82,6 +82,9 @@ export const tableComponent = defineComponent({
             }
           }
         })
+      },
+      insertColumn(index: number) {
+        console.log(index)
       }
     }
   }
