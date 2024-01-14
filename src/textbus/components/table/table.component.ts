@@ -85,6 +85,9 @@ export const tableComponent = defineComponent({
       },
       insertColumn(index: number) {
         console.log(index)
+      },
+      insertRow(index: number) {
+        console.log(index)
       }
     }
   }

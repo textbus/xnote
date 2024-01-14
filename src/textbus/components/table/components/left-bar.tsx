@@ -1,10 +1,10 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createRef, onUpdated, Signal, StaticRef } from '@viewfly/core'
 import { ExtractComponentInstanceType } from '@textbus/core'
+import { useProduce } from '@viewfly/hooks'
 
 import css from './left-bar.scoped.scss'
 import { tableComponent } from '../table.component'
-import { useProduce } from '@viewfly/hooks'
 
 export interface TopBarProps {
   tableRef: StaticRef<HTMLTableElement>
@@ -14,7 +14,8 @@ export interface TopBarProps {
 
 export function LeftBar(props: TopBarProps) {
   // let mouseDownFromToolbar = false
-  const vBarRef = createRef<HTMLTableElement>()
+  const actionBarRef = createRef<HTMLTableElement>()
+  const insertBarRef = createRef<HTMLTableElement>()
   const [toolbarStyles, updateToolbarStyles] = useProduce({
     left: 0,
     top: 0,
@@ -24,40 +25,77 @@ export function LeftBar(props: TopBarProps) {
   console.log(toolbarStyles)
   // 同步行高度
   onUpdated(() => {
-    const vBarRows = vBarRef.current!.rows
+    const insertBarRows = insertBarRef.current!.rows
+    const actionBarRows = actionBarRef.current!.rows
     setTimeout(() => {
       Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
-        return vBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+         insertBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+         actionBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
       })
     })
   })
   return withScopedCSS(css, () => {
+    const state = props.component.state
     return (
       <div class={['left-bar', { active: props.isFocus() }]}>
-        <table ref={vBarRef} class="xnote-table-bar">
-          <tbody>
-          {
-            props.component.state.layoutHeight.map(i => {
-              return <tr style={{ height: i + 'px' }}>
-                <td onClick={ev => {
-                  // mouseDownFromToolbar = true
-                  if (!ev.shiftKey) {
-                    updateToolbarStyles(draft => {
-                      draft.top = (ev.target as HTMLTableCellElement).offsetTop + (ev.target as HTMLTableCellElement).offsetHeight / 2 + 18
-                      draft.left = -100
-                      draft.visible = true
-                    })
-                  } else {
-                    updateToolbarStyles(draft => {
-                      draft.visible = false
-                    })
-                  }
-                }}/>
-              </tr>
-            })
-          }
-          </tbody>
-        </table>
+        <div class="insert-bar">
+          <table ref={insertBarRef}>
+            <tbody>
+              {
+                state.layoutHeight.map((i, index) => {
+                  return (
+                    <tr style={{ height: i + 'px', minHeight: i + 'px' }}>
+                      <td>
+                        {
+                          index === 0 && (
+                            <span class="insert-btn-wrap" style={{
+                              top: '-14px'
+                            }} onClick={() => {
+                              props.component.extends.insertRow(0)
+                            }}>
+                              <button class="insert-btn" type="button">+</button>
+                            </span>
+                          )
+                        }
+                        <span class="insert-btn-wrap" onClick={() => {
+                          props.component.extends.insertRow(index + 1)
+                        }}>
+                          <button class="insert-btn" type="button">+</button>
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="action-bar">
+          <table ref={actionBarRef}>
+            <tbody>
+            {
+              props.component.state.layoutHeight.map(i => {
+                return <tr style={{ height: i + 'px' }}>
+                  <td onClick={ev => {
+                    // mouseDownFromToolbar = true
+                    if (!ev.shiftKey) {
+                      updateToolbarStyles(draft => {
+                        draft.top = (ev.target as HTMLTableCellElement).offsetTop + (ev.target as HTMLTableCellElement).offsetHeight / 2 + 18
+                        draft.left = -100
+                        draft.visible = true
+                      })
+                    } else {
+                      updateToolbarStyles(draft => {
+                        draft.visible = false
+                      })
+                    }
+                  }}/>
+                </tr>
+              })
+            }
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   })
