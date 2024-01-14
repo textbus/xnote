@@ -5,7 +5,7 @@ import {
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
-import { inject, onUnmounted, createSignal, createRef } from '@viewfly/core'
+import { inject, onUnmounted, createSignal, createRef, provide } from '@viewfly/core'
 
 import './table.component.scss'
 import { TableComponent } from './table.component'
@@ -13,10 +13,13 @@ import { ResizeColumn } from './components/resize-column'
 import { TopBar } from './components/top-bar'
 import { Scroll } from './components/scroll'
 import { LeftBar } from './components/left-bar'
+import { TableService } from './table.service'
 
 export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
   const isFocus = createSignal(false)
+
+  provide(TableService)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
   })

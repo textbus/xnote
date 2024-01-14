@@ -9,6 +9,7 @@ import { Row, TableComponent } from '../table.component'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
 import { ToolbarItem } from '../../../../components/toolbar-item/toolbar-item'
 import { Button } from '../../../../components/button/button'
+import { TableService } from '../table.service'
 
 export interface TopBarProps {
   isFocus: Signal<boolean>
@@ -100,6 +101,8 @@ export function TopBar(props: TopBarProps) {
     return () => sub.unsubscribe()
   })
 
+  const tableService = inject(TableService)
+
   return withScopedCSS(css, () => {
     const state = props.component.state
     const currentSelectedColumnRange = selectedColumnRange()
@@ -132,7 +135,11 @@ export function TopBar(props: TopBarProps) {
                       <td style={{ width: i + 'px', minWidth: i + 'px' }}>
                         {
                           index === 0 && (
-                            <span class="insert-btn-wrap" style={{
+                            <span onMouseenter={() => {
+                              tableService.onInsertColumnBefore.next(0)
+                            }} onMouseleave={() => {
+                              tableService.onInsertColumnBefore.next(null)
+                            }} class="insert-btn-wrap" style={{
                               left: '-10px'
                             }} onClick={() => {
                               props.component.insertColumn(0)
@@ -141,7 +148,11 @@ export function TopBar(props: TopBarProps) {
                             </span>
                           )
                         }
-                        <span class="insert-btn-wrap" onClick={() => {
+                        <span class="insert-btn-wrap" onMouseenter={() => {
+                          tableService.onInsertColumnBefore.next(index + 1)
+                        }} onMouseleave={() => {
+                          tableService.onInsertColumnBefore.next(null)
+                        }} onClick={() => {
                           props.component.insertColumn(index + 1)
                         }}>
                           <button class="insert-btn" type="button">+</button>
