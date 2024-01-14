@@ -38,7 +38,7 @@ export function Scroll(props: ScrollProps) {
   })
 
   return withScopedCSS(css, () => {
-    return <div ref={scrollRef} class={[{
+    return <div ref={scrollRef} class={['scroll-container', {
       'left-end': showShadow().leftEnd,
       'right-end': showShadow().rightEnd,
       'active': props.isFocus(),

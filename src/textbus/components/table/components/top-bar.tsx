@@ -14,6 +14,7 @@ export interface TopBarProps {
   isFocus: Signal<boolean>
   component: TableComponent
   scrollRef: StaticRef<HTMLDivElement>
+
   onSelectColumn(isSelected: boolean): void
 
   rows: Row[]
@@ -106,7 +107,7 @@ export function TopBar(props: TopBarProps) {
       ? [currentSelectedColumnRange.startIndex, currentSelectedColumnRange.endIndex].sort((a, b) => a - b)
       : null
     return (
-      <div>
+      <div class="top-bar">
         <div class="xnote-table-toolbar">
           <ComponentToolbar
             style={{
@@ -120,47 +121,81 @@ export function TopBar(props: TopBarProps) {
             </ToolbarItem>
           </ComponentToolbar>
         </div>
-        <div class={['xnote-table-bar-h', { active: props.isFocus() }]}>
-          <table class="xnote-table-bar">
-            <tbody>
-            <tr>
-              {
-                state.layoutWidth.map((i, index) => {
-                  return <td onClick={ev => {
-                    mouseDownFromToolbar = true
-                    if (!ev.shiftKey) {
-                      updateToolbarStyles(draft => {
-                        draft.left = (ev.target as HTMLTableCellElement).offsetLeft + i / 2 - props.scrollRef.current!.scrollLeft
-                        draft.top = -5
-                        draft.visible = true
-                      })
-                    } else {
-                      updateToolbarStyles(draft => {
-                        draft.visible = false
-                      })
-                    }
-                  }} onMousedown={ev => {
-                    selectColumn(index, ev.shiftKey)
-                  }} class={{
-                    active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
-                  }} style={{ width: i + 'px', minWidth: i + 'px' }}/>
-                })
-              }
-            </tr>
-            </tbody>
-          </table>
+        <div class="toolbar-wrapper">
+          <div class="insert-bar">
+            <table>
+              <tbody>
+              <tr>
+                {
+                  state.layoutWidth.map((i, index) => {
+                    return (
+                      <td style={{ width: i + 'px', minWidth: i + 'px' }}>
+                        {
+                          index === 0 && (
+                            <span class="insert-btn-wrap" style={{
+                              left: '-10px'
+                            }} onClick={() => {
+                              props.component.insertColumn(0)
+                            }}>
+                              <button class="insert-btn" type="button">+</button>
+                            </span>
+                          )
+                        }
+                        <span class="insert-btn-wrap" onClick={() => {
+                          props.component.insertColumn(index + 1)
+                        }}>
+                          <button class="insert-btn" type="button">+</button>
+                        </span>
+                      </td>
+                    )
+                  })
+                }
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class={['action-bar', { active: props.isFocus() }]}>
+            <table>
+              <tbody>
+              <tr>
+                {
+                  state.layoutWidth.map((i, index) => {
+                    return <td onClick={ev => {
+                      mouseDownFromToolbar = true
+                      if (!ev.shiftKey) {
+                        updateToolbarStyles(draft => {
+                          draft.left = (ev.target as HTMLTableCellElement).offsetLeft + i / 2 - props.scrollRef.current!.scrollLeft
+                          draft.top = -5
+                          draft.visible = true
+                        })
+                      } else {
+                        updateToolbarStyles(draft => {
+                          draft.visible = false
+                        })
+                      }
+                    }} onMousedown={ev => {
+                      selectColumn(index, ev.shiftKey)
+                    }} class={{
+                      active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
+                    }} style={{ width: i + 'px', minWidth: i + 'px' }}/>
+                  })
+                }
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class={[
+            'mask',
+            {
+              active: selectedColumnRange()
+            }
+          ]} style={isSelectColumn ? {
+            width: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(currentSelectedColumnRangeSorted[0], currentSelectedColumnRangeSorted[1] + 1).reduce((a, b) => a + b, 0) + 'px' : '',
+            top: 0,
+            bottom: 0,
+            left: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(0, currentSelectedColumnRangeSorted[0]).reduce((a, b) => a + b, 0) + 'px' : ''
+          } : null}/>
         </div>
-        <div class={[
-          'xnote-table-selection-mask',
-          {
-            active: selectedColumnRange()
-          }
-        ]} style={isSelectColumn ? {
-          width: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(currentSelectedColumnRangeSorted[0], currentSelectedColumnRangeSorted[1] + 1).reduce((a, b) => a + b, 0) + 'px' : '',
-          top: 0,
-          bottom: 0,
-          left: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(0, currentSelectedColumnRangeSorted[0]).reduce((a, b) => a + b, 0) + 'px' : ''
-        } : null}/>
       </div>
     )
   })

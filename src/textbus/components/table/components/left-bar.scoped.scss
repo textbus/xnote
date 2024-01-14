@@ -1,0 +1,17 @@
+.left-bar {
+  //overflow: hidden;
+  width: 12px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  margin-left: -12px;
+
+  &.active {
+    display: block;
+  }
+
+  table {
+    width: 13px
+  }
+}

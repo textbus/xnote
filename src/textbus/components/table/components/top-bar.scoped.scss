@@ -1,0 +1,141 @@
+.top-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.xnote-table-toolbar {
+  position: relative;
+  height: 0;
+  top: -10px;
+  display: none;
+}
+
+.toolbar-wrapper {
+  height: 30px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -30px;
+}
+
+.mask {
+  border: 1px solid #296eff;
+  background: #296eff10;
+  display: none;
+  position: absolute;
+  pointer-events: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+
+.insert-bar {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: -10px;
+  margin-right: -10px;
+  height: 30px;
+  overflow: hidden;
+
+  table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    td {
+      box-sizing: border-box;
+      border: 1px solid transparent;
+      position: relative;
+      height: 18px;
+    }
+
+    .insert-btn-wrap {
+      width: 21px;
+      height: 21px;
+      right: -11px;
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      cursor: pointer;
+
+      .insert-btn {
+        cursor: inherit;
+        background: #ccc;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        text-align: center;
+        line-height: 20px;
+        position: relative;
+        box-shadow: none;
+        transform: scale(0.2);
+        transition: transform .15s;
+
+        &:after {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          background: inherit;
+          content: "";
+          transform: rotateZ(45deg);
+          top: 12px;
+          left: 5.5px;
+          z-index: -1;
+        }
+      }
+
+      &:hover {
+        .insert-btn {
+          background: #296eff;
+          transform: scale(1);
+        }
+      }
+    }
+  }
+}
+
+
+.action-bar {
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  margin-top: -12px;
+
+  &.active {
+    display: block;
+  }
+
+  table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+    overflow: hidden;
+
+    td {
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      background: #eee;
+      cursor: pointer;
+      position: relative;
+      height: 12px;
+
+      &:hover {
+        background: #dedede;
+      }
+
+      &.active {
+        background: #296eff;
+        border-color: #2358c9;
+      }
+    }
+  }
+}

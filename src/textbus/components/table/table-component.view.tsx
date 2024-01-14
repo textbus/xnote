@@ -44,6 +44,13 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
     })
     return (
       <div class="xnote-table" data-component={props.component.name} ref={props.rootRef}>
+        <TopBar
+          isFocus={isFocus}
+          component={props.component}
+          scrollRef={scrollRef}
+          onSelectColumn={is => isSelectColumn.set(is)}
+          rows={rows}/>
+        <LeftBar tableRef={tableRef} isFocus={isFocus} component={props.component}/>
         <Scroll onScroll={leftDistance => {
           scrollLeft.set(leftDistance)
         }} isFocus={isFocus}>
@@ -82,13 +89,6 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               }}/>
           </div>
         </Scroll>
-        <TopBar
-          isFocus={isFocus}
-          component={props.component}
-          scrollRef={scrollRef}
-          onSelectColumn={is => isSelectColumn.set(is)}
-          rows={rows}/>
-        <LeftBar tableRef={tableRef} isFocus={isFocus} component={props.component}/>
       </div>
     )
   }

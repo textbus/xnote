@@ -24,14 +24,15 @@ export function LeftBar(props: TopBarProps) {
   // 同步行高度
   onUpdated(() => {
     const vBarRows = vBarRef.current!.rows
-    Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
-      return vBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+    setTimeout(() => {
+      Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
+        return vBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+      })
     })
   })
   return withScopedCSS(css, () => {
     return (
-      <div class={['xnote-table-bar-v', { active: props.isFocus() }]}>
-        <div class="xnote-table-selector"/>
+      <div class={['left-bar', { active: props.isFocus() }]}>
         <table ref={vBarRef} class="xnote-table-bar">
           <tbody>
           {
