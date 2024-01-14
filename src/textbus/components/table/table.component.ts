@@ -112,4 +112,7 @@ export class TableComponent extends Component<TableComponentState> {
   insertColumn(index: number) {
     console.log(index)
   }
+  insertRow(index: number) {
+    console.log(index)
+  }
 }
