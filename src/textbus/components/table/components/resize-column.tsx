@@ -1,15 +1,18 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, onMounted, StaticRef } from '@viewfly/core'
+import { createRef, inject, onMounted, StaticRef } from '@viewfly/core'
 import { ExtractComponentInstanceType, fromEvent } from '@textbus/core'
 
 import css from './resize-column.scoped.scss'
 import { tableComponent } from '../table.component'
+import { TableService } from '../table.service'
 
-export interface ResizeColumnProps{
+export interface ResizeColumnProps {
   tableRef: StaticRef<HTMLTableElement>
   component: ExtractComponentInstanceType<typeof tableComponent>
+
   onActiveStateChange(isActive: boolean): void
 }
+
 export function ResizeColumn(props: ResizeColumnProps) {
   const dragLineRef = createRef<HTMLDivElement>()
   let activeCol: number | null = null
@@ -74,7 +77,26 @@ export function ResizeColumn(props: ResizeColumnProps) {
       subscription.unsubscribe()
     }
   })
+
+  const tableService = inject(TableService)
+
+  onMounted(() => {
+    const sub = tableService.onInsertColumnBefore.subscribe(n => {
+      if (n === null) {
+        dragLineRef.current!.style.display = 'none'
+        return
+      }
+      const state = props.component.state
+      const left = state.layoutWidth.slice(0, n).reduce((a, b) => a + b, 0)
+
+      dragLineRef.current!.style.display = 'block'
+      dragLineRef.current!.style.left = left + 'px'
+    })
+
+    return () => sub.unsubscribe()
+  })
+
   return withScopedCSS(css, () => {
-    return <div ref={dragLineRef} class={['xnote-table-drag-line']}/>
+    return <div ref={dragLineRef} class={['drag-line']}/>
   })
 }
