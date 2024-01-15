@@ -1,7 +1,6 @@
 .top-bar {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
   right: 0;
 }
@@ -19,18 +18,6 @@
   left: 0;
   right: 0;
   top: -30px;
-}
-
-.mask {
-  border: 1px solid #296eff;
-  background: #296eff10;
-  display: none;
-  position: absolute;
-  pointer-events: none;
-
-  &.active {
-    display: block;
-  }
 }
 
 
@@ -135,6 +122,17 @@
       &.active {
         background: #296eff;
         border-color: #2358c9;
+
+        &:before {
+          content: "";
+          position: absolute;
+          top: -1px;
+          bottom: 0;
+          border-width: 0 0 0 1px;
+          border-style: solid;
+          border-color: inherit;
+          left: -1px;
+        }
       }
     }
   }

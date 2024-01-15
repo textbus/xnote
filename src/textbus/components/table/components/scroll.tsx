@@ -1,4 +1,4 @@
-import { createRef, inject, onMounted, Props, Signal } from '@viewfly/core'
+import { createRef, inject, onMounted, Props, Signal, StaticRef } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { useProduce } from '@viewfly/hooks'
 import { Input } from '@textbus/platform-browser'
@@ -9,6 +9,7 @@ import css from './scroll.scoped.scss'
 export interface ScrollProps extends Props {
   onScroll(scrollLeft: number): void
   isFocus: Signal<boolean>
+  scrollRef: StaticRef<HTMLDivElement>
 }
 
 export function Scroll(props: ScrollProps) {
@@ -38,7 +39,7 @@ export function Scroll(props: ScrollProps) {
   })
 
   return withScopedCSS(css, () => {
-    return <div ref={scrollRef} class={['scroll-container', {
+    return <div ref={[scrollRef, props.scrollRef]} class={['scroll-container', {
       'left-end': showShadow().leftEnd,
       'right-end': showShadow().rightEnd,
       'active': props.isFocus(),
