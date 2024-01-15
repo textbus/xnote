@@ -49,8 +49,6 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
 
   const isResizeColumn = createSignal(false)
   const isSelectColumn = createSignal(false)
-  
-  const scrollLeft = createSignal(0)
 
   return () => {
     const state = props.component.state
@@ -71,9 +69,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
           tableRef={tableRef}
           isFocus={isFocus}
           component={props.component}/>
-        <Scroll scrollRef={scrollRef} onScroll={leftDistance => {
-          scrollLeft.set(leftDistance)
-        }} isFocus={isFocus}>
+        <Scroll scrollRef={scrollRef} isFocus={isFocus}>
           <div class="xnote-table-container">
             <table ref={tableRef} class="xnote-table-content">
               <colgroup>

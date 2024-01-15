@@ -5,9 +5,9 @@ import { Input } from '@textbus/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
 import css from './scroll.scoped.scss'
+import { TableService } from '../table.service'
 
 export interface ScrollProps extends Props {
-  onScroll(scrollLeft: number): void
   isFocus: Signal<boolean>
   scrollRef: StaticRef<HTMLDivElement>
 }
@@ -15,6 +15,7 @@ export interface ScrollProps extends Props {
 export function Scroll(props: ScrollProps) {
   const scrollRef = createRef<HTMLDivElement>()
   const input = inject(Input)
+  const tableService = inject(TableService)
 
   const [showShadow, updateShowShadow] = useProduce({
     leftEnd: false,
@@ -45,7 +46,7 @@ export function Scroll(props: ScrollProps) {
       'active': props.isFocus(),
       // 'hide-selection': isSelectColumn()
     }]} onScroll={ev => {
-      props.onScroll((ev.target as HTMLDivElement).scrollLeft)
+      tableService.onScroll.next((ev.target as HTMLDivElement).scrollLeft)
     }}>{props.children}</div>
   })
 }
