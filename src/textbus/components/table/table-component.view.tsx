@@ -14,6 +14,7 @@ import { TopBar } from './components/top-bar'
 import { Scroll } from './components/scroll'
 import { LeftBar } from './components/left-bar'
 import { TableService } from './table.service'
+import { ResizeRow } from './components/resize-row'
 
 export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
@@ -53,7 +54,10 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
           scrollRef={scrollRef}
           onSelectColumn={is => isSelectColumn.set(is)}
           rows={rows}/>
-        <LeftBar tableRef={tableRef} isFocus={isFocus} component={props.component}/>
+        <LeftBar
+          tableRef={tableRef}
+          isFocus={isFocus}
+          component={props.component}/>
         <Scroll onScroll={leftDistance => {
           scrollLeft.set(leftDistance)
         }} isFocus={isFocus}>
@@ -92,6 +96,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               }}/>
           </div>
         </Scroll>
+        <ResizeRow tableRef={tableRef}/>
       </div>
     )
   }
