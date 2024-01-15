@@ -1,10 +1,11 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, onUpdated, Signal, StaticRef } from '@viewfly/core'
+import { createRef, inject, onUpdated, Signal, StaticRef } from '@viewfly/core'
 import { ExtractComponentInstanceType } from '@textbus/core'
 import { useProduce } from '@viewfly/hooks'
 
 import css from './left-bar.scoped.scss'
 import { tableComponent } from '../table.component'
+import { TableService } from '../table.service'
 
 export interface TopBarProps {
   tableRef: StaticRef<HTMLTableElement>
@@ -16,6 +17,9 @@ export function LeftBar(props: TopBarProps) {
   // let mouseDownFromToolbar = false
   const actionBarRef = createRef<HTMLTableElement>()
   const insertBarRef = createRef<HTMLTableElement>()
+  
+  const tableService = inject(TableService)
+  
   const [toolbarStyles, updateToolbarStyles] = useProduce({
     left: 0,
     top: 0,
@@ -48,7 +52,11 @@ export function LeftBar(props: TopBarProps) {
                       <td>
                         {
                           index === 0 && (
-                            <span class="insert-btn-wrap" style={{
+                            <span onMouseenter={() => {
+                              tableService.onInsertRowBefore.next(-1)
+                            }} onMouseleave={() => {
+                              tableService.onInsertRowBefore.next(null)
+                            }} class="insert-btn-wrap" style={{
                               top: '-14px'
                             }} onClick={() => {
                               props.component.extends.insertRow(0)
@@ -57,7 +65,11 @@ export function LeftBar(props: TopBarProps) {
                             </span>
                           )
                         }
-                        <span class="insert-btn-wrap" onClick={() => {
+                        <span onMouseenter={() => {
+                          tableService.onInsertRowBefore.next(index)
+                        }} onMouseleave={() => {
+                          tableService.onInsertRowBefore.next(null)
+                        }} class="insert-btn-wrap" onClick={() => {
                           props.component.extends.insertRow(index + 1)
                         }}>
                           <button class="insert-btn" type="button">+</button>
