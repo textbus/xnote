@@ -15,6 +15,7 @@ import { Scroll } from './components/scroll'
 import { LeftBar } from './components/left-bar'
 import { TableService } from './table.service'
 import { ResizeRow } from './components/resize-row'
+import { SelectionMask } from './components/selection-mask'
 
 export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
@@ -58,7 +59,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
           tableRef={tableRef}
           isFocus={isFocus}
           component={props.component}/>
-        <Scroll onScroll={leftDistance => {
+        <Scroll scrollRef={scrollRef} onScroll={leftDistance => {
           scrollLeft.set(leftDistance)
         }} isFocus={isFocus}>
           <div class="xnote-table-container">
@@ -94,6 +95,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               onActiveStateChange={isActive => {
                 isResizeColumn.set(isActive)
               }}/>
+            <SelectionMask component={props.component}/>
           </div>
         </Scroll>
         <ResizeRow tableRef={tableRef}/>

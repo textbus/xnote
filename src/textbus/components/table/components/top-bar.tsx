@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, inject, onMounted, Signal, StaticRef } from '@viewfly/core'
+import { createSignal, inject, onMounted, Signal, StaticRef, watch } from '@viewfly/core'
 import { Slot, Selection, fromEvent } from '@textbus/core'
 import { useProduce } from '@viewfly/hooks'
 
@@ -26,12 +26,24 @@ export function TopBar(props: TopBarProps) {
   const selection = inject(Selection)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
-  let isSelectColumn = false
+  watch(selectedColumnRange, value => {
+    const currentSelectedColumnRangeSorted = value
+      ? [value.startIndex, value.endIndex].sort((a, b) => a - b)
+      : null
+    if (currentSelectedColumnRangeSorted) {
+      tableService.onSelectColumns.next({
+        start: currentSelectedColumnRangeSorted[0],
+        end: currentSelectedColumnRangeSorted[1]
+      })
+    } else {
+      tableService.onSelectColumns.next(null)
+    }
+  })
+
   let maskActive = false
 
   function selectColumn(index: number, isMultiple: boolean) {
     editorService.hideInlineToolbar = true
-    isSelectColumn = true
     maskActive = true
     const currentSelectedColumnRange = selectedColumnRange()
     if (isMultiple && currentSelectedColumnRange) {
@@ -109,6 +121,7 @@ export function TopBar(props: TopBarProps) {
     const currentSelectedColumnRangeSorted = currentSelectedColumnRange
       ? [currentSelectedColumnRange.startIndex, currentSelectedColumnRange.endIndex].sort((a, b) => a - b)
       : null
+
     return (
       <div class="top-bar">
         <div class="xnote-table-toolbar">
@@ -195,17 +208,6 @@ export function TopBar(props: TopBarProps) {
               </tbody>
             </table>
           </div>
-          <div class={[
-            'mask',
-            {
-              active: selectedColumnRange()
-            }
-          ]} style={isSelectColumn ? {
-            width: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(currentSelectedColumnRangeSorted[0], currentSelectedColumnRangeSorted[1] + 1).reduce((a, b) => a + b, 0) + 'px' : '',
-            top: 0,
-            bottom: 0,
-            left: currentSelectedColumnRangeSorted ? state.layoutWidth.slice(0, currentSelectedColumnRangeSorted[0]).reduce((a, b) => a + b, 0) + 'px' : ''
-          } : null}/>
         </div>
       </div>
     )
