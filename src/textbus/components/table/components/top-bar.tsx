@@ -24,6 +24,7 @@ export interface TopBarProps {
 export function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const selection = inject(Selection)
+  const tableService = inject(TableService)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
   watch(selectedColumnRange, value => {
@@ -113,7 +114,15 @@ export function TopBar(props: TopBarProps) {
     return () => sub.unsubscribe()
   })
 
-  const tableService = inject(TableService)
+  const leftDistance = createSignal(0)
+
+  onMounted(() => {
+    const sub = tableService.onScroll.subscribe(n => {
+      leftDistance.set(n)
+    })
+
+    return () => sub.unsubscribe()
+  })
 
   return withScopedCSS(css, () => {
     const state = props.component.state
@@ -139,7 +148,9 @@ export function TopBar(props: TopBarProps) {
         </div>
         <div class="toolbar-wrapper">
           <div class="insert-bar">
-            <table>
+            <table style={{
+              transform: `translateX(${-leftDistance()}px)`
+            }}>
               <tbody>
               <tr>
                 {
@@ -179,7 +190,9 @@ export function TopBar(props: TopBarProps) {
             </table>
           </div>
           <div class={['action-bar', { active: props.isFocus() }]}>
-            <table>
+            <table style={{
+              transform: `translateX(${-leftDistance()}px)`
+            }}>
               <tbody>
               <tr>
                 {

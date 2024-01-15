@@ -82,7 +82,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
         return
       }
       const state = props.component.state
-      const left = state.layoutWidth.slice(0, n).reduce((a, b) => a + b, 0)
+      const left = state.layoutWidth.slice(0, n).reduce((a, b) => a + b, 0) - 0.5
 
       dragLineRef.current!.style.display = 'block'
       dragLineRef.current!.style.left = left + 'px'

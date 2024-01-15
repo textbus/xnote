@@ -7,4 +7,6 @@ export class TableService {
   onInsertColumnBefore = new Subject<number | null>()
   onSelectColumns = new Subject<{ start: number, end: number } | null>()
   onSelectRows = new Subject<{ start: number, end: number } | null>()
+
+  onScroll = new Subject<number>()
 }

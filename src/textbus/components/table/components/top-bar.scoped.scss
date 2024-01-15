@@ -33,6 +33,8 @@
     border-spacing: 0;
     border-collapse: collapse;
     table-layout: fixed;
+    position: relative;
+    z-index: 1;
 
     td {
       box-sizing: border-box;
@@ -44,7 +46,7 @@
     .insert-btn-wrap {
       width: 21px;
       height: 21px;
-      right: -11px;
+      right: -10px;
       position: absolute;
       top: 0;
       z-index: 1;
