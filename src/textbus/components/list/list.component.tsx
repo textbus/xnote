@@ -1,16 +1,14 @@
 import {
   Commander,
-  ComponentInitData,
-  ComponentInstance,
+  Component,
   ContentType,
+  ComponentStateLiteral,
   createVNode,
-  defineComponent, ExtractComponentInstanceType,
   onBreak,
   Selection,
   Slot,
   Textbus,
-  useContext,
-  useSelf
+  useContext, Registry,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
@@ -20,44 +18,38 @@ import './list.component.scss'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
+  slot: Slot
 }
 
-export const listComponent = defineComponent({
-  name: 'ListComponent',
-  type: ContentType.BlockComponent,
-  validate(textbus, data?: ComponentInitData<ListComponentState>) {
-    return {
-      slots: data?.slots || [new Slot<unknown>([
-        ContentType.InlineComponent,
-        ContentType.Text
-      ])],
-      state: {
-        type: data?.state?.type || 'OrderedList'
-      }
-    }
-  },
-  setup() {
+export class ListComponent extends Component<ListComponentState> {
+  static componentName = 'ListComponent'
+  static type = ContentType.BlockComponent
+
+  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<ListComponentState>) {
+    return new ListComponent(textbus, {
+      type: json.type,
+      slot: textbus.get(Registry).createSlot(json.slot)
+    })
+  }
+
+  override setup() {
     const textbus = useContext()
-    const self = useSelf<ExtractComponentInstanceType<typeof listComponent>>()
     const commander = useContext(Commander)
     const selection = useContext(Selection)
     onBreak(ev => {
-      const afterContentDelta = ev.target.cut(ev.data.index).toDelta()
-      const nextList = listComponent.createInstance(textbus, {
-        state: {
-          type: self.state.type
-        }
+      const slot = ev.target.cut(ev.data.index)
+      const nextList = new ListComponent(textbus, {
+        slot,
+        type: this.state.type
       })
-      const slot = nextList.slots.get(0)!
-      slot.insertDelta(afterContentDelta)
-      commander.insertAfter(nextList, self)
+      commander.insertAfter(nextList, this)
       selection.setPosition(slot, 0)
       ev.preventDefault()
     })
   }
-})
+}
 
-export function ListComponentView(props: ViewComponentProps<typeof listComponent>) {
+export function ListComponentView(props: ViewComponentProps<ListComponent>) {
   const adapter = inject(DomAdapter)
   return () => {
     const ListType = props.component.state.type === 'UnorderedList' ? 'ul' : 'ol'
@@ -66,7 +58,7 @@ export function ListComponentView(props: ViewComponentProps<typeof listComponent
         <li>
           <div></div>
           {
-            adapter.slotRender(props.component.slots.first, children => {
+            adapter.slotRender(props.component.state.slot, children => {
               return createVNode('div', {
                 class: 'xnote-list-content'
               }, children)
@@ -82,18 +74,14 @@ export const listComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'UL' || element.tagName === 'OL'
   },
-  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): ComponentInstance | Slot | void {
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
     const slot = slotParser(new Slot([
       ContentType.InlineComponent,
       ContentType.Text
     ]), element.querySelector('.xnote-list-content') || document.createElement('div'))
-    return listComponent.createInstance(textbus, {
-      slots: [
-        slot
-      ],
-      state: {
-        type: element.tagName === 'OL' ? 'OrderedList' : 'UnorderedList'
-      }
+    return new ListComponent(textbus, {
+      slot,
+      type: element.tagName === 'OL' ? 'OrderedList' : 'UnorderedList'
     })
   }
 }

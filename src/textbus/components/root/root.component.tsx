@@ -1,72 +1,74 @@
 import {
-  ComponentInstance,
+  Component,
   CompositionStartEventData,
+  ComponentStateLiteral,
   ContentType,
   createVNode,
-  defineComponent,
   Event,
   onBreak,
   onCompositionStart,
   onContentInsert,
-  onSlotRemove,
   Selection,
   Slot,
-  Subject, Textbus,
-  useContext,
-  useSelf,
+  Subject,
+  Textbus,
+  useContext, Registry,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { inject, createDynamicRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
-import { paragraphComponent } from '../paragraph/paragraph.component'
+import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { LeftToolbarService } from '../../../services/left-toolbar.service'
 
-export const rootComponent = defineComponent({
-  name: 'RootComponent',
-  type: ContentType.BlockComponent,
-  validate(_, initData) {
-    return {
-      slots: [
-        new Slot([
-          ContentType.Text
-        ]),
-        initData?.slots?.[0] || new Slot([
-          ContentType.BlockComponent,
-          ContentType.InlineComponent,
-          ContentType.Text
-        ])
-      ]
-    }
-  },
-  setup() {
+export interface RootComponentState {
+  heading: Slot
+  content: Slot
+}
+
+export class RootComponent extends Component<RootComponentState> {
+  static componentName = 'RootComponent'
+  static type = ContentType.BlockComponent
+  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<RootComponentState>) {
+    const heading = textbus.get(Registry).createSlot(json.heading)
+    const content = textbus.get(Registry).createSlot(json.content)
+    return new RootComponent(textbus, {
+      heading,
+      content
+    })
+  }
+  onCompositionStart = new Subject<Event<Slot, CompositionStartEventData>>()
+
+  override setup() {
     const textbus = useContext()
     const selection = textbus.get(Selection)
-    const slots = useSelf().slots
-
-    onSlotRemove(ev => {
-      ev.preventDefault()
-    })
 
     onBreak(ev => {
-      if (ev.target === slots.get(0)!) {
-        const afterContentDelta = ev.target.cut(ev.data.index).toDelta()
-        const p = paragraphComponent.createInstance(textbus)
-        const slot = p.slots.get(0)!
-        slot.insertDelta(afterContentDelta)
-        const body = slots.get(1)!
+      if (ev.target === this.state.heading) {
+        const afterContent = ev.target.cut(ev.data.index)
+        const p = new ParagraphComponent(textbus, {
+          slot: afterContent
+        })
+        const body = this.state.content
         body.retain(0)
         body.insert(p)
-        selection.setPosition(slot, 0)
+        selection.setPosition(afterContent, 0)
         ev.preventDefault()
       }
     })
 
     onContentInsert(ev => {
-      if (ev.target === slots.get(1) && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
-        const p = paragraphComponent.createInstance(textbus)
-        const slot = p.slots.get(0)!
+      // const heading = this.state.get('heading')
+      const content = this.state.content
+      if (ev.target === content && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
+        const slot = new Slot([
+          ContentType.Text,
+          ContentType.InlineComponent
+        ])
+        const p = new ParagraphComponent(textbus, {
+          slot
+        })
         slot.insert(ev.data.content)
         ev.target.insert(p)
         selection.setPosition(slot, slot.index)
@@ -74,24 +76,18 @@ export const rootComponent = defineComponent({
       }
     })
 
-    const compositionStartEvent = new Subject<Event<Slot, CompositionStartEventData>>()
     onCompositionStart(ev => {
-      compositionStartEvent.next(ev)
+      this.onCompositionStart.next(ev)
     })
-
-    return {
-      onCompositionStart: compositionStartEvent
-    }
   }
-})
+}
 
-export function RootView(props: ViewComponentProps<typeof rootComponent>) {
+export function RootView(props: ViewComponentProps<RootComponent>) {
   const adapter = inject(DomAdapter)
-  const { first, last } = props.component.slots
-
+  const { heading, content } = props.component.state
   const ref = createDynamicRef<HTMLDivElement>(node => {
-    const sub = props.component.extends.onCompositionStart.subscribe(ev => {
-      if (ev.target === props.component.slots.get(0)) {
+    const sub = props.component.onCompositionStart.subscribe(ev => {
+      if (ev.target === heading) {
         (node.children[0] as HTMLElement).dataset.placeholder = ''
       } else {
         (node.children[1] as HTMLElement).dataset.placeholder = ''
@@ -118,26 +114,26 @@ export function RootView(props: ViewComponentProps<typeof rootComponent>) {
   }
 
   return () => {
-    const { component, rootRef } = props
+    const { rootRef } = props
 
     return (
       <div class="xnote-root" ref={[rootRef, ref]}>
         {
-          adapter.slotRender(first!, children => {
+          adapter.slotRender(heading!, children => {
             return (createVNode('div', {
                 class: 'xnote-title',
-                'data-placeholder': first.isEmpty ? '请输入标题' : ''
+                'data-placeholder': heading.isEmpty ? '请输入标题' : ''
               }, children)
             )
           }, false)
         }
         {
-          adapter.slotRender(component.slots.last!, children => {
+          adapter.slotRender(content, children => {
             return (
               createVNode('div', {
                 class: 'xnote-content',
                 onMousemove: move,
-                'data-placeholder': last.isEmpty ? '请输入内容' : ''
+                'data-placeholder': content.isEmpty ? '请输入内容' : ''
               }, children)
             )
           }, false)
@@ -151,14 +147,15 @@ export const rootComponentLoader: ComponentLoader = {
   match(): boolean {
     return true
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): ComponentInstance | Slot {
+  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component | Slot {
     const slot = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,
       ContentType.Text
     ]), element)
-    return rootComponent.createInstance(injector, {
-      slots: [slot]
-    })
+    // return rootComponent.createInstance(injector, {
+    //   slots: [slot]
+    // })
+    return slot
   }
 }

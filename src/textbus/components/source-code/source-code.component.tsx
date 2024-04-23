@@ -1,20 +1,18 @@
 import {
+  ComponentStateLiteral,
   BehaviorSubject,
-  ComponentInitData,
-  ComponentInstance,
+  Component,
   ContentType,
   createVNode,
-  defineComponent,
-  ExtractComponentInstanceType,
   onBlur,
-  onBreak, onFocus,
+  onBreak,
+  onFocus,
   onPaste,
   Selection,
   Slot,
   Textbus,
   useContext,
-  useSelf,
-  VTextNode,
+  VTextNode, Registry,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
@@ -22,7 +20,7 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, onUnmounted, createSignal } from '@viewfly/core'
 
 import './source-code.component.scss'
-import { paragraphComponent } from '../paragraph/paragraph.component'
+import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
 import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
 import { Button } from '../../../components/button/button'
@@ -122,25 +120,42 @@ export interface SourceCodeComponentState {
   theme?: string
   lineNumber?: boolean
   autoBreak?: boolean
+  slots: Array<{ slot: Slot, emphasize: boolean }>
 }
 
 export interface CodeSlotState {
   emphasize: boolean
+  slot: Slot
 }
 
-export function createCodeSlot() {
-  return new Slot<CodeSlotState>([
-    ContentType.Text
-  ], {
+function createCodeSlot(): CodeSlotState {
+  return {
+    slot: new Slot([ContentType.Text]),
     emphasize: false
-  })
+  }
 }
 
-export const sourceCodeComponent = defineComponent({
-  type: ContentType.BlockComponent,
-  name: 'SourceCodeComponent',
-  separable: false,
-  zenCoding: {
+export class SourceCodeComponent extends Component<SourceCodeComponentState> {
+  static type = ContentType.BlockComponent
+  static componentName = 'SourceCodeComponent'
+
+  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<SourceCodeComponentState>) {
+    const registry = textbus.get(Registry)
+    return new SourceCodeComponent(textbus, {
+      slots: json.slots.map(item => {
+        return {
+          slot: registry.createSlot(item.slot),
+          emphasize: item.emphasize
+        }
+      }),
+      autoBreak: json.autoBreak,
+      lang: json.lang,
+      lineNumber: json.lineNumber,
+      theme: json.theme
+    })
+  }
+
+  static zenCoding = {
     key: 'Enter',
     match(c: string) {
       const matchString = languageList.map(i => i.label || i.value).concat('js', 'ts').join('|').replace(/\+/, '\\+')
@@ -187,78 +202,52 @@ export const sourceCodeComponent = defineComponent({
         slots: [createCodeSlot()]
       }
     }
-  },
-  validate(_, data: ComponentInitData<SourceCodeComponentState, CodeSlotState> = {
-    slots: [],
-    state: {
-      lang: '',
-      theme: ''
-    }
-  }) {
-    const state = {
-      lang: data.state!.lang,
-      theme: data.state?.theme || 'github',
-      lineNumber: data.state?.lineNumber !== false
-    }
+  }
 
-    return {
-      slots: data.slots?.length ? data.slots : [createCodeSlot()],
-      state
-    }
-  },
-  setup() {
-    const self = useSelf<ExtractComponentInstanceType<typeof sourceCodeComponent>>()
-    const slots = self.slots
+  focus = new BehaviorSubject<boolean>(false)
+
+  override setup() {
     const textbus = useContext()
 
     const selection = useContext(Selection)
 
     onBreak(ev => {
-      if (ev.target.isEmpty && ev.target === slots.last) {
-        const prevSlot = slots.get(slots.length - 2)
-        if (prevSlot?.isEmpty) {
-          const paragraph = paragraphComponent.createInstance(textbus)
+      const slots = this.state.slots
+      if (ev.target.isEmpty && ev.target === slots[slots.length - 1].slot) {
+        const prevSlot = slots[slots.length - 2]
+        if (prevSlot?.slot.isEmpty) {
+          const slot = new Slot([
+            ContentType.InlineComponent,
+            ContentType.Text
+          ])
+          const paragraph = new ParagraphComponent(textbus, {
+            slot
+          })
           const parentComponent = selection.commonAncestorComponent!
           const parentSlot = parentComponent.parent!
           const index = parentSlot.indexOf(parentComponent)
           parentSlot.retain(index + 1)
-          slots.remove(slots.last)
+          slots.pop()
           if (slots.length > 1) {
-            slots.remove(prevSlot)
+            const ref = slots.find(i => {
+              return i.slot === prevSlot?.slot
+            })
+            const index = slots.indexOf(ref!)
+            slots.splice(index, 1)
           }
           parentSlot.insert(paragraph)
-          selection.setPosition(paragraph.slots.get(0)!, 0)
+          selection.setPosition(slot, 0)
           ev.preventDefault()
           return
         }
       }
-      const nextSlot = ev.target.cutTo(createCodeSlot(), ev.data.index)
-      slots.insertAfter(nextSlot, ev.target as Slot)
+      const nextSlot = ev.target.cut(ev.data.index)
+      const ref = slots.find(i => i.slot === ev.target)
+      const index = slots.indexOf(ref!)
+      slots.splice(index + 1, 0, { slot: nextSlot, emphasize: ref?.emphasize || false })
       selection.setPosition(nextSlot, 0)
       ev.preventDefault()
     })
-
-    function emphasize() {
-      const { startSlot, endSlot } = selection
-      let startIndex = slots.indexOf(startSlot!)
-      const endIndex = slots.indexOf(endSlot!) + 1
-      for (; startIndex < endIndex; startIndex++) {
-        slots.get(startIndex)?.updateState(draft => {
-          draft.emphasize = true
-        })
-      }
-    }
-
-    function cancelEmphasize() {
-      const { startSlot, endSlot } = selection
-      let startIndex = slots.indexOf(startSlot!)
-      const endIndex = slots.indexOf(endSlot!) + 1
-      for (; startIndex < endIndex; startIndex++) {
-        slots.get(startIndex)?.updateState(draft => {
-          draft.emphasize = false
-        })
-      }
-    }
 
     onPaste(ev => {
       const codeList: string[] = []
@@ -304,45 +293,60 @@ export const sourceCodeComponent = defineComponent({
       if (firstCode) {
         target.insert(firstCode)
       }
-      const index = slots.indexOf(target)
+      const slots = this.state.slots
+      const index = slots.findIndex(i => i.slot === target)
       if (codeList.length) {
-        slots.retain(index + 1)
         const slotList = codeList.map(i => {
-          const slot = createCodeSlot()
-          slot.insert(i)
-          return slot
+          const item = createCodeSlot()
+          item.slot.insert(i)
+          return item
         })
+        slots.splice(index + 1, 0, ...slotList)
         const last = slotList[slotList.length - 1]
-        slots.insert(...slotList)
-        selection.setPosition(last, last.length)
+        selection.setPosition(last.slot, last.slot.length)
       } else {
         selection.setPosition(target, target.index)
       }
       ev.preventDefault()
     })
 
-    const focus = new BehaviorSubject<boolean>(false)
-
     onFocus(() => {
-      focus.next(true)
+      this.focus.next(true)
     })
 
     onBlur(() => {
-      focus.next(false)
+      this.focus.next(false)
     })
 
-    return {
-      emphasize,
-      cancelEmphasize,
-      focus
+  }
+
+  cancelEmphasize = () => {
+    const selection = this.textbus.get(Selection)
+    const slots = this.state.slots
+    const { startSlot, endSlot } = selection
+    let startIndex = slots.findIndex(i => i.slot === startSlot!)
+    const endIndex = slots.findIndex(i => i.slot === endSlot!) + 1
+    for (; startIndex < endIndex; startIndex++) {
+      slots[startIndex].emphasize = false
     }
   }
-})
 
-export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeComponent>) {
+  emphasize = () => {
+    const selection = this.textbus.get(Selection)
+    const slots = this.state.slots
+    const { startSlot, endSlot } = selection
+    let startIndex = slots.findIndex(i => i.slot === startSlot!)
+    const endIndex = slots.findIndex(i => i.slot === endSlot!) + 1
+    for (; startIndex < endIndex; startIndex++) {
+      slots[startIndex].emphasize = true
+    }
+  }
+}
+
+export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
   const adapter = inject(DomAdapter)
   const isFocus = createSignal(false)
-  const subscription = props.component.extends.focus.subscribe(b => {
+  const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
   })
 
@@ -350,29 +354,23 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
     subscription.unsubscribe()
   })
 
+  const state = props.component.state
+
   function changeLang(lang: string) {
-    props.component.updateState(draft => {
-      draft.lang = lang
-    })
+    state.lang = lang
   }
 
   function changeTheme(theme: string) {
-    props.component.updateState(draft => {
-      draft.theme = theme
-    })
+    state.theme = theme
   }
 
   function setting(v: string) {
     switch (v) {
       case 'lineNumber':
-        props.component.updateState(draft => {
-          draft.lineNumber = !props.component.state.lineNumber
-        })
+        state.lineNumber = !state.lineNumber
         break
       case 'autoBreak':
-        props.component.updateState(draft => {
-          draft.autoBreak = !props.component.state.autoBreak
-        })
+        state.autoBreak = !state.autoBreak
         break
     }
   }
@@ -380,13 +378,12 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
   const input = inject(Input)
 
   function updateCaret() {
-    if (props.component.extends.focus) {
-      input.caret.refresh(false)
-    }
+    input.caret.refresh(false)
   }
 
   return () => {
-    const { state, slots } = props.component
+    const state = props.component.state
+    const slots = state.slots
 
     let lang = ''
     languageList.forEach(i => {
@@ -394,11 +391,12 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
         lang = i.label
       }
     })
-    const blockHighlight = slots.toArray().some(i => i.state?.emphasize === true)
+    const blockHighlight = slots.some(i => i.emphasize)
     const results: DocumentFragment[] = []
 
     if (state.lang) {
-      const str = slots.toArray().map(slot => {
+      const str = slots.map(item => {
+        const slot = item.slot
         return (slot.isEmpty ? '' : slot.toString()) + '\n'
       }).join('')
       const highlightResult = highlightjs.highlight(state.lang, str)
@@ -457,7 +455,7 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
       }}
            lang={state.lang}
            data-auto-break={state.autoBreak}
-           data-theme={state!.theme || null}
+           data-theme={state.theme || null}
            data-line-number={state.lineNumber}
       >
         <ComponentToolbar visible={isFocus()}>
@@ -495,10 +493,10 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
             </Dropdown>
           </ToolbarItem>
           <ToolbarItem>
-            <Button onClick={props.component.extends.emphasize}>强调</Button>
+            <Button onClick={props.component.emphasize}>强调</Button>
           </ToolbarItem>
           <ToolbarItem>
-            <Button onClick={props.component.extends.cancelEmphasize}>取消强调</Button>
+            <Button onClick={props.component.cancelEmphasize}>取消强调</Button>
           </ToolbarItem>
         </ComponentToolbar>
         <div class={[
@@ -519,15 +517,15 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
             'margin-left': -Math.max(String(slots.length).length, 2.5) + 'em'
           }}>
             {
-              slots.toArray().map(item => {
-                return adapter.slotRender(item, (children) => {
+              slots.map(item => {
+                return adapter.slotRender(item.slot, (children) => {
                   if (state.lang) {
                     const nodes = Array.from(results.shift()!.childNodes)
-                    children = nodesToVNodes(item, nodes, 0)
+                    children = nodesToVNodes(item.slot, nodes, 0)
                     if (!children.length) {
                       const br = createVNode('br')
                       br.location = {
-                        slot: item,
+                        slot: item.slot,
                         startIndex: 0,
                         endIndex: 1
                       }
@@ -535,7 +533,7 @@ export function SourceCodeView(props: ViewComponentProps<typeof sourceCodeCompon
                     }
                   }
                   return createVNode('div', {
-                    class: 'xnote-source-code-line' + (item.state?.emphasize ? ' xnote-source-code-line-emphasize' : '')
+                    class: 'xnote-source-code-line' + (item.emphasize ? ' xnote-source-code-line-emphasize' : '')
                   }, [
                     createVNode('div', { class: 'xnote-source-code-line-content' }, children)
                   ])
@@ -554,36 +552,33 @@ export const sourceCodeComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'PRE'
   },
-  read(el: HTMLElement, textbus: Textbus): ComponentInstance {
+  read(el: HTMLElement, textbus: Textbus) {
     const lines = el.querySelectorAll('.xnote-source-code-line')
-    let slots: Slot[] = []
+    let slots: CodeSlotState[] = []
     if (lines.length) {
       slots = Array.from(lines).map(i => {
         const code = (i as HTMLElement).innerText.replace(/[\s\n]+$/, '')
-        const slot = createCodeSlot()
-        slot.updateState(draft => {
-          draft.emphasize = i.classList.contains('xnote-source-code-line-emphasize')
-        })
+        const item = createCodeSlot()
+        const slot = item.slot
+        item.emphasize = i.classList.contains('xnote-source-code-line-emphasize')
         slot.insert(code)
-        return slot
+        return item
       })
     } else {
       el.querySelectorAll('br').forEach(br => {
         br.parentNode!.replaceChild(document.createTextNode('\n'), br)
       })
       slots = el.innerText.split('\n').map(code => {
-        const slot = createCodeSlot()
-        slot.insert(code)
-        return slot
+        const item = createCodeSlot()
+        item.slot.insert(code)
+        return item
       })
     }
 
-    return sourceCodeComponent.createInstance(textbus, {
-      state: {
-        lang: el.getAttribute('lang') || '',
-        theme: el.getAttribute('theme') || '',
-        lineNumber: !el.classList.contains('xnote-source-code-hide-line-number')
-      },
+    return new SourceCodeComponent(textbus, {
+      lang: el.getAttribute('lang') || '',
+      theme: el.getAttribute('theme') || '',
+      lineNumber: !el.classList.contains('xnote-source-code-hide-line-number'),
       slots
     })
   },

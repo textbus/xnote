@@ -16,15 +16,15 @@ import { DomAdapter } from '@textbus/platform-browser'
 import css from './left-toolbar.scoped.scss'
 import { RefreshService } from '../../services/refresh.service'
 import { LeftToolbarService } from '../../services/left-toolbar.service'
-import { paragraphComponent } from '../../textbus/components/paragraph/paragraph.component'
-import { sourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
-import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
-import { todolistComponent } from '../../textbus/components/todolist/todolist.component'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { useActiveBlock } from '../hooks/active-block'
 import { Divider } from '../../components/divider/divider'
 import { useBlockTransform } from '../hooks/block-transform'
+import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
+import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
+import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
+import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
 
 export function LeftToolbar() {
   provide(RefreshService)
@@ -147,10 +147,10 @@ export function LeftToolbar() {
     if (slot) {
       const component = slot.parent!
       const types: [boolean, JSXNode][] = [
-        [component.name === paragraphComponent.name, <span class="xnote-icon-pilcrow"/>],
-        [component.name === sourceCodeComponent.name, <span class="xnote-icon-source-code"/>],
-        [component.name === blockquoteComponent.name, <span class="xnote-icon-quotes-right"/>],
-        [component.name === todolistComponent.name, <span class="xnote-icon-checkbox-checked"/>],
+        [component.name === ParagraphComponent.componentName, <span class="xnote-icon-pilcrow"/>],
+        [component.name === SourceCodeComponent.componentName, <span class="xnote-icon-source-code"/>],
+        [component.name === BlockquoteComponent.componentName, <span class="xnote-icon-quotes-right"/>],
+        [component.name === TodolistComponent.componentName, <span class="xnote-icon-checkbox-checked"/>],
       ]
       const heading = slot.getAttribute(headingAttr)
       if (heading) {

@@ -1,4 +1,4 @@
-import { ComponentInstance, createVNode, FormatHostBindingRender, Formatter, VElement, VTextNode } from '@textbus/core'
+import { Component, createVNode, FormatHostBindingRender, Formatter, VElement, VTextNode } from '@textbus/core'
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export interface LinkFormatData {
@@ -9,7 +9,7 @@ export interface LinkFormatData {
 export const linkFormatter = new Formatter<LinkFormatData>('link', {
   priority: -1,
   inheritable: false,
-  render(children: Array<VElement | VTextNode | ComponentInstance>, formatValue: LinkFormatData): VElement | FormatHostBindingRender {
+  render(children: Array<VElement | VTextNode | Component>, formatValue: LinkFormatData): VElement | FormatHostBindingRender {
     return createVNode('a', {
       href: formatValue.href,
       target: formatValue.target

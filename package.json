@@ -9,9 +9,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.23",
-    "@textbus/core": "^4.0.0-alpha.23",
-    "@textbus/platform-browser": "^4.0.0-alpha.23",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.29",
+    "@textbus/collaborate": "4.0.0-alpha.29",
+    "@textbus/core": "^4.0.0-alpha.29",
+    "@textbus/platform-browser": "^4.0.0-alpha.29",
     "@viewfly/core": "^0.6.0",
     "@viewfly/hooks": "^0.6.0",
     "@viewfly/platform-browser": "^0.6.0",

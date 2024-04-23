@@ -1,10 +1,10 @@
 import {
-  ComponentInstance,
+  Component,
   ContentType,
   createVNode,
-  defineComponent,
   Slot,
-  Textbus,
+  ComponentStateLiteral,
+  Textbus, Registry,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -12,10 +12,14 @@ import { inject } from '@viewfly/core'
 
 import './blockquote.component.scss'
 
-export const blockquoteComponent = defineComponent({
-  type: ContentType.BlockComponent,
-  name: 'BlockquoteComponent',
-  zenCoding: {
+export interface BlockquoteComponentState {
+  slot: Slot
+}
+
+export class BlockquoteComponent extends Component<BlockquoteComponentState> {
+  static type = ContentType.BlockComponent
+  static componentName = 'BlockquoteComponent'
+  static zenCoding = {
     key: ' ',
     match: /^>$/,
     generateInitData() {
@@ -27,22 +31,29 @@ export const blockquoteComponent = defineComponent({
         ])]
       }
     }
-  },
-  validate(_, data) {
-    return {
-      slots: data?.slots || [new Slot([
-        ContentType.Text,
-        ContentType.InlineComponent,
-        ContentType.BlockComponent
-      ])]
-    }
-  },
-})
+  }
+  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<BlockquoteComponentState>) {
+    const slot = textbus.get(Registry).createSlot(json.slot)
+    return new BlockquoteComponent(textbus, {
+      slot
+    })
+  }
 
-export function BlockquoteView(props: ViewComponentProps<typeof blockquoteComponent>) {
+  constructor(textbus: Textbus, state: BlockquoteComponentState = {
+    slot: new Slot([
+      ContentType.Text,
+      ContentType.InlineComponent,
+      ContentType.BlockComponent
+    ])
+  }) {
+    super(textbus, state)
+  }
+}
+
+export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
   const adapter = inject(DomAdapter)
   return () => {
-    const slot = props.component.slots.first!
+    const slot = props.component.state.slot
     return adapter.slotRender(slot, children => {
       return createVNode('div', {
         class: 'xnote-blockquote',
@@ -56,14 +67,14 @@ export const blockquoteComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'BLOCKQUOTE'
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): ComponentInstance {
+  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component {
     const slot = slotParser(new Slot([
       ContentType.Text,
       ContentType.BlockComponent,
       ContentType.InlineComponent
     ]), element)
-    return blockquoteComponent.createInstance(injector, {
-      slots: [slot]
+    return new BlockquoteComponent(injector, {
+      slot
     })
   },
 }

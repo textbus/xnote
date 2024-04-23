@@ -1,6 +1,5 @@
 import {
-  Commander,
-  ComponentInstance,
+  Commander, Component,
   Controller,
   createVNode,
   FormatHostBindingRender,
@@ -13,7 +12,7 @@ import {
 import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const boldFormatter = new Formatter<boolean>('bold', {
-  render(children: Array<VElement | VTextNode | ComponentInstance>): VElement | FormatHostBindingRender {
+  render(children: Array<VElement | VTextNode | Component>): VElement | FormatHostBindingRender {
     return createVNode('strong', null, children)
   }
 })

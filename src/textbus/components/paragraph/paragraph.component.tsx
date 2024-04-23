@@ -1,14 +1,14 @@
 import {
   Commander,
-  ComponentInstance,
+  Component,
+  ComponentStateLiteral,
   ContentType,
   createVNode,
-  defineComponent,
-  onBreak,
+  onBreak, Registry,
   Selection,
-  Slot, Textbus,
+  Slot,
+  Textbus,
   useContext,
-  useSelf,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -16,43 +16,44 @@ import { inject } from '@viewfly/core'
 
 import './paragraph.component.scss'
 
-export const paragraphComponent = defineComponent({
-  name: 'ParagraphComponent',
-  type: ContentType.BlockComponent,
-  validate(_, initData) {
-    return {
-      slots: [
-        initData?.slots?.[0] || new Slot([
-          ContentType.Text,
-          ContentType.InlineComponent
-        ])
-      ]
-    }
-  },
-  setup() {
-    const self = useSelf()
+export interface ParagraphComponentState {
+  slot: Slot
+}
+
+export class ParagraphComponent extends Component<ParagraphComponentState> {
+  static componentName = 'ParagraphComponent'
+  static type = ContentType.BlockComponent
+
+  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<ParagraphComponentState>) {
+    const slot = textbus.get(Registry).createSlot(json.slot)
+    return new ParagraphComponent(textbus, {
+      slot
+    })
+  }
+
+  override setup() {
     const injector = useContext()
     const commander = injector.get(Commander)
     const selection = injector.get(Selection)
 
     onBreak(ev => {
-      const afterContentDelta = ev.target.cut(ev.data.index).toDelta()
-      const nextParagraph = paragraphComponent.createInstance(injector)
-      const slot = nextParagraph.slots.get(0)!
-      slot.insertDelta(afterContentDelta)
-      commander.insertAfter(nextParagraph, self)
-      selection.setPosition(slot, 0)
+      const afterSlot = ev.target.cut(ev.data.index)
+      const nextParagraph = new ParagraphComponent(injector, {
+        slot: afterSlot
+      })
+      commander.insertAfter(nextParagraph, this)
+      selection.setPosition(afterSlot, 0)
       ev.preventDefault()
     })
   }
-})
+}
 
-export function ParagraphView(props: ViewComponentProps<typeof paragraphComponent>) {
+export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
   const adapter = inject(DomAdapter)
   return () => {
-    const slot = props.component.slots.first!
+    const slot = props.component.state.slot
     return (
-      <div class="xnote-paragraph" ref={props.rootRef} data-component={paragraphComponent.name}>
+      <div class="xnote-paragraph" ref={props.rootRef} data-component={ParagraphComponent.name}>
         {
           adapter.slotRender(slot, children => {
             return (
@@ -67,16 +68,16 @@ export function ParagraphView(props: ViewComponentProps<typeof paragraphComponen
 
 export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.dataset.compoment === paragraphComponent.name || element.tagName === 'P'
+    return element.dataset.compoment === ParagraphComponent.name || element.tagName === 'P'
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): ComponentInstance | Slot {
+  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component | Slot {
     const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent,
       ContentType.BlockComponent
     ]), element.tagName === 'P' ? element : element.children[0] as HTMLElement).toDelta()
 
-    const results: ComponentInstance[] = []
+    const results: Component[] = []
 
     let slot: Slot | null = null
     for (const item of delta) {
@@ -89,8 +90,8 @@ export const paragraphComponentLoader: ComponentLoader = {
           delta.attributes.forEach((value, key) => {
             slot!.setAttribute(key, value)
           })
-          results.push(paragraphComponent.createInstance(injector, {
-            slots: [slot]
+          results.push(new ParagraphComponent(injector, {
+            slot
           }))
         }
         slot.insert(item.insert, item.formats)

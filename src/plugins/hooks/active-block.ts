@@ -3,12 +3,12 @@ import { Query, QueryStateType } from '@textbus/core'
 import { inject, InjectFlags, onUnmounted, THROW_IF_NOT_FOUND } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
-import { paragraphComponent } from '../../textbus/components/paragraph/paragraph.component'
-import { todolistComponent } from '../../textbus/components/todolist/todolist.component'
-import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
-import { sourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { RefreshService } from '../../services/refresh.service'
-import { tableComponent } from '../../textbus/components/table/table.component'
+import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
+import { TableComponent } from '../../textbus/components/table/table.component'
+import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
+import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
+import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 
 export function useActiveBlock() {
   const query = inject(Query)
@@ -31,16 +31,16 @@ export function useActiveBlock() {
   function updateCheckStates() {
     setCheckStates(draft => {
       const heading = query.queryAttribute(headingAttr)
-      draft.paragraph = query.queryComponent(paragraphComponent).state === QueryStateType.Enabled
+      draft.paragraph = query.queryComponent(ParagraphComponent).state === QueryStateType.Enabled
       draft.h1 = draft.h2 = draft.h3 = draft.h4 = draft.h5 = draft.h6 = false
       if (heading.state === QueryStateType.Enabled) {
         draft[heading.value as any] = true
         draft.paragraph = false
       }
-      draft.table = query.queryComponent(tableComponent).state === QueryStateType.Enabled
-      draft.todolist = query.queryComponent(todolistComponent).state === QueryStateType.Enabled
-      draft.blockquote = query.queryComponent(blockquoteComponent).state === QueryStateType.Enabled
-      draft.sourceCode = query.queryComponent(sourceCodeComponent).state === QueryStateType.Enabled
+      draft.table = query.queryComponent(TableComponent).state === QueryStateType.Enabled
+      draft.todolist = query.queryComponent(TodolistComponent).state === QueryStateType.Enabled
+      draft.blockquote = query.queryComponent(BlockquoteComponent).state === QueryStateType.Enabled
+      draft.sourceCode = query.queryComponent(SourceCodeComponent).state === QueryStateType.Enabled
     })
   }
 

@@ -2,12 +2,12 @@ import { Commander, ContentType, Query, QueryStateType, Selection, Slot, Textbus
 import { inject } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
-import { paragraphComponent } from '../../textbus/components/paragraph/paragraph.component'
-import { todolistComponent } from '../../textbus/components/todolist/todolist.component'
-import { blockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
-import { sourceCodeComponent, SourceCodeComponentState } from '../../textbus/components/source-code/source-code.component'
-import { tableComponent } from '../../textbus/components/table/table.component'
-import { highlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
+import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
+import { TableComponent } from '../../textbus/components/table/table.component'
+import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
+import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
+import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
+import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
 
 export function useBlockTransform() {
   const commander = inject(Commander)
@@ -27,20 +27,25 @@ export function useBlockTransform() {
       case 'paragraph':
         commander.unApplyAttribute(headingAttr)
         commander.transform({
-          target: paragraphComponent,
+          targetType: ParagraphComponent.type,
           multipleSlot: false,
           slotFactory() {
             return new Slot([
               ContentType.InlineComponent,
               ContentType.Text
             ])
+          },
+          stateFactory(slot: Slot) {
+            return new ParagraphComponent(textbus, {
+              slot
+            })
           }
         })
         break
       case 'table': {
-        const table = tableComponent.createInstance(textbus)
+        const table = new TableComponent(textbus)
         commander.insert(table)
-        if (selection.commonAncestorSlot?.isEmpty && selection.commonAncestorComponent?.name === paragraphComponent.name) {
+        if (selection.commonAncestorSlot?.isEmpty && selection.commonAncestorComponent?.name === ParagraphComponent.componentName) {
           commander.replaceComponent(selection.commonAncestorComponent, table)
         } else {
           commander.insert(table)
@@ -50,7 +55,7 @@ export function useBlockTransform() {
       case 'todolist':
         commander.unApplyAttribute(headingAttr)
         commander.transform({
-          target: todolistComponent,
+          targetType: TodolistComponent.type,
           multipleSlot: false,
           slotFactory() {
             return new Slot([
@@ -58,15 +63,16 @@ export function useBlockTransform() {
               ContentType.Text
             ])
           },
-          stateFactory() {
-            return {
-              checked: false
-            }
+          stateFactory(slot) {
+            return new TodolistComponent(textbus, {
+              checked: false,
+              slot
+            })
           }
         })
         break
       case 'blockquote': {
-        const state = query.queryComponent(blockquoteComponent)
+        const state = query.queryComponent(BlockquoteComponent)
         if (state.state === QueryStateType.Enabled) {
           const current = state.value!
           const parent = current.parent!
@@ -77,12 +83,12 @@ export function useBlockTransform() {
 
           commander.removeComponent(current)
 
-          current.slots.get(0)!.sliceContent().forEach(i => {
+          current.__slots__.get(0)!.sliceContent().forEach(i => {
             parent.insert(i)
           })
         } else {
-          const block = blockquoteComponent.createInstance(textbus)
-          const slot = block.slots.get(0)!
+          const block = new BlockquoteComponent(textbus)
+          const slot = block.state.slot
           if (selection.startSlot === selection.endSlot) {
             const parentComponent = selection.startSlot!.parent!
             const parentSlot = parentComponent.parent!
@@ -103,40 +109,51 @@ export function useBlockTransform() {
       }
         break
       case 'sourceCode': {
-        const state = query.queryComponent(sourceCodeComponent)
+        const state = query.queryComponent(SourceCodeComponent)
         if (state.state === QueryStateType.Enabled) {
           commander.transform({
-            target: paragraphComponent,
+            targetType: ParagraphComponent.type,
             multipleSlot: false,
             slotFactory() {
               return new Slot([
                 ContentType.InlineComponent,
                 ContentType.Text
               ])
+            },
+            stateFactory(slot: Slot) {
+              return new ParagraphComponent(textbus, {
+                slot
+              })
             }
           })
         } else {
           commander.transform({
-            target: sourceCodeComponent,
+            targetType: SourceCodeComponent.type,
             multipleSlot: true,
             slotFactory() {
               return new Slot([
                 ContentType.Text
               ])
             },
-            stateFactory(): SourceCodeComponentState {
-              return {
+            stateFactory(slots: Slot[]) {
+              return new SourceCodeComponent(textbus, {
                 lang: '',
-                theme: '',
-                lineNumber: true
-              }
+                lineNumber: true,
+                autoBreak: true,
+                slots: slots.map(slot => {
+                  return {
+                    slot,
+                    emphasize: false
+                  }
+                })
+              })
             }
           })
         }
       }
         break
       case 'highlightBox': {
-        const state = query.queryComponent(highlightBoxComponent)
+        const state = query.queryComponent(HighlightBoxComponent)
         if (state.state === QueryStateType.Enabled) {
           const current = state.value!
           const parent = current.parent!
@@ -147,12 +164,12 @@ export function useBlockTransform() {
 
           commander.removeComponent(current)
 
-          current.slots.get(0)!.sliceContent().forEach(i => {
+          current.__slots__.get(0)!.sliceContent().forEach(i => {
             parent.insert(i)
           })
         } else {
-          const block = highlightBoxComponent.createInstance(textbus)
-          const slot = block.slots.get(0)!
+          const block = new HighlightBoxComponent(textbus)
+          const slot = block.state.slot
           if (selection.startSlot === selection.endSlot) {
             const parentComponent = selection.startSlot!.parent!
             const parentSlot = parentComponent.parent!

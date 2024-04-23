@@ -1,6 +1,7 @@
 import {
-  ComponentInstance,
-  createVNode, fromEvent, Selection,
+  createVNode,
+  fromEvent,
+  Selection,
   Slot,
   Textbus
 } from '@textbus/core'
@@ -12,16 +13,15 @@ import { useProduce } from '@viewfly/hooks'
 import './table.component.scss'
 import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
 import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
-import { TableCellConfig, tableComponent } from './table.component'
+import { TableComponent } from './table.component'
 import { EditorService } from '../../../services/editor.service'
 
-
-export function TableComponentView(props: ViewComponentProps<typeof tableComponent>) {
+export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
   const selection = inject(Selection)
   const editorService = inject(EditorService)
   const isFocus = createSignal(false)
-  const subscription = props.component.extends.focus.subscribe(b => {
+  const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
   })
 
@@ -48,7 +48,8 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
       const leftDistance = ev.clientX - tableRect.x
       const state = props.component.state
       let x = 0
-      for (let i = 0; i < state.layoutWidth.length; i++) {
+      const layoutWidth = state.layoutWidth
+      for (let i = 0; i < layoutWidth.length; i++) {
         const n = leftDistance - x
         if (i > 0 && Math.abs(n) < 5) {
           Object.assign(dragLineRef.current!.style, {
@@ -60,7 +61,7 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
         }
         activeCol = null
         dragLineRef.current!.style.display = 'none'
-        x += state.layoutWidth[i]
+        x += layoutWidth[i]
       }
     }).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
       isDrag = true
@@ -79,17 +80,14 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
         const distanceX = moveEvent.clientX - x
 
         dragLineRef.current!.style.left = Math.max(initLeft + distanceX, minLeft) + 'px'
-        props.component.updateState(draft => {
-          draft.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
-        }, false)
+        layoutWidth.splice(activeCol! - 1, 1, Math.max(initWidth + distanceX, minWidth))
+
       }).add(fromEvent<MouseEvent>(document, 'mouseup').subscribe(upEvent => {
         isDrag = false
         wrapperRef.current!.style.userSelect = 'auto'
         moveEvent.unsubscribe()
         const distanceX = upEvent.clientX - x
-        props.component.updateState(draft => {
-          draft.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
-        })
+        layoutWidth.splice(activeCol! - 1, 1, Math.max(initWidth + distanceX, minWidth))
       }))
     }))
 
@@ -161,9 +159,9 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
     const [startIndex, endIndex] = [range.startIndex, range.endIndex].sort((a, b) => a - b)
 
     const selectedSlots: Slot[] = []
-    const rows = toRows()
+    const rows = props.component.state.rows
     rows.forEach(row => {
-      selectedSlots.push(...row.slice(startIndex, endIndex + 1))
+      selectedSlots.push(...row.cells.slice(startIndex, endIndex + 1).map(i => i.slot))
     })
     selection.setSelectedRanges(selectedSlots.map(i => {
       return {
@@ -193,23 +191,12 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
 
   // 表格框选 end
 
-  function toRows() {
-    const { slots, state } = props.component
-    const rows: Slot<TableCellConfig>[][] = []
-
-    for (let i = 0; i < state.rowCount; i++) {
-      rows.push(slots.slice(i * state.colCount, (i + 1) * state.colCount))
-    }
-
-    return rows
-  }
-
   return () => {
     const state = props.component.state
-    const rows = toRows()
+    const rows = state.rows
 
     Promise.resolve().then(() => {
-      props.component.extends.afterContentCheck()
+      props.component.afterContentCheck()
     })
 
     const currentSelectedColumnRange = selectedColumnRange()
@@ -229,8 +216,8 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
             <table ref={vBarRef} class="xnote-table-bar">
               <tbody>
               {
-                state.layoutHeight.map(i => {
-                  return <tr style={{ height: i + 'px' }}>
+                state.rows.map(i => {
+                  return <tr style={{ height: i.height + 'px' }}>
                     <td>
                       <div class="xnote-table-delete-btn-wrap">
                         <button class="xnote-table-delete-btn"><span class="xnote-icon-bin"></span></button>
@@ -283,12 +270,12 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
                 </colgroup>
                 <tbody>
                 {
-                  rows.map((row, i) => {
+                  rows.map((row) => {
                     return (
-                      <tr style={{ height: state.layoutHeight[i] + 'px' }}>
+                      <tr style={{ height: row.height + 'px' }}>
                         {
-                          row.map(cell => {
-                            return adapter.slotRender(cell, children => {
+                          row.cells.map(cell => {
+                            return adapter.slotRender(cell.slot, children => {
                               return createVNode('td', null, children)
                             }, false)
                           })
@@ -321,9 +308,9 @@ export function TableComponentView(props: ViewComponentProps<typeof tableCompone
 
 export const tableComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.dataset.component === tableComponent.name
+    return element.dataset.component === TableComponent.componentName
   },
-  read(element: HTMLElement, textbus: Textbus): ComponentInstance | Slot | void {
-    return tableComponent.createInstance(textbus)
+  read(element: HTMLElement, textbus: Textbus): TableComponent | Slot | void {
+    return new TableComponent(textbus)
   }
 }

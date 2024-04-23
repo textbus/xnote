@@ -1,33 +1,33 @@
 import { Adapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
 import { BrowserModule, Parser } from '@textbus/platform-browser'
-import { ComponentInstance, Textbus } from '@textbus/core'
+import { Component, ContentType, Slot, Textbus } from '@textbus/core'
 
 import {
   BlockquoteView,
-  blockquoteComponent,
   blockquoteComponentLoader,
   HighlightBoxView,
-  highlightBoxComponent,
   highlightBoxComponentLoader,
-  listComponent,
   ListComponentView,
   ParagraphView,
-  paragraphComponent,
   paragraphComponentLoader,
   RootView,
-  rootComponent,
   rootComponentLoader,
   SourceCodeView,
-  sourceCodeComponent,
   sourceCodeComponentLoader,
-  tableComponent,
   tableComponentLoader,
   TableComponentView,
   TodolistView,
-  todolistComponent,
   todolistComponentLoader,
-  listComponentLoader
+  listComponentLoader,
+  ParagraphComponent,
+  RootComponent,
+  BlockquoteComponent,
+  TodolistComponent,
+  SourceCodeComponent,
+  TableComponent,
+  HighlightBoxComponent,
+  ListComponent
 } from './textbus/components/_api'
 import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
@@ -70,14 +70,14 @@ export interface XNoteConfig {
 
 export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
   const adapter = new Adapter({
-    [paragraphComponent.name]: ParagraphView,
-    [rootComponent.name]: RootView,
-    [blockquoteComponent.name]: BlockquoteView,
-    [todolistComponent.name]: TodolistView,
-    [sourceCodeComponent.name]: SourceCodeView,
-    [tableComponent.name]: TableComponentView,
-    [highlightBoxComponent.name]: HighlightBoxView,
-    [listComponent.name]: ListComponentView
+    [ParagraphComponent.componentName]: ParagraphView,
+    [RootComponent.componentName]: RootView,
+    [BlockquoteComponent.componentName]: BlockquoteView,
+    [TodolistComponent.componentName]: TodolistView,
+    [SourceCodeComponent.componentName]: SourceCodeView,
+    [TableComponent.componentName]: TableComponentView,
+    [HighlightBoxComponent.componentName]: HighlightBoxView,
+    [ListComponent.componentName]: ListComponentView
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus
@@ -124,11 +124,14 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       browserModule
     ],
     components: [
-      blockquoteComponent,
-      paragraphComponent,
-      sourceCodeComponent,
-      todolistComponent,
-      tableComponent
+      ParagraphComponent,
+      RootComponent,
+      BlockquoteComponent,
+      TodolistComponent,
+      SourceCodeComponent,
+      TableComponent,
+      HighlightBoxComponent,
+      ListComponent
     ],
     formatters: [
       backgroundColorFormatter,
@@ -157,19 +160,20 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       registerUnderlineShortcut(textbus)
     }
   })
-  let rootComp: ComponentInstance
+  let rootComp: Component
   if (config.content) {
     const parser = textbus.get(Parser)
     const doc = parser.parseDoc(config.content, rootComponentLoader)
-    rootComp = doc instanceof ComponentInstance ? doc : rootComponent.createInstance(textbus, {
-      slots: doc ? [doc] : []
+    rootComp = doc instanceof Component ? doc : new RootComponent(textbus, {
+      heading: new Slot([ContentType.Text]),
+      content: doc as Slot
     })
   } else {
-    rootComp = rootComponent.createInstance(textbus)
+    rootComp = new RootComponent(textbus, {
+      heading: new Slot([ContentType.Text]),
+      content: new Slot([ContentType.Text, ContentType.InlineComponent, ContentType.BlockComponent])
+    })
   }
   await textbus.render(rootComp)
-  // textbus.onChange.subscribe(() => {
-  //   console.log(rootComp.toJSON())
-  // })
   return textbus
 }

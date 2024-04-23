@@ -1,6 +1,5 @@
 import {
-  Commander,
-  ComponentInstance,
+  Commander, Component,
   Controller,
   createVNode,
   FormatHostBindingRender,
@@ -14,7 +13,7 @@ import { FormatLoader, FormatLoaderReadResult } from '@textbus/platform-browser'
 
 export const underlineFormatter = new Formatter<boolean>('underline', {
   columned: true,
-  render(children: Array<VElement | VTextNode | ComponentInstance>): VElement | FormatHostBindingRender {
+  render(children: Array<VElement | VTextNode | Component>): VElement | FormatHostBindingRender {
     return createVNode('u', null, children)
   }
 })

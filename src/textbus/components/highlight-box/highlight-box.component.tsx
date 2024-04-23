@@ -1,64 +1,72 @@
 import {
-  ComponentInitData,
-  ComponentInstance,
+  Commander,
+  Component,
   ContentType,
   createVNode,
-  defineComponent,
   onBreak,
+  ComponentStateLiteral,
   onContentInsert,
   Selection,
   Slot,
   Textbus,
-  useContext,
-  useSelf
+  useContext, Registry,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, createRef } from '@viewfly/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 
-import { paragraphComponent } from '../paragraph/paragraph.component'
+import { ParagraphComponent } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 
 export interface HighlightBoxComponentState {
   type: string
+  slot: Slot
 }
 
-export const highlightBoxComponent = defineComponent({
-  name: 'HighlightBoxComponent',
-  type: ContentType.BlockComponent,
-  validate(_, initData?: ComponentInitData<HighlightBoxComponentState>): ComponentInitData<HighlightBoxComponentState> {
-    return {
-      slots: [
-        initData?.slots?.[0] || new Slot([ContentType.BlockComponent, ContentType.Text, ContentType.InlineComponent])
-      ],
-      state: {
-        type: initData?.state?.type || String.fromCodePoint(0x1F600),
-      }
-    }
-  },
-  setup() {
-    const slots = useSelf().slots
+export class HighlightBoxComponent extends Component<HighlightBoxComponentState> {
+  static componentName = 'HighlightBoxComponent'
+  static type: ContentType.BlockComponent
+
+  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<HighlightBoxComponentState>) {
+    return new HighlightBoxComponent(textbus, {
+      type: json.type,
+      slot: textbus.get(Registry).createSlot(json.slot)
+    })
+  }
+
+  constructor(textbus: Textbus, state: HighlightBoxComponentState = {
+    type: '',
+    slot: new Slot([
+      ContentType.BlockComponent
+    ])
+  }) {
+    super(textbus, state)
+  }
+
+  override setup() {
     const textbus = useContext()
     const selection = useContext(Selection)
+    const commander = useContext(Commander)
     onBreak(ev => {
-      if (ev.target === slots.get(0)!) {
-        const afterContentDelta = ev.target.cut(ev.data.index).toDelta()
-        const p = paragraphComponent.createInstance(textbus)
-        const slot = p.slots.get(0)!
-        slot.insertDelta(afterContentDelta)
-        const body = slots.get(1)!
-        body.retain(0)
-        body.insert(p)
-        selection.setPosition(slot, 0)
-        ev.preventDefault()
-      }
+      const afterSlot = ev.target.cut(ev.data.index)
+      const nextParagraph = new ParagraphComponent(textbus, {
+        slot: afterSlot
+      })
+      commander.insertAfter(nextParagraph, this)
+      selection.setPosition(afterSlot, 0)
+      ev.preventDefault()
     })
 
     onContentInsert(ev => {
-      if (ev.target === slots.get(0) && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
-        const p = paragraphComponent.createInstance(textbus)
-        const slot = p.slots.get(0)!
+      if (ev.target === this.state.slot && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
+        const slot = new Slot([
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+        const p = new ParagraphComponent(textbus, {
+          slot
+        })
         slot.insert(ev.data.content)
         ev.target.insert(p)
         selection.setPosition(slot, slot.index)
@@ -66,9 +74,9 @@ export const highlightBoxComponent = defineComponent({
       }
     })
   }
-})
+}
 
-export function HighlightBoxView(props: ViewComponentProps<typeof highlightBoxComponent>) {
+export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent>) {
   const adapter = inject(DomAdapter)
   const emoji: number[] = []
   for (let i = 0x1F600; i <= 0x1F64F; i++) {
@@ -78,14 +86,12 @@ export function HighlightBoxView(props: ViewComponentProps<typeof highlightBoxCo
 
   function setType(type: string) {
     dropdownRef.current?.isShow.set(false)
-    props.component.updateState(draft => {
-      draft.type = type
-    })
+    props.component.state.type = type
   }
 
 
   return () => {
-    const { slots, state, name } = props.component
+    const { state, name } = props.component
     return (
       <div data-component={name} ref={props.rootRef} data-icon={state.type} class="xnote-highlight-box">
         <div class="xnote-highlight-box-left">
@@ -107,7 +113,7 @@ export function HighlightBoxView(props: ViewComponentProps<typeof highlightBoxCo
           </Dropdown>
         </div>
         {
-          adapter.slotRender(slots.first, children => {
+          adapter.slotRender(state.slot, children => {
             return createVNode('div', {
               class: 'xnote-highlight-box-content'
             }, children)
@@ -120,19 +126,17 @@ export function HighlightBoxView(props: ViewComponentProps<typeof highlightBoxCo
 
 export const highlightBoxComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.tagName === 'DIV' && element.dataset.component === highlightBoxComponent.name
+    return element.tagName === 'DIV' && element.dataset.component === HighlightBoxComponent.componentName
   },
-  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): ComponentInstance | Slot | void {
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
     const slot = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,
       ContentType.Text
     ]), element.querySelector('.xnote-highlight-box-content')!)
-    return highlightBoxComponent.createInstance(textbus, {
-      slots: [slot],
-      state: {
-        type: element.dataset.icon || ''
-      }
+    return new HighlightBoxComponent(textbus, {
+      type: element.dataset.icon || '',
+      slot
     })
   }
 }
