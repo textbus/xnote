@@ -23,21 +23,27 @@
     padding: 6px;
     pointer-events: none;
     user-select: none;
-    transform: translateY(20px);
     overflow-y: auto;
-
+    display: none;
     &.to-top {
       top: initial;
       bottom: 100%;
-      transform: translateY(0);
 
       &.active {
+        transform: translateY(0);
+      }
+      &.expand {
         transform: translateY(-10px);
       }
     }
 
     &.active {
-      transition: .3s;
+      display: block;
+      transform: translateY(20px);
+      transition-duration: 0s;
+    }
+    &.expand {
+      transition: transform 0.3s, opacity 0.3s;
       pointer-events: auto;
       opacity: 1;
       transform: translateY(10px);

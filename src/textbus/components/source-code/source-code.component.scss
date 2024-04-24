@@ -61,6 +61,7 @@ code, kbd, pre, samp {
   counter-reset: codeNum;
   overflow: auto;
   position: relative;
+  max-height: 450px;
 }
 
 .xnote-source-code-content-highlight .xnote-source-code-line {

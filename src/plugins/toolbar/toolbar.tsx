@@ -18,6 +18,7 @@ import { AttrTool } from '../_common/attr-tool'
 import { FontSizeTool } from '../_common/font-size.tool'
 import { FontFamilyTool } from '../_common/font-family'
 import { EditorService } from '../../services/editor.service'
+import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 
 export function Toolbar() {
   provide(RefreshService)
@@ -98,7 +99,7 @@ export function Toolbar() {
       }),
       delay(100),
       filter(() => {
-        return !selection.isCollapsed
+        return !selection.isCollapsed && !(selection.commonAncestorComponent instanceof SourceCodeComponent)
       }),
       map(getTop),
       delay(200),

@@ -1,7 +1,7 @@
 import {
   createRef,
   createSignal,
-  getCurrentInstance,
+  getCurrentInstance, inject,
   Injectable,
   JSXNode,
   onMounted,
@@ -12,7 +12,7 @@ import {
   watch,
 } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { delay, fromEvent, Subject, Subscription } from '@textbus/core'
+import { delay, fromEvent, Subject, Subscription, tap } from '@textbus/core'
 
 import css from './dropdown.scoped.scss'
 
@@ -32,6 +32,13 @@ export interface DropdownProps extends Props {
   onCheck?(value: any): void
 }
 
+@Injectable({
+  provideIn: 'root'
+})
+export class DropdownNotifyService {
+  onOpen = new Subject<number>()
+}
+
 @Injectable()
 export class DropdownService {
   isOpen = false
@@ -47,10 +54,13 @@ export class DropdownService {
 export function Dropdown(props: DropdownProps) {
   const isShow = createSignal(false)
   const toTop = createSignal(false)
+  const expand = createSignal(false)
   provide(DropdownService)
 
   const component = getCurrentInstance()
   const dropdownService = component.get(DropdownService)
+  const dropdownNotifyService = inject(DropdownNotifyService)
+  const id = Math.random()
 
   const toggle = () => {
     const next = !isShow()
@@ -63,6 +73,9 @@ export function Dropdown(props: DropdownProps) {
 
   function updateMenuHeight() {
     if (menuRef.current) {
+      menuRef.current.scrollTo({
+        top: 0
+      })
       const triggerRect = triggerRef.current!.getBoundingClientRect()
       const documentClientHeight = document.documentElement.clientHeight
 
@@ -79,10 +92,29 @@ export function Dropdown(props: DropdownProps) {
   }
 
   watch(isShow, (newValue) => {
+    if (newValue) {
+      dropdownNotifyService.onOpen.next(id)
+    }
+  })
+
+  watch(expand, newValue => {
     if (newValue && menuRef.current) {
       updateMenuHeight()
     }
     dropdownService.onOpenStateChange.next(newValue)
+  })
+
+  onMounted(() => {
+    const sub = dropdownNotifyService.onOpen.subscribe(dropdownId => {
+      if (dropdownId === id) {
+        return
+      }
+      if (isShow()) {
+        isShow.set(false)
+      }
+    })
+
+    return () => sub.unsubscribe()
   })
 
   const subscription = new Subscription()
@@ -93,18 +125,26 @@ export function Dropdown(props: DropdownProps) {
     }
     let leaveSub: Subscription
     const bindLeave = function () {
-      leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').pipe(delay(200)).subscribe(() => {
+      leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').pipe(
+        delay(200)
+      ).subscribe(() => {
         isShow.set(false)
+        expand.set(false)
       })
     }
     bindLeave()
     subscription.add(
-      fromEvent(dropdownRef.current!, 'mouseenter').subscribe(() => {
-        if (leaveSub) {
-          leaveSub.unsubscribe()
-        }
-        bindLeave()
-        isShow.set(true)
+      fromEvent(dropdownRef.current!, 'mouseenter').pipe(
+        tap(() => {
+          if (leaveSub) {
+            leaveSub.unsubscribe()
+          }
+          bindLeave()
+          isShow.set(true)
+        }),
+        delay(100)
+      ).subscribe(() => {
+        expand.set(true)
       })
     )
   })
@@ -128,7 +168,8 @@ export function Dropdown(props: DropdownProps) {
             width: props.width
           }} class={['dropdown-menu', {
             active: isShow(),
-            'to-top': toTop()
+            'to-top': toTop(),
+            'expand': expand()
           }]}>
             {
               Array.isArray(props.menu) ?
