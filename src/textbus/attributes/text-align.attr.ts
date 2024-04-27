@@ -1,4 +1,4 @@
-import { Attribute, VElement } from '@textbus/core'
+import { Attribute, Commander, Keyboard, Textbus, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 
 export const textAlignAttr = new Attribute<string>('textAlign', {
@@ -17,4 +17,26 @@ export const textAlignAttrLoader: AttributeLoader<string> = {
       value: element.style.textAlign
     }
   }
+}
+
+export function registerTextAlignShortcut(textbus: Textbus) {
+  const keyboard = textbus.get(Keyboard)
+  const commander = textbus.get(Commander)
+
+  keyboard.addShortcut({
+    keymap: {
+      key: 'lrej'.split(''),
+      ctrlKey: true
+    },
+    action(key: string): boolean | void {
+      const valueMap = {
+        l: 'left',
+        r: 'right',
+        e: 'center',
+        j: 'justify'
+      }
+
+      commander.applyAttribute(textAlignAttr, valueMap[key])
+    }
+  })
 }
