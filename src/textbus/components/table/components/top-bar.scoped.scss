@@ -3,6 +3,11 @@
   top: 0;
   left: 0;
   right: 0;
+  display: none;
+
+  &.active {
+    display: block;
+  }
 }
 
 .xnote-table-toolbar {

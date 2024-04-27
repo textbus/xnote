@@ -134,7 +134,9 @@ export function TopBar(props: TopBarProps) {
       : null
 
     return (
-      <div class="top-bar">
+      <div class={['top-bar', {
+        active: props.isFocus()
+      }]}>
         <div class="xnote-table-toolbar">
           <ComponentToolbar
             style={{
