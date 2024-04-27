@@ -40,7 +40,7 @@ export function registerStrikeThroughShortcut(textbus: Textbus) {
   keyboard.addShortcut({
     keymap: {
       ctrlKey: true,
-      key: 'b'
+      key: 'd'
     },
     action: () => {
       toggleStrikeThrough(textbus)

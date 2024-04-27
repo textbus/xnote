@@ -39,7 +39,7 @@ export function registerItalicShortcut(textbus: Textbus) {
   keyboard.addShortcut({
     keymap: {
       ctrlKey: true,
-      key: ','
+      key: 'i'
     },
     action: () => {
       toggleItalic(textbus)

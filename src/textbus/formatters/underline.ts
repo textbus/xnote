@@ -40,7 +40,7 @@ export function registerUnderlineShortcut(textbus: Textbus) {
   keyboard.addShortcut({
     keymap: {
       ctrlKey: true,
-      key: 'b'
+      key: 'u'
     },
     action: () => {
       toggleUnderline(textbus)
