@@ -114,6 +114,13 @@ export class TableComponent extends Component<TableComponentState> {
     })
   }
 
+  deleteColumn(index: number) {
+    this.state.layoutWidth.splice(index, 1)
+    this.state.rows.forEach(row => {
+      row.cells.splice(index, 1)
+    })
+  }
+
   insertColumn(index: number) {
     this.state.layoutWidth.splice(index, 0, defaultColumnWidth)
     this.state.rows.forEach(row => {

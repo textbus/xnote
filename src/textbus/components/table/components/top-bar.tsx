@@ -124,6 +124,8 @@ export function TopBar(props: TopBarProps) {
     return () => sub.unsubscribe()
   })
 
+  const deleteIndex = createSignal(0)
+
   return withScopedCSS(css, () => {
     const state = props.component.state
     const currentSelectedColumnRange = selectedColumnRange()
@@ -136,13 +138,18 @@ export function TopBar(props: TopBarProps) {
         <div class="xnote-table-toolbar">
           <ComponentToolbar
             style={{
-              display: 'inline-block',
+              display: toolbarStyles().visible ? 'inline-block' : 'none',
               left: toolbarStyles().left + 'px',
-              top: toolbarStyles().top + 'px',
+              top: toolbarStyles().top - 10 + 'px',
+            }}
+            innerStyle={{
+              transform: 'translateX(-50%)'
             }}
             visible={toolbarStyles().visible}>
             <ToolbarItem>
-              <Button><span class="xnote-icon-bin"></span></Button>
+              <Button onClick={() => {
+                props.component.deleteColumn(deleteIndex())
+              }}><span class="xnote-icon-bin"></span></Button>
             </ToolbarItem>
           </ComponentToolbar>
         </div>
@@ -156,7 +163,9 @@ export function TopBar(props: TopBarProps) {
                 {
                   state.layoutWidth.map((i, index) => {
                     return (
-                      <td style={{ width: i + 'px', minWidth: i + 'px' }}>
+                      <td style={{ width: i + 'px', minWidth: i + 'px' }} onClick={() =>
+                        deleteIndex.set(index)
+                      }>
                         {
                           index === 0 && (
                             <span onMouseenter={() => {
