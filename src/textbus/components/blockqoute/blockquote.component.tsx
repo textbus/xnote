@@ -4,7 +4,7 @@ import {
   createVNode,
   Slot,
   ComponentStateLiteral,
-  Textbus, Registry,
+  Textbus, Registry, ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -19,19 +19,20 @@ export interface BlockquoteComponentState {
 export class BlockquoteComponent extends Component<BlockquoteComponentState> {
   static type = ContentType.BlockComponent
   static componentName = 'BlockquoteComponent'
-  static zenCoding = {
+  static zenCoding: ZenCodingGrammarInterceptor<BlockquoteComponentState> = {
     key: ' ',
     match: /^>$/,
-    generateInitData() {
+    createState(): BlockquoteComponentState {
       return {
-        slots: [new Slot([
+        slot: new Slot([
           ContentType.Text,
           ContentType.InlineComponent,
           ContentType.BlockComponent
-        ])]
+        ])
       }
     }
   }
+
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<BlockquoteComponentState>) {
     const slot = textbus.get(Registry).createSlot(json.slot)
     return new BlockquoteComponent(textbus, {

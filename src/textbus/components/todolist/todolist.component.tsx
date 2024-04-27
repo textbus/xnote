@@ -9,7 +9,8 @@ import {
   Selection,
   Slot,
   Textbus,
-  useContext
+  useContext,
+  ZenCodingGrammarInterceptor
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -26,6 +27,20 @@ export interface TodolistComponentState {
 export class TodolistComponent extends Component<TodolistComponentState> {
   static type = ContentType.BlockComponent
   static componentName = 'TodoListComponent'
+  static zenCoding: ZenCodingGrammarInterceptor<TodolistComponentState> = {
+    match: /^\[(x|\s)?\]$/,
+    key: ' ',
+    createState(content: string): TodolistComponentState {
+      const isChecked = content.charAt(1) === 'x'
+      return {
+        checked: isChecked,
+        slot: new Slot([
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+      }
+    }
+  }
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<TodolistComponentState>) {
     const slot = textbus.get(Registry).createSlot(json.slot)

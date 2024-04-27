@@ -1,4 +1,4 @@
-import { Attribute, Commander, Keyboard, Textbus, VElement } from '@textbus/core'
+import { Attribute, Commander, Keyboard, Selection, Textbus, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 
 export const headingAttr = new Attribute<string>('Heading', {
@@ -22,6 +22,7 @@ export const headingAttrLoader: AttributeLoader<string> = {
 export function registerHeadingShortcut(textbus: Textbus) {
   const keyboard = textbus.get(Keyboard)
   const commander = textbus.get(Commander)
+  const selection = textbus.get(Selection)
 
   keyboard.addShortcut({
     keymap: {
@@ -30,6 +31,21 @@ export function registerHeadingShortcut(textbus: Textbus) {
     },
     action(key: string): boolean | void {
       commander.applyAttribute(headingAttr, 'h' + key)
+    }
+  })
+
+  keyboard.addZenCodingInterceptor({
+    match(content: string) {
+      return /^#{1,6}$/.test(content)
+    },
+    try(key: string): boolean {
+      return key === ' '
+    },
+    action(content) {
+      const commonAncestorSlot = selection.commonAncestorSlot!
+      commonAncestorSlot.cut()
+      commander.applyAttribute(headingAttr, 'h' + content.length)
+      return true
     }
   })
 }

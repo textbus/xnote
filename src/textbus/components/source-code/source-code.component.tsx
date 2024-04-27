@@ -12,7 +12,7 @@ import {
   Slot,
   Textbus,
   useContext,
-  VTextNode, Registry,
+  VTextNode, Registry, ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
@@ -155,50 +155,46 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
     })
   }
 
-  static zenCoding = {
+  static zenCoding: ZenCodingGrammarInterceptor<SourceCodeComponentState> = {
     key: 'Enter',
     match(c: string) {
       const matchString = languageList.map(i => i.label || i.value).concat('js', 'ts').join('|').replace(/\+/, '\\+')
       const reg = new RegExp(`^\`\`\`(${matchString})$`, 'i')
       return reg.test(c)
     },
-    generateInitData(content) {
+    createState(content): SourceCodeComponentState {
       const matchString = content.replace(/`/g, '').replace(/\+/, '\\+')
       for (const item of languageList) {
         const reg = new RegExp(`^${matchString}$`, 'i')
         if (reg.test(item.label || item.value)) {
           return {
-            state: {
-              lang: item.value,
-              theme: ''
-            },
+            lang: item.value,
+            theme: '',
+            lineNumber: true,
             slots: [createCodeSlot()]
           }
         }
       }
       if (/^js$/i.test(matchString)) {
         return {
-          state: {
-            lang: 'JavaScript',
-            theme: ''
-          },
+          lang: 'JavaScript',
+          theme: '',
+          lineNumber: true,
           slots: [createCodeSlot()]
         }
       }
       if (/^ts$/i.test(matchString)) {
         return {
-          state: {
-            lang: 'TypeScript',
-            theme: ''
-          },
+          lang: 'TypeScript',
+          theme: '',
+          lineNumber: true,
           slots: [createCodeSlot()]
         }
       }
       return {
-        state: {
-          lang: '',
-          theme: ''
-        },
+        lang: '',
+        theme: '',
+        lineNumber: true,
         slots: [createCodeSlot()]
       }
     }
