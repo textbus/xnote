@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, inject, onUpdated, Signal, StaticRef } from '@viewfly/core'
+import { createRef, getCurrentInstance, inject, onUnmounted, onUpdated, Signal, StaticRef } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 
 import css from './left-bar.scoped.scss'
@@ -32,10 +32,18 @@ export function LeftBar(props: TopBarProps) {
     const actionBarRows = actionBarRef.current!.rows
     setTimeout(() => {
       Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
-         insertBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
-         actionBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+        insertBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+        actionBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
       })
     })
+  })
+  const instance = getCurrentInstance()
+  const s = props.component.changeMarker.onChange.subscribe(() => {
+    instance.markAsDirtied()
+  })
+
+  onUnmounted(() => {
+    s.unsubscribe()
   })
   return withScopedCSS(css, () => {
     const state = props.component.state
@@ -44,40 +52,40 @@ export function LeftBar(props: TopBarProps) {
         <div class="insert-bar">
           <table ref={insertBarRef}>
             <tbody>
-              {
-                state.rows.map((i, index) => {
-                  return (
-                    <tr style={{ height: i.height + 'px', minHeight: i.height + 'px' }}>
-                      <td>
-                        {
-                          index === 0 && (
-                            <span onMouseenter={() => {
-                              tableService.onInsertRowBefore.next(-1)
-                            }} onMouseleave={() => {
-                              tableService.onInsertRowBefore.next(null)
-                            }} class="insert-btn-wrap" style={{
-                              top: '-14px'
-                            }} onClick={() => {
-                              props.component.insertRow(0)
-                            }}>
+            {
+              state.rows.map((i, index) => {
+                return (
+                  <tr style={{ height: i.height + 'px', minHeight: i.height + 'px' }}>
+                    <td>
+                      {
+                        index === 0 && (
+                          <span onMouseenter={() => {
+                            tableService.onInsertRowBefore.next(-1)
+                          }} onMouseleave={() => {
+                            tableService.onInsertRowBefore.next(null)
+                          }} class="insert-btn-wrap" style={{
+                            top: '-14px'
+                          }} onClick={() => {
+                            props.component.insertRow(0)
+                          }}>
                               <button class="insert-btn" type="button">+</button>
                             </span>
-                          )
-                        }
-                        <span onMouseenter={() => {
-                          tableService.onInsertRowBefore.next(index)
-                        }} onMouseleave={() => {
-                          tableService.onInsertRowBefore.next(null)
-                        }} class="insert-btn-wrap" onClick={() => {
-                          props.component.insertRow(index + 1)
-                        }}>
+                        )
+                      }
+                      <span onMouseenter={() => {
+                        tableService.onInsertRowBefore.next(index)
+                      }} onMouseleave={() => {
+                        tableService.onInsertRowBefore.next(null)
+                      }} class="insert-btn-wrap" onClick={() => {
+                        props.component.insertRow(index + 1)
+                      }}>
                           <button class="insert-btn" type="button">+</button>
                         </span>
-                      </td>
-                    </tr>
-                  )
-                })
-              }
+                    </td>
+                  </tr>
+                )
+              })
+            }
             </tbody>
           </table>
         </div>

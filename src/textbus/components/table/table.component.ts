@@ -1,12 +1,14 @@
 import {
   Component,
+  ComponentStateLiteral,
   ContentType,
   onFocusIn,
-  ComponentStateLiteral,
   onFocusOut,
+  Registry,
   Selection,
   Slot,
-  Subject, Textbus, Registry,
+  Subject,
+  Textbus,
 } from '@textbus/core'
 
 import { ParagraphComponent } from '../paragraph/paragraph.component'
@@ -26,6 +28,9 @@ export interface TableComponentState {
   layoutWidth: number[]
   rows: Row[]
 }
+
+const defaultRowHeight = 30
+const defaultColumnWidth = 100
 
 export class TableComponent extends Component<TableComponentState> {
   static componentName = 'TableComponent'
@@ -52,10 +57,10 @@ export class TableComponent extends Component<TableComponentState> {
 
   constructor(textbus: Textbus, state: TableComponentState = {
     layoutWidth: [200, 200, 200],
-    rows: Array.from({length: 3}).map(() => {
+    rows: Array.from({ length: 3 }).map(() => {
       return {
-        height: 30,
-        cells: Array.from({length: 3}).map(() => {
+        height: defaultRowHeight,
+        cells: Array.from({ length: 3 }).map(() => {
           return {
             rowspan: 1,
             colspan: 1,
@@ -110,9 +115,34 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   insertColumn(index: number) {
-    console.log(index)
+    this.state.layoutWidth.splice(index, 0, defaultColumnWidth)
+    this.state.rows.forEach(row => {
+      row.cells.splice(index, 0, {
+        rowspan: 1,
+        colspan: 1,
+        slot: new Slot([
+          ContentType.BlockComponent,
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+      })
+    })
   }
+
   insertRow(index: number) {
-    console.log(index)
+    this.state.rows.splice(index, 0, {
+      height: defaultRowHeight,
+      cells: this.state.layoutWidth.map(() => {
+        return {
+          rowspan: 1,
+          colspan: 1,
+          slot: new Slot([
+            ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
+          ])
+        }
+      })
+    })
   }
 }
