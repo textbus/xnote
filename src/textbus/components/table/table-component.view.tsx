@@ -71,7 +71,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               {
                 rows.map((row) => {
                   return (
-                    <tr style={{ height: row.height + 'px' }}>
+                    <tr>
                       {
                         row.cells.map(cell => {
                           return adapter.slotRender(cell.slot, children => {

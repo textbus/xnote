@@ -1,7 +1,6 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createSignal, inject, onMounted, Signal, StaticRef, watch } from '@viewfly/core'
 import { Slot, Selection, fromEvent } from '@textbus/core'
-import { useProduce } from '@viewfly/hooks'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'
@@ -25,7 +24,7 @@ export function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const selection = inject(Selection)
   const tableService = inject(TableService)
-  const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
+  const selectedColumnRange = createSignal<null | {startIndex: number, endIndex: number}>(null)
 
   watch(selectedColumnRange, value => {
     const currentSelectedColumnRangeSorted = value
@@ -92,24 +91,16 @@ export function TopBar(props: TopBarProps) {
   })
 
 
-  const [toolbarStyles, updateToolbarStyles] = useProduce({
-    left: 0,
-    top: 0,
-    visible: false
-  })
-
   let mouseDownFromToolbar = false
 
   onMounted(() => {
     const sub = fromEvent(document, 'click').subscribe(() => {
-      props.onSelectColumn(false)
       if (mouseDownFromToolbar) {
         mouseDownFromToolbar = false
         return
       }
-      updateToolbarStyles(draft => {
-        draft.visible = false
-      })
+      props.onSelectColumn(false)
+      deleteIndex.set(null)
     })
     return () => sub.unsubscribe()
   })
@@ -124,7 +115,7 @@ export function TopBar(props: TopBarProps) {
     return () => sub.unsubscribe()
   })
 
-  const deleteIndex = createSignal(0)
+  const deleteIndex = createSignal<null | number>(null)
 
   return withScopedCSS(css, () => {
     const state = props.component.state
@@ -137,24 +128,6 @@ export function TopBar(props: TopBarProps) {
       <div class={['top-bar', {
         active: props.isFocus()
       }]}>
-        <div class="xnote-table-toolbar">
-          <ComponentToolbar
-            style={{
-              display: toolbarStyles().visible ? 'inline-block' : 'none',
-              left: toolbarStyles().left + 'px',
-              top: toolbarStyles().top - 10 + 'px',
-            }}
-            innerStyle={{
-              transform: 'translateX(-50%)'
-            }}
-            visible={toolbarStyles().visible}>
-            <ToolbarItem>
-              <Button onClick={() => {
-                props.component.deleteColumn(deleteIndex())
-              }}><span class="xnote-icon-bin"></span></Button>
-            </ToolbarItem>
-          </ComponentToolbar>
-        </div>
         <div class="toolbar-wrapper">
           <div class="insert-bar">
             <table style={{
@@ -165,33 +138,48 @@ export function TopBar(props: TopBarProps) {
                 {
                   state.layoutWidth.map((i, index) => {
                     return (
-                      <td style={{ width: i + 'px', minWidth: i + 'px' }} onClick={() =>
-                        deleteIndex.set(index)
-                      }>
-                        {
-                          index === 0 && (
-                            <span onMouseenter={() => {
-                              tableService.onInsertColumnBefore.next(0)
-                            }} onMouseleave={() => {
-                              tableService.onInsertColumnBefore.next(null)
-                            }} class="insert-btn-wrap" style={{
-                              left: '-10px'
-                            }} onClick={() => {
-                              props.component.insertColumn(0)
-                            }}>
+                      <td style={{ width: i + 'px', minWidth: i + 'px' }}>
+                        <div style={{height: '18px'}}>
+                          {
+                            index === 0 && (
+                              <span onMouseenter={() => {
+                                tableService.onInsertColumnBefore.next(0)
+                              }} onMouseleave={() => {
+                                tableService.onInsertColumnBefore.next(null)
+                              }} class="insert-btn-wrap" style={{
+                                left: '-10px'
+                              }} onClick={() => {
+                                props.component.insertColumn(0)
+                              }}>
                               <button class="insert-btn" type="button">+</button>
                             </span>
-                          )
-                        }
-                        <span class="insert-btn-wrap" onMouseenter={() => {
-                          tableService.onInsertColumnBefore.next(index + 1)
-                        }} onMouseleave={() => {
-                          tableService.onInsertColumnBefore.next(null)
-                        }} onClick={() => {
-                          props.component.insertColumn(index + 1)
-                        }}>
+                            )
+                          }
+                          <span class="insert-btn-wrap" onMouseenter={() => {
+                            tableService.onInsertColumnBefore.next(index + 1)
+                          }} onMouseleave={() => {
+                            tableService.onInsertColumnBefore.next(null)
+                          }} onClick={() => {
+                            props.component.insertColumn(index + 1)
+                          }}>
                           <button class="insert-btn" type="button">+</button>
                         </span>
+                          <ComponentToolbar
+                            style={{
+                              display: deleteIndex() === index ? 'inline-block' : 'none',
+                              left: '50%',
+                            }}
+                            innerStyle={{
+                              transform: 'translateX(-50%)'
+                            }}
+                            visible={deleteIndex() === index}>
+                            <ToolbarItem>
+                              <Button onClick={() => {
+                                props.component.deleteColumn(index)
+                              }}><span class="xnote-icon-bin"></span></Button>
+                            </ToolbarItem>
+                          </ComponentToolbar>
+                        </div>
                       </td>
                     )
                   })
@@ -208,20 +196,13 @@ export function TopBar(props: TopBarProps) {
               <tr>
                 {
                   state.layoutWidth.map((i, index) => {
-                    return <td onClick={ev => {
+                    return <td onMousedown={ev => {
                       mouseDownFromToolbar = true
                       if (!ev.shiftKey) {
-                        updateToolbarStyles(draft => {
-                          draft.left = (ev.target as HTMLTableCellElement).offsetLeft + i / 2 - props.scrollRef.current!.scrollLeft
-                          draft.top = -5
-                          draft.visible = true
-                        })
+                        deleteIndex.set(index)
                       } else {
-                        updateToolbarStyles(draft => {
-                          draft.visible = false
-                        })
+                        deleteIndex.set(null)
                       }
-                    }} onMousedown={ev => {
                       selectColumn(index, ev.shiftKey)
                     }} class={{
                       active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null

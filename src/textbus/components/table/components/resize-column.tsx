@@ -9,6 +9,7 @@ import { TableService } from '../table.service'
 export interface ResizeColumnProps {
   tableRef: StaticRef<HTMLTableElement>
   component: TableComponent
+
   onActiveStateChange(isActive: boolean): void
 }
 

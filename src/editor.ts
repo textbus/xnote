@@ -29,7 +29,7 @@ import {
   HighlightBoxComponent,
   ListComponent
 } from './textbus/components/_api'
-import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
+import { ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
 import {
   backgroundColorFormatLoader,
@@ -149,7 +149,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       LeftToolbarService
     ],
     plugins: [
-      new LeftToolbarPlugin(),
+      // new LeftToolbarPlugin(),
       new ToolbarPlugin(),
     ],
     setup(textbus: Textbus) {
