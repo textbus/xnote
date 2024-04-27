@@ -1,20 +1,22 @@
 import {
   Commander,
+  Component,
+  ComponentStateLiteral,
   ContentType,
   createVNode,
   onBreak,
-  Slot,
-  useContext,
+  Registry,
   Selection,
-  ComponentStateLiteral,
+  Slot,
   Textbus,
-  Component, Registry
+  useContext
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
 
 import './todolist.component.scss'
+import { ParagraphComponent } from '../paragraph/paragraph.component'
 
 export interface TodolistComponentState {
   checked: boolean
@@ -39,6 +41,24 @@ export class TodolistComponent extends Component<TodolistComponentState> {
     const selection = useContext(Selection)
     onBreak(ev => {
       const slot = ev.target.cut(ev.data.index)
+      if (ev.target.isEmpty && slot.isEmpty) {
+        const beforeIndex = this.parent!.indexOf(this)
+        const beforeComponent = this.parent!.getContentAtIndex(beforeIndex)
+        if (beforeComponent instanceof TodolistComponent && beforeComponent.state.slot.isEmpty) {
+          const nextComponent = new ParagraphComponent(textbus, {
+            slot: new Slot([
+              ContentType.Text,
+              ContentType.InlineComponent
+            ])
+          })
+          nextComponent.state.slot.insertDelta(slot.toDelta())
+          commander.insertAfter(nextComponent, this)
+          commander.removeComponent(this)
+          selection.setPosition(nextComponent.state.slot, 0)
+          ev.preventDefault()
+          return
+        }
+      }
       const nextParagraph = new TodolistComponent(textbus, {
         checked: this.state.checked,
         slot
