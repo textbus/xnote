@@ -9,7 +9,7 @@ import {
   Selection,
   Slot,
   Textbus,
-  useContext,
+  useContext, useDynamicShortcut,
   ZenCodingGrammarInterceptor
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
@@ -18,6 +18,8 @@ import { inject } from '@viewfly/core'
 
 import './todolist.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
+import { textIndentAttr } from '../../attributes/text-indent.attr'
+import { strikeThroughFormatter } from '../../formatters/strike-through'
 
 export interface TodolistComponentState {
   checked: boolean
@@ -82,6 +84,23 @@ export class TodolistComponent extends Component<TodolistComponentState> {
       selection.setPosition(slot, 0)
       ev.preventDefault()
     })
+
+    useDynamicShortcut({
+      keymap: {
+        key: 'Backspace'
+      },
+      action: (): boolean | void => {
+        if (!selection.isCollapsed || selection.startOffset !== 0) {
+          return false
+        }
+        const slot = selection.commonAncestorSlot!.cut()
+        const paragraph = new ParagraphComponent(textbus, {
+          slot
+        })
+        commander.replaceComponent(this, paragraph)
+        selection.setPosition(slot, 0)
+      }
+    })
   }
 }
 
@@ -91,12 +110,20 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
 
   function toggle() {
     state.checked = !state.checked
+    state.slot.applyFormat(strikeThroughFormatter, {
+      startIndex: 0,
+      endIndex: state.slot.length,
+      value: state.checked ? true : null
+    })
   }
 
   return () => {
     const { slot, checked } = state
+    const indent = slot.getAttribute(textIndentAttr) || 0
     return (
-      <div data-component={TodolistComponent.componentName} ref={props.rootRef} class="xnote-todolist">
+      <div data-component={TodolistComponent.componentName} ref={props.rootRef} class="xnote-todolist" style={{
+        marginLeft: indent * 24 + 'px'
+      }}>
         <div class="xnote-todolist-icon" onClick={toggle}>
           <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']}/>
         </div>
