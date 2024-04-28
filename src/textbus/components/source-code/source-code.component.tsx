@@ -232,7 +232,9 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
             slots.splice(index, 1)
           }
           parentSlot.insert(paragraph)
-          selection.setPosition(slot, 0)
+          textbus.nextTick(() => {
+            selection.setPosition(slot, 0)
+          })
           ev.preventDefault()
           return
         }
@@ -241,7 +243,10 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
       const ref = slots.find(i => i.slot === ev.target)
       const index = slots.indexOf(ref!)
       slots.splice(index + 1, 0, { slot: nextSlot, emphasize: ref?.emphasize || false })
-      selection.setPosition(nextSlot, 0)
+
+      textbus.nextTick(() => {
+        selection.setPosition(nextSlot, 0)
+      })
       ev.preventDefault()
     })
 
