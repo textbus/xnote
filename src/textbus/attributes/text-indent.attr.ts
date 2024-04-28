@@ -1,4 +1,4 @@
-import { Attribute, Keyboard, Selection, Textbus, VElement } from '@textbus/core'
+import { Attribute, Commander, Keyboard, Selection, Textbus, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 
 export const textIndentAttr = new Attribute<number>('textIndent', {
@@ -22,6 +22,7 @@ export const textIndentAttrLoader: AttributeLoader<number> = {
 export function registerTextIndentShortcut(textbus: Textbus) {
   const keyboard = textbus.get(Keyboard)
   const selection = textbus.get(Selection)
+  const commander = textbus.get(Commander)
 
   keyboard.addShortcut({
     keymap: {
@@ -54,6 +55,28 @@ export function registerTextIndentShortcut(textbus: Textbus) {
           block.slot.removeAttribute(textIndentAttr)
         }
       })
+    }
+  })
+
+  keyboard.addShortcut({
+    keymap: {
+      key: 'Backspace'
+    },
+    action(): boolean | void {
+      if (!selection.isCollapsed) {
+        return false
+      }
+      const slot = selection.commonAncestorSlot!
+      const currentIndent = slot.getAttribute(textIndentAttr)
+      if (typeof currentIndent === 'number' && selection.startOffset === 0) {
+        if (currentIndent > 1) {
+          slot.setAttribute(textIndentAttr, currentIndent - 1)
+        } else {
+          slot.removeAttribute(textIndentAttr)
+        }
+      } else {
+        commander.delete(true)
+      }
     }
   })
 }

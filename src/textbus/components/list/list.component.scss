@@ -1,3 +1,22 @@
 .xnote-list {
   margin: 8px 0;
+  padding: 0;
+
+  > li {
+    display: flex;
+  }
+}
+
+.xnote-list-type {
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  color: #296eff;
+  white-space: nowrap;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.xnote-list-content[style*=text-indent] {
+  text-indent: 0!important;
 }

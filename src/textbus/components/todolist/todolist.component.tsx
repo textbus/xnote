@@ -58,8 +58,8 @@ export class TodolistComponent extends Component<TodolistComponentState> {
       const slot = ev.target.cut(ev.data.index)
       if (ev.target.isEmpty && slot.isEmpty) {
         const beforeIndex = this.parent!.indexOf(this)
-        const beforeComponent = this.parent!.getContentAtIndex(beforeIndex)
-        if (beforeComponent instanceof TodolistComponent && beforeComponent.state.slot.isEmpty) {
+        const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)
+        if (beforeComponent instanceof TodolistComponent) {
           const nextComponent = new ParagraphComponent(textbus, {
             slot: new Slot([
               ContentType.Text,
