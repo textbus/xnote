@@ -1,6 +1,6 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createSignal, inject, onMounted, Signal, StaticRef, watch } from '@viewfly/core'
-import { Slot, Selection, fromEvent } from '@textbus/core'
+import { Slot, Selection, fromEvent, Textbus } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'
@@ -22,6 +22,7 @@ export function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const selection = inject(Selection)
   const tableService = inject(TableService)
+  const textbus = inject(Textbus)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
   watch(selectedColumnRange, value => {
@@ -64,13 +65,16 @@ export function TopBar(props: TopBarProps) {
     rows.forEach(row => {
       selectedSlots.push(...row.cells.slice(startIndex, endIndex + 1).map(i => i.slot))
     })
-    selection.setSelectedRanges(selectedSlots.map(i => {
-      return {
-        slot: i,
-        startIndex: 0,
-        endIndex: i.length
-      }
-    }))
+
+    textbus.nextTick(() => {
+      selection.setSelectedRanges(selectedSlots.map(i => {
+        return {
+          slot: i,
+          startIndex: 0,
+          endIndex: i.length
+        }
+      }))
+    })
     props.onSelectColumn(true)
   }
 

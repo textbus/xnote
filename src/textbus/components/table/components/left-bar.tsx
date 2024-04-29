@@ -9,7 +9,7 @@ import {
   Signal,
   StaticRef, watch
 } from '@viewfly/core'
-import { fromEvent, Slot, Selection } from '@textbus/core'
+import { fromEvent, Slot, Selection, Textbus } from '@textbus/core'
 
 import css from './left-bar.scoped.scss'
 import { TableComponent } from '../table.component'
@@ -33,6 +33,7 @@ export function LeftBar(props: TopBarProps) {
   const selection = inject(Selection)
   const actionBarRef = createRef<HTMLTableElement>()
   const insertBarRef = createRef<HTMLTableElement>()
+  const textbus = inject(Textbus)
 
   const tableService = inject(TableService)
   // 同步行高度
@@ -112,13 +113,16 @@ export function LeftBar(props: TopBarProps) {
     rows.slice(startIndex, endIndex + 1).forEach(row => {
       selectedSlots.push(...row.cells.map(i => i.slot))
     })
-    selection.setSelectedRanges(selectedSlots.map(i => {
-      return {
-        slot: i,
-        startIndex: 0,
-        endIndex: i.length
-      }
-    }))
+    textbus.nextTick(() => {
+      selection.setSelectedRanges(selectedSlots.map(i => {
+        return {
+          slot: i,
+          startIndex: 0,
+          endIndex: i.length
+        }
+      }))
+    })
+
     props.onSelectRow(true)
   }
 
