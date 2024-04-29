@@ -63,14 +63,26 @@ export function SelectionMask(props: SelectionMaskProps) {
 
     const state = props.component.state
     updateStyles(draft => {
+      let topCompensation = 0.5
+      let heightCompensation = -1
+      if (range.start === 0) {
+        topCompensation = 0
+        heightCompensation = -0.5
+      }
+      if (range.start > 0) {
+        heightCompensation = -1
+      }
+      if (range.start === state.rows.length - 1) {
+        heightCompensation += 0.5
+      }
       const trs = Array.from(props.tableRef.current!.rows)
       draft.visible = true
-      draft.top = sum(trs.slice(0, range.start).map(i => i.offsetHeight))
+      draft.top = sum(trs.slice(0, range.start).map(i => i.offsetHeight)) + topCompensation
       draft.left = 0
       draft.right = 0
       draft.bottom = 0
-      draft.height = sum(trs.slice(range.start, range.end + 1).map(i => i.offsetHeight)) - 1 + 'px'
-      draft.width = sum(state.layoutWidth) + 'px'
+      draft.height = sum(trs.slice(range.start, range.end + 1).map(i => i.offsetHeight)) + heightCompensation + 'px'
+      draft.width = sum(state.layoutWidth) - 1 + 'px'
     })
   }))
 
