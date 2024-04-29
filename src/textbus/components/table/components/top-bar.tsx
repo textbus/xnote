@@ -24,7 +24,7 @@ export function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const selection = inject(Selection)
   const tableService = inject(TableService)
-  const selectedColumnRange = createSignal<null | {startIndex: number, endIndex: number}>(null)
+  const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
   watch(selectedColumnRange, value => {
     const currentSelectedColumnRangeSorted = value
@@ -139,7 +139,7 @@ export function TopBar(props: TopBarProps) {
                   state.layoutWidth.map((i, index) => {
                     return (
                       <td style={{ width: i + 'px', minWidth: i + 'px' }}>
-                        <div style={{height: '18px'}}>
+                        <div class="tool-container">
                           {
                             index === 0 && (
                               <span onMouseenter={() => {
@@ -162,8 +162,8 @@ export function TopBar(props: TopBarProps) {
                           }} onClick={() => {
                             props.component.insertColumn(index + 1)
                           }}>
-                          <button class="insert-btn" type="button">+</button>
-                        </span>
+                            <button class="insert-btn" type="button">+</button>
+                          </span>
                           <ComponentToolbar
                             style={{
                               display: deleteIndex() === index ? 'inline-block' : 'none',

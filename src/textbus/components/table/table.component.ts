@@ -56,11 +56,11 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   constructor(textbus: Textbus, state: TableComponentState = {
-    layoutWidth: [200, 200, 200],
+    layoutWidth: Array.from<number>({ length: 13 }).fill(100),
     rows: Array.from({ length: 3 }).map(() => {
       return {
         height: defaultRowHeight,
-        cells: Array.from({ length: 3 }).map(() => {
+        cells: Array.from({ length: 13 }).map(() => {
           return {
             rowspan: 1,
             colspan: 1,
