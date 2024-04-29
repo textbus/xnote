@@ -37,6 +37,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
 
   const isResizeColumn = createSignal(false)
   const isSelectColumn = createSignal(false)
+  const isSelectRow = createSignal(false)
 
   return () => {
     const state = props.component.state
@@ -51,11 +52,11 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
           isFocus={isFocus}
           component={props.component}
           scrollRef={scrollRef}
-          onSelectColumn={is => isSelectColumn.set(is)}
-          rows={rows}/>
+          onSelectColumn={is => isSelectColumn.set(is)}/>
         <LeftBar
           tableRef={tableRef}
           isFocus={isFocus}
+          onSelectRow={is => isSelectRow.set(is)}
           component={props.component}/>
         <Scroll scrollRef={scrollRef} isFocus={isFocus}>
           <div class="xnote-table-container">
@@ -91,7 +92,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               onActiveStateChange={isActive => {
                 isResizeColumn.set(isActive)
               }}/>
-            <SelectionMask component={props.component}/>
+            <SelectionMask tableRef={tableRef} component={props.component}/>
           </div>
         </Scroll>
         <ResizeRow tableRef={tableRef}/>

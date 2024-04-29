@@ -4,7 +4,7 @@ import { Slot, Selection, fromEvent } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'
-import { Row, TableComponent } from '../table.component'
+import { TableComponent } from '../table.component'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
 import { ToolbarItem } from '../../../../components/toolbar-item/toolbar-item'
 import { Button } from '../../../../components/button/button'
@@ -16,8 +16,6 @@ export interface TopBarProps {
   scrollRef: StaticRef<HTMLDivElement>
 
   onSelectColumn(isSelected: boolean): void
-
-  rows: Row[]
 }
 
 export function TopBar(props: TopBarProps) {
@@ -62,7 +60,7 @@ export function TopBar(props: TopBarProps) {
     const [startIndex, endIndex] = [range.startIndex, range.endIndex].sort((a, b) => a - b)
 
     const selectedSlots: Slot[] = []
-    const rows = props.rows
+    const rows = props.component.state.rows
     rows.forEach(row => {
       selectedSlots.push(...row.cells.slice(startIndex, endIndex + 1).map(i => i.slot))
     })
