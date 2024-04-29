@@ -20,29 +20,36 @@ export function ResizeColumn(props: ResizeColumnProps) {
   onMounted(() => {
     const { tableRef } = props
     let isDrag = false
-    const subscription = fromEvent<MouseEvent>(tableRef.current!, 'mousemove').subscribe(ev => {
-      if (isDrag) {
-        return
-      }
-      const tableRect = tableRef.current!.getBoundingClientRect()
-      const leftDistance = ev.clientX - tableRect.x
-      const state = props.component.state
-      let x = 0
-      for (let i = 0; i < state.layoutWidth.length; i++) {
-        const n = leftDistance - x
-        if (i > 0 && Math.abs(n) < 5) {
-          Object.assign(dragLineRef.current!.style, {
-            left: x + 'px',
-            display: 'block'
-          })
-          activeCol = i
-          break
+    let ignoreMove = false
+    const subscription = fromEvent(document, 'mousedown').subscribe(() => {
+      ignoreMove = true
+    }).add(fromEvent(document, 'mouseup').subscribe(() => {
+      ignoreMove = false
+    })).add(
+      fromEvent<MouseEvent>(tableRef.current!, 'mousemove').subscribe(ev => {
+        if (isDrag || ignoreMove) {
+          return
         }
-        activeCol = null
-        dragLineRef.current!.style.display = 'none'
-        x += state.layoutWidth[i]
-      }
-    }).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
+        const tableRect = tableRef.current!.getBoundingClientRect()
+        const leftDistance = ev.clientX - tableRect.x
+        const state = props.component.state
+        let x = 0
+        for (let i = 0; i < state.layoutWidth.length; i++) {
+          const n = leftDistance - x
+          if (i > 0 && Math.abs(n) < 5) {
+            Object.assign(dragLineRef.current!.style, {
+              left: x + 'px',
+              display: 'block'
+            })
+            activeCol = i
+            break
+          }
+          activeCol = null
+          dragLineRef.current!.style.display = 'none'
+          x += state.layoutWidth[i]
+        }
+      })
+    ).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
       isDrag = true
       props.onActiveStateChange(true)
 

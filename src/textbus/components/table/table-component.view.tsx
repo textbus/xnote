@@ -60,7 +60,12 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
           component={props.component}/>
         <Scroll scrollRef={scrollRef} isFocus={isFocus}>
           <div class="xnote-table-container">
-            <table ref={tableRef} class="xnote-table-content">
+            <table ref={tableRef} class={[
+              'xnote-table-content',
+              {
+                'hide-selection': isSelectRow() || isSelectColumn()
+              }
+            ]}>
               <colgroup>
                 {
                   state.layoutWidth.map(w => {

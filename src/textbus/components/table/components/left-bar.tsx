@@ -64,6 +64,7 @@ export function LeftBar(props: TopBarProps) {
       }
       props.onSelectRow(false)
       deleteIndex.set(null)
+      selectedRowRange.set(null)
     })
     return () => sub.unsubscribe()
   })

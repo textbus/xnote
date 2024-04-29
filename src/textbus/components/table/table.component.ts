@@ -55,6 +55,8 @@ export class TableComponent extends Component<TableComponentState> {
     })
   }
 
+  private selection = this.textbus.get(Selection)
+
   constructor(textbus: Textbus, state: TableComponentState = {
     layoutWidth: Array.from<number>({ length: 13 }).fill(100),
     rows: Array.from({ length: 3 }).map(() => {
@@ -89,7 +91,7 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   afterContentCheck() {
-    const selection = this.textbus.get(Selection)
+    const selection = this.selection
     const rows = this.state.rows
     rows.forEach(row => {
       row.cells.forEach(cell => {
@@ -119,10 +121,12 @@ export class TableComponent extends Component<TableComponentState> {
     this.state.rows.forEach(row => {
       row.cells.splice(index, 1)
     })
+    this.selection.unSelect()
   }
 
   deleteRow(index: number) {
     this.state.rows.splice(index, 1)
+    this.selection.unSelect()
   }
 
   insertColumn(index: number) {
@@ -137,6 +141,12 @@ export class TableComponent extends Component<TableComponentState> {
           ContentType.Text
         ])
       })
+    })
+    this.textbus.nextTick(() => {
+      const slot = this.state.rows[0].cells[index]?.slot
+      if (slot) {
+        this.selection.setPosition(slot, 0)
+      }
     })
   }
 
@@ -154,6 +164,12 @@ export class TableComponent extends Component<TableComponentState> {
           ])
         }
       })
+    })
+    this.textbus.nextTick(() => {
+      const slot = this.state.rows[index].cells[0]?.slot
+      if (slot) {
+        this.selection.setPosition(slot, 0)
+      }
     })
   }
 }

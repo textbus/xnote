@@ -99,6 +99,7 @@ export function TopBar(props: TopBarProps) {
       }
       props.onSelectColumn(false)
       deleteIndex.set(null)
+      selectedColumnRange.set(null)
     })
     return () => sub.unsubscribe()
   })
@@ -174,6 +175,7 @@ export function TopBar(props: TopBarProps) {
                             <ToolbarItem>
                               <Button onClick={() => {
                                 props.component.deleteColumn(index)
+                                deleteIndex.set(null)
                               }}><span class="xnote-icon-bin"></span></Button>
                             </ToolbarItem>
                           </ComponentToolbar>
