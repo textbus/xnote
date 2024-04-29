@@ -1,4 +1,4 @@
-import { createRef, inject, onMounted, Props, Signal, StaticRef } from '@viewfly/core'
+import { createRef, inject, onMounted, onUpdated, Props, Signal, StaticRef } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { useProduce } from '@viewfly/hooks'
 import { Input } from '@textbus/platform-browser'
@@ -37,6 +37,14 @@ export function Scroll(props: ScrollProps) {
     update()
     const s = fromEvent(el, 'scroll').subscribe(update)
     return () => s.unsubscribe()
+  })
+
+  onUpdated(() => {
+    const el = scrollRef.current!
+    updateShowShadow(draft => {
+      draft.leftEnd = el.scrollLeft === 0
+      draft.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
+    })
   })
 
   return withScopedCSS(css, () => {
