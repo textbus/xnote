@@ -45,7 +45,7 @@ export function SelectionMask(props: SelectionMaskProps) {
       draft.top = 0
       draft.bottom = 0
       draft.left = sum(state.layoutWidth.slice(0, range.start))
-      // draft.right = 0
+      draft.right = 0
       draft.width = sum(state.layoutWidth.slice(range.start, range.end + 1)) - 1 + 'px'
       draft.height = 'auto'
     })
@@ -61,6 +61,7 @@ export function SelectionMask(props: SelectionMaskProps) {
     }
     isShowRow = true
 
+    const state = props.component.state
     updateStyles(draft => {
       const trs = Array.from(props.tableRef.current!.rows)
       draft.visible = true
@@ -69,7 +70,7 @@ export function SelectionMask(props: SelectionMaskProps) {
       draft.right = 0
       draft.bottom = 0
       draft.height = sum(trs.slice(range.start, range.end + 1).map(i => i.offsetHeight)) - 1 + 'px'
-      draft.width = '100%'
+      draft.width = sum(state.layoutWidth) + 'px'
     })
   }))
 
@@ -84,6 +85,7 @@ export function SelectionMask(props: SelectionMaskProps) {
         display: style.visible ? 'block' : 'none',
         left: style.left + 'px',
         top: style.top + 'px',
+        right: style.right + 'px',
         width: style.width,
         height: style.height,
         bottom: style.bottom + 'px'

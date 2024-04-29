@@ -100,7 +100,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
             <SelectionMask tableRef={tableRef} component={props.component}/>
           </div>
         </Scroll>
-        <ResizeRow tableRef={tableRef}/>
+        <ResizeRow component={props.component} tableRef={tableRef}/>
       </div>
     )
   }

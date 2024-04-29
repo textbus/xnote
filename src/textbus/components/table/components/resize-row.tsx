@@ -4,9 +4,12 @@ import { useProduce } from '@viewfly/hooks'
 
 import css from './resize-row.scoped.scss'
 import { TableService } from '../table.service'
+import { TableComponent } from '../table.component'
+import { sum } from '../_utils'
 
 export interface ResizeRowProps {
   tableRef: StaticRef<HTMLTableElement>
+  component: TableComponent
 }
 
 export function ResizeRow(props: ResizeRowProps) {
@@ -40,7 +43,8 @@ export function ResizeRow(props: ResizeRowProps) {
     return <div ref={dragLineRef}
                 style={{
                   display: styles().visible ? 'block' : 'none',
-                  top: styles().top + 'px'
+                  top: styles().top + 'px',
+                  width: sum(props.component.state.layoutWidth) + 'px'
                 }}
                 class={'drag-line'}/>
   })

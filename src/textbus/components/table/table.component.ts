@@ -58,11 +58,11 @@ export class TableComponent extends Component<TableComponentState> {
   private selection = this.textbus.get(Selection)
 
   constructor(textbus: Textbus, state: TableComponentState = {
-    layoutWidth: Array.from<number>({ length: 13 }).fill(100),
+    layoutWidth: Array.from<number>({ length: 3 }).fill(100),
     rows: Array.from({ length: 3 }).map(() => {
       return {
         height: defaultRowHeight,
-        cells: Array.from({ length: 13 }).map(() => {
+        cells: Array.from({ length: 3 }).map(() => {
           return {
             rowspan: 1,
             colspan: 1,

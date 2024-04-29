@@ -26,7 +26,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
     }).add(fromEvent(document, 'mouseup').subscribe(() => {
       ignoreMove = false
     })).add(
-      fromEvent<MouseEvent>(tableRef.current!, 'mousemove').subscribe(ev => {
+      fromEvent<MouseEvent>(tableRef.current!.parentNode as HTMLElement, 'mousemove').subscribe(ev => {
         if (isDrag || ignoreMove) {
           return
         }
@@ -34,7 +34,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
         const leftDistance = ev.clientX - tableRect.x
         const state = props.component.state
         let x = 0
-        for (let i = 0; i < state.layoutWidth.length; i++) {
+        for (let i = 0; i < state.layoutWidth.length + 1; i++) {
           const n = leftDistance - x
           if (i > 0 && Math.abs(n) < 5) {
             Object.assign(dragLineRef.current!.style, {
