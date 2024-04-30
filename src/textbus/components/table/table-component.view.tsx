@@ -1,11 +1,12 @@
 import {
   createVNode,
+  Selection,
   Slot,
   Textbus
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
-import { inject, onUnmounted, createSignal, createRef, provide } from '@viewfly/core'
+import { inject, onUnmounted, createSignal, createRef, provide, onMounted } from '@viewfly/core'
 
 import './table.component.scss'
 import { TableComponent } from './table.component'
@@ -20,7 +21,6 @@ import { SelectionMask } from './components/selection-mask'
 export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
   const isFocus = createSignal(false)
-
   provide(TableService)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
@@ -32,12 +32,64 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
 
   const tableRef = createRef<HTMLTableElement>()
   const scrollRef = createRef<HTMLDivElement>()
-  // 滚动阴影 start
-
 
   const isResizeColumn = createSignal(false)
-  const isSelectColumn = createSignal(false)
-  const isSelectRow = createSignal(false)
+
+  const selection = inject(Selection)
+
+  const findPosition = (slot: Slot) => {
+    let cell: Slot | null = slot
+    while (cell?.parent && cell.parent !== props.component) {
+      cell = cell.parentSlot
+    }
+    if (cell) {
+      const rows = props.component.state.rows
+      for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        const row = rows[rowIndex].cells
+        for (let colIndex = 0; colIndex < row.length; colIndex++) {
+          const item = row[colIndex].slot
+          if (item === cell) {
+            return {
+              rowIndex,
+              colIndex
+            }
+          }
+        }
+      }
+    }
+    return null
+  }
+
+  onMounted(() => {
+    const sub = selection.onChange.subscribe(() => {
+      if (selection.commonAncestorComponent !== props.component || selection.isCollapsed) {
+        props.component.tableSelection.set(null)
+        return
+      }
+
+      const startPosition = findPosition(selection.startSlot!)
+      const endPosition = findPosition(selection.endSlot!)
+
+      if (startPosition && endPosition) {
+        if (startPosition.rowIndex === endPosition.rowIndex && startPosition.colIndex === endPosition.colIndex) {
+          props.component.tableSelection.set(null)
+          return
+        }
+        const [startColumn, endColumn] = [startPosition.colIndex, endPosition.colIndex].sort((a, b) => a - b)
+        const [startRow, endRow] = [startPosition.rowIndex, endPosition.rowIndex].sort((a, b) => a - b)
+        props.component.tableSelection.set({
+          startColumn,
+          startRow,
+          endColumn: endColumn + 1,
+          endRow: endRow + 1
+        })
+      } else {
+        props.component.tableSelection.set(null)
+      }
+    })
+
+    return () => sub.unsubscribe()
+  })
 
   return () => {
     const state = props.component.state
@@ -51,19 +103,17 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
         <TopBar
           isFocus={isFocus}
           component={props.component}
-          scrollRef={scrollRef}
-          onSelectColumn={is => isSelectColumn.set(is)}/>
+          scrollRef={scrollRef}/>
         <LeftBar
           tableRef={tableRef}
           isFocus={isFocus}
-          onSelectRow={is => isSelectRow.set(is)}
           component={props.component}/>
         <Scroll scrollRef={scrollRef} isFocus={isFocus}>
           <div class="xnote-table-container">
             <table ref={tableRef} class={[
               'xnote-table-content',
               {
-                'hide-selection': isSelectRow() || isSelectColumn()
+                'hide-selection': props.component.tableSelection()
               }
             ]}>
               <colgroup>

@@ -1,6 +1,6 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, inject, onMounted, Signal, StaticRef, watch } from '@viewfly/core'
-import { Slot, Selection, fromEvent, Textbus } from '@textbus/core'
+import { createSignal, getCurrentInstance, inject, onMounted, onUnmounted, Signal, StaticRef } from '@viewfly/core'
+import { Slot, Selection, Textbus, fromEvent } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'
@@ -14,8 +14,6 @@ export interface TopBarProps {
   isFocus: Signal<boolean>
   component: TableComponent
   scrollRef: StaticRef<HTMLDivElement>
-
-  onSelectColumn(isSelected: boolean): void
 }
 
 export function TopBar(props: TopBarProps) {
@@ -25,25 +23,8 @@ export function TopBar(props: TopBarProps) {
   const textbus = inject(Textbus)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
-  watch(selectedColumnRange, value => {
-    const currentSelectedColumnRangeSorted = value
-      ? [value.startIndex, value.endIndex].sort((a, b) => a - b)
-      : null
-    if (currentSelectedColumnRangeSorted) {
-      tableService.onSelectColumns.next({
-        start: currentSelectedColumnRangeSorted[0],
-        end: currentSelectedColumnRangeSorted[1]
-      })
-    } else {
-      tableService.onSelectColumns.next(null)
-    }
-  })
-
-  let maskActive = false
-
   function selectColumn(index: number, isMultiple: boolean) {
     editorService.hideInlineToolbar = true
-    maskActive = true
     const currentSelectedColumnRange = selectedColumnRange()
     if (isMultiple && currentSelectedColumnRange) {
       selectedColumnRange.set({
@@ -75,24 +56,7 @@ export function TopBar(props: TopBarProps) {
         }
       }))
     })
-    props.onSelectColumn(true)
   }
-
-  onMounted(() => {
-    const selectionChangeSubscription = selection.onChange.subscribe(() => {
-      if (maskActive) {
-        maskActive = false
-        return
-      }
-      selectedColumnRange.set(null)
-    })
-
-    return () => {
-      selectionChangeSubscription.unsubscribe()
-    }
-  })
-
-
   let mouseDownFromToolbar = false
 
   onMounted(() => {
@@ -101,7 +65,6 @@ export function TopBar(props: TopBarProps) {
         mouseDownFromToolbar = false
         return
       }
-      props.onSelectColumn(false)
       deleteIndex.set(null)
       selectedColumnRange.set(null)
     })
@@ -118,15 +81,19 @@ export function TopBar(props: TopBarProps) {
     return () => sub.unsubscribe()
   })
 
+  const instance = getCurrentInstance()
+  const s = props.component.changeMarker.onChange.subscribe(() => {
+    instance.markAsDirtied()
+  })
+  onUnmounted(() => {
+    s.unsubscribe()
+  })
   const deleteIndex = createSignal<null | number>(null)
 
   return withScopedCSS(css, () => {
-    const state = props.component.state
-    const currentSelectedColumnRange = selectedColumnRange()
-    const currentSelectedColumnRangeSorted = currentSelectedColumnRange
-      ? [currentSelectedColumnRange.startIndex, currentSelectedColumnRange.endIndex].sort((a, b) => a - b)
-      : null
+    const { state, tableSelection } = props.component
 
+    const position = tableSelection()
     return (
       <div class={['top-bar', {
         active: props.isFocus()
@@ -209,7 +176,11 @@ export function TopBar(props: TopBarProps) {
                       }
                       selectColumn(index, ev.shiftKey)
                     }} class={{
-                      active: currentSelectedColumnRangeSorted ? index >= currentSelectedColumnRangeSorted[0] && index <= currentSelectedColumnRangeSorted[1] : null
+                      active: !position ? false :
+                        (position.startRow === 0 &&
+                          position.endRow === state.rows.length &&
+                          index >= position.startColumn && index < position.endColumn
+                        )
                     }} style={{ width: i + 'px', minWidth: i + 'px' }}/>
                   })
                 }

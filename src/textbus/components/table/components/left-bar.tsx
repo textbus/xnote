@@ -7,9 +7,9 @@ import {
   onUnmounted,
   onUpdated,
   Signal,
-  StaticRef, watch
+  StaticRef
 } from '@viewfly/core'
-import { fromEvent, Slot, Selection, Textbus } from '@textbus/core'
+import { Slot, Selection, Textbus, fromEvent } from '@textbus/core'
 
 import css from './left-bar.scoped.scss'
 import { TableComponent } from '../table.component'
@@ -23,12 +23,9 @@ export interface TopBarProps {
   tableRef: StaticRef<HTMLTableElement>
   isFocus: Signal<boolean>
   component: TableComponent
-
-  onSelectRow(isSelected: boolean): void
 }
 
 export function LeftBar(props: TopBarProps) {
-  // let mouseDownFromToolbar = false
   const editorService = inject(EditorService)
   const selection = inject(Selection)
   const actionBarRef = createRef<HTMLTableElement>()
@@ -63,7 +60,6 @@ export function LeftBar(props: TopBarProps) {
         mouseDownFromToolbar = false
         return
       }
-      props.onSelectRow(false)
       deleteIndex.set(null)
       selectedRowRange.set(null)
     })
@@ -71,27 +67,10 @@ export function LeftBar(props: TopBarProps) {
   })
 
   const selectedRowRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
-
-  watch(selectedRowRange, value => {
-    const currentSelectedRowRangeSorted = value
-      ? [value.startIndex, value.endIndex].sort((a, b) => a - b)
-      : null
-    if (currentSelectedRowRangeSorted) {
-      tableService.onSelectRows.next({
-        start: currentSelectedRowRangeSorted[0],
-        end: currentSelectedRowRangeSorted[1]
-      })
-    } else {
-      tableService.onSelectRows.next(null)
-    }
-  })
-
   const deleteIndex = createSignal<null | number>(null)
-  let maskActive = false
 
   function selectRow(index: number, isMultiple: boolean) {
     editorService.hideInlineToolbar = true
-    maskActive = true
     const currentSelectedColumnRange = selectedRowRange()
     if (isMultiple && currentSelectedColumnRange) {
       selectedRowRange.set({
@@ -122,30 +101,12 @@ export function LeftBar(props: TopBarProps) {
         }
       }))
     })
-
-    props.onSelectRow(true)
   }
 
-  onMounted(() => {
-    const selectionChangeSubscription = selection.onChange.subscribe(() => {
-      if (maskActive) {
-        maskActive = false
-        return
-      }
-      selectedRowRange.set(null)
-    })
-
-    return () => {
-      selectionChangeSubscription.unsubscribe()
-    }
-  })
-
   return withScopedCSS(css, () => {
-    const state = props.component.state
-    const currentSelectedRowRange = selectedRowRange()
-    const currentSelectedRowRangeSorted = currentSelectedRowRange
-      ? [currentSelectedRowRange.startIndex, currentSelectedRowRange.endIndex].sort((a, b) => a - b)
-      : null
+    const { state, tableSelection } = props.component
+
+    const position = tableSelection()
     return (
       <div class={['left-bar', { active: props.isFocus() }]}>
         <div class="insert-bar">
@@ -222,7 +183,11 @@ export function LeftBar(props: TopBarProps) {
                     }
                     selectRow(index, ev.shiftKey)
                   }} class={{
-                    active: currentSelectedRowRangeSorted ? index >= currentSelectedRowRangeSorted[0] && index <= currentSelectedRowRangeSorted[1] : null
+                    active: !position ? false :
+                      (position.startColumn === 0 &&
+                        position.endColumn === state.layoutWidth.length &&
+                        index >= position.startRow && index < position.endRow
+                      )
                   }}/>
                 </tr>
               })

@@ -3,7 +3,7 @@ import {
   ComponentStateLiteral,
   ContentType,
   onFocusIn,
-  onFocusOut,
+  onFocusOut, onGetRanges,
   Registry,
   Selection,
   Slot,
@@ -12,6 +12,8 @@ import {
 } from '@textbus/core'
 
 import { ParagraphComponent } from '../paragraph/paragraph.component'
+import { createSignal } from '@viewfly/core'
+import { TableSelection } from './components/selection-mask'
 
 export interface TableCellConfig {
   rowspan: number
@@ -80,6 +82,7 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   focus = new Subject<boolean>()
+  tableSelection = createSignal<TableSelection | null>(null)
 
   override setup() {
     onFocusIn(() => {
@@ -87,6 +90,24 @@ export class TableComponent extends Component<TableComponentState> {
     })
     onFocusOut(() => {
       this.focus.next(false)
+    })
+
+    onGetRanges(ev => {
+      const selectPosition = this.tableSelection()
+      if (selectPosition) {
+        const cells: Slot[] = []
+        this.state.rows.slice(selectPosition.startRow, selectPosition.endRow + 1).forEach(row => {
+          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn + 1).map(i => i.slot))
+        })
+        ev.useRanges(cells.map(i => {
+          return {
+            slot: i,
+            startIndex: 0,
+            endIndex: i.length
+          }
+        }))
+        ev.preventDefault()
+      }
     })
   }
 
