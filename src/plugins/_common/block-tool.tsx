@@ -22,6 +22,8 @@ export function BlockTool() {
       [states.h4, 'xnote-icon-heading-h4'],
       [states.h5, 'xnote-icon-heading-h5'],
       [states.h6, 'xnote-icon-heading-h6'],
+      [states.orderedList, 'xnote-icon-list-numbered'],
+      [states.unorderedList, 'xnote-icon-list'],
       [states.todolist, 'xnote-icon-checkbox-checked'],
       [states.blockquote, 'xnote-icon-quotes-right'],
       [states.sourceCode, 'xnote-icon-source-code'],
@@ -67,10 +69,10 @@ export function BlockTool() {
           label: <MenuItem icon={<span class="xnote-icon-checkbox-checked"/>} checked={states.todolist}>待办事项</MenuItem>,
           value: 'todolist'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-list-numbered"></span>} checked={states.orderedList}>有序列表</MenuItem>,
           value: 'ol'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-list"/>}>无序列表</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-list"/>} checked={states.unorderedList}>无序列表</MenuItem>,
           value: 'ul'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-quotes-right"/>} checked={states.blockquote}>引用</MenuItem>,

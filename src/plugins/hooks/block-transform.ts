@@ -8,6 +8,7 @@ import { TodolistComponent } from '../../textbus/components/todolist/todolist.co
 import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
+import { ListComponent } from '../../textbus/components/list/list.component'
 
 export function useBlockTransform() {
   const commander = inject(Commander)
@@ -70,6 +71,27 @@ export function useBlockTransform() {
             })
           }
         })
+        break
+      case 'ol':
+      case 'ul': {
+        commander.transform({
+          targetType: ListComponent.type,
+          multipleSlot: false,
+          slotFactory() {
+            return new Slot([
+              ContentType.InlineComponent,
+              ContentType.Text
+            ])
+          },
+          stateFactory(slot) {
+            return new ListComponent(textbus, {
+              type: value === 'ol' ? 'OrderedList' : 'UnorderedList',
+              reorder: true,
+              slot
+            })
+          }
+        })
+      }
         break
       case 'blockquote': {
         const state = query.queryComponent(BlockquoteComponent)
