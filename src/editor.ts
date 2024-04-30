@@ -27,7 +27,7 @@ import {
   SourceCodeComponent,
   TableComponent,
   HighlightBoxComponent,
-  ListComponent
+  ListComponent, ImageComponent, ImageView
 } from './textbus/components/_api'
 import { ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
@@ -77,7 +77,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [SourceCodeComponent.componentName]: SourceCodeView,
     [TableComponent.componentName]: TableComponentView,
     [HighlightBoxComponent.componentName]: HighlightBoxView,
-    [ListComponent.componentName]: ListComponentView
+    [ListComponent.componentName]: ListComponentView,
+    [ImageComponent.componentName]: ImageView
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus
@@ -124,6 +125,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       browserModule
     ],
     components: [
+      ImageComponent,
       ParagraphComponent,
       RootComponent,
       BlockquoteComponent,

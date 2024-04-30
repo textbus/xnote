@@ -1,5 +1,6 @@
 export * from './blockqoute/blockquote.component'
 export * from './highlight-box/highlight-box.component'
+export * from './image/image.component'
 export * from './list/list.component'
 export * from './paragraph/paragraph.component'
 export * from './root/root.component'
