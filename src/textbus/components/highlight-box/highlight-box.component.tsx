@@ -26,7 +26,7 @@ export interface HighlightBoxComponentState {
 
 export class HighlightBoxComponent extends Component<HighlightBoxComponentState> {
   static componentName = 'HighlightBoxComponent'
-  static type: ContentType.BlockComponent
+  static type = ContentType.BlockComponent
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<HighlightBoxComponentState>) {
     return new HighlightBoxComponent(textbus, {
