@@ -30,8 +30,9 @@ export function DragResize(props: DragResizeProps) {
       return
     }
     isShow.set(true)
-    component.state.width = ref.current!.offsetWidth + 'px'
-    component.state.height = ref.current!.offsetHeight + 'px'
+    const width = ref.current!.offsetWidth
+    const height = ref.current!.offsetHeight
+    mask.current!.innerText = `${Math.round(width)}px * ${Math.round(height)}px`
   })
 
   function selectComponent() {
