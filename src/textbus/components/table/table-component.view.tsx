@@ -68,6 +68,15 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
 
       if (startPosition && endPosition) {
         if (startPosition.rowIndex === endPosition.rowIndex && startPosition.colIndex === endPosition.colIndex) {
+          if (selection.startSlot === selection.endSlot && selection.startOffset === 0 && selection.endOffset === selection.startSlot?.length) {
+            props.component.tableSelection.set({
+              startColumn: startPosition.colIndex,
+              startRow: startPosition.rowIndex,
+              endColumn: endPosition.colIndex + 1,
+              endRow: endPosition.rowIndex + 1
+            })
+            return
+          }
           props.component.tableSelection.set(null)
           return
         }
@@ -95,7 +104,8 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
       props.component.afterContentCheck()
     })
     return (
-      <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth} ref={props.rootRef}>
+      <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
+           ref={props.rootRef}>
         <TopBar
           isFocus={isFocus}
           component={props.component}
