@@ -27,7 +27,10 @@ import {
   SourceCodeComponent,
   TableComponent,
   HighlightBoxComponent,
-  ListComponent, ImageComponent, ImageView
+  ListComponent,
+  ImageComponent,
+  ImageView,
+  imageComponentLoader
 } from './textbus/components/_api'
 import { ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
@@ -99,7 +102,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       sourceCodeComponentLoader,
       todolistComponentLoader,
       tableComponentLoader,
-      listComponentLoader
+      listComponentLoader,
+      imageComponentLoader
     ],
     formatLoaders: [
       backgroundColorFormatLoader,
