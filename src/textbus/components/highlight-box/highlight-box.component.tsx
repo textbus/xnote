@@ -15,7 +15,7 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, createRef } from '@viewfly/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 
-import { ParagraphComponent } from '../paragraph/paragraph.component'
+import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 
@@ -129,11 +129,21 @@ export const highlightBoxComponentLoader: ComponentLoader = {
     return element.tagName === 'DIV' && element.dataset.component === HighlightBoxComponent.componentName
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
-    const slot = slotParser(new Slot([
+    const delta = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,
       ContentType.Text
-    ]), element.querySelector('.xnote-highlight-box-content')!)
+    ]), element.querySelector('.xnote-highlight-box-content')!).toDelta()
+
+    const slot = new Slot([
+      ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
+    ])
+
+    deltaToBlock(delta, textbus).forEach(i => {
+      slot.insert(i)
+    })
     return new HighlightBoxComponent(textbus, {
       type: element.dataset.icon || '',
       slot

@@ -19,7 +19,7 @@ import { inject, createDynamicRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
-import { ParagraphComponent } from '../paragraph/paragraph.component'
+import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
 import { LeftToolbarService } from '../../../services/left-toolbar.service'
 
 export interface RootComponentState {
@@ -30,6 +30,7 @@ export interface RootComponentState {
 export class RootComponent extends Component<RootComponentState> {
   static componentName = 'RootComponent'
   static type = ContentType.BlockComponent
+
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<RootComponentState>) {
     const heading = textbus.get(Registry).createSlot(json.heading)
     const content = textbus.get(Registry).createSlot(json.content)
@@ -38,6 +39,7 @@ export class RootComponent extends Component<RootComponentState> {
       content
     })
   }
+
   onCompositionStart = new Subject<Event<Slot, CompositionStartEventData>>()
 
   override setup() {
@@ -147,15 +149,21 @@ export const rootComponentLoader: ComponentLoader = {
   match(): boolean {
     return true
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component | Slot {
-    const slot = slotParser(new Slot([
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
+    const delta = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,
       ContentType.Text
-    ]), element)
-    // return rootComponent.createInstance(injector, {
-    //   slots: [slot]
-    // })
+    ]), element).toDelta()
+    const slot = new Slot([
+      ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
+    ])
+
+    deltaToBlock(delta, textbus).forEach(i => {
+      slot.insert(i)
+    })
     return slot
   }
 }

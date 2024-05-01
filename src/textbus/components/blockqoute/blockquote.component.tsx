@@ -11,6 +11,7 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
 
 import './blockquote.component.scss'
+import { deltaToBlock } from '../paragraph/paragraph.component'
 
 export interface BlockquoteComponentState {
   slot: Slot
@@ -68,13 +69,23 @@ export const blockquoteComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'BLOCKQUOTE'
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component {
-    const slot = slotParser(new Slot([
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component {
+    const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.BlockComponent,
       ContentType.InlineComponent
-    ]), element)
-    return new BlockquoteComponent(injector, {
+    ]), element).toDelta()
+
+    const slot = new Slot([
+      ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
+    ])
+
+    deltaToBlock(delta, textbus).forEach(i => {
+      slot.insert(i)
+    })
+    return new BlockquoteComponent(textbus, {
       slot
     })
   },
