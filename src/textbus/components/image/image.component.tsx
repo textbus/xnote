@@ -1,10 +1,10 @@
 import { Component, ComponentStateLiteral, ContentType, Slot, Textbus } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
+import { ComponentLoader } from '@textbus/platform-browser'
+import { createRef } from '@viewfly/core'
 
 import './image.component.scss'
 import { DragResize } from '../../../components/drag-resize/drag-resize'
-import { ComponentLoader } from '@textbus/platform-browser'
-import { createRef } from '@viewfly/core'
 
 export interface ImageComponentState {
   src: string
@@ -20,10 +20,6 @@ export class ImageComponent extends Component<ImageComponentState> {
     return new ImageComponent(textbus, {
       ...json
     })
-  }
-
-  override setup() {
-    //
   }
 }
 
