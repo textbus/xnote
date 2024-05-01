@@ -1,0 +1,6 @@
+.xnote-video {
+  display: inline-block;
+  > video {
+    max-width: 100%;
+  }
+}

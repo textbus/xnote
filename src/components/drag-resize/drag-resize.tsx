@@ -5,10 +5,11 @@ import { fromEvent, Selection } from '@textbus/core'
 
 import style from './drag-resize.scoped.scss'
 import { ImageComponent } from '../../textbus/components/image/image.component'
+import { VideoComponent } from '../../textbus/components/video/video.component'
 
 export interface DragResizeProps extends Props {
-  component: ImageComponent
-  source: StaticRef<HTMLImageElement>
+  component: ImageComponent | VideoComponent
+  source: StaticRef<HTMLImageElement | HTMLVideoElement>
 }
 
 export function DragResize(props: DragResizeProps) {

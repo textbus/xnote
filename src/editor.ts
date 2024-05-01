@@ -30,7 +30,7 @@ import {
   ListComponent,
   ImageComponent,
   ImageView,
-  imageComponentLoader
+  imageComponentLoader, videoComponentLoader, VideoComponent, VideoView
 } from './textbus/components/_api'
 import { ToolbarPlugin } from './plugins/_api'
 import { LeftToolbarService } from './services/_api'
@@ -81,7 +81,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [TableComponent.componentName]: TableComponentView,
     [HighlightBoxComponent.componentName]: HighlightBoxView,
     [ListComponent.componentName]: ListComponentView,
-    [ImageComponent.componentName]: ImageView
+    [ImageComponent.componentName]: ImageView,
+    [VideoComponent.componentName]: VideoView
   }, (host, root) => {
     const app = createApp(root, {
       context: textbus
@@ -103,7 +104,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       todolistComponentLoader,
       tableComponentLoader,
       listComponentLoader,
-      imageComponentLoader
+      imageComponentLoader,
+      videoComponentLoader
     ],
     formatLoaders: [
       backgroundColorFormatLoader,
@@ -137,7 +139,8 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       SourceCodeComponent,
       TableComponent,
       HighlightBoxComponent,
-      ListComponent
+      ListComponent,
+      VideoComponent
     ],
     formatters: [
       backgroundColorFormatter,
