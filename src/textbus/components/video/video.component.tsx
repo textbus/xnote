@@ -32,7 +32,7 @@ export function VideoView(props: ViewComponentProps<VideoComponent>) {
   const videoRef = createRef<HTMLVideoElement>()
   return () => {
     return (
-      <div class="xnote-video" data-component={name}>
+      <div ref={props.rootRef} class="xnote-video" data-component={name}>
         <DragResize source={videoRef} component={props.component}>
           <video ref={videoRef} src={state.src} style={{
             width: state.width,

@@ -28,7 +28,7 @@ export function ImageView(props: ViewComponentProps<ImageComponent>) {
   const imageRef = createRef<HTMLImageElement>()
   return () => {
     return (
-      <div class="xnote-image" data-component={name}>
+      <div class="xnote-image" ref={props.rootRef} data-component={name}>
         <DragResize source={imageRef} component={props.component}>
           <img alt="" ref={imageRef} src={state.src} style={{
             width: state.width,
