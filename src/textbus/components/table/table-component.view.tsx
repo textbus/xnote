@@ -1,15 +1,10 @@
-import {
-  createVNode,
-  Selection,
-  Slot,
-  Textbus
-} from '@textbus/core'
+import { ContentType, createVNode, Selection, Slot, Textbus } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
-import { inject, onUnmounted, createSignal, createRef, provide, onMounted } from '@viewfly/core'
+import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { createRef, createSignal, inject, onMounted, onUnmounted, provide } from '@viewfly/core'
 
 import './table.component.scss'
-import { TableComponent } from './table.component'
+import { TableCellConfig, TableComponent } from './table.component'
 import { ResizeColumn } from './components/resize-column'
 import { TopBar } from './components/top-bar'
 import { Scroll } from './components/scroll'
@@ -17,6 +12,7 @@ import { LeftBar } from './components/left-bar'
 import { TableService } from './table.service'
 import { ResizeRow } from './components/resize-row'
 import { SelectionMask } from './components/selection-mask'
+import { deltaToBlock } from '../paragraph/paragraph.component'
 
 export function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
@@ -99,7 +95,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
       props.component.afterContentCheck()
     })
     return (
-      <div class="xnote-table" data-component={props.component.name} ref={props.rootRef}>
+      <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth} ref={props.rootRef}>
         <TopBar
           isFocus={isFocus}
           component={props.component}
@@ -158,9 +154,177 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
 
 export const tableComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.dataset.component === TableComponent.componentName
+    return element.dataset.component === TableComponent.componentName || element.tagName === 'TABLE'
   },
-  read(element: HTMLElement, textbus: Textbus): TableComponent | Slot | void {
-    return new TableComponent(textbus)
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): TableComponent | Slot | void {
+    if (element.tagName === 'DIV') {
+      element = element.querySelector('.xnote-table-content') as HTMLTableElement
+    }
+    const { tHead, tBodies, tFoot } = element as HTMLTableElement
+    const headers: TableCellConfig[][] = []
+    const bodies: TableCellConfig[][] = []
+    if (tHead) {
+      Array.from(tHead.rows).forEach(row => {
+        const arr: TableCellConfig[] = []
+        headers.push(arr)
+        Array.from(row.cells).forEach(cell => {
+          const slot = new Slot([
+            ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
+          ])
+          arr.push({
+            slot,
+            rowspan: cell.rowSpan,
+            colspan: cell.colSpan
+          })
+          const delta = slotParser(new Slot([
+            ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
+          ]), cell).toDelta()
+
+          const results = deltaToBlock(delta, textbus)
+          results.forEach(i => {
+            slot.insert(i)
+          })
+        })
+      })
+    }
+
+    if (tBodies) {
+      Array.of(...Array.from(tBodies), tFoot || { rows: [] }).reduce((value, next) => {
+        return value.concat(Array.from(next.rows))
+      }, [] as HTMLTableRowElement[]).forEach((row: HTMLTableRowElement) => {
+        const arr: TableCellConfig[] = []
+        bodies.push(arr)
+        Array.from(row.cells).forEach(cell => {
+          const slot = new Slot([
+            ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
+          ])
+          arr.push({
+            slot,
+            rowspan: cell.rowSpan,
+            colspan: cell.colSpan
+          })
+          const delta = slotParser(new Slot([
+            ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
+          ]), cell).toDelta()
+
+          const results = deltaToBlock(delta, textbus)
+          results.forEach(i => {
+            slot.insert(i)
+          })
+        })
+      })
+    }
+    bodies.unshift(...headers)
+
+    const cells = autoComplete(bodies)
+
+    let layoutWidth: number[] | null = null
+
+    try {
+      const columnWidth = JSON.parse(element.dataset.layoutWidth || '')
+      if (Array.isArray(columnWidth)) {
+        layoutWidth = columnWidth
+      }
+    } catch (e) {
+      //
+    }
+
+    if (!layoutWidth) {
+      layoutWidth = Array.from<number>({ length: cells[0].length }).fill(100)
+    }
+
+
+    return new TableComponent(textbus, {
+      rows: cells.map(i => {
+        return {
+          height: 30,
+          cells: i
+        }
+      }),
+      layoutWidth
+    })
   }
+}
+
+
+export function autoComplete(table: TableCellConfig[][]) {
+  const newTable: TableCellConfig[][] = []
+
+  table.forEach((tr, rowIndex) => {
+    if (!newTable[rowIndex]) {
+      newTable[rowIndex] = []
+    }
+    const row = newTable[rowIndex]
+
+    let startColumnIndex = 0
+
+    tr.forEach(td => {
+      while (row[startColumnIndex]) {
+        startColumnIndex++
+      }
+
+      let maxColspan = 1
+
+      while (maxColspan < td.colspan) {
+        if (!row[startColumnIndex + maxColspan]) {
+          maxColspan++
+        } else {
+          break
+        }
+      }
+
+      td.colspan = maxColspan
+
+      for (let i = rowIndex, len = td.rowspan + rowIndex; i < len; i++) {
+        if (!newTable[i]) {
+          newTable[i] = []
+        }
+        const row = newTable[i]
+
+        for (let j = startColumnIndex, max = startColumnIndex + maxColspan; j < max; j++) {
+          row[j] = td
+        }
+      }
+
+      startColumnIndex += maxColspan
+    })
+  })
+
+  const maxColumns = Math.max(...newTable.map(i => i.length))
+  newTable.forEach(tr => {
+    for (let i = 0; i < maxColumns; i++) {
+      if (!tr[i]) {
+        tr[i] = {
+          rowspan: 1,
+          colspan: 1,
+          slot: new Slot([
+            ContentType.Text,
+            ContentType.InlineComponent,
+            ContentType.BlockComponent
+          ])
+        }
+      }
+    }
+  })
+
+  const recordCells: TableCellConfig[] = []
+
+  return newTable.map(tr => {
+    return tr.filter(td => {
+      const is = recordCells.includes(td)
+      if (is) {
+        return false
+      }
+      recordCells.push(td)
+      return true
+    })
+  })
 }

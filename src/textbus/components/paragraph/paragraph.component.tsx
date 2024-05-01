@@ -3,7 +3,7 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
+  createVNode, DeltaLite,
   onBreak, Registry,
   Selection,
   Slot,
@@ -70,40 +70,19 @@ export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.compoment === ParagraphComponent.name || element.tagName === 'P'
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component | Slot {
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
     const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent,
       ContentType.BlockComponent
     ]), element.tagName === 'P' ? element : element.children[0] as HTMLElement).toDelta()
 
-    const results: Component[] = []
-
-    let slot: Slot | null = null
-    for (const item of delta) {
-      if (typeof item.insert === 'string' || item.insert.type === ContentType.InlineComponent) {
-        if (!slot) {
-          slot = new Slot([
-            ContentType.InlineComponent,
-            ContentType.Text
-          ])
-          delta.attributes.forEach((value, key) => {
-            slot!.setAttribute(key, value)
-          })
-          results.push(new ParagraphComponent(injector, {
-            slot
-          }))
-        }
-        slot.insert(item.insert, item.formats)
-      } else {
-        results.push(item.insert)
-        slot = null
-      }
-    }
+    const results = deltaToBlock(delta, textbus)
 
     if (results.length === 1) {
       return results[0]
     }
+
     const containerSlot = new Slot([
       ContentType.BlockComponent
     ])
@@ -113,4 +92,31 @@ export const paragraphComponentLoader: ComponentLoader = {
     })
     return containerSlot
   }
+}
+
+export function deltaToBlock(delta: DeltaLite, textbus: Textbus) {
+  const results: Component[] = []
+
+  let slot: Slot | null = null
+  for (const item of delta) {
+    if (typeof item.insert === 'string' || item.insert.type === ContentType.InlineComponent) {
+      if (!slot) {
+        slot = new Slot([
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+        delta.attributes.forEach((value, key) => {
+          slot!.setAttribute(key, value)
+        })
+        results.push(new ParagraphComponent(textbus, {
+          slot
+        }))
+      }
+      slot.insert(item.insert, item.formats)
+    } else {
+      results.push(item.insert)
+      slot = null
+    }
+  }
+  return results
 }
