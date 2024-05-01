@@ -96,9 +96,18 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
     return () => sub.unsubscribe()
   })
 
+  const rowMapping = new WeakMap<object, number>()
+
   return () => {
     const state = props.component.state
     const rows = state.rows
+
+    rows.forEach(row => {
+      if (rowMapping.has(row)) {
+        return
+      }
+      rowMapping.set(row, Math.random())
+    })
 
     Promise.resolve().then(() => {
       props.component.afterContentCheck()
@@ -133,11 +142,13 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
               {
                 rows.map((row) => {
                   return (
-                    <tr>
+                    <tr key={rowMapping.get(row)}>
                       {
                         row.cells.map(cell => {
                           return adapter.slotRender(cell.slot, children => {
-                            return createVNode('td', null, children)
+                            return createVNode('td', {
+                              key: cell.slot.id
+                            }, children)
                           }, false)
                         })
                       }
