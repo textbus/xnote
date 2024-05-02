@@ -1,7 +1,7 @@
 import { Adapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
 import { BrowserModule, Parser } from '@textbus/platform-browser'
-import { Component, ContentType, Slot, Textbus } from '@textbus/core'
+import { Component, ContentType, Module, Slot, Textbus } from '@textbus/core'
 
 import {
   BlockquoteView,
@@ -66,9 +66,11 @@ import './textbus/doc.scss'
 import { headingAttrLoader, registerHeadingShortcut } from './textbus/attributes/heading.attr'
 import { registerTextAlignShortcut, textAlignAttrLoader } from './textbus/attributes/text-align.attr'
 import { registerTextIndentShortcut, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
+import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 
 export interface XNoteConfig {
-  content?: string
+  content?: string,
+  collaborateConfig?: CollaborateConfig
 }
 
 export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
@@ -125,11 +127,15 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       textIndentAttrLoader
     ]
   })
+
+  const modules: Module[] = [browserModule]
+  if(config.collaborateConfig) {
+    modules.push(new CollaborateModule(config.collaborateConfig))
+  }
+
   const textbus = new Textbus({
     zenCoding: true,
-    imports: [
-      browserModule
-    ],
+    imports: modules,
     components: [
       ImageComponent,
       ParagraphComponent,
