@@ -1,9 +1,9 @@
 import { Plugin } from '@textbus/core'
-
-import { LeftToolbar } from './left-toolbar'
 import { VIEW_DOCUMENT } from '@textbus/platform-browser'
 import { Application, Injector, viewfly } from '@viewfly/core'
 import { DomRenderer } from '@viewfly/platform-browser'
+
+import { LeftToolbar } from './left-toolbar'
 
 export class LeftToolbarPlugin implements Plugin {
   private app: Application | null = null

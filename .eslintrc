@@ -1,6 +1,6 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module"
@@ -32,7 +32,26 @@
     "no-multi-spaces": 1,
     "no-multiple-empty-lines": 1,
     "quotes": [1, "single"],
-    "array-callback-return": 1
+    "array-callback-return": 1,
+    "import/order": [
+      1,
+      {
+        "groups": [
+          [
+            "builtin",
+            "external",
+            "internal",
+            "type"
+          ],
+          [
+            "parent",
+            "sibling",
+            "index"
+          ]
+        ],
+        "newlines-between": "always"
+      }
+    ]
   },
   "ignorePatterns": ["node_modules"]
 }

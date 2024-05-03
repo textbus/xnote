@@ -1,6 +1,7 @@
 import { Adapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
 import { BrowserModule, Parser } from '@textbus/platform-browser'
+import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus } from '@textbus/core'
 
 import {
@@ -61,12 +62,10 @@ import {
   underlineFormatLoader,
   underlineFormatter
 } from './textbus/formatters/_api'
-
 import './textbus/doc.scss'
 import { headingAttrLoader, registerHeadingShortcut } from './textbus/attributes/heading.attr'
 import { registerTextAlignShortcut, textAlignAttrLoader } from './textbus/attributes/text-align.attr'
 import { registerTextIndentShortcut, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
-import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 
 export interface XNoteConfig {
   content?: string,

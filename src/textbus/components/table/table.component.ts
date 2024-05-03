@@ -10,9 +10,9 @@ import {
   Subject,
   Textbus,
 } from '@textbus/core'
+import { createSignal } from '@viewfly/core'
 
 import { ParagraphComponent } from '../paragraph/paragraph.component'
-import { createSignal } from '@viewfly/core'
 import { TableSelection } from './components/selection-mask'
 
 export interface TableCellConfig {
