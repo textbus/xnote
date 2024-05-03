@@ -10,14 +10,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.32",
-    "@textbus/collaborate": "4.0.0-alpha.31",
-    "@textbus/core": "^4.0.0-alpha.31",
-    "@textbus/platform-browser": "^4.0.0-alpha.32",
-    "@viewfly/core": "^0.6.1",
-    "@viewfly/hooks": "^0.6.1",
-    "@viewfly/platform-browser": "^0.6.1",
-    "@viewfly/scoped-css": "^0.6.1",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.34",
+    "@textbus/collaborate": "4.0.0-alpha.34",
+    "@textbus/core": "^4.0.0-alpha.34",
+    "@textbus/platform-browser": "^4.0.0-alpha.34",
+    "@viewfly/core": "^0.6.3",
+    "@viewfly/hooks": "^0.6.3",
+    "@viewfly/platform-browser": "^0.6.3",
+    "@viewfly/scoped-css": "^0.6.3",
     "highlight.js": "^11.9.0",
     "reflect-metadata": "^0.1.13"
   },

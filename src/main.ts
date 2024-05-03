@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'reflect-metadata'
 import './assets/icons/style.css'
 import { createXNote } from './editor'

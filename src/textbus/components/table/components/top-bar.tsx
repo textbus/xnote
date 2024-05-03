@@ -55,6 +55,9 @@ export function TopBar(props: TopBarProps) {
           endIndex: i.length
         }
       }))
+
+      selection.restore()
+      textbus.focus()
     })
   }
   let mouseDownFromToolbar = false
@@ -167,7 +170,7 @@ export function TopBar(props: TopBarProps) {
               <tr>
                 {
                   state.layoutWidth.map((i, index) => {
-                    return <td onMousedown={ev => {
+                    return <td onClick={ev => {
                       mouseDownFromToolbar = true
                       if (!ev.shiftKey) {
                         deleteIndex.set(index)

@@ -100,6 +100,8 @@ export function LeftBar(props: TopBarProps) {
           endIndex: i.length
         }
       }))
+      selection.restore()
+      textbus.focus()
     })
   }
 

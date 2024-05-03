@@ -153,20 +153,27 @@ export class TableComponent extends Component<TableComponentState> {
   insertColumn(index: number) {
     this.state.layoutWidth.splice(index, 0, defaultColumnWidth)
     this.state.rows.forEach(row => {
-      row.cells.splice(index, 0, {
-        rowspan: 1,
-        colspan: 1,
+      const slot = new Slot([
+        ContentType.BlockComponent,
+        ContentType.InlineComponent,
+        ContentType.Text
+      ])
+      slot.insert(new ParagraphComponent(this.textbus, {
         slot: new Slot([
-          ContentType.BlockComponent,
           ContentType.InlineComponent,
           ContentType.Text
         ])
+      }))
+      row.cells.splice(index, 0, {
+        rowspan: 1,
+        colspan: 1,
+        slot
       })
     })
     this.textbus.nextTick(() => {
       const slot = this.state.rows[0].cells[index]?.slot
       if (slot) {
-        this.selection.setPosition(slot, 0)
+        this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
       }
     })
   }
@@ -175,21 +182,28 @@ export class TableComponent extends Component<TableComponentState> {
     this.state.rows.splice(index, 0, {
       height: defaultRowHeight,
       cells: this.state.layoutWidth.map(() => {
-        return {
-          rowspan: 1,
-          colspan: 1,
+        const slot = new Slot([
+          ContentType.BlockComponent,
+          ContentType.InlineComponent,
+          ContentType.Text
+        ])
+        slot.insert(new ParagraphComponent(this.textbus, {
           slot: new Slot([
-            ContentType.BlockComponent,
             ContentType.InlineComponent,
             ContentType.Text
           ])
+        }))
+        return {
+          rowspan: 1,
+          colspan: 1,
+          slot
         }
       })
     })
     this.textbus.nextTick(() => {
       const slot = this.state.rows[index].cells[0]?.slot
       if (slot) {
-        this.selection.setPosition(slot, 0)
+        this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
       }
     })
   }

@@ -1,11 +1,11 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { onMounted, onUnmounted, StaticRef, watch } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
+import { debounceTime } from '@textbus/core'
 
 import css from './selection-mask.scoped.scss'
 import { TableComponent } from '../table.component'
 import { sum } from '../_utils'
-import { delay } from '@textbus/core'
 
 export interface TableSelection {
   startRow: number
@@ -66,7 +66,7 @@ export function SelectionMask(props: SelectionMaskProps) {
     }
   }
 
-  const s = props.component.changeMarker.onChange.pipe(delay(1)).subscribe(() => {
+  const s = props.component.changeMarker.onChange.pipe(debounceTime(30)).subscribe(() => {
     update()
   })
 

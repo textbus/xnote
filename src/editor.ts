@@ -194,5 +194,6 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     })
   }
   await textbus.render(rootComp)
+  console.log(rootComp)
   return textbus
 }
