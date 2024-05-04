@@ -53,7 +53,7 @@ export function Toolbar() {
   function getTop() {
     const docRect = viewDocument.getBoundingClientRect()
     const toolbarRect = toolbarRef.current!.getBoundingClientRect()
-    const documentHeight = document.documentElement.clientHeight
+    // const documentHeight = document.documentElement.clientHeight
     const selectionFocusRect = bridge.getRect({
       slot: selection.focusSlot!,
       offset: selection.focusOffset!
@@ -62,8 +62,9 @@ export function Toolbar() {
       return null
     }
 
+    // console.log(selectionFocusRect.top, toolbarRect.height)
     const centerLeft = selectionFocusRect.left
-    const toBottom = documentHeight - selectionFocusRect.top - selectionFocusRect.height > toolbarRect.height + 10
+    const toBottom = selectionFocusRect.top < toolbarRect.height + 10
     const top = toBottom ?
       selectionFocusRect.top + selectionFocusRect.height - docRect.top + 10 :
       selectionFocusRect.top - docRect.top - toolbarRect.height - 10
