@@ -5,15 +5,15 @@
   "main": "src/index.tsx",
   "scripts": {
     "start": "webpack-dev-server",
-    "serve": "HOST=localhost PORT=1234 npx y-websocket",
+    "serve": "npx y-websocket HOST=localhost PORT=1234 ",
     "build": "rimraf dist && webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.34",
-    "@textbus/collaborate": "4.0.0-alpha.34",
-    "@textbus/core": "^4.0.0-alpha.34",
-    "@textbus/platform-browser": "^4.0.0-alpha.34",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.35",
+    "@textbus/collaborate": "4.0.0-alpha.35",
+    "@textbus/core": "^4.0.0-alpha.35",
+    "@textbus/platform-browser": "^4.0.0-alpha.35",
     "@viewfly/core": "^0.6.3",
     "@viewfly/hooks": "^0.6.3",
     "@viewfly/platform-browser": "^0.6.3",
