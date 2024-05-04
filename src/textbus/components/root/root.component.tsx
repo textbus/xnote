@@ -7,7 +7,6 @@ import {
   Event,
   onBreak,
   onCompositionStart,
-  onContentInsert,
   Selection,
   Slot,
   Subject,
@@ -21,6 +20,7 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import './root.component.scss'
 import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
 import { LeftToolbarService } from '../../../services/left-toolbar.service'
+import { useBlockContent } from '../../hooks/use-block-content'
 
 export interface RootComponentState {
   heading: Slot
@@ -60,23 +60,7 @@ export class RootComponent extends Component<RootComponentState> {
       }
     })
 
-    onContentInsert(ev => {
-      // const heading = this.state.get('heading')
-      const content = this.state.content
-      if (ev.target === content && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
-        const slot = new Slot([
-          ContentType.Text,
-          ContentType.InlineComponent
-        ])
-        const p = new ParagraphComponent(textbus, {
-          slot
-        })
-        slot.insert(ev.data.content)
-        ev.target.insert(p)
-        selection.setPosition(slot, slot.index)
-        ev.preventDefault()
-      }
-    })
+    useBlockContent(this.state.content)
 
     onCompositionStart(ev => {
       this.onCompositionStart.next(ev)

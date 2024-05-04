@@ -14,6 +14,7 @@ import { createSignal } from '@viewfly/core'
 
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { TableSelection } from './components/selection-mask'
+import { useBlockContent } from '../../hooks/use-block-content'
 
 export interface TableCellConfig {
   rowspan: number
@@ -90,6 +91,10 @@ export class TableComponent extends Component<TableComponentState> {
     })
     onFocusOut(() => {
       this.focus.next(false)
+    })
+
+    useBlockContent((slot) => {
+      return slot.parent === this
     })
 
     onGetRanges(ev => {

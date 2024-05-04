@@ -1,23 +1,20 @@
 import {
-  Commander,
   Component,
   ContentType,
   createVNode,
-  onBreak,
   ComponentStateLiteral,
-  onContentInsert,
-  Selection,
   Slot,
   Textbus,
-  useContext, Registry,
+  Registry,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, createRef } from '@viewfly/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 
-import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
+import { deltaToBlock } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
 import { Dropdown } from '../../../components/dropdown/dropdown'
+import { useBlockContent } from '../../hooks/use-block-content'
 
 export interface HighlightBoxComponentState {
   type: string
@@ -45,34 +42,7 @@ export class HighlightBoxComponent extends Component<HighlightBoxComponentState>
   }
 
   override setup() {
-    const textbus = useContext()
-    const selection = useContext(Selection)
-    const commander = useContext(Commander)
-    onBreak(ev => {
-      const afterSlot = ev.target.cut(ev.data.index)
-      const nextParagraph = new ParagraphComponent(textbus, {
-        slot: afterSlot
-      })
-      commander.insertAfter(nextParagraph, this)
-      selection.setPosition(afterSlot, 0)
-      ev.preventDefault()
-    })
-
-    onContentInsert(ev => {
-      if (ev.target === this.state.slot && (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
-        const slot = new Slot([
-          ContentType.InlineComponent,
-          ContentType.Text
-        ])
-        const p = new ParagraphComponent(textbus, {
-          slot
-        })
-        slot.insert(ev.data.content)
-        ev.target.insert(p)
-        selection.setPosition(slot, slot.index)
-        ev.preventDefault()
-      }
-    })
+    useBlockContent(this.state.slot)
   }
 }
 

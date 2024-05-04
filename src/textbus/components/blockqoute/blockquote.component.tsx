@@ -12,6 +12,7 @@ import { inject } from '@viewfly/core'
 
 import './blockquote.component.scss'
 import { deltaToBlock } from '../paragraph/paragraph.component'
+import { useBlockContent } from '../../hooks/use-block-content'
 
 export interface BlockquoteComponentState {
   slot: Slot
@@ -50,18 +51,25 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
   }) {
     super(textbus, state)
   }
+
+  override setup() {
+    useBlockContent(this.state.slot)
+  }
 }
 
 export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
   const adapter = inject(DomAdapter)
   return () => {
     const slot = props.component.state.slot
-    return adapter.slotRender(slot, children => {
-      return createVNode('div', {
-        class: 'xnote-blockquote',
-        ref: props.rootRef
-      }, children)
-    }, false)
+    return (
+      <blockquote class="xnote-blockquote" ref={props.rootRef} data-component={props.component.name}>
+        {
+          adapter.slotRender(slot, children => {
+            return createVNode('div', null, children)
+          }, false)
+        }
+      </blockquote>
+    )
   }
 }
 

@@ -3,8 +3,10 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode, DeltaLite,
-  onBreak, Registry,
+  createVNode,
+  DeltaLite,
+  onBreak,
+  Registry,
   Selection,
   Slot,
   Textbus,
@@ -29,6 +31,15 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
     return new ParagraphComponent(textbus, {
       slot
     })
+  }
+
+  constructor(textbus: Textbus, state: ParagraphComponentState = {
+    slot: new Slot([
+      ContentType.InlineComponent,
+      ContentType.Text
+    ])
+  }) {
+    super(textbus, state)
   }
 
   override setup() {
