@@ -63,9 +63,9 @@ import {
   underlineFormatter
 } from './textbus/formatters/_api'
 import './textbus/doc.scss'
-import { headingAttrLoader, registerHeadingShortcut } from './textbus/attributes/heading.attr'
-import { registerTextAlignShortcut, textAlignAttrLoader } from './textbus/attributes/text-align.attr'
-import { registerTextIndentShortcut, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
+import { headingAttr, headingAttrLoader, registerHeadingShortcut } from './textbus/attributes/heading.attr'
+import { registerTextAlignShortcut, textAlignAttr, textAlignAttrLoader } from './textbus/attributes/text-align.attr'
+import { registerTextIndentShortcut, textIndentAttr, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
 
 export interface XNoteConfig {
   content?: string,
@@ -158,6 +158,11 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       linkFormatter,
       strikeThroughFormatter,
       underlineFormatter
+    ],
+    attributes: [
+      headingAttr,
+      textAlignAttr,
+      textIndentAttr
     ],
     providers: [
       LeftToolbarService

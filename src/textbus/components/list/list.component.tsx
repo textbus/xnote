@@ -10,7 +10,7 @@ import {
   Selection,
   Slot,
   Textbus,
-  useContext, useDynamicShortcut,
+  useContext, useDynamicShortcut, VTextNode,
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -194,19 +194,21 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
       }
     }
     return (
-      <ListType ref={props.rootRef} data-component={component.name} class="xnote-list" style={{
-        marginLeft: indent * 24 + 'px'
-      }}>
-        <li>
-          <div class="xnote-list-type">{icon}</div>
-          {
-            adapter.slotRender(component.state.slot, children => {
-              return createVNode('div', {
-                class: 'xnote-list-content'
-              }, children)
-            }, false)
-          }
-        </li>
+      <ListType ref={props.rootRef} data-component={component.name} class="xnote-list">
+        {
+          adapter.slotRender(component.state.slot, children => {
+            return createVNode('li', {
+              class: 'xnote-list-content'
+            }, [
+              createVNode('div', {
+                class: 'xnote-list-type'
+              }, [
+                new VTextNode(icon)
+              ]),
+              ...children
+            ])
+          }, false)
+        }
       </ListType>
     )
   }
