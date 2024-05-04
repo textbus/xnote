@@ -15,7 +15,7 @@
   border: 1px solid #ddd;
   position: absolute;
   right: 100%;
-  top: 0;
+  //top: 0;
   cursor: pointer;
   height: 26px;
 
@@ -38,6 +38,7 @@
   user-select: none;
   pointer-events: none;
   overflow-y: auto;
+  background: #fff;
 
   &-items {
     padding: 6px;

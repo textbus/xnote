@@ -19,7 +19,6 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
 import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
-import { LeftToolbarService } from '../../../services/left-toolbar.service'
 import { useBlockContent } from '../../hooks/use-block-content'
 
 export interface RootComponentState {
@@ -84,21 +83,6 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     }
   })
 
-
-  const leftToolbarService = inject(LeftToolbarService)
-
-  function move(ev: MouseEvent) {
-    let currentNode = ev.target as Node | null
-    while (currentNode) {
-      const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
-      if (slot) {
-        leftToolbarService.updateActivatedSlot(slot.parent === props.component ? null : slot)
-        break
-      }
-      currentNode = currentNode.parentNode
-    }
-  }
-
   return () => {
     const { rootRef } = props
 
@@ -118,7 +102,6 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
             return (
               createVNode('div', {
                 class: 'xnote-content',
-                onMousemove: move,
                 'data-placeholder': content.isEmpty ? '请输入内容' : ''
               }, children)
             )

@@ -10,12 +10,21 @@ import {
   provide, watch,
 } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
-import { delay, fromEvent, Selection, Slot, Subscription, throttleTime } from '@textbus/core'
+import {
+  delay,
+  distinctUntilChanged,
+  fromEvent,
+  map,
+  RootComponentRef,
+  Selection,
+  Slot,
+  Subscription,
+  throttleTime
+} from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
 
 import css from './left-toolbar.scoped.scss'
 import { RefreshService } from '../../services/refresh.service'
-import { LeftToolbarService } from '../../services/left-toolbar.service'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { useActiveBlock } from '../hooks/active-block'
@@ -25,12 +34,13 @@ import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
+import { RootComponent } from '../../textbus/components/root/root.component'
 
 export function LeftToolbar() {
   provide(RefreshService)
   const adapter = inject(DomAdapter)
   const selection = inject(Selection)
-  const leftToolbarService = inject(LeftToolbarService)
+  const rootComponentRef = inject(RootComponentRef)
   const currentInstance = getCurrentInstance()
   const refreshService = currentInstance.get(RefreshService)
 
@@ -54,33 +64,51 @@ export function LeftToolbar() {
     display: false
   })
 
-
-  let timer: any = 0
-  const subscription = leftToolbarService.onSlotActive.subscribe((c) => {
-    activeSlot.set(c)
-    const position = positionSignal()
-    clearTimeout(timer)
-    if (!c) {
-      if (position.display) {
-        timer = setTimeout(() => {
-          updatePosition(draft => {
-            draft.display = false
-          })
-        }, 200)
+  onMounted(() => {
+    const rootComponent = rootComponentRef.component as RootComponent
+    const contentContainer = adapter.getNativeNodeBySlot(rootComponent.state.content)!
+    const sub = fromEvent(contentContainer!, 'mousemove').pipe(
+      map(ev => {
+        if (!selection.isCollapsed) {
+          return null
+        }
+        let currentNode = ev.target as Node | null
+        while (currentNode) {
+          const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
+          if (slot) {
+            if (slot === rootComponent.state.content) {
+              return null
+            }
+            return slot
+          }
+          currentNode = currentNode.parentNode
+        }
+        return null
+      }),
+      distinctUntilChanged(),
+    ).subscribe(slot => {
+      if (slot) {
+        const nativeNode = adapter.getNativeNodeByComponent(slot.parent!)!
+        updatePosition(draft => {
+          const containerRect = contentContainer.getBoundingClientRect()
+          const currentRect = nativeNode.getBoundingClientRect()
+          draft.display = true
+          draft.left = currentRect.left - containerRect.left
+          draft.top = currentRect.top - containerRect.top + contentContainer.offsetTop
+        })
       }
-      return
-    }
-    const nativeNode = adapter.getNativeNodeByComponent(c.parent!)!
-    updatePosition(draft => {
-      draft.display = true
-      draft.left = nativeNode.offsetLeft
-      draft.top = nativeNode.offsetTop
     })
+
+    return () => sub.unsubscribe()
   })
 
-  subscription.add(selection.onChange.pipe(throttleTime(30)).subscribe(() => {
-    leftToolbarService.onRefresh.next()
-  }))
+  const subscription = selection.onChange.pipe(throttleTime(30)).subscribe(() => {
+    if (!selection.isCollapsed) {
+      updatePosition(draft => {
+        draft.display = false
+      })
+    }
+  })
 
   onUnmounted(() => {
     subscription.unsubscribe()
@@ -203,7 +231,6 @@ export function LeftToolbar() {
             }
           ]} ref={menuRef}>
             <div class="left-toolbar-menu-items">
-
               <MenuItem onClick={transform} value="paragraph" icon={<span class="xnote-icon-pilcrow"/>}
                         checked={states.paragraph}>正文</MenuItem>
               <MenuItem onClick={transform} value="h1" icon={<span class="xnote-icon-heading-h1"/>} checked={states.h1}>一级标题</MenuItem>
@@ -216,8 +243,8 @@ export function LeftToolbar() {
               <MenuItem onClick={transform} value="table" icon={<span class="xnote-icon-table"/>} checked={states.table}>表格</MenuItem>
               <MenuItem onClick={transform} value="todolist" icon={<span class="xnote-icon-checkbox-checked"/>}
                         checked={states.todolist}>待办事项</MenuItem>
-              <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>
-              <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-list"/>}>无序列表</MenuItem>
+              <MenuItem onClick={transform} value="OrderedList" icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>
+              <MenuItem onClick={transform} value="UnorderedList" icon={<span class="xnote-icon-list"/>}>无序列表</MenuItem>
               <MenuItem onClick={transform} value="blockquote" icon={<span class="xnote-icon-quotes-right"/>}
                         checked={states.blockquote}>引用</MenuItem>
               <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}

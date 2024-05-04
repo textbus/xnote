@@ -33,8 +33,7 @@ import {
   ImageView,
   imageComponentLoader, videoComponentLoader, VideoComponent, VideoView
 } from './textbus/components/_api'
-import { ToolbarPlugin } from './plugins/_api'
-import { LeftToolbarService } from './services/_api'
+import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import {
   backgroundColorFormatLoader,
   backgroundColorFormatter,
@@ -165,10 +164,9 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       textIndentAttr
     ],
     providers: [
-      LeftToolbarService
     ],
     plugins: [
-      // new LeftToolbarPlugin(),
+      new LeftToolbarPlugin(),
       new ToolbarPlugin(),
     ],
     onAfterStartup(textbus: Textbus) {
