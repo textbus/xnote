@@ -1,4 +1,5 @@
 import {
+  createDynamicRef,
   createRef,
   createSignal,
   getCurrentInstance, inject,
@@ -67,13 +68,20 @@ export function Dropdown(props: DropdownProps) {
     isShow.set(next)
   }
 
-  const menuRef = createRef<HTMLElement>()
+  let menuElement: HTMLElement | null = null
+
+  const menuRef = createDynamicRef<HTMLElement>(el => {
+    menuElement = el
+    return () => {
+      menuElement = null
+    }
+  })
   const triggerRef = createRef<HTMLElement>()
   const dropdownRef = createRef<HTMLElement>()
 
   function updateMenuHeight() {
-    if (menuRef.current) {
-      menuRef.current.scrollTo({
+    if (menuElement) {
+      menuElement.scrollTo({
         top: 0
       })
       const triggerRect = triggerRef.current!.getBoundingClientRect()
@@ -82,11 +90,11 @@ export function Dropdown(props: DropdownProps) {
       const bottomDistance = documentClientHeight - triggerRect.bottom
       const isToTop = bottomDistance < 200 && triggerRect.top > bottomDistance
       toTop.set(isToTop)
-      const maxHeight = Math.max(menuRef.current.scrollHeight, menuRef.current.offsetHeight)
       if (isToTop) {
-        menuRef.current.style.maxHeight = Math.min(triggerRect.top - 30, maxHeight) + 'px'
+        const maxHeight = Math.max(menuElement.scrollHeight, menuElement.offsetHeight)
+        menuElement.style.height = Math.min(triggerRect.top - 30, maxHeight) + 'px'
       } else {
-        menuRef.current.style.maxHeight = bottomDistance - 30 + 'px'
+        menuElement.style.height = Math.min(bottomDistance - 30, menuElement.scrollHeight) + 'px'
       }
     }
   }
@@ -98,7 +106,7 @@ export function Dropdown(props: DropdownProps) {
   })
 
   watch(expand, newValue => {
-    if (newValue && menuRef.current) {
+    if (newValue && menuElement) {
       updateMenuHeight()
     }
     dropdownService.onOpenStateChange.next(newValue)
@@ -164,28 +172,31 @@ export function Dropdown(props: DropdownProps) {
             </div>
             <div class="dropdown-btn-arrow"/>
           </div>
-          <div ref={menuRef} style={{
-            width: props.width
-          }} class={['dropdown-menu', {
-            active: isShow(),
-            'to-top': toTop(),
-            'expand': expand()
-          }]}>
-            {
-              Array.isArray(props.menu) ?
-                props.menu.map(menu => {
-                  return (
-                    <div class="dropdown-menu-item" onClick={() => {
-                      if (menu.disabled) {
-                        return
-                      }
-                      props.onCheck?.(menu.value)
-                    }}>{menu.label}</div>
-                  )
-                }) :
-                props.menu
-            }
-          </div>
+          {
+            isShow() && <div ref={menuRef} style={{
+              width: props.width
+            }} class={['dropdown-menu', {
+              'to-top': toTop(),
+              'expand': expand()
+            }]}>
+              <div class="dropdown-menu-content">
+                {
+                  Array.isArray(props.menu) ?
+                    props.menu.map(menu => {
+                      return (
+                        <div class="dropdown-menu-item" onClick={() => {
+                          if (menu.disabled) {
+                            return
+                          }
+                          props.onCheck?.(menu.value)
+                        }}>{menu.label}</div>
+                      )
+                    }) :
+                    props.menu
+                }
+              </div>
+              </div>
+          }
         </div>
       )
     })

@@ -20,28 +20,25 @@
     left: -10px;
     top: 100%;
     opacity: 0;
-    padding: 6px;
     pointer-events: none;
     user-select: none;
     overflow-y: auto;
-    display: none;
+    transform: translateY(20px);
+    transition-duration: 0s;
+    height: 0;
+
+    &-content {
+      padding: 6px;
+    }
     &.to-top {
       top: initial;
       bottom: 100%;
-
-      &.active {
-        transform: translateY(0);
-      }
+      transform: translateY(0);
       &.expand {
         transform: translateY(-10px);
       }
     }
 
-    &.active {
-      display: block;
-      transform: translateY(20px);
-      transition-duration: 0s;
-    }
     &.expand {
       transition: transform 0.3s, opacity 0.3s;
       pointer-events: auto;
