@@ -34,6 +34,7 @@ import { SourceCodeComponent } from '../../textbus/components/source-code/source
 import { RootComponent } from '../../textbus/components/root/root.component'
 import { Dropdown } from '../../components/dropdown/dropdown'
 import { TableComponent } from '../../textbus/components/table/table.component'
+import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
 
 export function LeftToolbar() {
   provide(RefreshService)
@@ -51,7 +52,7 @@ export function LeftToolbar() {
   function transform(v: string) {
     const active = activeSlot()
     if (active) {
-      selection.setPosition(active, active.length)
+      selection.setBaseAndExtent(active, 0, active, active.length)
       selection.restore()
       toBlock(v)
       activeSlot.set(selection.focusSlot)
@@ -98,6 +99,7 @@ export function LeftToolbar() {
       activeSlot.set(slot)
       if (slot) {
         checkStates(slot)
+        isEmptyBlock.set(slot.parent instanceof ParagraphComponent && slot.isEmpty)
         const nativeNode = adapter.getNativeNodeByComponent(slot.parent!)!
         updatePosition(draft => {
           const containerRect = docContentContainer.getBoundingClientRect()
@@ -110,6 +112,7 @@ export function LeftToolbar() {
         updatePosition(draft => {
           draft.display = false
         })
+        isEmptyBlock.set(false)
       }
     })
 
@@ -260,15 +263,15 @@ export function LeftToolbar() {
               {
                 isEmptyBlock() ?
                   <span>
-                  {
-                    activeNode
-                  }
-                    <i style="font-size: 12px" class="xnote-icon-more"></i>
-                </span>
+                    <i class="xnote-icon-plus"></i>
+                  </span>
                   :
                   <span>
-                  <i class="bi bi-plus"></i>
-                </span>
+                    {
+                      activeNode
+                    }
+                    <i style="font-size: 12px" class="xnote-icon-more"></i>
+                  </span>
               }
             </button>
           </Dropdown>

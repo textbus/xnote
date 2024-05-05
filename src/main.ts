@@ -27,11 +27,11 @@ const user: UserInfo = {
 }
 createXNote(document.getElementById('app')!, {
   content: document.getElementById('article')!.innerHTML,
-  collaborateConfig: {
-    url: 'ws://localhost:1234',
-    roomName: 'xnote',
-    userinfo: user
-  }
+  // collaborateConfig: {
+  //   url: 'ws://localhost:1234',
+  //   roomName: 'xnote',
+  //   userinfo: user
+  // }
 }).then(textbus => {
   console.log(textbus.getJSON())
 })
