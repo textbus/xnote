@@ -30,10 +30,12 @@
     &-content {
       padding: 6px;
     }
+
     &.to-top {
       top: initial;
       bottom: 100%;
       transform: translateY(0);
+
       &.expand {
         transform: translateY(-10px);
       }
@@ -44,6 +46,25 @@
       pointer-events: auto;
       opacity: 1;
       transform: translateY(10px);
+    }
+
+    &.abreast {
+      left: 100%;
+      transform: translateX(10px);
+
+      &.expand {
+        transform: translateX(5px);
+      }
+
+      &.to-left {
+        transform: translateX(-10px);
+        right: 100%;
+        left: auto;
+
+        &.expand {
+          transform: translateX(-5px);
+        }
+      }
     }
   }
 }

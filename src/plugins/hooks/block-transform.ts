@@ -45,7 +45,6 @@ export function useBlockTransform() {
         break
       case 'table': {
         const table = new TableComponent(textbus)
-        commander.insert(table)
         if (selection.commonAncestorSlot?.isEmpty && selection.commonAncestorComponent?.name === ParagraphComponent.componentName) {
           commander.replaceComponent(selection.commonAncestorComponent, table)
         } else {

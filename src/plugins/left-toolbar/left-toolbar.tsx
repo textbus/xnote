@@ -11,14 +11,15 @@ import {
 } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 import {
+  debounceTime,
   delay,
-  distinctUntilChanged,
+  distinctUntilChanged, filter,
   fromEvent,
-  map,
-  RootComponentRef,
+  map, merge,
+  RootComponentRef, sampleTime,
   Selection,
   Slot,
-  Subscription,
+  Subscription, Textbus,
   throttleTime
 } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
@@ -35,10 +36,13 @@ import { SourceCodeComponent } from '../../textbus/components/source-code/source
 import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
 import { RootComponent } from '../../textbus/components/root/root.component'
+import { Dropdown } from '../../components/dropdown/dropdown'
+import { TableComponent } from '../../textbus/components/table/table.component'
 
 export function LeftToolbar() {
   provide(RefreshService)
   const adapter = inject(DomAdapter)
+  const textbus = inject(Textbus)
   const selection = inject(Selection)
   const rootComponentRef = inject(RootComponentRef)
   const currentInstance = getCurrentInstance()
@@ -66,17 +70,17 @@ export function LeftToolbar() {
 
   onMounted(() => {
     const rootComponent = rootComponentRef.component as RootComponent
-    const contentContainer = adapter.getNativeNodeBySlot(rootComponent.state.content)!
-    const sub = fromEvent(contentContainer!, 'mousemove').pipe(
+    const docContentContainer = adapter.getNativeNodeBySlot(rootComponent.state.content)!
+    const sub = fromEvent(docContentContainer!, 'mousemove').pipe(
+      filter(() => {
+        return selection.isCollapsed
+      }),
       map(ev => {
-        if (!selection.isCollapsed) {
-          return null
-        }
         let currentNode = ev.target as Node | null
         while (currentNode) {
           const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
           if (slot) {
-            if (slot === rootComponent.state.content) {
+            if (slot?.parent instanceof SourceCodeComponent || slot?.parent instanceof TableComponent) {
               return null
             }
             return slot
@@ -86,29 +90,46 @@ export function LeftToolbar() {
         return null
       }),
       distinctUntilChanged(),
+      filter(slot => {
+        return !slot || slot !== rootComponent.state.content
+      }),
+      sampleTime(250),
+      filter(() => {
+        return !isShow()
+      })
     ).subscribe(slot => {
+      activeSlot.set(slot)
       if (slot) {
         const nativeNode = adapter.getNativeNodeByComponent(slot.parent!)!
         updatePosition(draft => {
-          const containerRect = contentContainer.getBoundingClientRect()
+          const containerRect = docContentContainer.getBoundingClientRect()
           const currentRect = nativeNode.getBoundingClientRect()
           draft.display = true
           draft.left = currentRect.left - containerRect.left
-          draft.top = currentRect.top - containerRect.top + contentContainer.offsetTop
+          draft.top = currentRect.top - containerRect.top + docContentContainer.offsetTop
+        })
+      } else {
+        updatePosition(draft => {
+          draft.display = false
         })
       }
     })
 
     return () => sub.unsubscribe()
   })
-
-  const subscription = selection.onChange.pipe(throttleTime(30)).subscribe(() => {
-    if (!selection.isCollapsed) {
-      updatePosition(draft => {
-        draft.display = false
-      })
-    }
-  })
+  const subscription = merge(textbus.onChange, selection.onChange).pipe(
+    debounceTime(20)
+  ).subscribe(() => {
+    refreshService.onRefresh.next()
+  }).add(
+    selection.onChange.pipe(throttleTime(30)).subscribe(() => {
+      if (!selection.isCollapsed) {
+        updatePosition(draft => {
+          draft.display = false
+        })
+      }
+    })
+  )
 
   onUnmounted(() => {
     subscription.unsubscribe()
@@ -200,7 +221,7 @@ export function LeftToolbar() {
       }
     }
 
-    const states = checkStates()
+    const states = checkStates(activeSlot())
 
     return (
       <div class="left-toolbar" ref={toolbarRef}>
@@ -209,28 +230,12 @@ export function LeftToolbar() {
           top: position.top + 'px',
           display: position.display ? 'block' : 'none'
         }}>
-          <button type="button" class="left-toolbar-btn">
-            {
-              isEmptyBlock() ?
-                <span>
-                  {
-                    activeNode
-                  }
-                  <i style="font-size: 12px" class="xnote-icon-more"></i>
-                </span>
-                :
-                <span>
-                  <i class="bi bi-plus"></i>
-                </span>
-            }
-          </button>
-          <div class={[
-            'left-toolbar-menu',
-            {
-              active: isShow()
-            }
-          ]} ref={menuRef}>
-            <div class="left-toolbar-menu-items">
+          <Dropdown abreast={true} style={{
+            position: 'absolute',
+            right: 0,
+            top: 0
+          }} menu={
+            <>
               <MenuItem onClick={transform} value="paragraph" icon={<span class="xnote-icon-pilcrow"/>}
                         checked={states.paragraph}>正文</MenuItem>
               <MenuItem onClick={transform} value="h1" icon={<span class="xnote-icon-heading-h1"/>} checked={states.h1}>一级标题</MenuItem>
@@ -243,14 +248,32 @@ export function LeftToolbar() {
               <MenuItem onClick={transform} value="table" icon={<span class="xnote-icon-table"/>} checked={states.table}>表格</MenuItem>
               <MenuItem onClick={transform} value="todolist" icon={<span class="xnote-icon-checkbox-checked"/>}
                         checked={states.todolist}>待办事项</MenuItem>
-              <MenuItem onClick={transform} value="OrderedList" icon={<span class="xnote-icon-list-numbered"></span>}>有序列表</MenuItem>
-              <MenuItem onClick={transform} value="UnorderedList" icon={<span class="xnote-icon-list"/>}>无序列表</MenuItem>
+              <MenuItem onClick={transform} value="ol" icon={<span class="xnote-icon-list-numbered"></span>}
+                        checked={states.orderedList}>有序列表</MenuItem>
+              <MenuItem onClick={transform} value="ul" icon={<span class="xnote-icon-list"/>}
+                        checked={states.unorderedList}>无序列表</MenuItem>
               <MenuItem onClick={transform} value="blockquote" icon={<span class="xnote-icon-quotes-right"/>}
                         checked={states.blockquote}>引用</MenuItem>
               <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}
                         checked={states.sourceCode}>代码块</MenuItem>
-            </div>
-          </div>
+            </>
+          }>
+            <button type="button" class="left-toolbar-btn">
+              {
+                isEmptyBlock() ?
+                  <span>
+                  {
+                    activeNode
+                  }
+                    <i style="font-size: 12px" class="xnote-icon-more"></i>
+                </span>
+                  :
+                  <span>
+                  <i class="bi bi-plus"></i>
+                </span>
+              }
+            </button>
+          </Dropdown>
         </div>
       </div>
     )

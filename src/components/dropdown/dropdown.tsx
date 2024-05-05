@@ -14,6 +14,7 @@ import {
 } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { delay, fromEvent, Subject, Subscription, tap } from '@textbus/core'
+import { HTMLAttributes } from '@viewfly/platform-browser'
 
 import css from './dropdown.scoped.scss'
 
@@ -29,6 +30,9 @@ export interface DropdownProps extends Props {
   trigger?: DropdownTriggerTypes
   menu: DropdownMenu[] | JSXNode
   width?: string
+  class?: HTMLAttributes<HTMLElement>['class']
+  style?: HTMLAttributes<HTMLElement>['style']
+  abreast?: boolean
 
   onCheck?(value: any): void
 }
@@ -55,6 +59,7 @@ export class DropdownService {
 export function Dropdown(props: DropdownProps) {
   const isShow = createSignal(false)
   const toTop = createSignal(false)
+  const toLeft = createSignal(false)
   const expand = createSignal(false)
   provide(DropdownService)
 
@@ -81,20 +86,47 @@ export function Dropdown(props: DropdownProps) {
 
   function updateMenuHeight() {
     if (menuElement) {
-      menuElement.scrollTo({
-        top: 0
-      })
-      const triggerRect = triggerRef.current!.getBoundingClientRect()
-      const documentClientHeight = document.documentElement.clientHeight
+      if (props.abreast) {
+        const triggerRect = triggerRef.current!.getBoundingClientRect()
 
-      const bottomDistance = documentClientHeight - triggerRect.bottom
-      const isToTop = bottomDistance < 200 && triggerRect.top > bottomDistance
-      toTop.set(isToTop)
-      if (isToTop) {
-        const maxHeight = Math.max(menuElement.scrollHeight, menuElement.offsetHeight)
-        menuElement.style.height = Math.min(triggerRect.top - 30, maxHeight) + 'px'
+        const leftDistance = triggerRect.left
+        const isToLeft = leftDistance > menuElement.offsetWidth + 20
+        toLeft.set(isToLeft)
+        if (isToLeft) {
+          menuElement.style.right = '100%'
+        } else {
+          menuElement.style.left = '100%'
+        }
+
+        const btnEle = triggerRef.current!
+        const screenHeight = document.documentElement.clientHeight
+        const menuHeight = menuElement.scrollHeight
+        const maxHeight = Math.min(screenHeight - 20, menuHeight)
+
+        menuElement.style.height = maxHeight + 'px'
+        const btnRect = btnEle.getBoundingClientRect()
+
+
+        let offsetTop = maxHeight / 2
+        if (btnRect.top - offsetTop < 10) {
+          offsetTop = btnRect.top - 10
+        } else if (btnRect.top + offsetTop > screenHeight - 10) {
+          offsetTop += (btnRect.top + offsetTop - (screenHeight - 10))
+        }
+        menuElement.style.top = -offsetTop + 'px'
       } else {
-        menuElement.style.height = Math.min(bottomDistance - 30, menuElement.scrollHeight) + 'px'
+        const triggerRect = triggerRef.current!.getBoundingClientRect()
+        const documentClientHeight = document.documentElement.clientHeight
+
+        const bottomDistance = documentClientHeight - triggerRect.bottom
+        const isToTop = bottomDistance < 200 && triggerRect.top > bottomDistance
+        toTop.set(isToTop)
+        if (isToTop) {
+          const maxHeight = Math.max(menuElement.scrollHeight, menuElement.offsetHeight)
+          menuElement.style.height = Math.min(triggerRect.top - 30, maxHeight) + 'px'
+        } else {
+          menuElement.style.height = Math.min(bottomDistance - 30, menuElement.scrollHeight) + 'px'
+        }
       }
     }
   }
@@ -165,7 +197,7 @@ export function Dropdown(props: DropdownProps) {
     isShow,
     $render: withScopedCSS(css, () => {
       return (
-        <div class="dropdown" ref={dropdownRef}>
+        <div class={['dropdown', props.class]} style={props.style} ref={dropdownRef}>
           <div class="dropdown-btn" ref={triggerRef}>
             <div class="dropdown-btn-inner">
               {props.children}
@@ -173,9 +205,13 @@ export function Dropdown(props: DropdownProps) {
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <div ref={menuRef} style={{
+            <div ref={menuRef} style={{
               width: props.width
-            }} class={['dropdown-menu', {
+            }} class={['dropdown-menu', props.abreast ? {
+              abreast: props.abreast,
+              'to-left': toLeft(),
+              'expand': expand()
+            } : {
               'to-top': toTop(),
               'expand': expand()
             }]}>
@@ -195,7 +231,7 @@ export function Dropdown(props: DropdownProps) {
                     props.menu
                 }
               </div>
-              </div>
+            </div>
           }
         </div>
       )

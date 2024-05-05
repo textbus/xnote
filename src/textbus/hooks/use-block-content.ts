@@ -13,7 +13,7 @@ export function useBlockContent(slot: Slot | ((slot: Slot) => boolean)) {
   })
 
   onContentInsert(ev => {
-    if (typeof slot === 'function' ? slot(ev.target) : ev.target === slot &&
+    if ((typeof slot === 'function' ? slot(ev.target) : ev.target === slot) &&
       (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
       const p = new ParagraphComponent(textbus)
       const childSlot = p.state.slot

@@ -1,5 +1,5 @@
 import { useProduce } from '@viewfly/hooks'
-import { Query, QueryStateType } from '@textbus/core'
+import { Query, QueryStateType, Selection, Slot } from '@textbus/core'
 import { inject, InjectFlags, onUnmounted, THROW_IF_NOT_FOUND } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
@@ -13,6 +13,7 @@ import { ListComponent } from '../../textbus/components/list/list.component'
 
 export function useActiveBlock() {
   const query = inject(Query)
+  const selection = inject(Selection)
   const refreshService = inject(RefreshService, THROW_IF_NOT_FOUND, InjectFlags.Default)
   const [checkStates, setCheckStates] = useProduce({
     paragraph: false,
@@ -60,5 +61,13 @@ export function useActiveBlock() {
     subscription.unsubscribe()
   })
 
-  return checkStates
+  return function (slot: Slot | null = null) {
+    if (slot) {
+      const snapshot = selection.createSnapshot()
+      selection.setBaseAndExtent(slot, 0, slot, slot.length)
+      updateCheckStates()
+      snapshot.restore()
+    }
+    return checkStates()
+  }
 }

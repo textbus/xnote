@@ -2,6 +2,7 @@
   position: absolute;
   left: -10px;
   top: 0;
+  z-index: 10;
 }
 
 .left-toolbar-btn-wrap {
@@ -13,9 +14,6 @@
   border-radius: 5px;
   background: #fff;
   border: 1px solid #ddd;
-  position: absolute;
-  right: 100%;
-  //top: 0;
   cursor: pointer;
   height: 26px;
 
@@ -25,31 +23,3 @@
   }
 }
 
-.left-toolbar-menu {
-  position: absolute;
-  top: 0;
-  right: 46px;
-  width: 200px;
-  border: 1px solid #dee0e3;
-  box-shadow: 2px 3px 5px rgba(0, 0, 0, .1);
-  border-radius: 6px;
-  transform: translateX(10px);
-  opacity: 0;
-  user-select: none;
-  pointer-events: none;
-  overflow-y: auto;
-  background: #fff;
-
-  &-items {
-    padding: 6px;
-  }
-
-  &.active {
-    pointer-events: auto;
-    transform: translateX(0);
-    opacity: 1;
-    //transition-style: transform opacity;
-    transition-property: opacity, transform;
-    transition-duration: .2s;
-  }
-}
