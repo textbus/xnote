@@ -229,7 +229,7 @@ export function LeftToolbar() {
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
           left: position.left + 'px',
           top: position.top + 'px',
-          display: position.display ? 'block' : 'none'
+          display: position.display && selection.isCollapsed ? 'block' : 'none'
         }}>
           <Dropdown abreast={true} style={{
             position: 'absolute',
@@ -257,6 +257,9 @@ export function LeftToolbar() {
                         checked={states.blockquote}>引用</MenuItem>
               <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}
                         checked={states.sourceCode}>代码块</MenuItem>
+              <Dropdown style={{display: 'block'}} abreast={true} menu={[]}>
+                <MenuItem>在下面添加</MenuItem>
+              </Dropdown>
             </>
           }>
             <button type="button" class="left-toolbar-btn">

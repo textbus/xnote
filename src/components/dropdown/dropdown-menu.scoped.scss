@@ -1,0 +1,22 @@
+.dropdown-menu {
+  position: fixed;
+  border: 1px solid #ddd;
+  width: 200px;
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, .1);
+  border-radius: 5px;
+  background: #fff;
+  left: -10px;
+  top: 100%;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  overflow-y: auto;
+  box-sizing: border-box;
+  transition-duration: 0s;
+  height: 0;
+  transition: transform 0.3s, opacity 0.3s;
+
+  &-content {
+    padding: 6px;
+  }
+}
