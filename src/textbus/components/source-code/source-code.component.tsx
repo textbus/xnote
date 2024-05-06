@@ -12,7 +12,7 @@ import {
   Slot,
   Textbus,
   useContext,
-  VTextNode, Registry, ZenCodingGrammarInterceptor,
+  VTextNode, Registry, ZenCodingGrammarInterceptor, useDynamicShortcut, Commander,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
@@ -319,6 +319,46 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
       this.focus.next(false)
     })
 
+    const commander = useContext(Commander)
+    useDynamicShortcut({
+      keymap: {
+        key: 'Tab'
+      },
+      action(): boolean | void {
+        if (selection.isCollapsed) {
+          commander.insert(' ')
+          return
+        }
+        const blocks = selection.getBlocks()
+        blocks.forEach(block => {
+          block.slot.retain(0)
+          block.slot.insert('  ')
+        })
+        selection.setBaseAndExtent(selection.anchorSlot!, selection.anchorOffset! + 2, selection.focusSlot!, selection.focusOffset! + 2)
+      }
+    })
+
+    useDynamicShortcut({
+      keymap: {
+        key: 'Tab',
+        shiftKey: true
+      },
+      action(): boolean | void {
+        const blocks = selection.getBlocks()
+        blocks.forEach(block => {
+          if (block.slot.sliceContent(0, 2)[0] === '  ') {
+            block.slot.retain(0)
+            block.slot.delete(2)
+            if (block.slot === selection.anchorSlot) {
+              selection.setAnchor(block.slot, selection.anchorOffset! - 2)
+            }
+            if (block.slot === selection.focusSlot) {
+              selection.setFocus(block.slot, selection.focusOffset! - 2)
+            }
+          }
+        })
+      }
+    })
   }
 
   cancelEmphasize = () => {

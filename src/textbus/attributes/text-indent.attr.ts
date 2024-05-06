@@ -1,6 +1,8 @@
 import { Attribute, Commander, Keyboard, Selection, Textbus, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 
+import { SourceCodeComponent } from '../components/source-code/source-code.component'
+
 export const textIndentAttr = new Attribute<number>('textIndent', {
   render(node: VElement, formatValue: number) {
     return node.styles.set('text-indent', formatValue * 24 + 'px')
@@ -31,6 +33,9 @@ export function registerTextIndentShortcut(textbus: Textbus) {
     action(): boolean | void {
       const blocks = selection.getBlocks()
       blocks.forEach(block => {
+        if (block.slot.parent instanceof SourceCodeComponent) {
+          return
+        }
         const currentIndent = block.slot.getAttribute(textIndentAttr)
         if (typeof currentIndent === 'number') {
           block.slot.setAttribute(textIndentAttr, currentIndent + 1)
