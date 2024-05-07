@@ -8,10 +8,10 @@
   left: -10px;
   top: 100%;
   opacity: 0;
-  pointer-events: none;
+  //pointer-events: none;
   user-select: none;
   overflow-y: auto;
-  box-sizing: border-box;
+  //box-sizing: border-box;
   transition-duration: 0s;
   height: 0;
   transition: transform 0.3s, opacity 0.3s;

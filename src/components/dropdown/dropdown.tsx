@@ -101,12 +101,16 @@ export function Dropdown(props: DropdownProps) {
       leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').pipe(
         delay(200)
       ).subscribe(() => {
+        if (isEnterMenu) {
+          return
+        }
         isShow.set(false)
       })
     }
     bindLeave()
     subscription.add(
       fromEvent(dropdownRef.current!, 'mouseenter').subscribe(() => {
+        clearTimeout(timer)
         if (leaveSub) {
           leaveSub.unsubscribe()
         }
@@ -115,6 +119,21 @@ export function Dropdown(props: DropdownProps) {
       })
     )
   })
+  let isEnterMenu = false
+  let timer: any = null
+
+  function onEnterMenu() {
+    isEnterMenu = true
+    clearTimeout(timer)
+  }
+
+  function onLeaveMenu() {
+    isEnterMenu = false
+
+    timer = setTimeout(() => {
+      isShow.set(false)
+    }, 200)
+  }
 
   onUnmounted(() => {
     subscription.unsubscribe()
@@ -132,7 +151,7 @@ export function Dropdown(props: DropdownProps) {
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <DropdownMenuPortal abreast={props.abreast} triggerRef={triggerRef}>
+            isShow() && <DropdownMenuPortal onEnter={onEnterMenu} onLeave={onLeaveMenu} abreast={props.abreast} triggerRef={triggerRef}>
               {
                 Array.isArray(props.menu) ?
                   props.menu.map(menu => {

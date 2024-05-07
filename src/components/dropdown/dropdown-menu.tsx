@@ -8,6 +8,8 @@ import { DropdownService } from './dropdown'
 export interface DropdownMenuProps extends Props {
   abreast?: boolean
   triggerRef: StaticRef<HTMLElement>
+  onEnter(): void
+  onLeave(): void
 }
 
 export function DropdownMenuPortal(props: DropdownMenuProps) {
@@ -93,7 +95,7 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
   })
   return createPortal(withScopedCSS(css, () => {
     return (
-      <div ref={menuRef} style={{
+      <div onMouseenter={props.onEnter} onMouseleave={props.onLeave} ref={menuRef} style={{
         width: props.width
       }} class="dropdown-menu">
         <div class="dropdown-menu-content">
