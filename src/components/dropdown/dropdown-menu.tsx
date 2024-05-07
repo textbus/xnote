@@ -21,15 +21,6 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
   onMounted(() => {
     const menuElement = menuRef.current!
     if (props.abreast) {
-      const triggerRect = props.triggerRef.current!.getBoundingClientRect()
-      const leftDistance = triggerRect.left
-      const isToLeft = leftDistance > menuElement.offsetWidth + 20
-      if (isToLeft) {
-        menuElement.style.right = '100%'
-      } else {
-        menuElement.style.left = '100%'
-      }
-
       const btnEle = props.triggerRef.current!
       const screenHeight = document.documentElement.clientHeight
       const menuHeight = menuElement.scrollHeight
@@ -38,14 +29,33 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
       menuElement.style.height = maxHeight + 'px'
       const btnRect = btnEle.getBoundingClientRect()
 
-
-      let offsetTop = maxHeight / 2
-      if (btnRect.top - offsetTop < 10) {
-        offsetTop = btnRect.top - 10
-      } else if (btnRect.top + offsetTop > screenHeight - 10) {
-        offsetTop += (btnRect.top + offsetTop - (screenHeight - 10))
+      let offsetTop = btnRect.top - maxHeight / 2
+      if (offsetTop < 10) {
+        offsetTop = 10
+      } else if (offsetTop + maxHeight > screenHeight - 10) {
+        offsetTop = screenHeight - 10 - maxHeight
       }
-      menuElement.style.top = -offsetTop + 'px'
+      menuElement.style.top = offsetTop + 'px'
+
+      const triggerRect = props.triggerRef.current!.getBoundingClientRect()
+      const leftDistance = triggerRect.left
+      const isToLeft = leftDistance >= menuElement.offsetWidth + 20
+      if (isToLeft) {
+        menuElement.style.left = leftDistance - menuElement.offsetWidth - 20 + 'px'
+        timer = setTimeout(() => {
+          menuElement.style.transform = 'translateX(10px)'
+          menuElement.style.opacity = '1'
+          dropdownService.onOpenStateChange.next(true)
+        }, delay)
+      } else {
+        menuElement.style.left = triggerRect.right + 20 + 'px'
+        timer = setTimeout(() => {
+          menuElement.style.transform = 'translateX(-10px)'
+          menuElement.style.opacity = '1'
+          dropdownService.onOpenStateChange.next(true)
+        }, delay)
+      }
+
     } else {
       const triggerRect = props.triggerRef.current!.getBoundingClientRect()
       const documentClientHeight = document.documentElement.clientHeight

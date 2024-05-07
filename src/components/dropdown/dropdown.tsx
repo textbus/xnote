@@ -132,7 +132,7 @@ export function Dropdown(props: DropdownProps) {
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <DropdownMenuPortal triggerRef={triggerRef}>
+            isShow() && <DropdownMenuPortal abreast={props.abreast} triggerRef={triggerRef}>
               {
                 Array.isArray(props.menu) ?
                   props.menu.map(menu => {

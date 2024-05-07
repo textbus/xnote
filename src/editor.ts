@@ -127,7 +127,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
   })
 
   const modules: Module[] = [browserModule]
-  if(config.collaborateConfig) {
+  if (config.collaborateConfig) {
     modules.push(new CollaborateModule(config.collaborateConfig))
   }
 
@@ -163,8 +163,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       textAlignAttr,
       textIndentAttr
     ],
-    providers: [
-    ],
+    providers: [],
     plugins: [
       new LeftToolbarPlugin(),
       new ToolbarPlugin(),
