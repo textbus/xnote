@@ -1,7 +1,7 @@
 import { ContentType, createVNode, Selection, Slot, Textbus } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { createRef, createSignal, inject, onMounted, onUnmounted, provide } from '@viewfly/core'
+import { createRef, createSignal, inject, onMounted, onUnmounted, withAnnotation } from '@viewfly/core'
 
 import './table.component.scss'
 import { TableCellConfig, TableComponent } from './table.component'
@@ -14,10 +14,11 @@ import { ResizeRow } from './components/resize-row'
 import { SelectionMask } from './components/selection-mask'
 import { deltaToBlock } from '../paragraph/paragraph.component'
 
-export function TableComponentView(props: ViewComponentProps<TableComponent>) {
+export const TableComponentView = withAnnotation({
+  providers: [TableService]
+}, function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
   const isFocus = createSignal(false)
-  provide(TableService)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
   })
@@ -171,7 +172,7 @@ export function TableComponentView(props: ViewComponentProps<TableComponent>) {
       </div>
     )
   }
-}
+})
 
 export const tableComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {

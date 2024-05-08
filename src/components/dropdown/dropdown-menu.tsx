@@ -1,24 +1,27 @@
-import { createRef, inject, onMounted, onUnmounted, Props, StaticRef } from '@viewfly/core'
+import { createRef, inject, onMounted, onUnmounted, Props, StaticRef, withAnnotation } from '@viewfly/core'
 import { createPortal } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
 import css from './dropdown-menu.scoped.scss'
-import { DropdownService } from './dropdown'
+import { DropdownContextService } from './dropdown-context.service'
+import { DropdownService } from './dropdown.service'
 
 export interface DropdownMenuProps extends Props {
   abreast?: boolean
   triggerRef: StaticRef<HTMLElement>
-  onEnter(): void
-  onLeave(): void
 }
 
-export function DropdownMenuPortal(props: DropdownMenuProps) {
-  const dropdownService = inject(DropdownService)
+export const DropdownMenuPortal = withAnnotation({
+  providers: [
+    DropdownService
+  ]
+}, function DropdownMenuPortal(props: DropdownMenuProps) {
+  const dropdownContextService = inject(DropdownContextService)
 
   const menuRef = createRef<HTMLElement>()
 
   let timer: any = null
-  const delay = 200
+  const delay = 10
 
   onMounted(() => {
     const menuElement = menuRef.current!
@@ -47,14 +50,12 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateX(10px)'
           menuElement.style.opacity = '1'
-          dropdownService.onOpenStateChange.next(true)
         }, delay)
       } else {
         menuElement.style.left = triggerRect.right + 20 + 'px'
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateX(-10px)'
           menuElement.style.opacity = '1'
-          dropdownService.onOpenStateChange.next(true)
         }, delay)
       }
 
@@ -74,7 +75,6 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateY(10px)'
           menuElement.style.opacity = '1'
-          dropdownService.onOpenStateChange.next(true)
         }, delay)
       } else {
         menuElement.style.height = Math.min(bottomDistance - 20, menuElement.scrollHeight) + 'px'
@@ -83,19 +83,28 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateY(-10px)'
           menuElement.style.opacity = '1'
-          dropdownService.onOpenStateChange.next(true)
         }, delay)
       }
     }
   })
 
   onUnmounted(() => {
-    dropdownService.onOpenStateChange.next(false)
     clearTimeout(timer)
   })
+
+  function onEnter() {
+    dropdownContextService.canHide = false
+    dropdownContextService.open()
+  }
+
+  function onLeave() {
+    dropdownContextService.canHide = true
+    dropdownContextService.hide()
+  }
+
   return createPortal(withScopedCSS(css, () => {
     return (
-      <div onMouseenter={props.onEnter} onMouseleave={props.onLeave} ref={menuRef} style={{
+      <div onMouseenter={onEnter} onMouseleave={onLeave} ref={menuRef} style={{
         width: props.width
       }} class="dropdown-menu">
         <div class="dropdown-menu-content">
@@ -106,4 +115,4 @@ export function DropdownMenuPortal(props: DropdownMenuProps) {
       </div>
     )
   }), document.body)
-}
+})

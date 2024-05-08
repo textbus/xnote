@@ -2,21 +2,19 @@ import {
   createRef,
   createSignal,
   inject,
-  Injectable,
   JSXNode,
   onMounted,
   onUnmounted,
   Props,
-  provide,
-  Scope,
-  watch,
+  withAnnotation,
 } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { delay, fromEvent, Subject, Subscription } from '@textbus/core'
+import { fromEvent, Subscription } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 
 import css from './dropdown.scoped.scss'
 import { DropdownMenuPortal } from './dropdown-menu'
+import { DropdownContextService } from './dropdown-context.service'
 
 export type DropdownTriggerTypes = 'hover' | 'click'
 
@@ -37,54 +35,28 @@ export interface DropdownProps extends Props {
   onCheck?(value: any): void
 }
 
-@Injectable({
-  provideIn: 'root'
-})
-export class DropdownNotifyService {
-  onOpen = new Subject<number>()
-}
-
-@Injectable()
-export class DropdownService {
-  isOpen = false
-  onOpenStateChange = new Subject<boolean>()
-
-  constructor() {
-    this.onOpenStateChange.subscribe(b => {
-      this.isOpen = b
-    })
-  }
-}
-
-export function Dropdown(props: DropdownProps) {
+export const Dropdown = withAnnotation({
+  providers: [DropdownContextService]
+}, function Dropdown(props: DropdownProps) {
   const isShow = createSignal(false)
-  provide(DropdownService)
 
-  const dropdownNotifyService = inject(DropdownNotifyService)
-  const id = Math.random()
+  const dropdownContextService = inject(DropdownContextService)
 
   const toggle = () => {
-    const next = !isShow()
-    isShow.set(next)
+    if (dropdownContextService.isOpen) {
+      dropdownContextService.hide(false)
+    } else {
+      dropdownContextService.open()
+    }
   }
 
   const triggerRef = createRef<HTMLElement>()
   const dropdownRef = createRef<HTMLElement>()
 
-  watch(isShow, (newValue) => {
-    if (newValue) {
-      dropdownNotifyService.onOpen.next(id)
-    }
-  })
 
   onMounted(() => {
-    const sub = dropdownNotifyService.onOpen.subscribe(dropdownId => {
-      if (dropdownId === id) {
-        return
-      }
-      if (isShow()) {
-        isShow.set(false)
-      }
+    const sub = dropdownContextService.onOpenStateChange.subscribe(b => {
+      isShow.set(b)
     })
 
     return () => sub.unsubscribe()
@@ -98,49 +70,34 @@ export function Dropdown(props: DropdownProps) {
     }
     let leaveSub: Subscription
     const bindLeave = function () {
-      leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').pipe(
-        delay(200)
-      ).subscribe(() => {
-        if (isEnterMenu) {
-          return
-        }
-        isShow.set(false)
+      leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').subscribe(() => {
+        dropdownContextService.hide()
       })
     }
     bindLeave()
     subscription.add(
       fromEvent(dropdownRef.current!, 'mouseenter').subscribe(() => {
-        clearTimeout(timer)
         if (leaveSub) {
           leaveSub.unsubscribe()
         }
         bindLeave()
-        isShow.set(true)
+        dropdownContextService.open()
       })
     )
   })
-  let isEnterMenu = false
-  let timer: any = null
-
-  function onEnterMenu() {
-    isEnterMenu = true
-    clearTimeout(timer)
-  }
-
-  function onLeaveMenu() {
-    isEnterMenu = false
-
-    timer = setTimeout(() => {
-      isShow.set(false)
-    }, 200)
-  }
 
   onUnmounted(() => {
     subscription.unsubscribe()
   })
 
   return {
-    isShow,
+    isShow(b: boolean) {
+      if (b) {
+        dropdownContextService.hide(false)
+      } else {
+        dropdownContextService.open()
+      }
+    },
     $render: withScopedCSS(css, () => {
       return (
         <div class={['dropdown', props.class]} style={props.style} ref={dropdownRef}>
@@ -151,7 +108,7 @@ export function Dropdown(props: DropdownProps) {
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <DropdownMenuPortal onEnter={onEnterMenu} onLeave={onLeaveMenu} abreast={props.abreast} triggerRef={triggerRef}>
+            isShow() && <DropdownMenuPortal abreast={props.abreast} triggerRef={triggerRef}>
               {
                 Array.isArray(props.menu) ?
                   props.menu.map(menu => {
@@ -172,6 +129,4 @@ export function Dropdown(props: DropdownProps) {
       )
     })
   }
-}
-
-Dropdown.scope = new Scope('Dropdown')
+})

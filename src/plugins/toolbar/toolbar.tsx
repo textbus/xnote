@@ -1,4 +1,4 @@
-import { createRef, inject, InjectFlags, onUnmounted, provide } from '@viewfly/core'
+import { createRef, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { debounceTime, delay, filter, fromEvent, map, merge, Selection, Subscription, Textbus } from '@textbus/core'
 import { SelectionBridge, VIEW_DOCUMENT } from '@textbus/platform-browser'
@@ -20,14 +20,15 @@ import { FontFamilyTool } from '../_common/font-family'
 import { EditorService } from '../../services/editor.service'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 
-export function Toolbar() {
-  provide(RefreshService)
+export const Toolbar = withAnnotation({
+  providers: [RefreshService]
+}, function Toolbar() {
   const selection = inject(Selection)
   const viewDocument = inject(VIEW_DOCUMENT)
   const bridge = inject(SelectionBridge)
   const textbus = inject(Textbus)
   const editorService = inject(EditorService)
-  const refreshService = inject(RefreshService, null, InjectFlags.Default)!
+  const refreshService = inject(RefreshService)
 
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
@@ -175,4 +176,4 @@ export function Toolbar() {
       </div>
     )
   })
-}
+})

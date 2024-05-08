@@ -1,6 +1,6 @@
 import { useProduce } from '@viewfly/hooks'
 import { Query, QueryStateType, Selection, Slot } from '@textbus/core'
-import { inject, InjectFlags, onUnmounted, THROW_IF_NOT_FOUND } from '@viewfly/core'
+import { inject, onUnmounted } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { RefreshService } from '../../services/refresh.service'
@@ -14,7 +14,7 @@ import { ListComponent } from '../../textbus/components/list/list.component'
 export function useActiveBlock() {
   const query = inject(Query)
   const selection = inject(Selection)
-  const refreshService = inject(RefreshService, THROW_IF_NOT_FOUND, InjectFlags.Default)
+  const refreshService = inject(RefreshService)
   const [checkStates, setCheckStates] = useProduce({
     paragraph: false,
     h1: false,

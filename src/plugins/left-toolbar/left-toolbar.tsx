@@ -7,7 +7,7 @@ import {
   JSXNode,
   onMounted,
   onUnmounted,
-  provide, watch,
+  watch, withAnnotation,
 } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 import {
@@ -36,8 +36,9 @@ import { Dropdown } from '../../components/dropdown/dropdown'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
 
-export function LeftToolbar() {
-  provide(RefreshService)
+export const LeftToolbar = withAnnotation({
+  providers: [RefreshService]
+}, function LeftToolbar() {
   const adapter = inject(DomAdapter)
   const textbus = inject(Textbus)
   const selection = inject(Selection)
@@ -257,9 +258,9 @@ export function LeftToolbar() {
                         checked={states.blockquote}>引用</MenuItem>
               <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}
                         checked={states.sourceCode}>代码块</MenuItem>
-              {/*<Dropdown style={{display: 'block'}} abreast={true} menu={[]}>*/}
-              {/*  <MenuItem>在下面添加</MenuItem>*/}
-              {/*</Dropdown>*/}
+              <Dropdown style={{ display: 'block' }} abreast={true} menu={[]}>
+                <MenuItem>在下面添加</MenuItem>
+              </Dropdown>
             </>
           }>
             <button type="button" class="left-toolbar-btn">
@@ -282,4 +283,4 @@ export function LeftToolbar() {
       </div>
     )
   })
-}
+})

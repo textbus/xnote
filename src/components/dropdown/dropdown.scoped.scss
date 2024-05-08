@@ -8,5 +8,10 @@
 
   &-btn {
     display: flex;
+    width: 100%;
+
+    &-inner {
+      flex: 1;
+    }
   }
 }
