@@ -7,7 +7,7 @@ import {
   JSXNode,
   onMounted,
   onUnmounted,
-  watch, withAnnotation,
+  withAnnotation,
 } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 import {
@@ -38,6 +38,7 @@ import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph
 import { Button } from '../../components/button/button'
 import { AttrTool } from '../_common/attr-tool'
 import { ColorTool } from '../_common/color.tool'
+import { useInsert } from './insert'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService]
@@ -144,36 +145,8 @@ export const LeftToolbar = withAnnotation({
   })
 
   const toolbarRef = createRef<HTMLElement>()
-  const menuRef = createRef<HTMLElement>()
   const btnRef = createRef<HTMLElement>()
   const isShow = createSignal(false)
-
-  function updateMenuHeight() {
-    const menuEle = menuRef.current!
-    const btnEle = btnRef.current!
-    const screenHeight = document.documentElement.clientHeight
-    const menuHeight = Math.max(menuEle.offsetHeight, menuEle.scrollHeight)
-    const maxHeight = Math.min(screenHeight - 20, menuHeight)
-
-    menuEle.style.maxHeight = maxHeight + 'px'
-    const btnRect = btnEle.getBoundingClientRect()
-
-    const bottomHeight = screenHeight - 10 - btnRect.top - btnRect.height
-    let offsetTop = maxHeight - bottomHeight
-    if (bottomHeight > maxHeight) {
-      offsetTop = 0
-      if (btnRect.top < 10) {
-        offsetTop = -(10 - btnRect.top)
-      }
-    }
-    menuEle.style.top = -offsetTop + 'px'
-  }
-
-  watch(isShow, (newValue) => {
-    if (newValue && menuRef.current) {
-      updateMenuHeight()
-    }
-  })
 
   onMounted(() => {
     let leaveSub: Subscription
@@ -196,6 +169,8 @@ export const LeftToolbar = withAnnotation({
 
 
   const isEmptyBlock = createSignal(true)
+
+  const insert = useInsert()
 
   return withScopedCSS(css, () => {
     const position = positionSignal()
@@ -287,7 +262,40 @@ export const LeftToolbar = withAnnotation({
               <Divider/>
               <Dropdown style={{ display: 'block' }} abreast={true} menu={
                 <>
-                  <MenuItem onClick={transform} value="table" icon={<span class="xnote-icon-table"/>} checked={states.table}>表格</MenuItem>
+                  <div class="btn-group">
+                    <Button ordinary={true} onClick={() => insert('paragraph')}>
+                      <span class="xnote-icon-pilcrow"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('h1')}>
+                      <span class="xnote-icon-heading-h1"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('h2')}>
+                      <span class="xnote-icon-heading-h2"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('h3')}>
+                      <span class="xnote-icon-heading-h3"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('h4')}>
+                      <span class="xnote-icon-heading-h4"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('todolist')}>
+                      <span class="xnote-icon-checkbox-checked"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('ol')}>
+                      <span class="xnote-icon-list-numbered"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('ul')}>
+                      <span class="xnote-icon-list"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('blockquote')}>
+                      <span class="xnote-icon-quotes-right"/>
+                    </Button>
+                    <Button ordinary={true} onClick={() => insert('sourceCode')}>
+                      <span class="xnote-icon-source-code"/>
+                    </Button>
+                  </div>
+                  <Divider/>
+                  <MenuItem onClick={() => insert('table')} icon={<span class="xnote-icon-table"/>}>表格</MenuItem>
                 </>
               }>
                 <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>

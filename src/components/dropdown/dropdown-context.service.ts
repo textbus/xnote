@@ -23,7 +23,9 @@ export class DropdownContextService {
       if (id === this.id) {
         return
       }
-      this.hide(false)
+
+      this.isOpen = false
+      this.openStateChangeEvent.next(false)
     })
     i++
   }
