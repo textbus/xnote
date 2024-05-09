@@ -1,18 +1,24 @@
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, Props } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Selection } from '@textbus/core'
+import { HTMLAttributes } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { useProduce } from '@viewfly/hooks'
 
 import css from './block-tool.scoped.scss'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { Button } from '../../components/button/button'
-import { Dropdown } from '../../components/dropdown/dropdown'
+import { Dropdown, DropdownProps } from '../../components/dropdown/dropdown'
 import { Divider } from '../../components/divider/divider'
 import { RefreshService } from '../../services/refresh.service'
 import { textAlignAttr } from '../../textbus/attributes/text-align.attr'
 import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
 
-export function AttrTool() {
+export interface AttrToolProps extends Props {
+  abreast?: DropdownProps['abreast']
+  style?: HTMLAttributes<HTMLElement>['style']
+}
+
+export function AttrTool(props: AttrToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const query = inject(Query)
@@ -83,7 +89,7 @@ export function AttrTool() {
   return withScopedCSS(css, () => {
     const states = checkStates()
     return (
-      <Dropdown onCheck={updateAttr} trigger={'hover'} menu={[
+      <Dropdown style={props.style} abreast={props.abreast} onCheck={updateAttr} trigger={'hover'} menu={[
         {
           label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} checked={states.textAlign === 'left'}>左对齐</MenuItem>,
           value: 't-l'
@@ -107,9 +113,11 @@ export function AttrTool() {
           value: 'i-'
         }
       ]}>
-        <Button arrow={true} highlight={false}>
-          <span class={`xnote-icon-paragraph-${states.textAlign || 'left'} icon`}/>
-        </Button>
+        {
+          props.children || <Button arrow={true} highlight={false}>
+            <span class={`xnote-icon-paragraph-${states.textAlign || 'left'} icon`}/>
+          </Button>
+        }
       </Dropdown>
     )
   })

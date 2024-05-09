@@ -35,6 +35,9 @@ import { RootComponent } from '../../textbus/components/root/root.component'
 import { Dropdown } from '../../components/dropdown/dropdown'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
+import { Button } from '../../components/button/button'
+import { AttrTool } from '../_common/attr-tool'
+import { ColorTool } from '../_common/color.tool'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService]
@@ -238,28 +241,56 @@ export const LeftToolbar = withAnnotation({
             top: 0
           }} menu={
             <>
-              <MenuItem onClick={transform} value="paragraph" icon={<span class="xnote-icon-pilcrow"/>}
-                        checked={states.paragraph}>正文</MenuItem>
-              <MenuItem onClick={transform} value="h1" icon={<span class="xnote-icon-heading-h1"/>} checked={states.h1}>一级标题</MenuItem>
-              <MenuItem onClick={transform} value="h2" icon={<span class="xnote-icon-heading-h2"/>} checked={states.h2}>二级标题</MenuItem>
-              <MenuItem onClick={transform} value="h3" icon={<span class="xnote-icon-heading-h3"/>} checked={states.h3}>三级标题</MenuItem>
-              <MenuItem onClick={transform} value="h4" icon={<span class="xnote-icon-heading-h4"/>} checked={states.h4}>四级标题</MenuItem>
-              <MenuItem onClick={transform} value="h5" icon={<span class="xnote-icon-heading-h5"/>} checked={states.h5}>五级标题</MenuItem>
-              <MenuItem onClick={transform} value="h6" icon={<span class="xnote-icon-heading-h6"/>} checked={states.h6}>六级标题</MenuItem>
+              <div class="btn-group">
+                <Button ordinary={true} highlight={states.paragraph} onClick={() => transform('paragraph')}>
+                  <span class="xnote-icon-pilcrow"/>
+                </Button>
+                <Button ordinary={true} highlight={states.h1} onClick={() => transform('h1')}>
+                  <span class="xnote-icon-heading-h1"/>
+                </Button>
+                <Button ordinary={true} highlight={states.h2} onClick={() => transform('h2')}>
+                  <span class="xnote-icon-heading-h2"/>
+                </Button>
+                <Button ordinary={true} highlight={states.h3} onClick={() => transform('h3')}>
+                  <span class="xnote-icon-heading-h3"/>
+                </Button>
+                <Button ordinary={true} highlight={states.h4} onClick={() => transform('h4')}>
+                  <span class="xnote-icon-heading-h4"/>
+                </Button>
+                <Button ordinary={true} highlight={states.todolist} onClick={() => transform('todolist')}>
+                  <span class="xnote-icon-checkbox-checked"/>
+                </Button>
+                <Button ordinary={true} highlight={states.orderedList} onClick={() => transform('ol')}>
+                  <span class="xnote-icon-list-numbered"/>
+                </Button>
+                <Button ordinary={true} highlight={states.unorderedList} onClick={() => transform('ul')}>
+                  <span class="xnote-icon-list"/>
+                </Button>
+                <Button ordinary={true} highlight={states.blockquote} onClick={() => transform('blockquote')}>
+                  <span class="xnote-icon-quotes-right"/>
+                </Button>
+                <Button ordinary={true} highlight={states.sourceCode} onClick={() => transform('sourceCode')}>
+                  <span class="xnote-icon-source-code"/>
+                </Button>
+              </div>
               <Divider/>
-              <MenuItem onClick={transform} value="table" icon={<span class="xnote-icon-table"/>} checked={states.table}>表格</MenuItem>
-              <MenuItem onClick={transform} value="todolist" icon={<span class="xnote-icon-checkbox-checked"/>}
-                        checked={states.todolist}>待办事项</MenuItem>
-              <MenuItem onClick={transform} value="ol" icon={<span class="xnote-icon-list-numbered"></span>}
-                        checked={states.orderedList}>有序列表</MenuItem>
-              <MenuItem onClick={transform} value="ul" icon={<span class="xnote-icon-list"/>}
-                        checked={states.unorderedList}>无序列表</MenuItem>
-              <MenuItem onClick={transform} value="blockquote" icon={<span class="xnote-icon-quotes-right"/>}
-                        checked={states.blockquote}>引用</MenuItem>
-              <MenuItem onClick={transform} value="sourceCode" icon={<span class="xnote-icon-source-code"/>}
-                        checked={states.sourceCode}>代码块</MenuItem>
-              <Dropdown style={{ display: 'block' }} abreast={true} menu={[]}>
-                <MenuItem>在下面添加</MenuItem>
+              <AttrTool style={{ display: 'block' }} abreast={true}>
+                <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
+              </AttrTool>
+              <ColorTool style={{ display: 'block' }} abreast={true}>
+                <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
+              </ColorTool>
+              <Divider/>
+              <MenuItem icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
+              <MenuItem icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
+              <MenuItem icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
+              <Divider/>
+              <Dropdown style={{ display: 'block' }} abreast={true} menu={
+                <>
+                  <MenuItem onClick={transform} value="table" icon={<span class="xnote-icon-table"/>} checked={states.table}>表格</MenuItem>
+                </>
+              }>
+                <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
               </Dropdown>
             </>
           }>

@@ -1,15 +1,21 @@
 import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted, createSignal } from '@viewfly/core'
+import { inject, onUnmounted, createSignal, Props } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
+import { HTMLAttributes } from '@viewfly/platform-browser'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { backgroundColorFormatter, colorFormatter } from '../../textbus/formatters/_api'
-import { Dropdown } from '../../components/dropdown/dropdown'
+import { Dropdown, DropdownProps } from '../../components/dropdown/dropdown'
 import css from './color-tool.scoped.scss'
 
-export function ColorTool() {
+export interface ColorToolProps extends Props {
+  abreast?: DropdownProps['abreast']
+  style?: HTMLAttributes<HTMLElement>['style']
+}
+
+export function ColorTool(props: ColorToolProps) {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)
@@ -59,7 +65,7 @@ export function ColorTool() {
   return withScopedCSS(css, () => {
     const vm = viewModel()
     return (
-      <Dropdown trigger={'hover'} menu={
+      <Dropdown style={props.style} abreast={props.abreast} trigger={'hover'} menu={
         <div>
           <div class="color-type">文字颜色</div>
           <div class="text-colors">
@@ -99,7 +105,8 @@ export function ColorTool() {
           </div>
         </div>
       }>
-        <Button highlight={vm.highlight} arrow={true} disabled={vm.disabled}>
+        {
+          props.children || <Button highlight={vm.highlight} arrow={true} disabled={vm.disabled}>
           <span class="background">
             <span style={{
               backgroundColor: backgroundColor(),
@@ -108,7 +115,8 @@ export function ColorTool() {
               <span class="xnote-icon-color"></span>
             </span>
           </span>
-        </Button>
+          </Button>
+        }
       </Dropdown>
     )
   })

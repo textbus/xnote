@@ -8,6 +8,7 @@ import { DropdownContextService } from '../dropdown/dropdown-context.service'
 export interface ButtonProps extends Props, ButtonHTMLAttributes<HTMLButtonElement> {
   highlight?: boolean
   arrow?: boolean
+  ordinary?: boolean
 }
 
 export function Button(props: ButtonProps) {
@@ -24,13 +25,14 @@ export function Button(props: ButtonProps) {
   }
   return withScopedCSS(css, () => {
     return (
-      <button type="button" class={[
+      <button type="button" {...props} class={[
         'btn',
         {
-          active: isActive(),
+          active: props.ordinary ? false : isActive(),
           highlight: props.highlight
-        }
-      ]} {...props}>
+        },
+        props.class
+      ]}>
         <span>
           {props.children}
         </span>

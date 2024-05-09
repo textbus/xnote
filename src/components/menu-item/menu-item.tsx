@@ -8,6 +8,7 @@ export interface MenuItemProps extends Props {
   checked?: boolean
   icon?: JSXNode
   value?: any
+  arrow?: boolean
 
   onClick?(value: any): void
 }
@@ -26,10 +27,16 @@ export function MenuItem(props: MenuItemProps) {
         <div>{
           props.icon && <span class="menu-icon">{props.icon}</span>
         }{props.children}</div>
-        <div class={[
-          'menu-check',
-          { checked: props.checked }
-        ]}><span class="xnote-icon-checkmark"></span></div>
+        {
+          props.arrow ?
+            <div class="arrow">
+              <span class="xnote-icon-arrow-right"></span>
+            </div> :
+            <div class={[
+              'menu-check',
+              { checked: props.checked }
+            ]}><span class="xnote-icon-checkmark"></span></div>
+        }
       </div>
     )
   })
