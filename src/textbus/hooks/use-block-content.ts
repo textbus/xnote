@@ -6,10 +6,12 @@ export function useBlockContent(slot: Slot | ((slot: Slot) => boolean)) {
   const textbus = useContext()
   const selection = textbus.get(Selection)
   onBreak(ev => {
-    const p = new ParagraphComponent(textbus)
-    ev.target.insert(p)
-    selection.setPosition(p.state.slot, 0)
-    ev.preventDefault()
+    if (typeof slot === 'function' ? slot(ev.target) : ev.target === slot) {
+      const p = new ParagraphComponent(textbus)
+      ev.target.insert(p)
+      selection.setPosition(p.state.slot, 0)
+      ev.preventDefault()
+    }
   })
 
   onContentInsert(ev => {

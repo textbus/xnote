@@ -1,14 +1,6 @@
-import {
-  Component,
-  ContentType,
-  createVNode,
-  ComponentStateLiteral,
-  Slot,
-  Textbus,
-  Registry,
-} from '@textbus/core'
+import { Component, ComponentStateLiteral, ContentType, createVNode, Registry, Slot, Textbus, } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject, createRef } from '@viewfly/core'
+import { createRef, inject } from '@viewfly/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 
 import { deltaToBlock } from '../paragraph/paragraph.component'
@@ -35,7 +27,9 @@ export class HighlightBoxComponent extends Component<HighlightBoxComponentState>
   constructor(textbus: Textbus, state: HighlightBoxComponentState = {
     type: '',
     slot: new Slot([
-      ContentType.BlockComponent
+      ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
     ])
   }) {
     super(textbus, state)
@@ -78,7 +72,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
             </div>
           }>
             <div class="xnote-highlight-box-icon">
-              <button type="button">{state.type || 'cc'}</button>
+              <button type="button">{state.type || '  '}</button>
             </div>
           </Dropdown>
         </div>

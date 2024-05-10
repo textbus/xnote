@@ -12,6 +12,7 @@ import { ListComponent } from '../../textbus/components/list/list.component'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
+import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
 
 export function InsertTool(props: { slot: Slot | null }) {
   const commander = inject(Commander)
@@ -99,6 +100,12 @@ export function InsertTool(props: { slot: Slot | null }) {
         break
       case 'video':
         break
+      case 'highlightBox': {
+        const comp = new HighlightBoxComponent(textbus)
+        commander.insertAfter(comp, component)
+        selection.setPosition(comp.state.slot, 0)
+      }
+        break
     }
   }
 
@@ -141,6 +148,7 @@ export function InsertTool(props: { slot: Slot | null }) {
       <MenuItem onClick={() => insert('todolist')} icon={<span class="xnote-icon-checkbox-checked"/>}>待办列表</MenuItem>
       <MenuItem onClick={() => insert('image')} icon={<span class="xnote-icon-image"/>}>图片</MenuItem>
       <MenuItem onClick={() => insert('video')} icon={<span class="xnote-icon-video"/>}>视频</MenuItem>
+      <MenuItem onClick={() => insert('highlightBox')} icon={<span class="xnote-icon-warning"/>}>高亮块</MenuItem>
     </>
   })
 }
