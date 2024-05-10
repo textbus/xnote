@@ -16,6 +16,12 @@ import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
 export interface AttrToolProps extends Props {
   abreast?: DropdownProps['abreast']
   style?: HTMLAttributes<HTMLElement>['style']
+
+  queryBefore?(): void
+
+  queryAfter?(): void
+
+  applyBefore?(): void
 }
 
 export function AttrTool(props: AttrToolProps) {
@@ -30,6 +36,7 @@ export function AttrTool(props: AttrToolProps) {
   })
 
   function updateCheckStates() {
+    props.queryBefore?.()
     setCheckStates(draft => {
       const textAlignState = query.queryAttribute(textAlignAttr)
       const textIndentState = query.queryAttribute(textIndentAttr)
@@ -37,11 +44,13 @@ export function AttrTool(props: AttrToolProps) {
       draft.textAlign = textAlignState.state === QueryStateType.Enabled ? textAlignState.value! : 'left'
       draft.textIndent = textIndentState.state === QueryStateType.Enabled ? textIndentState.value! : 0
     })
+    props.queryAfter?.()
   }
 
   updateCheckStates()
 
   const subscription = refreshService.onRefresh.subscribe(() => {
+    console.log(333)
     updateCheckStates()
   })
 
@@ -50,6 +59,7 @@ export function AttrTool(props: AttrToolProps) {
   })
 
   function updateAttr(value: any) {
+    props.applyBefore?.()
     switch (value) {
       case 't-l':
         commander.applyAttribute(textAlignAttr, '')

@@ -33,6 +33,6 @@ createXNote(document.getElementById('app')!, {
   //   userinfo: user
   // }
 }).then(textbus => {
-  console.log(textbus.getJSON())
+  // console.log(textbus.getJSON())
 })
 

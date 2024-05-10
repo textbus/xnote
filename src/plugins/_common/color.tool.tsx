@@ -13,6 +13,12 @@ import css from './color-tool.scoped.scss'
 export interface ColorToolProps extends Props {
   abreast?: DropdownProps['abreast']
   style?: HTMLAttributes<HTMLElement>['style']
+
+  queryBefore?(): void
+
+  queryAfter?(): void
+
+  applyBefore?(): void
 }
 
 export function ColorTool(props: ColorToolProps) {
@@ -28,13 +34,21 @@ export function ColorTool(props: ColorToolProps) {
     disabled: false,
   })
 
-  const sub = refreshService.onRefresh.subscribe(() => {
+  function updateCheckState() {
+    props.queryBefore?.()
     const textState = query.queryFormat(colorFormatter)
     const backgroundState = query.queryFormat(backgroundColorFormatter)
 
     textColor.set(textState.state === QueryStateType.Enabled ? textState.value! : '')
     backgroundColor.set(backgroundState.state === QueryStateType.Enabled ? backgroundState.value! : '')
+    props.queryAfter?.()
+  }
+
+  const sub = refreshService.onRefresh.subscribe(() => {
+    updateCheckState()
   })
+
+  updateCheckState()
 
   onUnmounted(() => {
     sub.unsubscribe()
@@ -72,6 +86,7 @@ export function ColorTool(props: ColorToolProps) {
             <div class={{
               active: textColor() === ''
             }} onClick={() => {
+              props.applyBefore?.()
               commander.unApplyFormat(colorFormatter)
             }}>A
             </div>
@@ -80,6 +95,7 @@ export function ColorTool(props: ColorToolProps) {
                 return <div class={{
                   active: textColor() === c
                 }} onClick={() => {
+                  props.applyBefore?.()
                   commander.applyFormat(colorFormatter, c)
                 }} style={{ color: c }}>A</div>
               })
@@ -91,6 +107,7 @@ export function ColorTool(props: ColorToolProps) {
               active: backgroundColor() === '',
               'no-background': true
             }} onClick={() => {
+              props.applyBefore?.()
               commander.unApplyFormat(backgroundColorFormatter)
             }}></div>
             {
@@ -98,6 +115,7 @@ export function ColorTool(props: ColorToolProps) {
                 return <div class={{
                   active: backgroundColor() === c
                 }} onClick={() => {
+                  props.applyBefore?.()
                   commander.applyFormat(backgroundColorFormatter, c)
                 }} style={{ backgroundColor: c }}>A</div>
               })

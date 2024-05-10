@@ -2,7 +2,6 @@ import { withScopedCSS } from '@viewfly/scoped-css'
 import {
   createRef,
   createSignal,
-  getCurrentInstance,
   inject,
   JSXNode,
   onMounted,
@@ -17,7 +16,7 @@ import {
   fromEvent,
   map, merge,
   RootComponentRef, sampleTime,
-  Selection,
+  Selection, SelectionSnapshot,
   Slot,
   Subscription, Textbus,
   throttleTime
@@ -47,8 +46,7 @@ export const LeftToolbar = withAnnotation({
   const textbus = inject(Textbus)
   const selection = inject(Selection)
   const rootComponentRef = inject(RootComponentRef)
-  const currentInstance = getCurrentInstance()
-  const refreshService = currentInstance.get(RefreshService)
+  const refreshService = inject(RefreshService)
 
   const checkStates = useActiveBlock()
   const toBlock = useBlockTransform()
@@ -203,6 +201,31 @@ export const LeftToolbar = withAnnotation({
       }
     }
 
+    let snapshot: SelectionSnapshot | null = null
+
+    function queryBefore() {
+      const slot = activeSlot()
+      if (slot) {
+        snapshot = selection.createSnapshot()
+        selection.selectSlot(slot)
+      }
+    }
+
+    function queryAfter() {
+      snapshot?.restore()
+      snapshot = null
+    }
+
+    function applyBefore() {
+      const slot = activeSlot()
+      if (slot) {
+        selection.selectSlot(slot)
+        textbus.nextTick(() => {
+          refreshService.onRefresh.next()
+        })
+      }
+    }
+
     return (
       <div class="left-toolbar" ref={toolbarRef}>
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
@@ -249,10 +272,21 @@ export const LeftToolbar = withAnnotation({
                 </Button>
               </div>
               <Divider/>
-              <AttrTool style={{ display: 'block' }} abreast={true}>
+              <AttrTool
+                style={{ display: 'block' }}
+                abreast={true}
+                applyBefore={applyBefore}
+                queryBefore={queryBefore}
+                queryAfter={queryAfter}>
                 <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
               </AttrTool>
-              <ColorTool style={{ display: 'block' }} abreast={true}>
+              <ColorTool
+                style={{ display: 'block' }}
+                abreast={true}
+                applyBefore={applyBefore}
+                queryBefore={queryBefore}
+                queryAfter={queryAfter}
+              >
                 <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
               </ColorTool>
               <Divider/>
