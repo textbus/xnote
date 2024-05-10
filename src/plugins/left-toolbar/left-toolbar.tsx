@@ -37,7 +37,7 @@ import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph
 import { Button } from '../../components/button/button'
 import { AttrTool } from '../_common/attr-tool'
 import { ColorTool } from '../_common/color.tool'
-import { useInsert } from './insert'
+import { InsertTool } from './insert-tool'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService]
@@ -168,8 +168,6 @@ export const LeftToolbar = withAnnotation({
 
   const isEmptyBlock = createSignal(true)
 
-  const insert = useInsert()
-
   return withScopedCSS(css, () => {
     const position = positionSignal()
     const slot = activeSlot()
@@ -294,44 +292,7 @@ export const LeftToolbar = withAnnotation({
               <MenuItem icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
               <MenuItem icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
               <Divider/>
-              <Dropdown style={{ display: 'block' }} abreast={true} menu={
-                <>
-                  <div class="btn-group">
-                    <Button ordinary={true} onClick={() => insert('paragraph')}>
-                      <span class="xnote-icon-pilcrow"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('h1')}>
-                      <span class="xnote-icon-heading-h1"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('h2')}>
-                      <span class="xnote-icon-heading-h2"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('h3')}>
-                      <span class="xnote-icon-heading-h3"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('h4')}>
-                      <span class="xnote-icon-heading-h4"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('todolist')}>
-                      <span class="xnote-icon-checkbox-checked"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('ol')}>
-                      <span class="xnote-icon-list-numbered"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('ul')}>
-                      <span class="xnote-icon-list"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('blockquote')}>
-                      <span class="xnote-icon-quotes-right"/>
-                    </Button>
-                    <Button ordinary={true} onClick={() => insert('sourceCode')}>
-                      <span class="xnote-icon-source-code"/>
-                    </Button>
-                  </div>
-                  <Divider/>
-                  <MenuItem onClick={() => insert('table')} icon={<span class="xnote-icon-table"/>}>表格</MenuItem>
-                </>
-              }>
+              <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertTool slot={activeSlot()}/>}>
                 <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
               </Dropdown>
             </>

@@ -50,7 +50,6 @@ export function AttrTool(props: AttrToolProps) {
   updateCheckStates()
 
   const subscription = refreshService.onRefresh.subscribe(() => {
-    console.log(333)
     updateCheckStates()
   })
 

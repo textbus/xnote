@@ -33,7 +33,7 @@ import {
   ImageView,
   imageComponentLoader, videoComponentLoader, VideoComponent, VideoView
 } from './textbus/components/_api'
-import { LeftToolbarPlugin } from './plugins/_api'
+import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import {
   backgroundColorFormatLoader,
   backgroundColorFormatter,
@@ -166,7 +166,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     providers: [],
     plugins: [
       new LeftToolbarPlugin(),
-      // new ToolbarPlugin(),
+      new ToolbarPlugin(),
     ],
     onAfterStartup(textbus: Textbus) {
       registerBoldShortcut(textbus)
