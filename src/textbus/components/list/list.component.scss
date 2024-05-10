@@ -1,20 +1,29 @@
 .xnote-list {
   margin: 8px 0;
   padding: 0;
-  list-style: none;
+
+  > li {
+    display: flex;
+  }
 }
 
 .xnote-list-type {
-  min-width: 24px;
-  display: inline-block;
+  width: 24px;
   text-indent: 0;
   text-align: left;
   color: #296eff;
   white-space: nowrap;
-  padding-right: 10px;
   box-sizing: border-box;
 }
 
-//.xnote-list-content[style*=text-indent] {
-//  text-indent: 0 !important;
-//}
+.xnote-order-btn {
+  padding-left: 5px;
+}
+
+.xnote-list-content[style*=text-indent] {
+  text-indent: 0 !important;
+}
+
+.xnote-list-content[style*=text-align] {
+  text-align: left !important;
+}

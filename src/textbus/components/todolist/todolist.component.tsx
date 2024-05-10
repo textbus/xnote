@@ -20,6 +20,7 @@ import './todolist.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
 import { strikeThroughFormatter } from '../../formatters/strike-through'
+import { textAlignAttr } from '../../attributes/text-align.attr'
 
 export interface TodolistComponentState {
   checked: boolean
@@ -106,7 +107,8 @@ export class TodolistComponent extends Component<TodolistComponentState> {
 
 export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
   const adapter = inject(DomAdapter)
-  const state = props.component.state
+  const component = props.component
+  const state = component.state
 
   function toggle() {
     state.checked = !state.checked
@@ -117,12 +119,20 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
     })
   }
 
+  const align = {
+    left: 'left',
+    right: 'right',
+    center: 'center',
+    justify: 'left'
+  }
   return () => {
     const { slot, checked } = state
     const indent = slot.getAttribute(textIndentAttr) || 0
     return (
       <div data-component={TodolistComponent.componentName} ref={props.rootRef} class="xnote-todolist" style={{
-        marginLeft: indent * 24 + 'px'
+        marginLeft: indent * 24 + 'px',
+        justifyContent: align[component.state.slot.getAttribute(textAlignAttr)!],
+        textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
       }}>
         <div class="xnote-todolist-icon" onClick={toggle}>
           <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']}/>

@@ -10,7 +10,7 @@ import {
   Selection,
   Slot,
   Textbus,
-  useContext, useDynamicShortcut, VTextNode,
+  useContext, useDynamicShortcut,
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -20,6 +20,10 @@ import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-brows
 import './list.component.scss'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
+import { Dropdown } from '../../../components/dropdown/dropdown'
+import { Button } from '../../../components/button/button'
+import { MenuItem } from '../../../components/menu-item/menu-item'
+import { textAlignAttr } from '../../attributes/text-align.attr'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -153,8 +157,31 @@ function numberToLetter(num: number) {
 
 export function ListComponentView(props: ViewComponentProps<ListComponent>) {
   const adapter = inject(DomAdapter)
+  const component = props.component
+
+  function reorder(is: boolean) {
+    component.state.reorder = is
+    const parentSlot = component.parent!
+    const index = parentSlot.indexOf(component)
+
+    const afterContent = parentSlot.sliceContent(index + 1)
+    for (const item of afterContent) {
+      if (item instanceof ListComponent) {
+        if (item.state.reorder) {
+          break
+        }
+        item.changeMarker.forceMarkDirtied()
+      }
+    }
+  }
+
+  const align = {
+    left: 'left',
+    right: 'right',
+    center: 'center',
+    justify: 'left'
+  }
   return () => {
-    const component = props.component
     const ListType = component.state.type === 'UnorderedList' ? 'ul' : 'ol'
     const ulIcons = ['•', '◦', '▪']
     let icon = ''
@@ -194,21 +221,32 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
       }
     }
     return (
-      <ListType ref={props.rootRef} data-component={component.name} class="xnote-list">
-        {
-          adapter.slotRender(component.state.slot, children => {
-            return createVNode('li', {
-              class: 'xnote-list-content'
-            }, [
-              createVNode('div', {
-                class: 'xnote-list-type'
-              }, [
-                new VTextNode(icon)
-              ]),
-              ...children
-            ])
-          }, false)
-        }
+      <ListType ref={props.rootRef} data-component={component.name} class="xnote-list" style={{
+        marginLeft: indent * 24 + 'px'
+      }}>
+        <li style={{
+          justifyContent: align[component.state.slot.getAttribute(textAlignAttr)!],
+          textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
+        }}>
+          <div class="xnote-list-type">{
+            component.state.type === 'UnorderedList' ?
+              <span class="xnote-order-btn">{icon}</span>
+              :
+              <Dropdown menu={<>
+                <MenuItem onClick={() => reorder(false)}>继续编号</MenuItem>
+                <MenuItem onClick={() => reorder(true)}>重新编号</MenuItem>
+              </>}>
+                <Button style={{ color: 'inherit' }}>{icon}</Button>
+              </Dropdown>
+          }</div>
+          {
+            adapter.slotRender(component.state.slot, children => {
+              return createVNode('div', {
+                class: 'xnote-list-content'
+              }, children)
+            }, false)
+          }
+        </li>
       </ListType>
     )
   }

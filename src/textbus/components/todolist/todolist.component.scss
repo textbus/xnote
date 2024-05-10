@@ -10,9 +10,13 @@
   }
 
   &-content {
-    flex: 1;
+    //flex: 1;
     &[style*=text-indent] {
-      text-indent: 0!important;
+      text-indent: 0 !important;
+    }
+
+    &[style*=text-align] {
+      text-align: left !important;
     }
   }
 }
