@@ -19,6 +19,7 @@ import { FontSizeTool } from '../_common/font-size.tool'
 import { FontFamilyTool } from '../_common/font-family'
 import { EditorService } from '../../services/editor.service'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
+import { LinkTool } from '../_common/link-tool'
 
 export const Toolbar = withAnnotation({
   providers: [RefreshService]
@@ -127,6 +128,13 @@ export const Toolbar = withAnnotation({
     })
     bindMouseup()
   })
+
+  function hideToolbar() {
+    updateViewPosition(draft => {
+      draft.isHide = true
+    })
+  }
+
   onUnmounted(() => {
     mousedownSubscription.unsubscribe()
     mouseupSubscription.unsubscribe()
@@ -166,6 +174,9 @@ export const Toolbar = withAnnotation({
         </ToolbarItem>
         <ToolbarItem>
           <FontFamilyTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <LinkTool hideToolbar={hideToolbar}/>
         </ToolbarItem>
         <ToolbarItem>
           <CodeTool/>

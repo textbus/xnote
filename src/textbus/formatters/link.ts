@@ -9,9 +9,22 @@ export interface LinkFormatData {
 export const linkFormatter = new Formatter<LinkFormatData>('link', {
   priority: -1,
   inheritable: false,
-  render(children: Array<VElement | VTextNode | Component>, formatValue: LinkFormatData): VElement | FormatHostBindingRender {
+  render(children: Array<VElement | VTextNode | Component>, formatValue: LinkFormatData, isOutput = false): VElement | FormatHostBindingRender {
+    if (isOutput) {
+      return createVNode('a', {
+        href: formatValue.href,
+        target: formatValue.target
+      }, children)
+    }
     return createVNode('a', {
-      href: formatValue.href,
+      onClick(ev: Event) {
+        ev.preventDefault()
+      },
+      'data-href': formatValue.href,
+      style: {
+        color: '#296eff',
+        textDecoration: 'underline'
+      },
       target: formatValue.target
     }, children)
   }
@@ -25,7 +38,7 @@ export const linkFormatLoader: FormatLoader<LinkFormatData> = {
     return {
       formatter: linkFormatter,
       value: {
-        href: element.href,
+        href: element.href || element.dataset.href as string,
         target: element.target as LinkFormatData['target'] || '_self'
       }
     }
