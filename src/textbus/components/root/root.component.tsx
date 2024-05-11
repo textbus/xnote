@@ -14,12 +14,14 @@ import {
   useContext, Registry,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { inject, createDynamicRef } from '@viewfly/core'
+import { inject, createDynamicRef, onUpdated } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
 import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
 import { useBlockContent } from '../../hooks/use-block-content'
+import { ListComponent } from '../list/list.component'
+import { TodolistComponent } from '../todolist/todolist.component'
 
 export interface RootComponentState {
   heading: Slot
@@ -65,6 +67,19 @@ export class RootComponent extends Component<RootComponentState> {
       this.onCompositionStart.next(ev)
     })
   }
+
+  afterCheck() {
+    const content = this.state.content
+    const lastContent = content.getContentAtIndex(content.length - 1)
+    if (lastContent instanceof ParagraphComponent ||
+      lastContent instanceof ListComponent ||
+      lastContent instanceof TodolistComponent) {
+      return
+    }
+
+    content.retain(content.length)
+    content.insert(new ParagraphComponent(this.textbus))
+  }
 }
 
 export function RootView(props: ViewComponentProps<RootComponent>) {
@@ -81,6 +96,10 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     return () => {
       sub.unsubscribe()
     }
+  })
+
+  onUpdated(() => {
+    props.component.afterCheck()
   })
 
   return () => {
