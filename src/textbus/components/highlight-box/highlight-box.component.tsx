@@ -7,6 +7,7 @@ import { deltaToBlock } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useBlockContent } from '../../hooks/use-block-content'
+import { Divider } from '../../../components/divider/divider'
 
 export interface HighlightBoxComponentState {
   type: string
@@ -14,6 +15,7 @@ export interface HighlightBoxComponentState {
 }
 
 export class HighlightBoxComponent extends Component<HighlightBoxComponentState> {
+  static defaultTypes = ['❤️', '💡', '📌', '✅', '❎', '👍', '🎉', '🚫', '❗']
   static componentName = 'HighlightBoxComponent'
   static type = ContentType.BlockComponent
 
@@ -59,8 +61,16 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
     return (
       <div data-component={name} ref={props.rootRef} data-icon={state.type} class="xnote-highlight-box">
         <div class="xnote-highlight-box-left">
-          <Dropdown ref={dropdownRef} width="210px" menu={
+          <Dropdown trigger="click" ref={dropdownRef} width="260px" menu={
             <div class="xnote-highlight-box-icons">
+              {
+                HighlightBoxComponent.defaultTypes.map(icon => {
+                  return (
+                    <button onClick={() => setType(icon)} type="button">{icon}</button>
+                  )
+                })
+              }
+              <Divider/>
               {
                 emoji.map(i => {
                   const icon = String.fromCodePoint(i)
@@ -72,7 +82,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
             </div>
           }>
             <div class="xnote-highlight-box-icon">
-              <button type="button">{state.type || '  '}</button>
+              <button type="button">{state.type || '❤️'}</button>
             </div>
           </Dropdown>
         </div>

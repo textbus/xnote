@@ -9,6 +9,7 @@ import { DropdownService } from './dropdown.service'
 export interface DropdownMenuProps extends Props {
   abreast?: boolean
   triggerRef: StaticRef<HTMLElement>
+  width?: string
 }
 
 export const DropdownMenuPortal = withAnnotation({

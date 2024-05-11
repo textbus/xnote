@@ -101,9 +101,11 @@ export function InsertTool(props: { slot: Slot | null }) {
       case 'video':
         break
       case 'highlightBox': {
+        const p = new ParagraphComponent(textbus)
         const comp = new HighlightBoxComponent(textbus)
+        comp.state.slot.insert(p)
         commander.insertAfter(comp, component)
-        selection.setPosition(comp.state.slot, 0)
+        selection.setPosition(p.state.slot, 0)
       }
         break
     }

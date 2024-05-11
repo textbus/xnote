@@ -6,7 +6,7 @@
   display: flex;
 
   &-left {
-    padding-top: 8px;
+    padding-top: 0.65em;
     width: 40px;
     text-align: center;
   }
@@ -17,7 +17,7 @@
 
   &-icon {
     button {
-      font-size: 18px;
+      font-size: 1.4em;
       padding: 0;
       border: none;
       border-radius: 4px;
@@ -40,7 +40,8 @@
     height: 30px;
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 24px;
+    padding: 0;
     cursor: pointer;
     border-radius: 4px;
     &:hover {
