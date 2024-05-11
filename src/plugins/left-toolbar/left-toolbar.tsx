@@ -10,6 +10,7 @@ import {
 } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 import {
+  Commander,
   debounceTime,
   delay,
   distinctUntilChanged, filter,
@@ -165,6 +166,64 @@ export const LeftToolbar = withAnnotation({
     )
   })
 
+  let snapshot: SelectionSnapshot | null = null
+
+  function queryBefore() {
+    const slot = activeSlot()
+    if (slot) {
+      snapshot = selection.createSnapshot()
+      selection.selectSlot(slot)
+    }
+  }
+
+  function queryAfter() {
+    snapshot?.restore()
+    snapshot = null
+  }
+
+  function applyBefore() {
+    const slot = activeSlot()
+    if (slot) {
+      selection.selectSlot(slot)
+      textbus.nextTick(() => {
+        refreshService.onRefresh.next()
+      })
+    }
+  }
+
+  const commander = inject(Commander)
+
+  function copy() {
+    const slot = activeSlot()
+    if (!slot) {
+      return
+    }
+    selection.selectComponent(slot.parent!, true)
+    commander.copy()
+  }
+
+  function cut() {
+    const slot = activeSlot()
+    if (!slot) {
+      return
+    }
+    copy()
+    remove()
+  }
+
+
+  function remove() {
+    const slot = activeSlot()
+    if (!slot) {
+      return
+    }
+    if (slot.parent!.__slots__.length <= 1) {
+      commander.removeComponent(slot.parent!)
+    } else {
+      selection.selectSlot(slot)
+      commander.delete()
+    }
+  }
 
   const isEmptyBlock = createSignal(true)
 
@@ -196,31 +255,6 @@ export const LeftToolbar = withAnnotation({
           activeNode = t[1]
           break
         }
-      }
-    }
-
-    let snapshot: SelectionSnapshot | null = null
-
-    function queryBefore() {
-      const slot = activeSlot()
-      if (slot) {
-        snapshot = selection.createSnapshot()
-        selection.selectSlot(slot)
-      }
-    }
-
-    function queryAfter() {
-      snapshot?.restore()
-      snapshot = null
-    }
-
-    function applyBefore() {
-      const slot = activeSlot()
-      if (slot) {
-        selection.selectSlot(slot)
-        textbus.nextTick(() => {
-          refreshService.onRefresh.next()
-        })
       }
     }
 
@@ -288,9 +322,9 @@ export const LeftToolbar = withAnnotation({
                 <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
               </ColorTool>
               <Divider/>
-              <MenuItem icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
-              <MenuItem icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
-              <MenuItem icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
+              <MenuItem onClick={copy} icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
+              <MenuItem onClick={remove} icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
+              <MenuItem onClick={cut} icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
               <Divider/>
               <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertTool slot={activeSlot()}/>}>
                 <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
