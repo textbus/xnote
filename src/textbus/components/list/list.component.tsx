@@ -24,6 +24,8 @@ import { Dropdown } from '../../../components/dropdown/dropdown'
 import { Button } from '../../../components/button/button'
 import { MenuItem } from '../../../components/menu-item/menu-item'
 import { textAlignAttr } from '../../attributes/text-align.attr'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -181,6 +183,8 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
     center: 'center',
     justify: 'left'
   }
+  const readonly = useReadonly()
+  const output = useOutput()
   return () => {
     const ListType = component.state.type === 'UnorderedList' ? 'ul' : 'ol'
     const ulIcons = ['•', '◦', '▪']
@@ -229,7 +233,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
           textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
         }}>
           <div class="xnote-list-type">{
-            component.state.type === 'UnorderedList' ?
+            component.state.type === 'UnorderedList' || readonly() || output() ?
               <span class="xnote-order-btn">{icon}</span>
               :
               <Dropdown menu={<>
@@ -244,7 +248,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
               return createVNode('div', {
                 class: 'xnote-list-content'
               }, children)
-            }, false)
+            }, readonly())
           }
         </li>
       </ListType>

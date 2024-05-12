@@ -13,6 +13,8 @@ import { TableService } from './table.service'
 import { ResizeRow } from './components/resize-row'
 import { SelectionMask } from './components/selection-mask'
 import { deltaToBlock } from '../paragraph/paragraph.component'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export const TableComponentView = withAnnotation({
   providers: [TableService]
@@ -99,6 +101,8 @@ export const TableComponentView = withAnnotation({
 
   const rowMapping = new WeakMap<object, number>()
 
+  const readonly = useReadonly()
+  const output = useOutput()
   return () => {
     const state = props.component.state
     const rows = state.rows
@@ -113,6 +117,48 @@ export const TableComponentView = withAnnotation({
     Promise.resolve().then(() => {
       props.component.afterContentCheck()
     })
+    if (readonly() || output()) {
+      return (
+        <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
+             ref={props.rootRef}>
+          <div class="xnote-table-container">
+            <table class={[
+              'xnote-table-content',
+              {
+                'hide-selection': props.component.tableSelection()
+              }
+            ]}>
+              <colgroup>
+                {
+                  state.layoutWidth.map(w => {
+                    return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                  })
+                }
+              </colgroup>
+              <tbody>
+              {
+                rows.map((row) => {
+                  return (
+                    <tr key={rowMapping.get(row)}>
+                      {
+                        row.cells.map(cell => {
+                          return adapter.slotRender(cell.slot, children => {
+                            return createVNode('td', {
+                              key: cell.slot.id
+                            }, children)
+                          }, readonly())
+                        })
+                      }
+                    </tr>
+                  )
+                })
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )
+    }
     return (
       <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
            ref={props.rootRef}>
@@ -150,7 +196,7 @@ export const TableComponentView = withAnnotation({
                             return createVNode('td', {
                               key: cell.slot.id
                             }, children)
-                          }, false)
+                          }, readonly())
                         })
                       }
                     </tr>

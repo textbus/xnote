@@ -17,6 +17,7 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
 
 import './paragraph.component.scss'
+import { useReadonly } from '../../hooks/use-readonly'
 
 export interface ParagraphComponentState {
   slot: Slot
@@ -61,6 +62,7 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
 
 export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
   const adapter = inject(DomAdapter)
+  const readonly = useReadonly()
   return () => {
     const slot = props.component.state.slot
     return (
@@ -70,7 +72,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
             return (
               createVNode('p', null, children)
             )
-          }, false)
+          }, readonly())
         }
       </div>
     )

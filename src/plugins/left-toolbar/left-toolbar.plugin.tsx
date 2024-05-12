@@ -4,13 +4,20 @@ import { Application, Injector, viewfly } from '@viewfly/core'
 import { DomRenderer } from '@viewfly/platform-browser'
 
 import { LeftToolbar } from './left-toolbar'
+import { useReadonly } from '../../textbus/hooks/use-readonly'
 
 export class LeftToolbarPlugin implements Plugin {
   private app: Application | null = null
 
   setup(injector: Injector) {
+    const App = function () {
+      const readonly = useReadonly()
+      return () => {
+        return readonly() ? null : <LeftToolbar/>
+      }
+    }
     this.app = viewfly({
-      root: <LeftToolbar/>,
+      root: <App/>,
       context: injector,
       nativeRenderer: new DomRenderer(),
       autoUpdate: true

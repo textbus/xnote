@@ -9,8 +9,8 @@ export interface LinkFormatData {
 export const linkFormatter = new Formatter<LinkFormatData>('link', {
   priority: -1,
   inheritable: false,
-  render(children: Array<VElement | VTextNode | Component>, formatValue: LinkFormatData, isOutput = false): VElement | FormatHostBindingRender {
-    if (isOutput) {
+  render(children: Array<VElement | VTextNode | Component>, formatValue: LinkFormatData, readonly = false): VElement | FormatHostBindingRender {
+    if (readonly) {
       return createVNode('a', {
         href: formatValue.href,
         target: formatValue.target

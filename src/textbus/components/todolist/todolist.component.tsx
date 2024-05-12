@@ -21,6 +21,8 @@ import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
 import { strikeThroughFormatter } from '../../formatters/strike-through'
 import { textAlignAttr } from '../../attributes/text-align.attr'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface TodolistComponentState {
   checked: boolean
@@ -111,6 +113,9 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
   const state = component.state
 
   function toggle() {
+    if (readonly() || output()) {
+      return
+    }
     state.checked = !state.checked
     state.slot.applyFormat(strikeThroughFormatter, {
       startIndex: 0,
@@ -125,6 +130,8 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
     center: 'center',
     justify: 'left'
   }
+  const readonly = useReadonly()
+  const output = useOutput()
   return () => {
     const { slot, checked } = state
     const indent = slot.getAttribute(textIndentAttr) || 0
@@ -142,7 +149,7 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
             return createVNode('div', {
               class: 'xnote-todolist-content'
             }, children)
-          }, false)
+          }, readonly())
         }
       </div>
     )

@@ -8,6 +8,8 @@ import './highlight.component.scss'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useBlockContent } from '../../hooks/use-block-content'
 import { Divider } from '../../../components/divider/divider'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface HighlightBoxComponentState {
   type: string
@@ -44,6 +46,8 @@ export class HighlightBoxComponent extends Component<HighlightBoxComponentState>
 
 export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent>) {
   const adapter = inject(DomAdapter)
+  const readonly = useReadonly()
+  const output = useOutput()
   const emoji: number[] = []
   for (let i = 0x1F600; i <= 0x1F64F; i++) {
     emoji.push(i)
@@ -55,9 +59,26 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
     props.component.state.type = type
   }
 
-
   return () => {
     const { state, name } = props.component
+    if (readonly() || output()) {
+      return (
+        <div data-component={name} ref={props.rootRef} data-icon={state.type} class="xnote-highlight-box">
+          <div class="xnote-highlight-box-left">
+            <div class="xnote-highlight-box-icon">
+              <button type="button">{state.type || '❤️'}</button>
+            </div>
+          </div>
+          {
+            adapter.slotRender(state.slot, children => {
+              return createVNode('div', {
+                class: 'xnote-highlight-box-content'
+              }, children)
+            }, readonly())
+          }
+        </div>
+      )
+    }
     return (
       <div data-component={name} ref={props.rootRef} data-icon={state.type} class="xnote-highlight-box">
         <div class="xnote-highlight-box-left">
@@ -91,7 +112,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
             return createVNode('div', {
               class: 'xnote-highlight-box-content'
             }, children)
-          }, false)
+          }, readonly())
         }
       </div>
     )

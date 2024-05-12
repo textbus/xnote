@@ -3,6 +3,7 @@ import { createApp } from '@viewfly/platform-browser'
 import { BrowserModule, Parser } from '@textbus/platform-browser'
 import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus } from '@textbus/core'
+import { ReflectiveInjector } from '@viewfly/core'
 
 import {
   BlockquoteView,
@@ -65,10 +66,12 @@ import './textbus/doc.scss'
 import { headingAttr, headingAttrLoader, registerHeadingShortcut } from './textbus/attributes/heading.attr'
 import { registerTextAlignShortcut, textAlignAttr, textAlignAttrLoader } from './textbus/attributes/text-align.attr'
 import { registerTextIndentShortcut, textIndentAttr, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
+import { OutputInjectionToken } from './textbus/injection-tokens'
 
 export interface XNoteConfig {
   content?: string,
   collaborateConfig?: CollaborateConfig
+  readonly?: boolean
 }
 
 export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
@@ -84,9 +87,14 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [ImageComponent.componentName]: ImageView,
     [VideoComponent.componentName]: VideoView
   }, (host, root) => {
+    const appInjector = new ReflectiveInjector(textbus, [{
+      provide: OutputInjectionToken,
+      useValue: false
+    }])
     const app = createApp(root, {
-      context: textbus
+      context: appInjector
     }).mount(host)
+
     return () => {
       app.destroy()
     }
@@ -133,6 +141,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
 
   const textbus = new Textbus({
     zenCoding: true,
+    readonly: config.readonly,
     imports: modules,
     components: [
       ImageComponent,
@@ -180,6 +189,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
       registerTextIndentShortcut(textbus)
     }
   })
+
   let rootComp: Component
   if (config.content) {
     const parser = textbus.get(Parser)
@@ -195,6 +205,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     })
   }
   await textbus.render(rootComp)
+
   // console.log(rootComp)
   return textbus
 }

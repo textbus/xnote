@@ -5,6 +5,8 @@ import { createRef } from '@viewfly/core'
 
 import './video.component.scss'
 import { DragResize } from '../../../components/drag-resize/drag-resize'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface VideoComponentState {
   src: string
@@ -30,7 +32,19 @@ export class VideoComponent extends Component<VideoComponentState> {
 export function VideoView(props: ViewComponentProps<VideoComponent>) {
   const { name, state } = props.component
   const videoRef = createRef<HTMLVideoElement>()
+  const readonly = useReadonly()
+  const output = useOutput()
   return () => {
+    if (readonly() || output()) {
+      return (
+        <div class="xnote-video" data-component={name}>
+          <video ref={videoRef} src={state.src} style={{
+            width: state.width,
+            height: state.height
+          }}/>
+        </div>
+      )
+    }
     return (
       <div ref={props.rootRef} class="xnote-video" data-component={name}>
         <DragResize source={videoRef} component={props.component}>

@@ -22,6 +22,7 @@ import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.compone
 import { useBlockContent } from '../../hooks/use-block-content'
 import { ListComponent } from '../list/list.component'
 import { TodolistComponent } from '../todolist/todolist.component'
+import { useReadonly } from '../../hooks/use-readonly'
 
 export interface RootComponentState {
   heading: Slot
@@ -102,6 +103,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     props.component.afterCheck()
   })
 
+  const readonly = useReadonly()
   return () => {
     const { rootRef } = props
 
@@ -114,7 +116,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
                 'data-placeholder': heading.isEmpty ? '请输入标题' : ''
               }, children)
             )
-          }, false)
+          }, readonly())
         }
         {
           adapter.slotRender(content, children => {
@@ -124,7 +126,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
                 'data-placeholder': content.isEmpty ? '请输入内容' : ''
               }, children)
             )
-          }, false)
+          }, readonly())
         }
       </div>
     )

@@ -26,6 +26,8 @@ import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
 import { Button } from '../../../components/button/button'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { MenuItem } from '../../../components/menu-item/menu-item'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export const languageList: Array<{ label: string, value: string }> = [{
   label: 'JavaScript',
@@ -421,7 +423,8 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
   function updateCaret() {
     input.caret.refresh(false)
   }
-
+  const readonly = useReadonly()
+  const output = useOutput()
   return () => {
     const state = props.component.state
     const slots = state.slots
@@ -499,47 +502,49 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
            data-theme={state.theme || null}
            data-line-number={state.lineNumber}
       >
-        <ComponentToolbar visible={isFocus()}>
-          <ToolbarItem>
-            <Dropdown onCheck={changeLang} trigger={'hover'} menu={languageList.map(item => {
+        {
+          !readonly() || !output() && <ComponentToolbar visible={isFocus()}>
+            <ToolbarItem>
+              <Dropdown onCheck={changeLang} trigger={'hover'} menu={languageList.map(item => {
+                return {
+                  label: <MenuItem checked={state.lang === item.value}>{item.label || 'Plain Text'}</MenuItem>,
+                  value: item.value
+                }
+              })}>
+                <Button arrow={true}>{lang || 'Plain Text'}</Button>
+              </Dropdown>
+            </ToolbarItem>
+            <ToolbarItem>
+              主题：<Dropdown trigger={'hover'} onCheck={changeTheme} menu={sourceCodeThemes.map(item => {
               return {
-                label: <MenuItem checked={state.lang === item.value}>{item.label || 'Plain Text'}</MenuItem>,
-                value: item.value
+                label: <MenuItem checked={state.theme === item}>{item}</MenuItem>,
+                value: item
               }
             })}>
-              <Button arrow={true}>{lang || 'Plain Text'}</Button>
-            </Dropdown>
-          </ToolbarItem>
-          <ToolbarItem>
-            主题：<Dropdown trigger={'hover'} onCheck={changeTheme} menu={sourceCodeThemes.map(item => {
-            return {
-              label: <MenuItem checked={state.theme === item}>{item}</MenuItem>,
-              value: item
-            }
-          })}>
               <Button arrow={true}>{state.theme || 'github'}</Button>
             </Dropdown>
-          </ToolbarItem>
-          <ToolbarItem>
-            <Dropdown onCheck={setting} menu={[
-              {
-                label: <MenuItem icon={<span class="xnote-icon-list-numbered"/>} checked={state.lineNumber}>行号</MenuItem>,
-                value: 'lineNumber'
-              }, {
-                label: <MenuItem icon={<span class="xnote-icon-text-wrap"/>} checked={state.autoBreak}>自动换行</MenuItem>,
-                value: 'autoBreak'
-              }
-            ]}>
-              <Button arrow={true}>设置</Button>
-            </Dropdown>
-          </ToolbarItem>
-          <ToolbarItem>
-            <Button onClick={props.component.emphasize}>强调</Button>
-          </ToolbarItem>
-          <ToolbarItem>
-            <Button onClick={props.component.cancelEmphasize}>取消强调</Button>
-          </ToolbarItem>
-        </ComponentToolbar>
+            </ToolbarItem>
+            <ToolbarItem>
+              <Dropdown onCheck={setting} menu={[
+                {
+                  label: <MenuItem icon={<span class="xnote-icon-list-numbered"/>} checked={state.lineNumber}>行号</MenuItem>,
+                  value: 'lineNumber'
+                }, {
+                  label: <MenuItem icon={<span class="xnote-icon-text-wrap"/>} checked={state.autoBreak}>自动换行</MenuItem>,
+                  value: 'autoBreak'
+                }
+              ]}>
+                <Button arrow={true}>设置</Button>
+              </Dropdown>
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button onClick={props.component.emphasize}>强调</Button>
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button onClick={props.component.cancelEmphasize}>取消强调</Button>
+            </ToolbarItem>
+          </ComponentToolbar>
+        }
         <div class={[
           'xnote-source-code-container',
           {
@@ -578,7 +583,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                   }, [
                     createVNode('div', { class: 'xnote-source-code-line-content' }, children)
                   ])
-                }, false)
+                }, readonly())
               })
             }
           </div>

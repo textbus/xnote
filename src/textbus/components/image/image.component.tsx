@@ -5,6 +5,8 @@ import { createRef } from '@viewfly/core'
 
 import './image.component.scss'
 import { DragResize } from '../../../components/drag-resize/drag-resize'
+import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface ImageComponentState {
   src: string
@@ -26,7 +28,19 @@ export class ImageComponent extends Component<ImageComponentState> {
 export function ImageView(props: ViewComponentProps<ImageComponent>) {
   const { name, state } = props.component
   const imageRef = createRef<HTMLImageElement>()
+  const readonly = useReadonly()
+  const output = useOutput()
   return () => {
+    if (readonly() || output()) {
+      return (
+        <div class="xnote-image" ref={props.rootRef} data-component={name}>
+          <img alt="" src={state.src} style={{
+            width: state.width,
+            height: state.height
+          }}/>
+        </div>
+      )
+    }
     return (
       <div class="xnote-image" ref={props.rootRef} data-component={name}>
         <DragResize source={imageRef} component={props.component}>

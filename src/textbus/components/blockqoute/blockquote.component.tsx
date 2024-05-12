@@ -13,6 +13,7 @@ import { inject } from '@viewfly/core'
 import './blockquote.component.scss'
 import { deltaToBlock } from '../paragraph/paragraph.component'
 import { useBlockContent } from '../../hooks/use-block-content'
+import { useReadonly } from '../../hooks/use-readonly'
 
 export interface BlockquoteComponentState {
   slot: Slot
@@ -59,6 +60,7 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
 
 export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
   const adapter = inject(DomAdapter)
+  const readonly = useReadonly()
   return () => {
     const slot = props.component.state.slot
     return (
@@ -66,7 +68,7 @@ export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
         {
           adapter.slotRender(slot, children => {
             return createVNode('div', null, children)
-          }, false)
+          }, readonly())
         }
       </blockquote>
     )
