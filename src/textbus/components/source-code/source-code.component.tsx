@@ -503,7 +503,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
            data-line-number={state.lineNumber}
       >
         {
-          !readonly() || !output() && <ComponentToolbar visible={isFocus()}>
+          (!readonly() || !output()) && <ComponentToolbar visible={isFocus()}>
             <ToolbarItem>
               <Dropdown onCheck={changeLang} trigger={'hover'} menu={languageList.map(item => {
                 return {

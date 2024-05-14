@@ -233,7 +233,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
           textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
         }}>
           <div class="xnote-list-type">{
-            component.state.type === 'UnorderedList' || readonly() || output() ?
+            (component.state.type === 'UnorderedList' || readonly() || output()) ?
               <span class="xnote-order-btn">{icon}</span>
               :
               <Dropdown menu={<>
