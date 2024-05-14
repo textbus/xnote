@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "target": "es6",
     "module": "esnext",
     "strict": true,
@@ -20,5 +21,6 @@
     "baseUrl": "./",
     "jsx": "react-jsx",
     "jsxImportSource": "@viewfly/core"
-  }
+  },
+  "include": ["src", "./types.d.ts"]
 }
