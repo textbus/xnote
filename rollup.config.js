@@ -25,7 +25,8 @@ module.exports = {
       }]
     }),
     postcss({
-      minimize: true
+      minimize: true,
+      extract: true
     })
   ]
 }
