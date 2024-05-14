@@ -1,10 +1,10 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "Viewfly project.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
-  "types": "./bundels/public-api.d.ts",
+  "types": "./bundles/public-api.d.ts",
   "scripts": {
     "start": "webpack-dev-server",
     "serve": "npx y-websocket HOST=localhost PORT=1234 ",
