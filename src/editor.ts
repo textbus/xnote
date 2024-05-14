@@ -5,6 +5,8 @@ import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
 
+import './assets/icons/style.css'
+
 import {
   BlockquoteView,
   blockquoteComponentLoader,

@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "description": "Viewfly project.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
@@ -54,6 +54,7 @@
     "postcss-selector-parser": "^6.0.16",
     "rimraf": "^5.0.1",
     "rollup": "^4.17.2",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.63.4",
