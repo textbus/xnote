@@ -1,6 +1,6 @@
 /* eslint-disable */
 import 'reflect-metadata'
-import './assets/icons/style.css'
+import './src/assets/icons/style.css'
 import { createXNote } from './src/editor'
 import { UserInfo } from '@textbus/collaborate'
 
