@@ -36,7 +36,7 @@ import { Dropdown } from '../../components/dropdown/dropdown'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
 import { Button } from '../../components/button/button'
-import { AttrTool } from '../_common/attr-tool'
+import { AttrTool } from '../_common/attr.tool'
 import { ColorTool } from '../_common/color.tool'
 import { InsertTool } from './insert-tool'
 
