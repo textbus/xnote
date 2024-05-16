@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "description": "Viewfly project.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
@@ -14,10 +14,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.41",
-    "@textbus/collaborate": "^4.0.0-alpha.41",
-    "@textbus/core": "^4.0.0-alpha.41",
-    "@textbus/platform-browser": "^4.0.0-alpha.41",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.42",
+    "@textbus/collaborate": "^4.0.0-alpha.42",
+    "@textbus/core": "^4.0.0-alpha.42",
+    "@textbus/platform-browser": "^4.0.0-alpha.42",
     "@viewfly/core": "^1.0.0-alpha.1",
     "@viewfly/hooks": "^1.0.0-alpha.1",
     "@viewfly/platform-browser": "^1.0.0-alpha.1",

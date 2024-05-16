@@ -27,14 +27,15 @@ const user: UserInfo = {
 }
 createXNote(document.getElementById('app')!, {
   readonly: false,
-  content: document.getElementById('article')!.innerHTML,
-  collaborateConfig: {
-    url: 'ws://localhost:1234',
-    roomName: 'xnote',
-    userinfo: user
-  }
+  // content: document.getElementById('article')!.innerHTML,
+  // collaborateConfig: {
+  //   url: 'ws://localhost:1234',
+  //   roomName: 'xnote',
+  //   userinfo: user
+  // }
 }).then(xnote => {
-  window['xnote'] = xnote
-  // console.log(textbus.getJSON())
+  xnote.textbus.onChange.subscribe(() => {
+    console.log(xnote.getHTML())
+  })
 })
 

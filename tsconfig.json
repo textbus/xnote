@@ -6,7 +6,7 @@
     "strict": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "useDefineForClassFields": true,
+    "useDefineForClassFields": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [

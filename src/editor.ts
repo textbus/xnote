@@ -1,6 +1,6 @@
-import { Adapter } from '@textbus/adapter-viewfly'
-import { createApp } from '@viewfly/platform-browser'
-import { BrowserModule, Parser } from '@textbus/platform-browser'
+import { ViewflyAdapter, ViewflyVDomAdapter } from '@textbus/adapter-viewfly'
+import { createApp, HTMLRenderer, OutputTranslator } from '@viewfly/platform-browser'
+import { BrowserModule, DomAdapter, Parser } from '@textbus/platform-browser'
 import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
@@ -77,7 +77,7 @@ export interface XNoteConfig {
 }
 
 export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
-  const adapter = new Adapter({
+  const adapter = new ViewflyAdapter({
     [ParagraphComponent.componentName]: ParagraphView,
     [RootComponent.componentName]: RootView,
     [BlockquoteComponent.componentName]: BlockquoteView,
@@ -88,13 +88,43 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     [ListComponent.componentName]: ListComponentView,
     [ImageComponent.componentName]: ImageView,
     [VideoComponent.componentName]: VideoView
-  }, (host, root) => {
-    const appInjector = new ReflectiveInjector(textbus, [{
+  }, (host, root, injector) => {
+    const appInjector = new ReflectiveInjector(injector, [{
       provide: OutputInjectionToken,
       useValue: false
     }])
     const app = createApp(root, {
       context: appInjector
+    }).mount(host)
+
+    return () => {
+      app.destroy()
+    }
+  })
+  const vDomAdapter = new ViewflyVDomAdapter({
+    [ParagraphComponent.componentName]: ParagraphView,
+    [RootComponent.componentName]: RootView,
+    [BlockquoteComponent.componentName]: BlockquoteView,
+    [TodolistComponent.componentName]: TodolistView,
+    [SourceCodeComponent.componentName]: SourceCodeView,
+    [TableComponent.componentName]: TableComponentView,
+    [HighlightBoxComponent.componentName]: HighlightBoxView,
+    [ListComponent.componentName]: ListComponentView,
+    [ImageComponent.componentName]: ImageView,
+    [VideoComponent.componentName]: VideoView
+  } as any, (host, root, injector) => {
+    const appInjector = new ReflectiveInjector(injector, [{
+      provide: OutputInjectionToken,
+      useValue: true
+    }, {
+      provide: DomAdapter,
+      useFactory() {
+        return vDomAdapter
+      }
+    }])
+    const app = createApp(root, {
+      context: appInjector,
+      nativeRenderer: new HTMLRenderer()
     }).mount(host)
 
     return () => {
@@ -142,6 +172,7 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
   }
 
   const textbus = new Textbus({
+    additionalAdapters: [vDomAdapter],
     zenCoding: true,
     readonly: config.readonly,
     imports: modules,
@@ -207,7 +238,11 @@ export async function createXNote(host: HTMLElement, config: XNoteConfig = {}) {
     })
   }
   await textbus.render(rootComp)
-
-  // console.log(rootComp)
-  return textbus
+  const translator = new OutputTranslator()
+  return {
+    textbus,
+    getHTML() {
+      return translator.transform(vDomAdapter.host)
+    }
+  }
 }
