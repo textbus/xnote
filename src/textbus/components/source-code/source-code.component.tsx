@@ -363,6 +363,16 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
     })
   }
 
+  override removeSlot(slot: Slot) {
+    const slots = this.state.slots
+    const index = slots.findIndex(i => i.slot === slot)
+    if (index > -1) {
+      slots.splice(index, 1)
+      return true
+    }
+    return false
+  }
+
   cancelEmphasize = () => {
     const selection = this.textbus.get(Selection)
     const slots = this.state.slots
