@@ -33,6 +33,8 @@ export interface DropdownProps extends Props {
   abreast?: boolean
 
   onCheck?(value: any): void
+
+  onExpendStateChange?(is: boolean): void
 }
 
 export const Dropdown = withAnnotation({
@@ -56,6 +58,7 @@ export const Dropdown = withAnnotation({
 
   onMounted(() => {
     const sub = dropdownContextService.onOpenStateChange.subscribe(b => {
+      props.onExpendStateChange?.(b)
       isShow.set(b)
     })
 

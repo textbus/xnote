@@ -1,5 +1,5 @@
 import { Plugin } from '@textbus/core'
-import { VIEW_DOCUMENT } from '@textbus/platform-browser'
+import { VIEW_CONTAINER } from '@textbus/platform-browser'
 import { Application, Injector, viewfly } from '@viewfly/core'
 import { DomRenderer } from '@viewfly/platform-browser'
 
@@ -22,7 +22,7 @@ export class LeftToolbarPlugin implements Plugin {
       nativeRenderer: new DomRenderer(),
       autoUpdate: true
     })
-    const viewDocument = injector.get(VIEW_DOCUMENT)
+    const viewDocument = injector.get(VIEW_CONTAINER)
     const host = document.createElement('div')
     viewDocument.appendChild(host)
     this.app.mount(host)

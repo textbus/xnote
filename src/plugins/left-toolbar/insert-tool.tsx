@@ -1,5 +1,5 @@
 import { inject } from '@viewfly/core'
-import { Commander, ContentType, Selection, Slot, Textbus } from '@textbus/core'
+import { Commander, Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
@@ -14,7 +14,12 @@ import { TableComponent } from '../../textbus/components/table/table.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
 import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
 
-export function InsertTool(props: { slot: Slot | null }) {
+export interface InsertToolProps {
+  slot: Slot | null
+  replace?: boolean
+}
+
+export function InsertTool(props: InsertToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const textbus = inject(Textbus)
@@ -23,6 +28,14 @@ export function InsertTool(props: { slot: Slot | null }) {
     const component = props.slot?.parent
     if (!component) {
       return
+    }
+
+    function insertComponent(comp: Component<any>) {
+      if(props.replace) {
+        commander.replaceComponent(component!, comp)
+      } else {
+        commander.insertAfter(comp, component!)
+      }
     }
     switch (type) {
       case 'h1':
@@ -42,7 +55,7 @@ export function InsertTool(props: { slot: Slot | null }) {
         const p = new ParagraphComponent(textbus, {
           slot
         })
-        commander.insertAfter(p, component)
+        insertComponent(p)
         selection.setPosition(slot, 0)
       }
         break
@@ -57,7 +70,7 @@ export function InsertTool(props: { slot: Slot | null }) {
           reorder: true,
           type: type === 'ol' ? 'OrderedList' : 'UnorderedList'
         })
-        commander.insertAfter(list, component)
+        insertComponent(list)
         selection.setPosition(slot, 0)
       }
         break
@@ -73,13 +86,13 @@ export function InsertTool(props: { slot: Slot | null }) {
             emphasize: false
           }]
         })
-        commander.insertAfter(comp, component)
+        insertComponent(comp)
         selection.setPosition(slot, 0)
       }
         break
       case 'table': {
         const table = new TableComponent(textbus)
-        commander.insertAfter(table, component)
+        insertComponent(table)
         selection.setPosition(table.state.rows[0].cells[0].slot, 0)
       }
         break
@@ -92,7 +105,7 @@ export function InsertTool(props: { slot: Slot | null }) {
           slot,
           checked: false
         })
-        commander.insertAfter(comp, component)
+        insertComponent(comp)
         selection.setPosition(slot, 0)
       }
         break
@@ -104,7 +117,7 @@ export function InsertTool(props: { slot: Slot | null }) {
         const p = new ParagraphComponent(textbus)
         const comp = new HighlightBoxComponent(textbus)
         comp.state.slot.insert(p)
-        commander.insertAfter(comp, component)
+        insertComponent(comp)
         selection.setPosition(p.state.slot, 0)
       }
         break

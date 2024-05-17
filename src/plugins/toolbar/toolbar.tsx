@@ -1,7 +1,7 @@
 import { createRef, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { debounceTime, delay, filter, fromEvent, map, merge, Selection, Subscription, Textbus } from '@textbus/core'
-import { SelectionBridge, VIEW_DOCUMENT } from '@textbus/platform-browser'
+import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { useProduce } from '@viewfly/hooks'
 
 import css from './toolbar.scoped.scss'
@@ -25,7 +25,7 @@ export const Toolbar = withAnnotation({
   providers: [RefreshService]
 }, function Toolbar() {
   const selection = inject(Selection)
-  const viewDocument = inject(VIEW_DOCUMENT)
+  const viewDocument = inject(VIEW_CONTAINER)
   const bridge = inject(SelectionBridge)
   const textbus = inject(Textbus)
   const editorService = inject(EditorService)

@@ -70,12 +70,14 @@ export const LeftToolbar = withAnnotation({
     display: false
   })
 
+  let isIgnoreMove = false
+
   onMounted(() => {
     const rootComponent = rootComponentRef.component as RootComponent
     const docContentContainer = adapter.getNativeNodeBySlot(rootComponent.state.content)!
     const sub = fromEvent(docContentContainer!, 'mousemove').pipe(
       filter(() => {
-        return selection.isCollapsed
+        return !isIgnoreMove
       }),
       map(ev => {
         let currentNode = ev.target as Node | null
@@ -227,6 +229,10 @@ export const LeftToolbar = withAnnotation({
 
   const isEmptyBlock = createSignal(true)
 
+  function changeIgnoreMove(b: boolean) {
+    isIgnoreMove = b
+  }
+
   return withScopedCSS(css, () => {
     const position = positionSignal()
     const slot = activeSlot()
@@ -265,11 +271,14 @@ export const LeftToolbar = withAnnotation({
           top: position.top + 'px',
           display: position.display && selection.isCollapsed ? 'block' : 'none'
         }}>
-          <Dropdown abreast={true} style={{
+          <Dropdown onExpendStateChange={changeIgnoreMove} abreast={true} style={{
             position: 'absolute',
             right: 0,
             top: 0
           }} menu={
+            isEmptyBlock() ?
+              <InsertTool replace={true} slot={activeSlot()}/>
+              :
             <>
               <div class="btn-group">
                 <Button ordinary={true} highlight={states.paragraph} onClick={() => transform('paragraph')}>
