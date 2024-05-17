@@ -81,14 +81,14 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
 
 export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.dataset.compoment === ParagraphComponent.name || element.tagName === 'P'
+    return element.dataset.compoment === ParagraphComponent.name || /P|H[1-6]/.test(element.tagName)
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
     const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent,
       ContentType.BlockComponent
-    ]), element.tagName === 'P' ? element : element.children[0] as HTMLElement).toDelta()
+    ]), /P|H[1-6]/.test(element.tagName) ? element : element.children[0] as HTMLElement).toDelta()
 
     const results = deltaToBlock(delta, textbus)
 
