@@ -50,7 +50,7 @@ export function InsertTool(props: InsertToolProps) {
           ContentType.Text
         ])
         if (/h[1-6]/.test(type)) {
-          slot.setAttribute(headingAttr, +type.substring(1))
+          slot.setAttribute(headingAttr, type)
         }
         const p = new ParagraphComponent(textbus, {
           slot
