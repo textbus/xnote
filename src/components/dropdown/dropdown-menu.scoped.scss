@@ -16,6 +16,7 @@
   transition-duration: 0s;
   height: 0;
   transition: transform 0.3s, opacity 0.3s;
+  max-height: 400px;
 
   &-content {
     padding: 6px;
