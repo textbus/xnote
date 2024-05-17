@@ -423,6 +423,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
   function updateCaret() {
     input.caret.refresh(false)
   }
+
   const readonly = useReadonly()
   const output = useOutput()
   return () => {
@@ -492,18 +493,19 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
 
 
     return (
-      <pre ref={props.rootRef} class={{
+      <div ref={props.rootRef} class={{
         'xnote-source-code': true,
         'xnote-source-code-line-number': state.lineNumber,
         [state.theme || 'github']: true
       }}
-           lang={state.lang}
+           data-lang={state.lang}
+           data-component={props.component.name}
            data-auto-break={state.autoBreak}
            data-theme={state.theme || null}
            data-line-number={state.lineNumber}
       >
         {
-          (!readonly() || !output()) && <ComponentToolbar visible={isFocus()}>
+          (!readonly() && !output()) && <ComponentToolbar visible={isFocus()}>
             <ToolbarItem>
               <Dropdown onCheck={changeLang} trigger={'hover'} menu={languageList.map(item => {
                 return {
@@ -578,10 +580,10 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                       children.push(br)
                     }
                   }
-                  return createVNode('div', {
+                  return createVNode('pre', {
                     class: 'xnote-source-code-line' + (item.emphasize ? ' xnote-source-code-line-emphasize' : '')
                   }, [
-                    createVNode('div', { class: 'xnote-source-code-line-content' }, children)
+                    createVNode('span', { class: 'xnote-source-code-line-content' }, children)
                   ])
                 }, readonly())
               })
@@ -589,19 +591,20 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
           </div>
           <span class="xnote-source-code-lang">{lang}</span>
         </div>
-      </pre>
+      </div>
     )
   }
 }
 
 export const sourceCodeComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.tagName === 'PRE'
+    return element.tagName === 'DIV' && element.dataset.component === SourceCodeComponent.componentName ||
+      element.tagName === 'PRE'
   },
   read(el: HTMLElement, textbus: Textbus) {
-    const lines = el.querySelectorAll('.xnote-source-code-line')
     let slots: CodeSlotState[] = []
-    if (lines.length) {
+    if (el.tagName === 'DIV') {
+      const lines = el.querySelectorAll('.xnote-source-code-line')
       slots = Array.from(lines).map(i => {
         const code = (i as HTMLElement).innerText.replace(/[\s\n]+$/, '')
         const item = createCodeSlot()
@@ -622,9 +625,10 @@ export const sourceCodeComponentLoader: ComponentLoader = {
     }
 
     return new SourceCodeComponent(textbus, {
-      lang: el.getAttribute('lang') || '',
-      theme: el.getAttribute('theme') || '',
-      lineNumber: !el.classList.contains('xnote-source-code-hide-line-number'),
+      lang: el.dataset.lang || '',
+      theme: el.dataset.theme || '',
+      lineNumber: !!el.dataset.lineNumber || true,
+      autoBreak: !!el.dataset.autoBreak || true,
       slots
     })
   },

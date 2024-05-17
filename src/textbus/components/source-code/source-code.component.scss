@@ -25,7 +25,7 @@
   display: flex;
   position: relative;
   overflow: hidden;
-  &.xnote-source-code-auto-break {
+  &.xnote-source-code-auto-break .xnote-source-code-line {
     word-break: break-all;
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -70,11 +70,12 @@ code, kbd, pre, samp {
 
 .xnote-source-code-line {
   display: flex;
-  margin-left: 0;
+  margin: 0;
 }
 
 .xnote-source-code-line-content {
   padding: 0 20px;
+  display: block;
 }
 
 .xnote-source-code-line-number {

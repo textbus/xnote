@@ -5,6 +5,10 @@
   > li {
     display: flex;
   }
+
+  &-content {
+    min-width: 2em;
+  }
 }
 
 .xnote-list-type {
