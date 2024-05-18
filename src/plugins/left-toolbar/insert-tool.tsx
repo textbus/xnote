@@ -1,4 +1,4 @@
-import { inject } from '@viewfly/core'
+import { inject, InjectFlags } from '@viewfly/core'
 import { Commander, Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
@@ -13,6 +13,9 @@ import { SourceCodeComponent } from '../../textbus/components/source-code/source
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
 import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
+import { FileUploader } from '../../interfaces'
+import { ImageComponent } from '../../textbus/components/image/image.component'
+import { VideoComponent } from '../../textbus/components/video/video.component'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -23,6 +26,7 @@ export function InsertTool(props: InsertToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const textbus = inject(Textbus)
+  const fileUploader = inject(FileUploader, InjectFlags.Optional, null)
 
   function insert(type: string) {
     const component = props.slot?.parent
@@ -31,12 +35,13 @@ export function InsertTool(props: InsertToolProps) {
     }
 
     function insertComponent(comp: Component<any>) {
-      if(props.replace) {
+      if (props.replace) {
         commander.replaceComponent(component!, comp)
       } else {
         commander.insertAfter(comp, component!)
       }
     }
+
     switch (type) {
       case 'h1':
       case 'h2':
@@ -110,8 +115,24 @@ export function InsertTool(props: InsertToolProps) {
       }
         break
       case 'image':
+        if (fileUploader) {
+          Promise.resolve(fileUploader.uploadFile('image')).then(url => {
+            const img = new ImageComponent(textbus, {
+              src: url
+            })
+            commander.insert(img)
+          })
+        }
         break
       case 'video':
+        if (fileUploader) {
+          Promise.resolve(fileUploader.uploadFile('video')).then(url => {
+            const img = new VideoComponent(textbus, {
+              src: url
+            })
+            commander.insert(img)
+          })
+        }
         break
       case 'highlightBox': {
         const p = new ParagraphComponent(textbus)
