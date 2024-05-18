@@ -4,6 +4,7 @@
   display: none;
   position: absolute;
   pointer-events: none;
+  box-sizing: content-box;
 
   &.active {
     display: block;
