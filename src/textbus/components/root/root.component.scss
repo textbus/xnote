@@ -6,17 +6,17 @@
   }
 }
 
-.xnote-title {
-  font-size: 30px;
-  font-weight: 600;
-  margin: 36px 0 22px;
-
-  &:before {
-    content: attr(data-placeholder);
-    position: absolute;
-    opacity: .5;
-  }
-}
+//.xnote-title {
+//  font-size: 30px;
+//  font-weight: 600;
+//  margin: 36px 0 22px;
+//
+//  &:before {
+//    content: attr(data-placeholder);
+//    position: absolute;
+//    opacity: .5;
+//  }
+//}
 
 .xnote-content {
   font-size: 16px;

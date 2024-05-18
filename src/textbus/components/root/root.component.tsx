@@ -5,16 +5,14 @@ import {
   ContentType,
   createVNode,
   Event,
-  onBreak,
   onCompositionStart,
-  Selection,
   Slot,
   Subject,
   Textbus,
-  useContext, Registry,
+  Registry,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { inject, createDynamicRef, onUpdated } from '@viewfly/core'
+import { inject, createDynamicRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -25,7 +23,7 @@ import { TodolistComponent } from '../todolist/todolist.component'
 import { useReadonly } from '../../hooks/use-readonly'
 
 export interface RootComponentState {
-  heading: Slot
+  // heading: Slot
   content: Slot
 }
 
@@ -34,10 +32,10 @@ export class RootComponent extends Component<RootComponentState> {
   static type = ContentType.BlockComponent
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<RootComponentState>) {
-    const heading = textbus.get(Registry).createSlot(json.heading)
+    // const heading = textbus.get(Registry).createSlot(json.heading)
     const content = textbus.get(Registry).createSlot(json.content)
     return new RootComponent(textbus, {
-      heading,
+      // heading,
       content
     })
   }
@@ -45,22 +43,22 @@ export class RootComponent extends Component<RootComponentState> {
   onCompositionStart = new Subject<Event<Slot, CompositionStartEventData>>()
 
   override setup() {
-    const textbus = useContext()
-    const selection = textbus.get(Selection)
+    // const textbus = useContext()
+    // const selection = textbus.get(Selection)
 
-    onBreak(ev => {
-      if (ev.target === this.state.heading) {
-        const afterContent = ev.target.cut(ev.data.index)
-        const p = new ParagraphComponent(textbus, {
-          slot: afterContent
-        })
-        const body = this.state.content
-        body.retain(0)
-        body.insert(p)
-        selection.setPosition(afterContent, 0)
-        ev.preventDefault()
-      }
-    })
+    // onBreak(ev => {
+    //   if (ev.target === this.state.heading) {
+    //     const afterContent = ev.target.cut(ev.data.index)
+    //     const p = new ParagraphComponent(textbus, {
+    //       slot: afterContent
+    //     })
+    //     const body = this.state.content
+    //     body.retain(0)
+    //     body.insert(p)
+    //     selection.setPosition(afterContent, 0)
+    //     ev.preventDefault()
+    //   }
+    // })
 
     useBlockContent(this.state.content)
 
@@ -85,23 +83,19 @@ export class RootComponent extends Component<RootComponentState> {
 
 export function RootView(props: ViewComponentProps<RootComponent>) {
   const adapter = inject(DomAdapter)
-  const { heading, content } = props.component.state
+  const { content } = props.component.state
   const ref = createDynamicRef<HTMLDivElement>(node => {
-    const sub = props.component.onCompositionStart.subscribe(ev => {
-      if (ev.target === heading) {
-        (node.children[0] as HTMLElement).dataset.placeholder = ''
-      } else {
-        (node.children[1] as HTMLElement).dataset.placeholder = ''
-      }
+    const sub = props.component.onCompositionStart.subscribe(() => {
+      (node.children[0] as HTMLElement).dataset.placeholder = ''
     })
     return () => {
       sub.unsubscribe()
     }
   })
 
-  onUpdated(() => {
-    props.component.afterCheck()
-  })
+  // onUpdated(() => {
+  //   props.component.afterCheck()
+  // })
 
   const readonly = useReadonly()
   return () => {
@@ -109,15 +103,6 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
 
     return (
       <div class="xnote-root" ref={[rootRef, ref]}>
-        {
-          adapter.slotRender(heading!, children => {
-            return (createVNode('div', {
-                class: 'xnote-title',
-                'data-placeholder': heading.isEmpty ? '请输入标题' : ''
-              }, children)
-            )
-          }, readonly())
-        }
         {
           adapter.slotRender(content, children => {
             return (
