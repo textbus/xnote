@@ -135,6 +135,27 @@ export class ListComponent extends Component<ListComponentState> {
         selection.setPosition(slot, 0)
       }
     })
+
+    useDynamicShortcut({
+      keymap: {
+        key: 'Tab'
+      },
+      action: (): boolean | void => {
+        updateAfterList(this)
+        return false
+      }
+    })
+
+    useDynamicShortcut({
+      keymap: {
+        key: 'Tab',
+        shiftKey: true
+      },
+      action: (): boolean | void => {
+        Promise.resolve().then(() => updateAfterList(this))
+        return false
+      }
+    })
   }
 }
 

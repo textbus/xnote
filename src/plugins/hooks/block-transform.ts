@@ -29,17 +29,16 @@ export function useBlockTransform() {
         commander.unApplyAttribute(headingAttr)
         commander.transform({
           targetType: ParagraphComponent.type,
-          multipleSlot: false,
           slotFactory() {
             return new Slot([
               ContentType.InlineComponent,
               ContentType.Text
             ])
           },
-          stateFactory(slot: Slot) {
-            return new ParagraphComponent(textbus, {
+          stateFactory(slots: Slot[]) {
+            return slots.map(slot => new ParagraphComponent(textbus, {
               slot
-            })
+            }))
           }
         })
         break
@@ -56,17 +55,18 @@ export function useBlockTransform() {
         commander.unApplyAttribute(headingAttr)
         commander.transform({
           targetType: TodolistComponent.type,
-          multipleSlot: false,
           slotFactory() {
             return new Slot([
               ContentType.InlineComponent,
               ContentType.Text
             ])
           },
-          stateFactory(slot) {
-            return new TodolistComponent(textbus, {
-              checked: false,
-              slot
+          stateFactory(slots: Slot[]) {
+            return slots.map(slot => {
+              return new TodolistComponent(textbus, {
+                checked: false,
+                slot
+              })
             })
           }
         })
@@ -75,18 +75,19 @@ export function useBlockTransform() {
       case 'ul': {
         commander.transform({
           targetType: ListComponent.type,
-          multipleSlot: false,
           slotFactory() {
             return new Slot([
               ContentType.InlineComponent,
               ContentType.Text
             ])
           },
-          stateFactory(slot) {
-            return new ListComponent(textbus, {
-              type: value === 'ol' ? 'OrderedList' : 'UnorderedList',
-              reorder: true,
-              slot
+          stateFactory(slots: Slot[]) {
+            return slots.map((slot, index) => {
+              return new ListComponent(textbus, {
+                type: value === 'ol' ? 'OrderedList' : 'UnorderedList',
+                reorder: index === 0,
+                slot
+              })
             })
           }
         })
@@ -134,30 +135,30 @@ export function useBlockTransform() {
         if (state.state === QueryStateType.Enabled) {
           commander.transform({
             targetType: ParagraphComponent.type,
-            multipleSlot: false,
             slotFactory() {
               return new Slot([
                 ContentType.InlineComponent,
                 ContentType.Text
               ])
             },
-            stateFactory(slot: Slot) {
-              return new ParagraphComponent(textbus, {
-                slot
+            stateFactory(slots: Slot[]) {
+              return slots.map(slot => {
+                return new ParagraphComponent(textbus, {
+                  slot
+                })
               })
             }
           })
         } else {
           commander.transform({
             targetType: SourceCodeComponent.type,
-            multipleSlot: true,
             slotFactory() {
               return new Slot([
                 ContentType.Text
               ])
             },
             stateFactory(slots: Slot[]) {
-              return new SourceCodeComponent(textbus, {
+              return [new SourceCodeComponent(textbus, {
                 lang: '',
                 lineNumber: true,
                 autoBreak: true,
@@ -167,7 +168,7 @@ export function useBlockTransform() {
                     emphasize: false
                   }
                 })
-              })
+              })]
             }
           })
         }
