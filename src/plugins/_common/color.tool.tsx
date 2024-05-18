@@ -61,6 +61,7 @@ export function ColorTool(props: ColorToolProps) {
     '#ffdf14',
     '#5eec75',
     '#5dfaff',
+    '#1296db',
     '#617fff',
     '#c459ff',
   ]

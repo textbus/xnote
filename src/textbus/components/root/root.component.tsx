@@ -21,6 +21,7 @@ import { useBlockContent } from '../../hooks/use-block-content'
 import { ListComponent } from '../list/list.component'
 import { TodolistComponent } from '../todolist/todolist.component'
 import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface RootComponentState {
   // heading: Slot
@@ -98,6 +99,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
   // })
 
   const readonly = useReadonly()
+  const output = useOutput()
   return () => {
     const { rootRef } = props
 
@@ -111,7 +113,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
                 'data-placeholder': content.isEmpty ? '请输入内容' : ''
               }, children)
             )
-          }, readonly())
+          }, readonly() || output())
         }
       </div>
     )

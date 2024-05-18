@@ -74,7 +74,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
               return createVNode('div', {
                 class: 'xnote-highlight-box-content'
               }, children)
-            }, readonly())
+            }, readonly() || output())
           }
         </div>
       )
@@ -112,7 +112,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
             return createVNode('div', {
               class: 'xnote-highlight-box-content'
             }, children)
-          }, readonly())
+          }, readonly() || output())
         }
       </div>
     )

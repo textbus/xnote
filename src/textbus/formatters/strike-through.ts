@@ -50,7 +50,7 @@ export function registerStrikeThroughShortcut(textbus: Textbus) {
 
 export const strikeThroughFormatLoader: FormatLoader<boolean> = {
   match(element: HTMLElement): boolean {
-    return /strike|del|s/i.test(element.tagName) || /line-through/.test(element.style.textDecoration)
+    return /^(strike|del|s)$/i.test(element.tagName) || /line-through/.test(element.style.textDecoration)
   },
   read(): FormatLoaderReadResult<boolean> {
     return {

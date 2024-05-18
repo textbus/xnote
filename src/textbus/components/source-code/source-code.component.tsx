@@ -510,9 +510,9 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
       }}
            data-lang={state.lang}
            data-component={props.component.name}
-           data-auto-break={state.autoBreak}
+           data-auto-break={state.autoBreak + ''}
            data-theme={state.theme || null}
-           data-line-number={state.lineNumber}
+           data-line-number={state.lineNumber + ''}
       >
         {
           (!readonly() && !output()) && <ComponentToolbar visible={isFocus()}>
@@ -608,7 +608,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
 
 export const sourceCodeComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.tagName === 'DIV' && element.dataset.component === SourceCodeComponent.componentName ||
+    return (element.tagName === 'DIV' && element.dataset.component === SourceCodeComponent.componentName) ||
       element.tagName === 'PRE'
   },
   read(el: HTMLElement, textbus: Textbus) {
@@ -637,8 +637,8 @@ export const sourceCodeComponentLoader: ComponentLoader = {
     return new SourceCodeComponent(textbus, {
       lang: el.dataset.lang || '',
       theme: el.dataset.theme || '',
-      lineNumber: !!el.dataset.lineNumber || true,
-      autoBreak: !!el.dataset.autoBreak || true,
+      lineNumber: el.dataset.lineNumber === 'true',
+      autoBreak: el.dataset.autoBreak === 'true',
       slots
     })
   },

@@ -9,12 +9,18 @@ export const headingAttr = new Attribute<string>('Heading', {
 
 export const headingAttrLoader: AttributeLoader<string> = {
   match(element: HTMLElement): boolean {
-    return /H[1-6]/.test(element.tagName)
+    return /H[1-6]/.test(element.tagName) || /(^|\s)xnote-h[1-6](\s|$)/.test(element.className)
   },
   read(element: HTMLElement): AttributeLoaderReadResult<string> {
+    if (/H[1-6]/.test(element.tagName)) {
+      return {
+        attribute: headingAttr,
+        value: element.tagName.toLowerCase()
+      }
+    }
     return {
       attribute: headingAttr,
-      value: element.tagName.toLowerCase()
+      value: element.className.substring(6)
     }
   }
 }

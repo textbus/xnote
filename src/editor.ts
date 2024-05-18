@@ -1,6 +1,6 @@
 import { ViewflyAdapter, ViewflyVDomAdapter } from '@textbus/adapter-viewfly'
 import { createApp, HTMLRenderer, OutputTranslator } from '@viewfly/platform-browser'
-import { BrowserModule, DomAdapter, Parser } from '@textbus/platform-browser'
+import { BrowserModule, DomAdapter, Parser, ViewOptions } from '@textbus/platform-browser'
 import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus, TextbusConfig } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
@@ -72,7 +72,8 @@ import { OutputInjectionToken } from './textbus/injection-tokens'
 
 export interface EditorConfig extends TextbusConfig {
   content?: string,
-  collaborateConfig?: CollaborateConfig
+  collaborateConfig?: CollaborateConfig,
+  viewOptions?: Partial<ViewOptions>
 }
 
 export class Editor extends Textbus {
@@ -80,7 +81,7 @@ export class Editor extends Textbus {
   private host!: HTMLElement
   private vDomAdapter: ViewflyVDomAdapter
 
-  constructor(private editorConfig: EditorConfig) {
+  constructor(private editorConfig: EditorConfig = {}) {
     const adapter = new ViewflyAdapter({
       [ParagraphComponent.componentName]: ParagraphView,
       [RootComponent.componentName]: RootView,
@@ -112,15 +113,15 @@ export class Editor extends Textbus {
       },
       adapter,
       componentLoaders: [
+        sourceCodeComponentLoader,
+        tableComponentLoader,
+        imageComponentLoader,
+        videoComponentLoader,
         highlightBoxComponentLoader,
         blockquoteComponentLoader,
         paragraphComponentLoader,
-        sourceCodeComponentLoader,
         todolistComponentLoader,
-        tableComponentLoader,
         listComponentLoader,
-        imageComponentLoader,
-        videoComponentLoader
       ],
       formatLoaders: [
         backgroundColorFormatLoader,
@@ -138,7 +139,8 @@ export class Editor extends Textbus {
         headingAttrLoader,
         textAlignAttrLoader,
         textIndentAttrLoader
-      ]
+      ],
+      ...editorConfig.viewOptions
     })
 
     const modules: Module[] = [browserModule]
@@ -176,6 +178,7 @@ export class Editor extends Textbus {
       }
     })
     super({
+      zenCoding: true,
       additionalAdapters: [vDomAdapter],
       imports: modules,
       components: [

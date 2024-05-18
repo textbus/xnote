@@ -27,16 +27,17 @@ const user: UserInfo = {
 }
 const editor = new Editor({
   readonly: false,
-  // content: document.getElementById('article')!.innerHTML,
+  content: document.getElementById('article')!.innerHTML,
   // collaborateConfig: {
   //   url: 'ws://localhost:1234',
   //   roomName: 'xnote',
   //   userinfo: user
   // }
 })
+const result = document.getElementById('result')!
 editor.mount(document.getElementById('app')!).then(() => {
   editor.onChange.subscribe(() => {
-    // console.log(editor.getHTML())
+    console.log(result.innerHTML = editor.getHTML())
   })
 })
 

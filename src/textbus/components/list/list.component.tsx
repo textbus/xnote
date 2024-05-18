@@ -269,7 +269,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
               return createVNode('div', {
                 class: 'xnote-list-content'
               }, children)
-            }, readonly())
+            }, readonly() || output())
           }
         </li>
       </ListType>

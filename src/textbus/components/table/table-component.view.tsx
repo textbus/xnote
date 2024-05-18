@@ -146,7 +146,7 @@ export const TableComponentView = withAnnotation({
                             return createVNode('td', {
                               key: cell.slot.id
                             }, children)
-                          }, readonly())
+                          }, readonly() || output())
                         })
                       }
                     </tr>
@@ -196,7 +196,7 @@ export const TableComponentView = withAnnotation({
                             return createVNode('td', {
                               key: cell.slot.id
                             }, children)
-                          }, readonly())
+                          }, readonly() || output())
                         })
                       }
                     </tr>

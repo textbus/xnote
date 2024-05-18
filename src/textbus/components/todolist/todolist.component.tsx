@@ -149,7 +149,7 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
             return createVNode('div', {
               class: 'xnote-todolist-content'
             }, children)
-          }, readonly())
+          }, readonly() || output())
         }
       </div>
     )

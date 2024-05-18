@@ -18,6 +18,7 @@ import { inject } from '@viewfly/core'
 
 import './paragraph.component.scss'
 import { useReadonly } from '../../hooks/use-readonly'
+import { useOutput } from '../../hooks/use-output'
 
 export interface ParagraphComponentState {
   slot: Slot
@@ -63,6 +64,7 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
 export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
   const adapter = inject(DomAdapter)
   const readonly = useReadonly()
+  const output = useOutput()
   return () => {
     const slot = props.component.state.slot
     return (
@@ -72,7 +74,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
             return (
               createVNode('p', null, children)
             )
-          }, readonly())
+          }, readonly() || output())
         }
       </div>
     )
@@ -84,11 +86,12 @@ export const paragraphComponentLoader: ComponentLoader = {
     return element.dataset.compoment === ParagraphComponent.name || /P|H[1-6]/.test(element.tagName)
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
+    const content = /P|H[1-6]/.test(element.tagName) ? element : element.children[0] as HTMLElement
     const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent,
       ContentType.BlockComponent
-    ]), /P|H[1-6]/.test(element.tagName) ? element : element.children[0] as HTMLElement).toDelta()
+    ]), content).toDelta()
 
     const results = deltaToBlock(delta, textbus)
 
