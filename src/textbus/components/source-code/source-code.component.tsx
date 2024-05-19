@@ -328,7 +328,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
       },
       action(): boolean | void {
         if (selection.isCollapsed) {
-          commander.insert(' ')
+          commander.insert('  ')
           return
         }
         const blocks = selection.getBlocks()

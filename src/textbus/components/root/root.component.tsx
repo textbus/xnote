@@ -16,15 +16,12 @@ import { inject, createDynamicRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
-import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
+import { deltaToBlock } from '../paragraph/paragraph.component'
 import { useBlockContent } from '../../hooks/use-block-content'
-import { ListComponent } from '../list/list.component'
-import { TodolistComponent } from '../todolist/todolist.component'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 
 export interface RootComponentState {
-  // heading: Slot
   content: Slot
 }
 
@@ -33,10 +30,8 @@ export class RootComponent extends Component<RootComponentState> {
   static type = ContentType.BlockComponent
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<RootComponentState>) {
-    // const heading = textbus.get(Registry).createSlot(json.heading)
     const content = textbus.get(Registry).createSlot(json.content)
     return new RootComponent(textbus, {
-      // heading,
       content
     })
   }
@@ -44,41 +39,11 @@ export class RootComponent extends Component<RootComponentState> {
   onCompositionStart = new Subject<Event<Slot, CompositionStartEventData>>()
 
   override setup() {
-    // const textbus = useContext()
-    // const selection = textbus.get(Selection)
-
-    // onBreak(ev => {
-    //   if (ev.target === this.state.heading) {
-    //     const afterContent = ev.target.cut(ev.data.index)
-    //     const p = new ParagraphComponent(textbus, {
-    //       slot: afterContent
-    //     })
-    //     const body = this.state.content
-    //     body.retain(0)
-    //     body.insert(p)
-    //     selection.setPosition(afterContent, 0)
-    //     ev.preventDefault()
-    //   }
-    // })
-
     useBlockContent(this.state.content)
 
     onCompositionStart(ev => {
       this.onCompositionStart.next(ev)
     })
-  }
-
-  afterCheck() {
-    const content = this.state.content
-    const lastContent = content.getContentAtIndex(content.length - 1)
-    if (lastContent instanceof ParagraphComponent ||
-      lastContent instanceof ListComponent ||
-      lastContent instanceof TodolistComponent) {
-      return
-    }
-
-    content.retain(content.length)
-    content.insert(new ParagraphComponent(this.textbus))
   }
 }
 
@@ -93,10 +58,6 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
       sub.unsubscribe()
     }
   })
-
-  // onUpdated(() => {
-  //   props.component.afterCheck()
-  // })
 
   const readonly = useReadonly()
   const output = useOutput()

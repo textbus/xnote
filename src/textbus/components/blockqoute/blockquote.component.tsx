@@ -29,8 +29,6 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
     createState(): BlockquoteComponentState {
       return {
         slot: new Slot([
-          ContentType.Text,
-          ContentType.InlineComponent,
           ContentType.BlockComponent
         ])
       }
@@ -46,8 +44,6 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
 
   constructor(textbus: Textbus, state: BlockquoteComponentState = {
     slot: new Slot([
-      ContentType.Text,
-      ContentType.InlineComponent,
       ContentType.BlockComponent
     ])
   }) {
@@ -83,15 +79,11 @@ export const blockquoteComponentLoader: ComponentLoader = {
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component {
     const delta = slotParser(new Slot([
-      ContentType.Text,
       ContentType.BlockComponent,
-      ContentType.InlineComponent
     ]), element).toDelta()
 
     const slot = new Slot([
       ContentType.BlockComponent,
-      ContentType.InlineComponent,
-      ContentType.Text
     ])
 
     deltaToBlock(delta, textbus).forEach(i => {

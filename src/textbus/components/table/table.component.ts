@@ -70,8 +70,6 @@ export class TableComponent extends Component<TableComponentState> {
             rowspan: 1,
             colspan: 1,
             slot: new Slot([
-              ContentType.Text,
-              ContentType.InlineComponent,
               ContentType.BlockComponent
             ])
           }
@@ -160,8 +158,6 @@ export class TableComponent extends Component<TableComponentState> {
     this.state.rows.forEach(row => {
       const slot = new Slot([
         ContentType.BlockComponent,
-        ContentType.InlineComponent,
-        ContentType.Text
       ])
       slot.insert(new ParagraphComponent(this.textbus, {
         slot: new Slot([
@@ -189,8 +185,6 @@ export class TableComponent extends Component<TableComponentState> {
       cells: this.state.layoutWidth.map(() => {
         const slot = new Slot([
           ContentType.BlockComponent,
-          ContentType.InlineComponent,
-          ContentType.Text
         ])
         slot.insert(new ParagraphComponent(this.textbus, {
           slot: new Slot([

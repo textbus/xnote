@@ -238,8 +238,6 @@ export const tableComponentLoader: ComponentLoader = {
         Array.from(row.cells).forEach(cell => {
           const slot = new Slot([
             ContentType.BlockComponent,
-            ContentType.InlineComponent,
-            ContentType.Text
           ])
           arr.push({
             slot,
@@ -248,8 +246,6 @@ export const tableComponentLoader: ComponentLoader = {
           })
           const delta = slotParser(new Slot([
             ContentType.BlockComponent,
-            ContentType.InlineComponent,
-            ContentType.Text
           ]), cell).toDelta()
 
           const results = deltaToBlock(delta, textbus)
@@ -269,8 +265,6 @@ export const tableComponentLoader: ComponentLoader = {
         Array.from(row.cells).forEach(cell => {
           const slot = new Slot([
             ContentType.BlockComponent,
-            ContentType.InlineComponent,
-            ContentType.Text
           ])
           arr.push({
             slot,
@@ -279,8 +273,6 @@ export const tableComponentLoader: ComponentLoader = {
           })
           const delta = slotParser(new Slot([
             ContentType.BlockComponent,
-            ContentType.InlineComponent,
-            ContentType.Text
           ]), cell).toDelta()
 
           const results = deltaToBlock(delta, textbus)
@@ -374,8 +366,6 @@ export function autoComplete(table: TableCellConfig[][]) {
           rowspan: 1,
           colspan: 1,
           slot: new Slot([
-            ContentType.Text,
-            ContentType.InlineComponent,
             ContentType.BlockComponent
           ])
         }

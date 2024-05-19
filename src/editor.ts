@@ -239,13 +239,11 @@ export class Editor extends Textbus {
       const parser = this.get(Parser)
       const doc = parser.parseDoc(config.content, rootComponentLoader)
       rootComp = doc instanceof Component ? doc : new RootComponent(this, {
-        // heading: new Slot([ContentType.Text]),
         content: doc as Slot
       })
     } else {
       rootComp = new RootComponent(this, {
-        // heading: new Slot([ContentType.Text]),
-        content: new Slot([ContentType.Text, ContentType.InlineComponent, ContentType.BlockComponent])
+        content: new Slot([ContentType.BlockComponent])
       })
     }
     return this.render(rootComp)
