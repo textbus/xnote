@@ -69,7 +69,7 @@ export const DropdownMenuPortal = withAnnotation({
       menuElement.style.left = triggerRect.left + 'px'
       if (isToTop) {
         const maxHeight = Math.max(menuElement.scrollHeight, menuElement.offsetHeight)
-        const height = Math.min(triggerRect.top - 20, maxHeight)
+        const height = Math.min(triggerRect.top - 20, maxHeight, 400)
         menuElement.style.height = height + 'px'
         menuElement.style.top = triggerRect.top - 20 - height + 'px'
 
