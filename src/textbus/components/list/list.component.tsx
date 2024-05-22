@@ -39,7 +39,13 @@ export class ListComponent extends Component<ListComponentState> {
 
   static zenCoding: ZenCodingGrammarInterceptor<ListComponentState> = {
     key: ' ',
-    match: /^([1-9]\.|[+*])$/,
+    match(content, textbus) {
+      const selection = textbus.get(Selection)
+      if (selection.commonAncestorComponent instanceof ParagraphComponent) {
+        return /^([1-9]\.|[+*])$/.test(content)
+      }
+      return false
+    },
     createState(content: string) {
       return {
         type: /[-+*]/.test(content) ? 'UnorderedList' : 'OrderedList',

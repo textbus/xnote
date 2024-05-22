@@ -4,14 +4,14 @@ import {
   createVNode,
   Slot,
   ComponentStateLiteral,
-  Textbus, Registry, ZenCodingGrammarInterceptor,
+  Textbus, Registry, ZenCodingGrammarInterceptor, Selection,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
 
 import './blockquote.component.scss'
-import { deltaToBlock } from '../paragraph/paragraph.component'
+import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
 import { useBlockContent } from '../../hooks/use-block-content'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
@@ -25,7 +25,13 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
   static componentName = 'BlockquoteComponent'
   static zenCoding: ZenCodingGrammarInterceptor<BlockquoteComponentState> = {
     key: ' ',
-    match: /^>$/,
+    match(content, textbus) {
+      const selection = textbus.get(Selection)
+      if (selection.commonAncestorComponent instanceof ParagraphComponent) {
+        return /^>$/.test(content)
+      }
+      return false
+    },
     createState(): BlockquoteComponentState {
       return {
         slot: new Slot([

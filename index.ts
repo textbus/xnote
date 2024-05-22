@@ -37,7 +37,7 @@ const editor = new Editor({
 const result = document.getElementById('result')!
 editor.mount(document.getElementById('app')!).then(() => {
   editor.onChange.subscribe(() => {
-    console.log(result.innerHTML = editor.getHTML())
+    // console.log(result.innerHTML = editor.getHTML())
   })
 })
 

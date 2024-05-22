@@ -158,11 +158,15 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
   }
 
   static zenCoding: ZenCodingGrammarInterceptor<SourceCodeComponentState> = {
-    key: 'Enter',
-    match(c: string) {
-      const matchString = languageList.map(i => i.label || i.value).concat('js', 'ts').join('|').replace(/\+/, '\\+')
-      const reg = new RegExp(`^\`\`\`(${matchString})$`, 'i')
-      return reg.test(c)
+    key: ['Enter', ' '],
+    match(c: string, textbus) {
+      const selection = textbus.get(Selection)
+      if (selection.commonAncestorComponent instanceof ParagraphComponent) {
+        const matchString = languageList.map(i => i.label || i.value).concat('js', 'ts').join('|').replace(/\+/, '\\+')
+        const reg = new RegExp(`^\`\`\`(${matchString})$`, 'i')
+        return reg.test(c)
+      }
+      return false
     },
     createState(content): SourceCodeComponentState {
       const matchString = content.replace(/`/g, '').replace(/\+/, '\\+')

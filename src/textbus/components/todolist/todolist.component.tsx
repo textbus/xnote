@@ -33,7 +33,13 @@ export class TodolistComponent extends Component<TodolistComponentState> {
   static type = ContentType.BlockComponent
   static componentName = 'TodoListComponent'
   static zenCoding: ZenCodingGrammarInterceptor<TodolistComponentState> = {
-    match: /^\[(x|\s)?\]$/,
+    match(content, textbus) {
+      const selection = textbus.get(Selection)
+      if (selection.commonAncestorComponent instanceof ParagraphComponent) {
+        return /^\[(x|\s)?\]$/.test(content)
+      }
+      return false
+    },
     key: ' ',
     createState(content: string): TodolistComponentState {
       const isChecked = content.charAt(1) === 'x'

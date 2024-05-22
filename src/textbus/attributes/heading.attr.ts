@@ -1,6 +1,8 @@
 import { Attribute, Commander, Keyboard, Selection, Textbus, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 
+import { SourceCodeComponent } from '../components/source-code/source-code.component'
+
 export const headingAttr = new Attribute<string>('Heading', {
   render(node: VElement, formatValue: string) {
     node.classes.add('xnote-' + formatValue)
@@ -48,6 +50,9 @@ export function registerHeadingShortcut(textbus: Textbus) {
       return key === ' '
     },
     action(content) {
+      if (selection.commonAncestorComponent instanceof SourceCodeComponent) {
+        return false
+      }
       const commonAncestorSlot = selection.commonAncestorSlot!
       commonAncestorSlot.cut()
       commander.applyAttribute(headingAttr, 'h' + content.length)
