@@ -1,5 +1,5 @@
 import { inject, onUnmounted, Props } from '@viewfly/core'
-import { Commander, Query, QueryStateType, Selection } from '@textbus/core'
+import { Commander, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { useProduce } from '@viewfly/hooks'
@@ -16,10 +16,7 @@ import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
 export interface AttrToolProps extends Props {
   abreast?: DropdownProps['abreast']
   style?: HTMLAttributes<HTMLElement>['style']
-
-  queryBefore?(): void
-
-  queryAfter?(): void
+  slot?: Slot | null
 
   applyBefore?(): void
 }
@@ -36,15 +33,27 @@ export function AttrTool(props: AttrToolProps) {
   })
 
   function updateCheckStates() {
-    props.queryBefore?.()
+    if (!props.slot && !selection.isSelected) {
+      return
+    }
     setCheckStates(draft => {
-      const textAlignState = query.queryAttribute(textAlignAttr)
-      const textIndentState = query.queryAttribute(textIndentAttr)
+      const range: Range = props.slot ? {
+        startSlot: props.slot,
+        endSlot: props.slot,
+        startOffset: 0,
+        endOffset: props.slot.length
+      } : {
+        startSlot: selection.startSlot!,
+        startOffset: selection.startOffset!,
+        endSlot: selection.endSlot!,
+        endOffset: selection.endOffset!
+      }
+      const textAlignState = query.queryAttributeByRange(textAlignAttr, range)
+      const textIndentState = query.queryAttributeByRange(textIndentAttr, range)
 
       draft.textAlign = textAlignState.state === QueryStateType.Enabled ? textAlignState.value! : 'left'
       draft.textIndent = textIndentState.state === QueryStateType.Enabled ? textIndentState.value! : 0
     })
-    props.queryAfter?.()
   }
 
   updateCheckStates()

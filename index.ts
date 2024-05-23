@@ -28,11 +28,11 @@ const user: UserInfo = {
 const editor = new Editor({
   readonly: false,
   content: document.getElementById('article')!.innerHTML,
-  // collaborateConfig: {
-  //   url: 'ws://localhost:1234',
-  //   roomName: 'xnote',
-  //   userinfo: user
-  // }
+  collaborateConfig: {
+    url: 'ws://localhost:1234',
+    roomName: 'xnote',
+    userinfo: user
+  }
 })
 const result = document.getElementById('result')!
 editor.mount(document.getElementById('app')!).then(() => {

@@ -17,7 +17,7 @@ import {
   fromEvent,
   map, merge,
   RootComponentRef, sampleTime,
-  Selection, SelectionSnapshot,
+  Selection,
   Slot,
   Subscription, Textbus,
   throttleTime
@@ -168,21 +168,6 @@ export const LeftToolbar = withAnnotation({
     )
   })
 
-  let snapshot: SelectionSnapshot | null = null
-
-  function queryBefore() {
-    const slot = activeSlot()
-    if (slot) {
-      snapshot = selection.createSnapshot()
-      selection.selectSlot(slot)
-    }
-  }
-
-  function queryAfter() {
-    snapshot?.restore()
-    snapshot = null
-  }
-
   function applyBefore() {
     const slot = activeSlot()
     if (slot) {
@@ -237,7 +222,7 @@ export const LeftToolbar = withAnnotation({
     const position = positionSignal()
     const slot = activeSlot()
     let activeNode = <span class="xnote-icon-pilcrow"/>
-    const states = checkStates()
+    const states = checkStates(slot)
 
     if (slot) {
       const types: [boolean, JSXNode][] = [
@@ -316,17 +301,14 @@ export const LeftToolbar = withAnnotation({
               <AttrTool
                 style={{ display: 'block' }}
                 abreast={true}
-                applyBefore={applyBefore}
-                queryBefore={queryBefore}
-                queryAfter={queryAfter}>
+                slot={slot}
+                applyBefore={applyBefore}>
                 <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
               </AttrTool>
               <ColorTool
                 style={{ display: 'block' }}
                 abreast={true}
                 applyBefore={applyBefore}
-                queryBefore={queryBefore}
-                queryAfter={queryAfter}
               >
                 <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
               </ColorTool>

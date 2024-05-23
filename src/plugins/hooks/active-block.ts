@@ -1,5 +1,5 @@
 import { useProduce } from '@viewfly/hooks'
-import { Query, QueryStateType, Selection, Slot } from '@textbus/core'
+import { Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { inject, onUnmounted } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
@@ -32,29 +32,35 @@ export function useActiveBlock() {
     highlightBox: false
   })
 
-  function updateCheckStates() {
+  function updateCheckStates(range: Range) {
     setCheckStates(draft => {
-      const heading = query.queryAttribute(headingAttr)
-      draft.paragraph = query.queryComponent(ParagraphComponent).state === QueryStateType.Enabled
+      const heading = query.queryAttributeByRange(headingAttr, range)
+      draft.paragraph = query.queryComponentByRange(ParagraphComponent, range).state === QueryStateType.Enabled
       draft.h1 = draft.h2 = draft.h3 = draft.h4 = draft.h5 = draft.h6 = false
       if (heading.state === QueryStateType.Enabled) {
         draft[heading.value as any] = true
         draft.paragraph = false
       }
-      const queryList = query.queryComponent(ListComponent)
+      const queryList = query.queryComponentByRange(ListComponent, range)
       draft.unorderedList = queryList.state === QueryStateType.Enabled && queryList.value!.state.type === 'UnorderedList'
       draft.orderedList = queryList.state === QueryStateType.Enabled && queryList.value!.state.type === 'OrderedList'
-      draft.table = query.queryComponent(TableComponent).state === QueryStateType.Enabled
-      draft.todolist = query.queryComponent(TodolistComponent).state === QueryStateType.Enabled
-      draft.blockquote = query.queryComponent(BlockquoteComponent).state === QueryStateType.Enabled
-      draft.sourceCode = query.queryComponent(SourceCodeComponent).state === QueryStateType.Enabled
+      draft.table = query.queryComponentByRange(TableComponent, range).state === QueryStateType.Enabled
+      draft.todolist = query.queryComponentByRange(TodolistComponent, range).state === QueryStateType.Enabled
+      draft.blockquote = query.queryComponentByRange(BlockquoteComponent, range).state === QueryStateType.Enabled
+      draft.sourceCode = query.queryComponentByRange(SourceCodeComponent, range).state === QueryStateType.Enabled
     })
   }
 
-  updateCheckStates()
-
   const subscription = refreshService.onRefresh.subscribe(() => {
-    updateCheckStates()
+    if (!selection.isSelected) {
+      return
+    }
+    updateCheckStates({
+      startOffset: selection.startOffset!,
+      startSlot: selection.startSlot!,
+      endSlot: selection.endSlot!,
+      endOffset: selection.endOffset!
+    })
   })
 
   onUnmounted(() => {
@@ -63,10 +69,19 @@ export function useActiveBlock() {
 
   return function (slot: Slot | null = null) {
     if (slot) {
-      const snapshot = selection.createSnapshot()
-      selection.setBaseAndExtent(slot, 0, slot, slot.length)
-      updateCheckStates()
-      snapshot.restore()
+      updateCheckStates({
+        startOffset: 0,
+        endOffset: slot.length,
+        startSlot: slot,
+        endSlot: slot
+      })
+    } else if (selection.isSelected) {
+      updateCheckStates({
+        startOffset: selection.startOffset!,
+        startSlot: selection.startSlot!,
+        endSlot: selection.endSlot!,
+        endOffset: selection.endOffset!
+      })
     }
     return checkStates()
   }

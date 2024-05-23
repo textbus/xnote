@@ -15,14 +15,19 @@ import { SelectionMask } from './components/selection-mask'
 import { deltaToBlock } from '../paragraph/paragraph.component'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { EditorService } from '../../../services/editor.service'
 
 export const TableComponentView = withAnnotation({
   providers: [TableService]
 }, function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
+  const editorService = inject(EditorService)
   const isFocus = createSignal(false)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
+    if (!b) {
+      editorService.hideInlineToolbar = false
+    }
   })
 
   onUnmounted(() => {
@@ -85,6 +90,7 @@ export const TableComponentView = withAnnotation({
         }
         const [startColumn, endColumn] = [startPosition.colIndex, endPosition.colIndex].sort((a, b) => a - b)
         const [startRow, endRow] = [startPosition.rowIndex, endPosition.rowIndex].sort((a, b) => a - b)
+
         props.component.tableSelection.set({
           startColumn,
           startRow,

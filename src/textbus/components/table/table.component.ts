@@ -99,9 +99,10 @@ export class TableComponent extends Component<TableComponentState> {
       const selectPosition = this.tableSelection()
       if (selectPosition) {
         const cells: Slot[] = []
-        this.state.rows.slice(selectPosition.startRow, selectPosition.endRow + 1).forEach(row => {
-          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn + 1).map(i => i.slot))
+        this.state.rows.slice(selectPosition.startRow, selectPosition.endRow).forEach(row => {
+          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn).map(i => i.slot))
         })
+        console.log(cells, selectPosition)
         ev.useRanges(cells.map(i => {
           return {
             slot: i,

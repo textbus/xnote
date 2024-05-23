@@ -1,6 +1,6 @@
 import { useProduce } from '@viewfly/hooks'
 import { inject, onUnmounted, createSignal, Props } from '@viewfly/core'
-import { Commander, Query, QueryStateType } from '@textbus/core'
+import { Commander, Query, QueryStateType, Range, Slot, Selection } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 
@@ -13,10 +13,7 @@ import css from './color-tool.scoped.scss'
 export interface ColorToolProps extends Props {
   abreast?: DropdownProps['abreast']
   style?: HTMLAttributes<HTMLElement>['style']
-
-  queryBefore?(): void
-
-  queryAfter?(): void
+  slot?: Slot | null
 
   applyBefore?(): void
 }
@@ -25,6 +22,7 @@ export function ColorTool(props: ColorToolProps) {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
   const commander = inject(Commander)
+  const selection = inject(Selection)
 
   const textColor = createSignal('')
   const backgroundColor = createSignal('')
@@ -35,13 +33,25 @@ export function ColorTool(props: ColorToolProps) {
   })
 
   function updateCheckState() {
-    props.queryBefore?.()
-    const textState = query.queryFormat(colorFormatter)
-    const backgroundState = query.queryFormat(backgroundColorFormatter)
+    if (!props.slot && !selection.isSelected) {
+      return
+    }
+    const range: Range = props.slot ? {
+      startSlot: props.slot,
+      endSlot: props.slot,
+      startOffset: 0,
+      endOffset: props.slot.length
+    } : {
+      startSlot: selection.startSlot!,
+      startOffset: selection.startOffset!,
+      endSlot: selection.endSlot!,
+      endOffset: selection.endOffset!
+    }
+    const textState = query.queryFormatByRange(colorFormatter, range)
+    const backgroundState = query.queryFormatByRange(backgroundColorFormatter, range)
 
     textColor.set(textState.state === QueryStateType.Enabled ? textState.value! : '')
     backgroundColor.set(backgroundState.state === QueryStateType.Enabled ? backgroundState.value! : '')
-    props.queryAfter?.()
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
