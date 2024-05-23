@@ -72,7 +72,6 @@ export const Toolbar = withAnnotation({
       selectionFocusRect.top - docRect.top - toolbarRect.height - 10
 
     updateViewPosition(draft => {
-      draft.isHide = false
       draft.transitionDuration = .15
       draft.left = centerLeft - docRect.left
       draft.top = top + 10
@@ -109,6 +108,7 @@ export const Toolbar = withAnnotation({
     ).subscribe((top) => {
       if (top !== null) {
         updateViewPosition(draft => {
+          draft.isHide = false
           draft.opacity = 1
           draft.top = top
         })

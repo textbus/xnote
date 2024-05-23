@@ -1,6 +1,6 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { ButtonHTMLAttributes } from '@viewfly/platform-browser'
-import { createSignal, inject, InjectFlags, onUnmounted, Props } from '@viewfly/core'
+import { createSignal, inject, onUnmounted, Props } from '@viewfly/core'
 
 import css from './button.scoped.scss'
 import { DropdownContextService } from '../dropdown/dropdown-context.service'
@@ -12,7 +12,7 @@ export interface ButtonProps extends Props, ButtonHTMLAttributes<HTMLButtonEleme
 }
 
 export function Button(props: ButtonProps) {
-  const dropdownContextService = inject(DropdownContextService, InjectFlags.Optional, null)
+  const dropdownContextService = inject(DropdownContextService, null)
   const isActive = createSignal(dropdownContextService?.isOpen || false)
   if (dropdownContextService) {
     const subscription = dropdownContextService.onOpenStateChange.subscribe(b => {

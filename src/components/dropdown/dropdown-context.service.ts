@@ -14,7 +14,7 @@ export class DropdownContextService {
   private openStateChangeEvent = new Subject<boolean>()
 
   private timer: any = null
-  private parentDropdownContextService = this.injector.get(DropdownContextService, InjectFlags.SkipSelf, null)
+  private parentDropdownContextService = this.injector.get(DropdownContextService, null, InjectFlags.SkipSelf)
 
   constructor(private dropdownService: DropdownService,
               private injector: Injector) {

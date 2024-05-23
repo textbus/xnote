@@ -1,4 +1,4 @@
-import { inject, InjectFlags } from '@viewfly/core'
+import { inject } from '@viewfly/core'
 import { Commander, Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
@@ -26,7 +26,7 @@ export function InsertTool(props: InsertToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const textbus = inject(Textbus)
-  const fileUploader = inject(FileUploader, InjectFlags.Optional, null)
+  const fileUploader = inject(FileUploader, null)
 
   function insert(type: string) {
     const component = props.slot?.parent

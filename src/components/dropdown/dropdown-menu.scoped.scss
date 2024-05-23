@@ -12,7 +12,7 @@
   //pointer-events: none;
   user-select: none;
   overflow-y: auto;
-  //box-sizing: border-box;
+  box-sizing: content-box;
   transition-duration: 0s;
   height: 0;
   transition: transform 0.3s, opacity 0.3s;
