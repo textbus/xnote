@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, inject, onMounted, StaticRef } from '@viewfly/core'
+import { createRef, inject, onMounted, Signal, StaticRef } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 
 import css from './resize-column.scoped.scss'
@@ -9,6 +9,7 @@ import { TableService } from '../table.service'
 export interface ResizeColumnProps {
   tableRef: StaticRef<HTMLTableElement>
   component: TableComponent
+  layoutWidth: Signal<number[]>
 
   onActiveStateChange(isActive: boolean): void
 }
@@ -62,17 +63,20 @@ export function ResizeColumn(props: ResizeColumnProps) {
       const minWidth = 30
       const minLeft = initLeft - initWidth + minWidth
 
+      const layoutWidthArr = layoutWidth.slice()
       const moveEvent = fromEvent<MouseEvent>(document, 'mousemove').subscribe(moveEvent => {
         const distanceX = moveEvent.clientX - x
 
         dragLineRef.current!.style.left = Math.max(initLeft + distanceX, minLeft) + 'px'
-        props.component.state.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
+        layoutWidthArr[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
+        props.layoutWidth.set(layoutWidthArr.slice())
       }).add(fromEvent<MouseEvent>(document, 'mouseup').subscribe(upEvent => {
         isDrag = false
         props.onActiveStateChange(false)
         moveEvent.unsubscribe()
         const distanceX = upEvent.clientX - x
         props.component.state.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
+        props.layoutWidth.set(props.component.state.layoutWidth)
       }))
     }))
 

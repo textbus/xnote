@@ -14,6 +14,7 @@ export interface TopBarProps {
   isFocus: Signal<boolean>
   component: TableComponent
   scrollRef: StaticRef<HTMLDivElement>
+  layoutWidth: Signal<number[]>
 }
 
 export function TopBar(props: TopBarProps) {
@@ -109,7 +110,7 @@ export function TopBar(props: TopBarProps) {
               <tbody>
               <tr>
                 {
-                  state.layoutWidth.map((i, index) => {
+                  props.layoutWidth().map((i, index) => {
                     return (
                       <td style={{ width: i + 'px', minWidth: i + 'px' }}>
                         <div class="tool-container">
@@ -169,7 +170,7 @@ export function TopBar(props: TopBarProps) {
               <tbody>
               <tr>
                 {
-                  state.layoutWidth.map((i, index) => {
+                  props.layoutWidth().map((i, index) => {
                     return <td onClick={ev => {
                       mouseDownFromToolbar = true
                       if (!ev.shiftKey) {

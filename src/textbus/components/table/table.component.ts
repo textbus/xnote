@@ -1,14 +1,14 @@
 import {
   Component,
   ComponentStateLiteral,
-  ContentType,
+  ContentType, GetRangesEvent, onDestroy,
   onFocusIn,
   onFocusOut, onGetRanges,
   Registry,
   Selection,
   Slot,
   Subject,
-  Textbus,
+  Textbus, useContext,
 } from '@textbus/core'
 import { createSignal } from '@viewfly/core'
 
@@ -84,6 +84,7 @@ export class TableComponent extends Component<TableComponentState> {
   tableSelection = createSignal<TableSelection | null>(null)
 
   override setup() {
+    const selection = useContext(Selection)
     onFocusIn(() => {
       this.focus.next(true)
     })
@@ -95,14 +96,46 @@ export class TableComponent extends Component<TableComponentState> {
       return slot.parent === this
     })
 
-    onGetRanges(ev => {
-      const selectPosition = this.tableSelection()
+    const sub = selection.onChange.subscribe(() => {
+      if (selection.commonAncestorComponent !== this || selection.isCollapsed) {
+        this.tableSelection.set(null)
+      }
+    })
+
+    onDestroy(() => {
+      sub.unsubscribe()
+    })
+
+    const findPosition = (slot: Slot) => {
+      let cell: Slot | null = slot
+      while (cell?.parent && cell.parent !== this) {
+        cell = cell.parentSlot
+      }
+      if (cell) {
+        const rows = this.state.rows
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+          const row = rows[rowIndex].cells
+          for (let colIndex = 0; colIndex < row.length; colIndex++) {
+            const item = row[colIndex].slot
+            if (item === cell) {
+              return {
+                rowIndex,
+                colIndex
+              }
+            }
+          }
+        }
+      }
+      return null
+    }
+
+    const select = (ev: GetRangesEvent<any>, selectPosition: TableSelection | null) => {
+      this.tableSelection.set(selectPosition)
       if (selectPosition) {
         const cells: Slot[] = []
         this.state.rows.slice(selectPosition.startRow, selectPosition.endRow).forEach(row => {
           cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn).map(i => i.slot))
         })
-        console.log(cells, selectPosition)
         ev.useRanges(cells.map(i => {
           return {
             slot: i,
@@ -111,6 +144,39 @@ export class TableComponent extends Component<TableComponentState> {
           }
         }))
         ev.preventDefault()
+      }
+    }
+
+    onGetRanges(ev => {
+      const startPosition = findPosition(selection.startSlot!)
+      const endPosition = findPosition(selection.endSlot!)
+
+      if (startPosition && endPosition) {
+        if (startPosition.rowIndex === endPosition.rowIndex && startPosition.colIndex === endPosition.colIndex) {
+          if (selection.startSlot === selection.endSlot && selection.startOffset === 0 && selection.endOffset === selection.startSlot?.length) {
+
+            select(ev, {
+              startColumn: startPosition.colIndex,
+              startRow: startPosition.rowIndex,
+              endColumn: endPosition.colIndex + 1,
+              endRow: endPosition.rowIndex + 1
+            })
+            return
+          }
+          select(ev, null)
+          return
+        }
+        const [startColumn, endColumn] = [startPosition.colIndex, endPosition.colIndex].sort((a, b) => a - b)
+        const [startRow, endRow] = [startPosition.rowIndex, endPosition.rowIndex].sort((a, b) => a - b)
+
+        select(ev, {
+          startColumn,
+          startRow,
+          endColumn: endColumn + 1,
+          endRow: endRow + 1
+        })
+      } else {
+        select(ev, null)
       }
     })
   }

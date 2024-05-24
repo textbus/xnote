@@ -1,7 +1,7 @@
-import { ContentType, createVNode, Selection, Slot, Textbus } from '@textbus/core'
+import { ContentType, createVNode, Slot, Textbus } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { createRef, createSignal, inject, onMounted, onUnmounted, withAnnotation } from '@viewfly/core'
+import { createRef, createSignal, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 
 import './table.component.scss'
 import { TableCellConfig, TableComponent } from './table.component'
@@ -23,6 +23,7 @@ export const TableComponentView = withAnnotation({
   const adapter = inject(DomAdapter)
   const editorService = inject(EditorService)
   const isFocus = createSignal(false)
+  const layoutWidth = createSignal(props.component.state.layoutWidth)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
     if (!b) {
@@ -38,72 +39,6 @@ export const TableComponentView = withAnnotation({
   const scrollRef = createRef<HTMLDivElement>()
 
   const isResizeColumn = createSignal(false)
-
-  const selection = inject(Selection)
-
-  const findPosition = (slot: Slot) => {
-    let cell: Slot | null = slot
-    while (cell?.parent && cell.parent !== props.component) {
-      cell = cell.parentSlot
-    }
-    if (cell) {
-      const rows = props.component.state.rows
-      for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-        const row = rows[rowIndex].cells
-        for (let colIndex = 0; colIndex < row.length; colIndex++) {
-          const item = row[colIndex].slot
-          if (item === cell) {
-            return {
-              rowIndex,
-              colIndex
-            }
-          }
-        }
-      }
-    }
-    return null
-  }
-
-  onMounted(() => {
-    const sub = selection.onChange.subscribe(() => {
-      if (selection.commonAncestorComponent !== props.component || selection.isCollapsed) {
-        props.component.tableSelection.set(null)
-        return
-      }
-
-      const startPosition = findPosition(selection.startSlot!)
-      const endPosition = findPosition(selection.endSlot!)
-
-      if (startPosition && endPosition) {
-        if (startPosition.rowIndex === endPosition.rowIndex && startPosition.colIndex === endPosition.colIndex) {
-          if (selection.startSlot === selection.endSlot && selection.startOffset === 0 && selection.endOffset === selection.startSlot?.length) {
-            props.component.tableSelection.set({
-              startColumn: startPosition.colIndex,
-              startRow: startPosition.rowIndex,
-              endColumn: endPosition.colIndex + 1,
-              endRow: endPosition.rowIndex + 1
-            })
-            return
-          }
-          props.component.tableSelection.set(null)
-          return
-        }
-        const [startColumn, endColumn] = [startPosition.colIndex, endPosition.colIndex].sort((a, b) => a - b)
-        const [startRow, endRow] = [startPosition.rowIndex, endPosition.rowIndex].sort((a, b) => a - b)
-
-        props.component.tableSelection.set({
-          startColumn,
-          startRow,
-          endColumn: endColumn + 1,
-          endRow: endRow + 1
-        })
-      } else {
-        props.component.tableSelection.set(null)
-      }
-    })
-
-    return () => sub.unsubscribe()
-  })
 
   const rowMapping = new WeakMap<object, number>()
 
@@ -136,7 +71,7 @@ export const TableComponentView = withAnnotation({
             ]}>
               <colgroup>
                 {
-                  state.layoutWidth.map(w => {
+                  layoutWidth().map(w => {
                     return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
                   })
                 }
@@ -170,6 +105,7 @@ export const TableComponentView = withAnnotation({
            ref={props.rootRef}>
         <TopBar
           isFocus={isFocus}
+          layoutWidth={layoutWidth}
           component={props.component}
           scrollRef={scrollRef}/>
         <LeftBar
@@ -186,7 +122,7 @@ export const TableComponentView = withAnnotation({
             ]}>
               <colgroup>
                 {
-                  state.layoutWidth.map(w => {
+                  layoutWidth().map(w => {
                     return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
                   })
                 }
@@ -214,6 +150,7 @@ export const TableComponentView = withAnnotation({
             <ResizeColumn
               tableRef={tableRef}
               component={props.component}
+              layoutWidth={layoutWidth}
               onActiveStateChange={isActive => {
                 isResizeColumn.set(isActive)
               }}/>
