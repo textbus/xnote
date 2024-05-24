@@ -20,6 +20,8 @@ import './paragraph.component.scss'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
+import { BlockquoteComponent } from '../blockqoute/blockquote.component'
+import { HighlightBoxComponent } from '../highlight-box/highlight-box.component'
 
 export interface ParagraphComponentState {
   slot: Slot
@@ -51,12 +53,22 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
     const selection = injector.get(Selection)
 
     onBreak(ev => {
+      const isEmpty = this.state.slot.isEmpty
       const afterSlot = ev.target.cut(ev.data.index)
       afterSlot.removeAttribute(headingAttr)
       const nextParagraph = new ParagraphComponent(injector, {
         slot: afterSlot
       })
-      commander.insertAfter(nextParagraph, this)
+
+      if (isEmpty && (
+        this.parentComponent instanceof BlockquoteComponent ||
+        this.parentComponent instanceof HighlightBoxComponent
+      )) {
+        commander.insertAfter(nextParagraph, this.parentComponent)
+        commander.removeComponent(this)
+      } else {
+        commander.insertAfter(nextParagraph, this)
+      }
       selection.setPosition(afterSlot, 0)
       ev.preventDefault()
     })

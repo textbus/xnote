@@ -7,7 +7,6 @@ import { deltaToBlock } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useBlockContent } from '../../hooks/use-block-content'
-import { Divider } from '../../../components/divider/divider'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 
@@ -80,8 +79,9 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
     return (
       <div data-component={name} ref={props.rootRef} data-icon={state.type} class="xnote-highlight-box">
         <div class="xnote-highlight-box-left">
-          <Dropdown trigger="click" ref={dropdownRef} width="260px" menu={
+          <Dropdown trigger="click" ref={dropdownRef} width="282px" menu={
             <div class="xnote-highlight-box-icons">
+              <div class="xnote-highlight-box-heading">常用</div>
               {
                 HighlightBoxComponent.defaultTypes.map(icon => {
                   return (
@@ -89,7 +89,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
                   )
                 })
               }
-              <Divider/>
+              <div class="xnote-highlight-box-heading">更多</div>
               {
                 emoji.map(i => {
                   const icon = String.fromCodePoint(i)

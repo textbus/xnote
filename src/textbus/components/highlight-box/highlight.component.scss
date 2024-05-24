@@ -17,7 +17,7 @@
 
   &-icon {
     button {
-      font-size: 1.4em;
+      font-size: 1.2em;
       padding: 0;
       border: none;
       border-radius: 4px;
@@ -40,7 +40,7 @@
     height: 30px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 22px;
     padding: 0;
     cursor: pointer;
     border-radius: 4px;
@@ -51,4 +51,10 @@
 }
 .xnote-highlight-box-content {
   padding: 5px;
+}
+
+.xnote-highlight-box-heading {
+  font-size: 14px;
+  padding: 10px 0 10px 3px;
+  opacity: .8;
 }
