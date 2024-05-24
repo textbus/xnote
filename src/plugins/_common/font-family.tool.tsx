@@ -40,6 +40,9 @@ export const isSupportFont = (function () {
 export function FontFamilyTool() {
   const currentFontFamily = createSignal('')
   const fontFamilyOptions = [{
+    label: '默认',
+    value: ''
+  }, {
     label: '宋体',
     value: 'SimSun, STSong'
   }, {
@@ -95,7 +98,7 @@ export function FontFamilyTool() {
     const result = query.queryFormat(fontFamilyFormatter)
     const isHighlight = result.state === QueryStateType.Enabled
     highlight.set(isHighlight)
-    currentFontFamily.set(isHighlight ? result.value! : '默认')
+    currentFontFamily.set(isHighlight ? result.value! : '')
   })
 
   onUnmounted(() => {
@@ -106,7 +109,7 @@ export function FontFamilyTool() {
     return (
       <Dropdown onCheck={check} menu={
         fontFamilyOptions.map(i => {
-          const disabled = !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v)
+          const disabled = i.value ? !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v) : false
           return {
             label: <MenuItem
               disabled={disabled}
