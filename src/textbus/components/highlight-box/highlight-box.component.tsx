@@ -124,6 +124,8 @@ export const highlightBoxComponentLoader: ComponentLoader = {
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
     const delta = slotParser(new Slot([
       ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
     ]), element.querySelector('.xnote-highlight-box-content')!).toDelta()
 
     const slot = new Slot([

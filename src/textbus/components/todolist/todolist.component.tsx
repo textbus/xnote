@@ -23,6 +23,7 @@ import { strikeThroughFormatter } from '../../formatters/strike-through'
 import { textAlignAttr } from '../../attributes/text-align.attr'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { headingAttr } from '../../attributes/heading.attr'
 
 export interface TodolistComponentState {
   checked: boolean
@@ -67,6 +68,7 @@ export class TodolistComponent extends Component<TodolistComponentState> {
     const selection = useContext(Selection)
     onBreak(ev => {
       const slot = ev.target.cut(ev.data.index)
+      slot.removeAttribute(headingAttr)
       if (ev.target.isEmpty && slot.isEmpty) {
         const beforeIndex = this.parent!.indexOf(this)
         const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)

@@ -26,6 +26,7 @@ import { MenuItem } from '../../../components/menu-item/menu-item'
 import { textAlignAttr } from '../../attributes/text-align.attr'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { headingAttr } from '../../attributes/heading.attr'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -95,6 +96,7 @@ export class ListComponent extends Component<ListComponentState> {
     })
     onBreak(ev => {
       const slot = ev.target.cut(ev.data.index)
+      slot.removeAttribute(headingAttr)
       if (ev.target.isEmpty && slot.isEmpty) {
         const beforeIndex = this.parent!.indexOf(this)
         const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)

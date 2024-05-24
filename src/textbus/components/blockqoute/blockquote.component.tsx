@@ -1,10 +1,13 @@
 import {
   Component,
+  ComponentStateLiteral,
   ContentType,
   createVNode,
+  Registry,
+  Selection,
   Slot,
-  ComponentStateLiteral,
-  Textbus, Registry, ZenCodingGrammarInterceptor, Selection,
+  Textbus,
+  ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -86,6 +89,8 @@ export const blockquoteComponentLoader: ComponentLoader = {
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component {
     const delta = slotParser(new Slot([
       ContentType.BlockComponent,
+      ContentType.InlineComponent,
+      ContentType.Text
     ]), element).toDelta()
 
     const slot = new Slot([

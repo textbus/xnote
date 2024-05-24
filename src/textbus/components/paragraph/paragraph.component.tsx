@@ -19,6 +19,7 @@ import { inject } from '@viewfly/core'
 import './paragraph.component.scss'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { headingAttr } from '../../attributes/heading.attr'
 
 export interface ParagraphComponentState {
   slot: Slot
@@ -51,6 +52,7 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
 
     onBreak(ev => {
       const afterSlot = ev.target.cut(ev.data.index)
+      afterSlot.removeAttribute(headingAttr)
       const nextParagraph = new ParagraphComponent(injector, {
         slot: afterSlot
       })
