@@ -8,33 +8,36 @@ import { ReflectiveInjector } from '@viewfly/core'
 import './assets/icons/style.css'
 
 import {
-  BlockquoteView,
+  BlockquoteComponent,
   blockquoteComponentLoader,
-  HighlightBoxView,
+  BlockquoteView, deltaToBlock,
+  HighlightBoxComponent,
   highlightBoxComponentLoader,
+  HighlightBoxView,
+  ImageComponent,
+  imageComponentLoader,
+  ImageView,
+  ListComponent,
+  listComponentLoader,
   ListComponentView,
-  ParagraphView,
+  ParagraphComponent,
   paragraphComponentLoader,
-  RootView,
+  ParagraphView,
+  RootComponent,
   rootComponentLoader,
-  SourceCodeView,
+  RootView,
+  SourceCodeComponent,
   sourceCodeComponentLoader,
+  SourceCodeView,
+  TableComponent,
   tableComponentLoader,
   TableComponentView,
-  TodolistView,
-  todolistComponentLoader,
-  listComponentLoader,
-  ParagraphComponent,
-  RootComponent,
-  BlockquoteComponent,
   TodolistComponent,
-  SourceCodeComponent,
-  TableComponent,
-  HighlightBoxComponent,
-  ListComponent,
-  ImageComponent,
-  ImageView,
-  imageComponentLoader, videoComponentLoader, VideoComponent, VideoView
+  todolistComponentLoader,
+  TodolistView,
+  VideoComponent,
+  videoComponentLoader,
+  VideoView
 } from './textbus/components/_api'
 import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
 import {
@@ -238,9 +241,21 @@ export class Editor extends Textbus {
     if (config.content) {
       const parser = this.get(Parser)
       const doc = parser.parseDoc(config.content, rootComponentLoader)
-      rootComp = doc instanceof Component ? doc : new RootComponent(this, {
-        content: doc as Slot
-      })
+      if (doc instanceof Component) {
+        rootComp = doc
+      } else {
+        const content = new Slot([
+          ContentType.BlockComponent
+        ])
+        if (doc instanceof Slot) {
+          deltaToBlock(doc.toDelta(), this).forEach(i => {
+            content.insert(i)
+          })
+        }
+        rootComp = new RootComponent(this, {
+          content
+        })
+      }
     } else {
       rootComp = new RootComponent(this, {
         content: new Slot([ContentType.BlockComponent])

@@ -65,7 +65,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     const { rootRef } = props
 
     return (
-      <div class="xnote-root" ref={[rootRef, ref]}>
+      <div class="xnote-root" ref={[rootRef, ref]} data-comopnent={props.component.name}>
         {
           adapter.slotRender(content, children => {
             return (
@@ -92,9 +92,7 @@ export const rootComponentLoader: ComponentLoader = {
       ContentType.Text
     ]), element).toDelta()
     const slot = new Slot([
-      ContentType.BlockComponent,
-      ContentType.InlineComponent,
-      ContentType.Text
+      ContentType.BlockComponent
     ])
 
     deltaToBlock(delta, textbus).forEach(i => {

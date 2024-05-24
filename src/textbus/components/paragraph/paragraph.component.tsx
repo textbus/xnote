@@ -70,7 +70,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
   return () => {
     const slot = props.component.state.slot
     return (
-      <div class="xnote-paragraph" ref={props.rootRef} data-component={ParagraphComponent.name}>
+      <div class="xnote-paragraph" ref={props.rootRef} data-component={ParagraphComponent.componentName}>
         {
           adapter.slotRender(slot, children => {
             return (
@@ -85,7 +85,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
 
 export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.dataset.compoment === ParagraphComponent.name || /P|H[1-6]/.test(element.tagName)
+    return element.dataset.compoment === ParagraphComponent.componentName || /P|H[1-6]/.test(element.tagName)
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
     const content = /P|H[1-6]/.test(element.tagName) ? element : element.children[0] as HTMLElement
