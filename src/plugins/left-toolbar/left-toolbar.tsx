@@ -84,9 +84,6 @@ export const LeftToolbar = withAnnotation({
         while (currentNode) {
           const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
           if (slot) {
-            if (slot?.parent instanceof SourceCodeComponent || slot?.parent instanceof TableComponent) {
-              return null
-            }
             return slot
           }
           currentNode = currentNode.parentNode
@@ -105,7 +102,11 @@ export const LeftToolbar = withAnnotation({
       activeSlot.set(slot)
       if (slot) {
         checkStates(slot)
-        isEmptyBlock.set(slot.parent instanceof ParagraphComponent && slot.isEmpty)
+        isEmptyBlock.set(
+          (slot.parent instanceof ParagraphComponent && slot.isEmpty) ||
+          slot.parent instanceof SourceCodeComponent ||
+          slot.parent instanceof TableComponent
+        )
         const nativeNode = adapter.getNativeNodeByComponent(slot.parent!)!
         updatePosition(draft => {
           const containerRect = docContentContainer.getBoundingClientRect()
@@ -249,6 +250,8 @@ export const LeftToolbar = withAnnotation({
       }
     }
 
+    const activeParentComponent = activeSlot()?.parent
+    const needInsert = activeParentComponent instanceof TableComponent || activeParentComponent instanceof SourceCodeComponent
     return (
       <div class="left-toolbar" ref={toolbarRef}>
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
@@ -262,65 +265,65 @@ export const LeftToolbar = withAnnotation({
             top: 0
           }} menu={
             isEmptyBlock() ?
-              <InsertTool replace={true} slot={activeSlot()}/>
+              <InsertTool replace={!needInsert} slot={activeSlot()}/>
               :
-            <>
-              <div class="btn-group">
-                <Button ordinary={true} highlight={states.paragraph} onClick={() => transform('paragraph')}>
-                  <span class="xnote-icon-pilcrow"/>
-                </Button>
-                <Button ordinary={true} highlight={states.h1} onClick={() => transform('h1')}>
-                  <span class="xnote-icon-heading-h1"/>
-                </Button>
-                <Button ordinary={true} highlight={states.h2} onClick={() => transform('h2')}>
-                  <span class="xnote-icon-heading-h2"/>
-                </Button>
-                <Button ordinary={true} highlight={states.h3} onClick={() => transform('h3')}>
-                  <span class="xnote-icon-heading-h3"/>
-                </Button>
-                <Button ordinary={true} highlight={states.h4} onClick={() => transform('h4')}>
-                  <span class="xnote-icon-heading-h4"/>
-                </Button>
-                <Button ordinary={true} highlight={states.todolist} onClick={() => transform('todolist')}>
-                  <span class="xnote-icon-checkbox-checked"/>
-                </Button>
-                <Button ordinary={true} highlight={states.orderedList} onClick={() => transform('ol')}>
-                  <span class="xnote-icon-list-numbered"/>
-                </Button>
-                <Button ordinary={true} highlight={states.unorderedList} onClick={() => transform('ul')}>
-                  <span class="xnote-icon-list"/>
-                </Button>
-                <Button ordinary={true} highlight={states.blockquote} onClick={() => transform('blockquote')}>
-                  <span class="xnote-icon-quotes-right"/>
-                </Button>
-                <Button ordinary={true} highlight={states.sourceCode} onClick={() => transform('sourceCode')}>
-                  <span class="xnote-icon-source-code"/>
-                </Button>
-              </div>
-              <Divider/>
-              <AttrTool
-                style={{ display: 'block' }}
-                abreast={true}
-                slot={slot}
-                applyBefore={applyBefore}>
-                <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
-              </AttrTool>
-              <ColorTool
-                style={{ display: 'block' }}
-                abreast={true}
-                applyBefore={applyBefore}
-              >
-                <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
-              </ColorTool>
-              <Divider/>
-              <MenuItem onClick={copy} icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
-              <MenuItem onClick={remove} icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
-              <MenuItem onClick={cut} icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
-              <Divider/>
-              <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertTool slot={activeSlot()}/>}>
-                <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
-              </Dropdown>
-            </>
+              <>
+                <div class="btn-group">
+                  <Button ordinary={true} highlight={states.paragraph} onClick={() => transform('paragraph')}>
+                    <span class="xnote-icon-pilcrow"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.h1} onClick={() => transform('h1')}>
+                    <span class="xnote-icon-heading-h1"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.h2} onClick={() => transform('h2')}>
+                    <span class="xnote-icon-heading-h2"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.h3} onClick={() => transform('h3')}>
+                    <span class="xnote-icon-heading-h3"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.h4} onClick={() => transform('h4')}>
+                    <span class="xnote-icon-heading-h4"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.todolist} onClick={() => transform('todolist')}>
+                    <span class="xnote-icon-checkbox-checked"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.orderedList} onClick={() => transform('ol')}>
+                    <span class="xnote-icon-list-numbered"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.unorderedList} onClick={() => transform('ul')}>
+                    <span class="xnote-icon-list"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.blockquote} onClick={() => transform('blockquote')}>
+                    <span class="xnote-icon-quotes-right"/>
+                  </Button>
+                  <Button ordinary={true} highlight={states.sourceCode} onClick={() => transform('sourceCode')}>
+                    <span class="xnote-icon-source-code"/>
+                  </Button>
+                </div>
+                <Divider/>
+                <AttrTool
+                  style={{ display: 'block' }}
+                  abreast={true}
+                  slot={slot}
+                  applyBefore={applyBefore}>
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
+                </AttrTool>
+                <ColorTool
+                  style={{ display: 'block' }}
+                  abreast={true}
+                  applyBefore={applyBefore}
+                >
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
+                </ColorTool>
+                <Divider/>
+                <MenuItem onClick={copy} icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
+                <MenuItem onClick={remove} icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
+                <MenuItem onClick={cut} icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
+                <Divider/>
+                <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertTool hideTitle={true} slot={activeSlot()}/>}>
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
+                </Dropdown>
+              </>
           }>
             <button type="button" class="left-toolbar-btn">
               {

@@ -16,9 +16,11 @@ import { HighlightBoxComponent } from '../../textbus/components/highlight-box/hi
 import { FileUploader } from '../../interfaces'
 import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
+import { MenuHeading } from '../../components/menu-heading/menu-heading'
 
 export interface InsertToolProps {
   slot: Slot | null
+  hideTitle?: boolean
   replace?: boolean
 }
 
@@ -147,6 +149,9 @@ export function InsertTool(props: InsertToolProps) {
 
   return withScopedCSS(css, () => {
     return <>
+      {
+        props.hideTitle ? null : <MenuHeading>{props.replace ? '替换为' : '在下面添加'}</MenuHeading>
+      }
       <div class="btn-group">
         <Button ordinary={true} onClick={() => insert('paragraph')}>
           <span class="xnote-icon-pilcrow"/>
