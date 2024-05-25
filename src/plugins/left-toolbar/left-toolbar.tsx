@@ -1,25 +1,22 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import {
-  createRef,
-  createSignal,
-  inject,
-  JSXNode,
-  onMounted,
-  onUnmounted,
-  withAnnotation,
-} from '@viewfly/core'
+import { createRef, createSignal, inject, JSXNode, onMounted, onUnmounted, withAnnotation, } from '@viewfly/core'
 import { useProduce } from '@viewfly/hooks'
 import {
   Commander,
+  ContentType,
   debounceTime,
   delay,
-  distinctUntilChanged, filter,
+  distinctUntilChanged,
+  filter,
   fromEvent,
-  map, merge,
-  RootComponentRef, sampleTime,
+  map,
+  merge,
+  RootComponentRef,
+  sampleTime,
   Selection,
   Slot,
-  Subscription, Textbus,
+  Subscription,
+  Textbus,
   throttleTime
 } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
@@ -84,6 +81,10 @@ export const LeftToolbar = withAnnotation({
         while (currentNode) {
           const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
           if (slot) {
+            if (slot?.parent?.type === ContentType.InlineComponent) {
+              currentNode = currentNode.parentNode
+              continue
+            }
             return slot
           }
           currentNode = currentNode.parentNode

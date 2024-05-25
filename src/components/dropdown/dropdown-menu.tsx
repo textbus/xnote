@@ -1,4 +1,4 @@
-import { createRef, inject, onMounted, onUnmounted, Props, StaticRef, withAnnotation } from '@viewfly/core'
+import { createRef, inject, onUnmounted, onUpdated, Props, StaticRef, withAnnotation } from '@viewfly/core'
 import { createPortal } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
@@ -10,6 +10,7 @@ export interface DropdownMenuProps extends Props {
   abreast?: boolean
   triggerRef: StaticRef<HTMLElement>
   width?: string
+  noTrigger?: boolean
 }
 
 export const DropdownMenuPortal = withAnnotation({
@@ -24,7 +25,7 @@ export const DropdownMenuPortal = withAnnotation({
   let timer: any = null
   const delay = 10
 
-  onMounted(() => {
+  function update() {
     const menuElement = menuRef.current!
     if (props.abreast) {
       const btnEle = props.triggerRef.current!
@@ -87,6 +88,10 @@ export const DropdownMenuPortal = withAnnotation({
         }, delay)
       }
     }
+  }
+
+  onUpdated(() => {
+    update()
   })
 
   onUnmounted(() => {
@@ -94,11 +99,17 @@ export const DropdownMenuPortal = withAnnotation({
   })
 
   function onEnter() {
+    if (props.noTrigger) {
+      return
+    }
     dropdownContextService.canHide = false
     dropdownContextService.open()
   }
 
   function onLeave() {
+    if (props.noTrigger) {
+      return
+    }
     dropdownContextService.canHide = true
     dropdownContextService.hide()
   }

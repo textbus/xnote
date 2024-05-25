@@ -16,7 +16,7 @@ import css from './dropdown.scoped.scss'
 import { DropdownMenuPortal } from './dropdown-menu'
 import { DropdownContextService } from './dropdown-context.service'
 
-export type DropdownTriggerTypes = 'hover' | 'click'
+export type DropdownTriggerTypes = 'hover' | 'click' | 'none'
 
 export interface DropdownMenu {
   disabled?: boolean
@@ -67,6 +67,9 @@ export const Dropdown = withAnnotation({
 
   const subscription = new Subscription()
   onMounted(() => {
+    if (props.trigger === 'none') {
+      return
+    }
     if (props.trigger === 'click') {
       subscription.add(fromEvent(triggerRef.current!, 'click').subscribe(toggle))
       return
@@ -96,9 +99,9 @@ export const Dropdown = withAnnotation({
   return {
     isShow(b: boolean) {
       if (b) {
-        dropdownContextService.hide(false)
-      } else {
         dropdownContextService.open()
+      } else {
+        dropdownContextService.hide(false)
       }
     },
     $render: withScopedCSS(css, () => {
@@ -111,7 +114,7 @@ export const Dropdown = withAnnotation({
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <DropdownMenuPortal width={props.width} abreast={props.abreast} triggerRef={triggerRef}>
+            isShow() && <DropdownMenuPortal noTrigger={props.trigger === 'none'} width={props.width} abreast={props.abreast} triggerRef={triggerRef}>
               {
                 Array.isArray(props.menu) ?
                   props.menu.map(menu => {

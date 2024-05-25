@@ -8,6 +8,7 @@ import { ReflectiveInjector } from '@viewfly/core'
 import './assets/icons/style.css'
 
 import {
+  AtComponent, atComponentLoader, AtComponentView,
   BlockquoteComponent,
   blockquoteComponentLoader,
   BlockquoteView, deltaToBlock,
@@ -22,7 +23,7 @@ import {
   ListComponentView,
   ParagraphComponent,
   paragraphComponentLoader,
-  ParagraphView,
+  ParagraphView, registerAtShortcut,
   RootComponent,
   rootComponentLoader,
   RootView,
@@ -95,7 +96,8 @@ export class Editor extends Textbus {
       [HighlightBoxComponent.componentName]: HighlightBoxView,
       [ListComponent.componentName]: ListComponentView,
       [ImageComponent.componentName]: ImageView,
-      [VideoComponent.componentName]: VideoView
+      [VideoComponent.componentName]: VideoView,
+      [AtComponent.componentName]: AtComponentView,
     }, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -116,6 +118,7 @@ export class Editor extends Textbus {
       },
       adapter,
       componentLoaders: [
+        atComponentLoader,
         sourceCodeComponentLoader,
         tableComponentLoader,
         imageComponentLoader,
@@ -160,7 +163,8 @@ export class Editor extends Textbus {
       [HighlightBoxComponent.componentName]: HighlightBoxView,
       [ListComponent.componentName]: ListComponentView,
       [ImageComponent.componentName]: ImageView,
-      [VideoComponent.componentName]: VideoView
+      [VideoComponent.componentName]: VideoView,
+      [AtComponent.componentName]: AtComponentView
     } as any, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -194,7 +198,8 @@ export class Editor extends Textbus {
         TableComponent,
         HighlightBoxComponent,
         ListComponent,
-        VideoComponent
+        VideoComponent,
+        AtComponent
       ],
       formatters: [
         backgroundColorFormatter,
@@ -227,6 +232,8 @@ export class Editor extends Textbus {
         registerHeadingShortcut(textbus)
         registerTextAlignShortcut(textbus)
         registerTextIndentShortcut(textbus)
+
+        registerAtShortcut(textbus)
       },
       ...editorConfig
     })
