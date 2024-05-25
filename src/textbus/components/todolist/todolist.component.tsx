@@ -42,14 +42,21 @@ export class TodolistComponent extends Component<TodolistComponentState> {
       return false
     },
     key: ' ',
-    createState(content: string): TodolistComponentState {
+    createState(content: string, textbus): TodolistComponentState {
+      const selection = textbus.get(Selection)
+      const commonAncestorSlot = selection.commonAncestorSlot!
+
+      const slot = new Slot([
+        ContentType.BlockComponent,
+        ContentType.Text
+      ])
+      if (commonAncestorSlot?.hasAttribute(textIndentAttr)) {
+        slot.setAttribute(textIndentAttr, commonAncestorSlot.getAttribute(textIndentAttr))
+      }
       const isChecked = content.charAt(1) === 'x'
       return {
         checked: isChecked,
-        slot: new Slot([
-          ContentType.InlineComponent,
-          ContentType.Text
-        ])
+        slot
       }
     }
   }

@@ -52,6 +52,7 @@
 
     .tool-container {
       height: 18px;
+
       > span, > div {
         pointer-events: auto;
       }
@@ -123,14 +124,23 @@
     border-collapse: collapse;
     table-layout: fixed;
     overflow: hidden;
+    border-radius: 4px 4px 0 0;
 
     td {
       box-sizing: border-box;
-      border: 1px solid #ddd;
+      border: 1px solid #eee;
       background: #eee;
       cursor: pointer;
       position: relative;
       height: 12px;
+
+      //&:first-child {
+      //  border-top-left-radius: 3px;
+      //}
+      //
+      //&:last-child {
+      //  border-top-right-radius: 3px;
+      //}
 
       &:hover {
         background: #dedede;

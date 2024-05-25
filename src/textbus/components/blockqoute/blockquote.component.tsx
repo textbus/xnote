@@ -18,6 +18,7 @@ import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.compone
 import { useBlockContent } from '../../hooks/use-block-content'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { textIndentAttr } from '../../attributes/text-indent.attr'
 
 export interface BlockquoteComponentState {
   slot: Slot
@@ -35,11 +36,18 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
       }
       return false
     },
-    createState(): BlockquoteComponentState {
+    createState(_, textbus): BlockquoteComponentState {
+      const selection = textbus.get(Selection)
+      const commonAncestorSlot = selection.commonAncestorSlot!
+
+      const slot = new Slot([
+        ContentType.BlockComponent
+      ])
+      if (commonAncestorSlot?.hasAttribute(textIndentAttr)) {
+        slot.setAttribute(textIndentAttr, commonAncestorSlot.getAttribute(textIndentAttr))
+      }
       return {
-        slot: new Slot([
-          ContentType.BlockComponent
-        ])
+        slot
       }
     }
   }

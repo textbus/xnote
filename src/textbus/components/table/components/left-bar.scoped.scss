@@ -88,10 +88,12 @@
     border-spacing: 0;
     border-collapse: collapse;
     table-layout: fixed;
+    border-radius: 4px 0 0 4px;
+    overflow: hidden;
 
     td {
       box-sizing: border-box;
-      border: 1px solid #ddd;
+      border: 1px solid #eee;
       background: #eee;
       cursor: pointer;
       position: relative;

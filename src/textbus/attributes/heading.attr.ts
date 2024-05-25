@@ -56,6 +56,7 @@ export function registerHeadingShortcut(textbus: Textbus) {
       const commonAncestorSlot = selection.commonAncestorSlot!
       commonAncestorSlot.cut()
       commander.applyAttribute(headingAttr, 'h' + content.length)
+      selection.setPosition(commonAncestorSlot, 0)
       return true
     }
   })

@@ -47,14 +47,21 @@ export class ListComponent extends Component<ListComponentState> {
       }
       return false
     },
-    createState(content: string) {
+    createState(content: string, textbus: Textbus) {
+      const selection = textbus.get(Selection)
+      const commonAncestorSlot = selection.commonAncestorSlot!
+
+      const slot = new Slot([
+        ContentType.BlockComponent,
+        ContentType.Text
+      ])
+      if (commonAncestorSlot?.hasAttribute(textIndentAttr)) {
+        slot.setAttribute(textIndentAttr, commonAncestorSlot.getAttribute(textIndentAttr))
+      }
       return {
         type: /[-+*]/.test(content) ? 'UnorderedList' : 'OrderedList',
         reorder: true,
-        slot: new Slot([
-          ContentType.InlineComponent,
-          ContentType.Text
-        ])
+        slot
       }
     }
   }
