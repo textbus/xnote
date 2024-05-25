@@ -193,7 +193,7 @@ export class ListComponent extends Component<ListComponentState> {
         key: 'Tab'
       },
       action: (): boolean | void => {
-        updateAfterList(this)
+        Promise.resolve().then(() => updateAfterList(this))
         return false
       }
     })
