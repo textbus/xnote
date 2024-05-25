@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.0.1-alpha.12",
+  "version": "0.0.1-alpha.13",
   "description": "Viewfly project.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
