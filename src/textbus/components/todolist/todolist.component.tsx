@@ -47,7 +47,7 @@ export class TodolistComponent extends Component<TodolistComponentState> {
       const commonAncestorSlot = selection.commonAncestorSlot!
 
       const slot = new Slot([
-        ContentType.BlockComponent,
+        ContentType.InlineComponent,
         ContentType.Text
       ])
       if (commonAncestorSlot?.hasAttribute(textIndentAttr)) {
