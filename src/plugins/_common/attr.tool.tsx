@@ -12,6 +12,7 @@ import { Divider } from '../../components/divider/divider'
 import { RefreshService } from '../../services/refresh.service'
 import { textAlignAttr } from '../../textbus/attributes/text-align.attr'
 import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
+import { Keymap } from '../../components/keymap/keymap'
 
 export interface AttrToolProps extends Props {
   abreast?: DropdownProps['abreast']
@@ -109,25 +110,25 @@ export function AttrTool(props: AttrToolProps) {
     return (
       <Dropdown style={props.style} abreast={props.abreast} onCheck={updateAttr} trigger={'hover'} menu={[
         {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} checked={states.textAlign === 'left'}>左对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} desc={<Keymap keymap={{key: 'L', ctrlKey: true}}/>} checked={states.textAlign === 'left'}>左对齐</MenuItem>,
           value: 't-l'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-right"/>} checked={states.textAlign === 'right'}>右对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-right"/>} desc={<Keymap keymap={{key: 'R', ctrlKey: true}}/>} checked={states.textAlign === 'right'}>右对齐</MenuItem>,
           value: 't-r'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-center"/>} checked={states.textAlign === 'center'}>居中对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-center"/>} desc={<Keymap keymap={{key: 'E', ctrlKey: true}}/>} checked={states.textAlign === 'center'}>居中对齐</MenuItem>,
           value: 't-c'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-justify"/>} checked={states.textAlign === 'justify'}>分散对齐</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-paragraph-justify"/>} desc={<Keymap keymap={{key: 'J', ctrlKey: true}}/>} checked={states.textAlign === 'justify'}>分散对齐</MenuItem>,
           value: 't-j'
         }, {
           label: <Divider/>,
           value: ''
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-indent-increase"/>}>增加缩进</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{key: '<', ctrlKey: true}}/>} icon={<span class="xnote-icon-indent-increase"/>}>增加缩进</MenuItem>,
           value: 'i+'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-indent-decrease"/>}>减少缩进</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{key: '>', ctrlKey: true}}/>} icon={<span class="xnote-icon-indent-decrease"/>}>减少缩进</MenuItem>,
           value: 'i-'
         }
       ]}>

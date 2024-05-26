@@ -3,7 +3,7 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
+  createVNode, Keyboard,
   onBreak,
   onParentSlotUpdated,
   Registry,
@@ -33,6 +33,42 @@ export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
   slot: Slot
   reorder: boolean
+}
+
+export function toList(textbus: Textbus, type: 'OrderedList' | 'UnorderedList') {
+  const commander = textbus.get(Commander)
+  commander.transform({
+    targetType: ListComponent.type,
+    slotFactory() {
+      return new Slot([
+        ContentType.InlineComponent,
+        ContentType.Text
+      ])
+    },
+    stateFactory(slots: Slot[]) {
+      return slots.map((slot, index) => {
+        return new ListComponent(textbus, {
+          type,
+          reorder: index === 0,
+          slot
+        })
+      })
+    }
+  })
+}
+
+export function registerListShortcut(textbus: Textbus) {
+  const keyboard = textbus.get(Keyboard)
+  keyboard.addShortcut({
+    keymap: {
+      key: ['o', 'u'],
+      ctrlKey: true,
+      shiftKey: true
+    },
+    action(key: string): boolean | void {
+      toList(textbus, key === 'o' ? 'OrderedList' : 'UnorderedList')
+    }
+  })
 }
 
 export class ListComponent extends Component<ListComponentState> {

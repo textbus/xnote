@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, inject, JSXNode, onUnmounted, Props } from '@viewfly/core'
+import { createSignal, inject, onUnmounted, Props, ViewNode } from '@viewfly/core'
 
 import css from './menu-item.scoped.scss'
 import { DropdownContextService } from '../dropdown/dropdown-context.service'
@@ -7,9 +7,10 @@ import { DropdownContextService } from '../dropdown/dropdown-context.service'
 export interface MenuItemProps extends Props {
   disabled?: boolean
   checked?: boolean
-  icon?: JSXNode
+  icon?: ViewNode
   value?: any
   arrow?: boolean
+  desc?: ViewNode
 
   onClick?(value: any): void
 }
@@ -37,9 +38,12 @@ export function MenuItem(props: MenuItemProps) {
   return withScopedCSS(css, () => {
     return (
       <div class={['menu-item', { disabled: props.disabled, active: props.arrow && isActive() }]} onClick={click}>
-        <div>{
-          props.icon && <span class="menu-icon">{props.icon}</span>
-        }{props.children}</div>
+        <div class="menu-item-content">
+          <div>{
+            props.icon && <span class="menu-icon">{props.icon}</span>
+          }{props.children}</div>
+          <div>{props.desc}</div>
+        </div>
         {
           props.arrow ?
             <div class="arrow">

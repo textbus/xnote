@@ -5,10 +5,10 @@ import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
-import { BlockquoteComponent } from '../../textbus/components/blockqoute/blockquote.component'
+import { toBlockquote } from '../../textbus/components/blockqoute/blockquote.component'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
-import { ListComponent } from '../../textbus/components/list/list.component'
+import { toList } from '../../textbus/components/list/list.component'
 
 export function useBlockTransform() {
   const commander = inject(Commander)
@@ -72,63 +72,11 @@ export function useBlockTransform() {
         })
         break
       case 'ol':
-      case 'ul': {
-        commander.transform({
-          targetType: ListComponent.type,
-          slotFactory() {
-            return new Slot([
-              ContentType.InlineComponent,
-              ContentType.Text
-            ])
-          },
-          stateFactory(slots: Slot[]) {
-            return slots.map((slot, index) => {
-              return new ListComponent(textbus, {
-                type: value === 'ol' ? 'OrderedList' : 'UnorderedList',
-                reorder: index === 0,
-                slot
-              })
-            })
-          }
-        })
-      }
+      case 'ul':
+        toList(textbus, value === 'ol' ? 'OrderedList' : 'UnorderedList')
         break
-      case 'blockquote': {
-        const state = query.queryComponent(BlockquoteComponent)
-        if (state.state === QueryStateType.Enabled) {
-          const current = state.value!
-          const parent = current.parent!
-
-          const index = parent.indexOf(current)
-
-          parent.retain(index)
-
-          commander.removeComponent(current)
-
-          current.__slots__.get(0)!.sliceContent().forEach(i => {
-            parent.insert(i)
-          })
-        } else {
-          const block = new BlockquoteComponent(textbus)
-          const slot = block.state.slot
-          if (selection.startSlot === selection.endSlot) {
-            const parentComponent = selection.startSlot!.parent!
-            const parentSlot = parentComponent.parent!
-            const position = parentSlot.indexOf(parentComponent)
-            slot.insert(parentComponent)
-            parentSlot.retain(position)
-            parentSlot.insert(block)
-          } else {
-            const commonAncestorSlot = selection.commonAncestorSlot!
-            const scope = selection.getCommonAncestorSlotScope()!
-            commonAncestorSlot.cut(scope.startOffset, scope.endOffset).sliceContent().forEach(i => {
-              slot.insert(i)
-            })
-            commonAncestorSlot.retain(scope.startOffset)
-            commonAncestorSlot.insert(block)
-          }
-        }
-      }
+      case 'blockquote':
+        toBlockquote(textbus)
         break
       case 'sourceCode': {
         const state = query.queryComponent(SourceCodeComponent)

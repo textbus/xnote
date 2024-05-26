@@ -1,8 +1,9 @@
 import {
+  Commander,
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
+  createVNode, Keyboard, Query, QueryStateType,
   Registry,
   Selection,
   Slot,
@@ -70,6 +71,61 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
   override setup() {
     useBlockContent(this.state.slot)
   }
+}
+
+
+export function toBlockquote(textbus: Textbus) {
+  const query = textbus.get(Query)
+  const commander = textbus.get(Commander)
+  const selection = textbus.get(Selection)
+
+  const state = query.queryComponent(BlockquoteComponent)
+  if (state.state === QueryStateType.Enabled) {
+    const current = state.value!
+    const parent = current.parent!
+
+    const index = parent.indexOf(current)
+
+    parent.retain(index)
+
+    commander.removeComponent(current)
+
+    current.__slots__.get(0)!.sliceContent().forEach(i => {
+      parent.insert(i)
+    })
+  } else {
+    const block = new BlockquoteComponent(textbus)
+    const slot = block.state.slot
+    if (selection.startSlot === selection.endSlot) {
+      const parentComponent = selection.startSlot!.parent!
+      const parentSlot = parentComponent.parent!
+      const position = parentSlot.indexOf(parentComponent)
+      slot.insert(parentComponent)
+      parentSlot.retain(position)
+      parentSlot.insert(block)
+    } else {
+      const commonAncestorSlot = selection.commonAncestorSlot!
+      const scope = selection.getCommonAncestorSlotScope()!
+      commonAncestorSlot.cut(scope.startOffset, scope.endOffset).sliceContent().forEach(i => {
+        slot.insert(i)
+      })
+      commonAncestorSlot.retain(scope.startOffset)
+      commonAncestorSlot.insert(block)
+    }
+  }
+}
+
+export function registerBlockquoteShortcut(textbus: Textbus) {
+  const keyboard = textbus.get(Keyboard)
+  keyboard.addShortcut({
+    keymap: {
+      ctrlKey: true,
+      key: '\''
+    },
+    action(): boolean | void {
+      toBlockquote(textbus)
+    }
+  })
 }
 
 export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {

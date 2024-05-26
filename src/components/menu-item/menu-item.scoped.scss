@@ -10,6 +10,12 @@
   justify-content: space-between;
   box-sizing: content-box;
 
+  &-content {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+  }
+
   &.disabled {
     opacity: 0.5;
     cursor: not-allowed;

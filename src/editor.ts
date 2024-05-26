@@ -23,7 +23,7 @@ import {
   ListComponentView,
   ParagraphComponent,
   paragraphComponentLoader,
-  ParagraphView, registerAtShortcut,
+  ParagraphView, registerAtShortcut, registerBlockquoteShortcut, registerListShortcut,
   RootComponent,
   rootComponentLoader,
   RootView,
@@ -234,6 +234,8 @@ export class Editor extends Textbus {
         registerTextIndentShortcut(textbus)
 
         registerAtShortcut(textbus)
+        registerListShortcut(textbus)
+        registerBlockquoteShortcut(textbus)
       },
       ...editorConfig
     })

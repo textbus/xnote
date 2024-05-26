@@ -90,7 +90,7 @@ export function ColorTool(props: ColorToolProps) {
   return withScopedCSS(css, () => {
     const vm = viewModel()
     return (
-      <Dropdown style={props.style} abreast={props.abreast} trigger={'hover'} menu={
+      <Dropdown style={props.style} width={'180px'} abreast={props.abreast} trigger={'hover'} menu={
         <div>
           <div class="color-type">文字颜色</div>
           <div class="text-colors">

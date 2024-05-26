@@ -34,10 +34,14 @@ export function registerHeadingShortcut(textbus: Textbus) {
 
   keyboard.addShortcut({
     keymap: {
-      key: '123456'.split(''),
+      key: '0123456'.split(''),
       ctrlKey: true
     },
     action(key: string): boolean | void {
+      if (key === '0') {
+        commander.unApplyAttribute(headingAttr)
+        return
+      }
       commander.applyAttribute(headingAttr, 'h' + key)
     }
   })

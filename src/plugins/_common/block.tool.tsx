@@ -7,6 +7,7 @@ import { Dropdown } from '../../components/dropdown/dropdown'
 import { Divider } from '../../components/divider/divider'
 import { useActiveBlock } from '../hooks/active-block'
 import { useBlockTransform } from '../hooks/block-transform'
+import { Keymap } from '../../components/keymap/keymap'
 
 export function BlockTool() {
   const checkStates = useActiveBlock()
@@ -42,25 +43,46 @@ export function BlockTool() {
     return (
       <Dropdown onCheck={transform} trigger={'hover'} menu={[
         {
-          label: <MenuItem icon={<span class="xnote-icon-pilcrow"/>} checked={states.paragraph}>正文</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-pilcrow"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '0'
+          }}/>} checked={states.paragraph}>正文</MenuItem>,
           value: 'paragraph'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-heading-h1"/>} checked={states.h1}>一级标题</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-heading-h1"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '1'
+          }}/>} checked={states.h1}>一级标题</MenuItem>,
           value: 'h1'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-heading-h2"/>} checked={states.h2}>二级标题</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-heading-h2"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '2'
+          }}/>} checked={states.h2}>二级标题</MenuItem>,
           value: 'h2'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-heading-h3"/>} checked={states.h3}>三级标题</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-heading-h3"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '3'
+          }}/>} checked={states.h3}>三级标题</MenuItem>,
           value: 'h3'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-heading-h4"/>} checked={states.h4}>四级标题</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-heading-h4"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '4'
+          }}/>} checked={states.h4}>四级标题</MenuItem>,
           value: 'h4'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-heading-h5"/>} checked={states.h5}>五级标题</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-heading-h5"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '5'
+          }}/>} checked={states.h5}>五级标题</MenuItem>,
           value: 'h5'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-heading-h6"/>} checked={states.h6}>六级标题</MenuItem>,
+          label: <MenuItem icon={<span class="xnote-icon-heading-h6"/>} desc={<Keymap keymap={{
+            ctrlKey: true,
+            key: '6'
+          }}/>} checked={states.h6}>六级标题</MenuItem>,
           value: 'h6'
         }, {
           label: <Divider/>,
@@ -69,13 +91,13 @@ export function BlockTool() {
           label: <MenuItem icon={<span class="xnote-icon-checkbox-checked"/>} checked={states.todolist}>待办事项</MenuItem>,
           value: 'todolist'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-list-numbered"></span>} checked={states.orderedList}>有序列表</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{key: 'O', shiftKey: true, ctrlKey: true}}/>} icon={<span class="xnote-icon-list-numbered"></span>} checked={states.orderedList}>有序列表</MenuItem>,
           value: 'ol'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-list"/>} checked={states.unorderedList}>无序列表</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{key: 'U', shiftKey: true, ctrlKey: true}}/>} icon={<span class="xnote-icon-list"/>} checked={states.unorderedList}>无序列表</MenuItem>,
           value: 'ul'
         }, {
-          label: <MenuItem icon={<span class="xnote-icon-quotes-right"/>} checked={states.blockquote}>引用</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{key: '\'', ctrlKey: true}}/>} icon={<span class="xnote-icon-quotes-right"/>} checked={states.blockquote}>引用</MenuItem>,
           value: 'blockquote'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-source-code"/>} checked={states.sourceCode}>代码块</MenuItem>,
