@@ -64,6 +64,15 @@ export const languageList: Array<{ label: string, value: string }> = [{
   label: 'Go',
   value: 'Go'
 }, {
+  label: 'Kotlin',
+  value: 'kotlin'
+}, {
+  label: 'Python',
+  value: 'python'
+}, {
+  label: 'PHP',
+  value: 'php'
+}, {
   label: 'JSON',
   value: 'JSON',
 }, {
@@ -106,11 +115,16 @@ export const languageList: Array<{ label: string, value: string }> = [{
   label: 'Dart',
   value: 'dart',
 }, {
+  label: 'Rust',
+  value: 'rust',
+}, {
   label: '',
   value: '',
 }]
 
 export const sourceCodeThemes = [
+  'xnote-dark',
+  'xnote-dark-blue',
   'github',
   'atom-one-dark',
   'foundation',
