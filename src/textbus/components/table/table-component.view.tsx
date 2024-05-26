@@ -55,9 +55,6 @@ export const TableComponentView = withAnnotation({
       rowMapping.set(row, Math.random())
     })
 
-    Promise.resolve().then(() => {
-      props.component.afterContentCheck()
-    })
     if (readonly() || output()) {
       return (
         <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
@@ -189,6 +186,8 @@ export const tableComponentLoader: ComponentLoader = {
           })
           const delta = slotParser(new Slot([
             ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
           ]), cell).toDelta()
 
           const results = deltaToBlock(delta, textbus)
@@ -216,6 +215,8 @@ export const tableComponentLoader: ComponentLoader = {
           })
           const delta = slotParser(new Slot([
             ContentType.BlockComponent,
+            ContentType.InlineComponent,
+            ContentType.Text
           ]), cell).toDelta()
 
           const results = deltaToBlock(delta, textbus)

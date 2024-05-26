@@ -10,7 +10,8 @@ import {
   Selection,
   Slot,
   Textbus,
-  useContext, useDynamicShortcut,
+  useContext,
+  useDynamicShortcut,
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
@@ -293,8 +294,8 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
 }
 
 export const listComponentLoader: ComponentLoader = {
-  match(element: HTMLElement): boolean {
-    return element.tagName === 'UL' || element.tagName === 'OL'
+  match(element: HTMLElement, returnableContentTypes): boolean {
+    return returnableContentTypes.includes(ContentType.BlockComponent) && (element.tagName === 'UL' || element.tagName === 'OL')
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
     const type = element.tagName === 'OL' ? 'OrderedList' : 'UnorderedList'

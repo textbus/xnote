@@ -100,7 +100,9 @@ export function InsertTool(props: InsertToolProps) {
       case 'table': {
         const table = new TableComponent(textbus)
         insertComponent(table)
-        selection.setPosition(table.state.rows[0].cells[0].slot, 0)
+        textbus.nextTick(() => {
+          selection.selectFirstPosition(table, true, true)
+        })
       }
         break
       case 'todolist': {

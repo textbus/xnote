@@ -9,7 +9,8 @@ import {
   Selection,
   Slot,
   Textbus,
-  useContext, useDynamicShortcut,
+  useContext,
+  useDynamicShortcut,
   ZenCodingGrammarInterceptor
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'

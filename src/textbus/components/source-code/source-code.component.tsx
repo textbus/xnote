@@ -1,23 +1,27 @@
 import {
-  ComponentStateLiteral,
   BehaviorSubject,
+  Commander,
   Component,
+  ComponentStateLiteral,
   ContentType,
   createVNode,
   onBlur,
   onBreak,
   onFocus,
   onPaste,
+  Registry,
   Selection,
   Slot,
   Textbus,
   useContext,
-  VTextNode, Registry, ZenCodingGrammarInterceptor, useDynamicShortcut, Commander,
+  useDynamicShortcut,
+  VTextNode,
+  ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject, onUnmounted, createSignal } from '@viewfly/core'
+import { createSignal, inject, onUnmounted } from '@viewfly/core'
 
 import './source-code.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
@@ -611,9 +615,10 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
 }
 
 export const sourceCodeComponentLoader: ComponentLoader = {
-  match(element: HTMLElement): boolean {
-    return (element.tagName === 'DIV' && element.dataset.component === SourceCodeComponent.componentName) ||
-      element.tagName === 'PRE'
+  match(element: HTMLElement, returnableContentTypes): boolean {
+    return returnableContentTypes.includes(ContentType.BlockComponent) &&
+      ((element.tagName === 'DIV' && element.dataset.component === SourceCodeComponent.componentName) ||
+        element.tagName === 'PRE')
   },
   read(el: HTMLElement, textbus: Textbus) {
     let slots: CodeSlotState[] = []

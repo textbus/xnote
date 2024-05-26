@@ -91,8 +91,8 @@ export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
 }
 
 export const blockquoteComponentLoader: ComponentLoader = {
-  match(element: HTMLElement): boolean {
-    return element.tagName === 'BLOCKQUOTE'
+  match(element: HTMLElement, returnableContentTypes): boolean {
+    return returnableContentTypes.includes(ContentType.BlockComponent) && element.tagName === 'BLOCKQUOTE'
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component {
     const delta = slotParser(new Slot([

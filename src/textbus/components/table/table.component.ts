@@ -1,14 +1,18 @@
 import {
   Component,
   ComponentStateLiteral,
-  ContentType, GetRangesEvent, onDestroy,
+  ContentType,
+  GetRangesEvent,
+  onDestroy,
   onFocusIn,
-  onFocusOut, onGetRanges,
+  onFocusOut,
+  onGetRanges,
   Registry,
   Selection,
   Slot,
   Subject,
-  Textbus, useContext,
+  Textbus,
+  useContext,
 } from '@textbus/core'
 import { createSignal } from '@viewfly/core'
 
@@ -61,17 +65,18 @@ export class TableComponent extends Component<TableComponentState> {
   private selection = this.textbus.get(Selection)
 
   constructor(textbus: Textbus, state: TableComponentState = {
-    layoutWidth: Array.from<number>({ length: 3 }).fill(100),
+    layoutWidth: Array.from<number>({ length: 5 }).fill(100),
     rows: Array.from({ length: 3 }).map(() => {
       return {
         height: defaultRowHeight,
-        cells: Array.from({ length: 3 }).map(() => {
+        cells: Array.from({ length: 5 }).map(() => {
+          const p = new ParagraphComponent(textbus)
+          const slot = new Slot([ContentType.BlockComponent])
+          slot.insert(p)
           return {
             rowspan: 1,
             colspan: 1,
-            slot: new Slot([
-              ContentType.BlockComponent
-            ])
+            slot
           }
         })
       }
@@ -181,31 +186,31 @@ export class TableComponent extends Component<TableComponentState> {
     })
   }
 
-  afterContentCheck() {
-    const selection = this.selection
-    const rows = this.state.rows
-    rows.forEach(row => {
-      row.cells.forEach(cell => {
-        const slot = cell.slot
-        if (slot.isEmpty) {
-          const childSlot = new Slot([
-            ContentType.Text,
-            ContentType.InlineComponent
-          ])
-          const p = new ParagraphComponent(this.textbus, {
-            slot: childSlot
-          })
-          slot.insert(p)
-          if (slot === selection.anchorSlot) {
-            selection.setAnchor(childSlot, 0)
-          }
-          if (slot === selection.focusSlot) {
-            selection.setFocus(childSlot, 0)
-          }
-        }
-      })
-    })
-  }
+  // afterContentCheck() {
+  //   const selection = this.selection
+  //   const rows = this.state.rows
+  //   rows.forEach(row => {
+  //     row.cells.forEach(cell => {
+  //       const slot = cell.slot
+  //       if (slot.isEmpty) {
+  //         const childSlot = new Slot([
+  //           ContentType.Text,
+  //           ContentType.InlineComponent
+  //         ])
+  //         const p = new ParagraphComponent(this.textbus, {
+  //           slot: childSlot
+  //         })
+  //         slot.insert(p)
+  //         if (slot === selection.anchorSlot) {
+  //           selection.setAnchor(childSlot, 0)
+  //         }
+  //         if (slot === selection.focusSlot) {
+  //           selection.setFocus(childSlot, 0)
+  //         }
+  //       }
+  //     })
+  //   })
+  // }
 
   deleteColumn(index: number) {
     this.state.layoutWidth.splice(index, 1)
