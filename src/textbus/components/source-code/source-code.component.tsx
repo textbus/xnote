@@ -453,7 +453,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
   const input = inject(Input)
 
   function updateCaret() {
-    input.caret.refresh(false)
+    input.caret.refresh()
   }
 
   const readonly = useReadonly()

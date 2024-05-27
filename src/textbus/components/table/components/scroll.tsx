@@ -26,7 +26,7 @@ export function Scroll(props: ScrollProps) {
 
     function update() {
       if (props.isFocus()) {
-        input.caret.refresh(false)
+        input.caret.refresh()
       }
       updateShowShadow(draft => {
         draft.leftEnd = el.scrollLeft === 0
