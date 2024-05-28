@@ -13,19 +13,19 @@ export function Keymap(props: KeymapProps) {
   const arr: ViewNode[] = []
   const keymap = props.keymap
   if (keymap.ctrlKey) {
-    arr.push(isMac() ? <span class="xnote-icon-command"></span> : 'Ctrl')
+    arr.push(isMac() ? <span class="xnote-icon-command"></span> : <span>Ctrl</span>)
   }
   if (keymap.shiftKey) {
     if (arr.length) {
       arr.push('+')
     }
-    arr.push(isMac() ? <span class="xnote-icon-shift"></span> : 'Shift')
+    arr.push(isMac() ? <span class="xnote-icon-shift"></span> : <span>Shift</span>)
   }
   if (keymap.altKey) {
     if (arr.length) {
       arr.push('+')
     }
-    arr.push(isMac() ? <span class="xnote-icon-opt"></span> : 'Alt')
+    arr.push(isMac() ? <span class="xnote-icon-opt"></span> : <span>Alt</span>)
   }
   if (keymap.key) {
     if (arr.length) {

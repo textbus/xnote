@@ -41,7 +41,7 @@ export function BlockTool() {
     }
 
     return (
-      <Dropdown onCheck={transform} trigger={'hover'} menu={[
+      <Dropdown width={'auto'} onCheck={transform} trigger={'hover'} menu={[
         {
           label: <MenuItem icon={<span class="xnote-icon-pilcrow"/>} desc={<Keymap keymap={{
             ctrlKey: true,

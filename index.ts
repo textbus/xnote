@@ -66,11 +66,11 @@ class Http extends Organization {
 const editor = new Editor({
   readonly: false,
   content: document.getElementById('article')!.innerHTML,
-  collaborateConfig: {
-    url: 'ws://localhost:1234',
-    roomName: 'xnote',
-    userinfo: user
-  },
+  // collaborateConfig: {
+  //   url: 'ws://localhost:1234',
+  //   roomName: 'xnote',
+  //   userinfo: user
+  // },
   providers: [
     {
       provide: Organization,

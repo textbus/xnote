@@ -1,5 +1,8 @@
+@import "../../../../assets/scroll";
+
 .scroll-container {
   overflow-y: auto;
+  @include scroll();
 
   &:before {
     pointer-events: none;

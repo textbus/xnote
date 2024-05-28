@@ -1,3 +1,5 @@
+@import "../../assets/scroll";
+
 .dropdown-menu {
   position: fixed;
   z-index: 10;
@@ -17,6 +19,7 @@
   height: 0;
   transition: transform 0.3s, opacity 0.3s;
   max-height: 400px;
+  @include scroll();
 
   &-content {
     padding: 6px;

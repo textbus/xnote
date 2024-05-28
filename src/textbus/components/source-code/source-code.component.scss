@@ -9,6 +9,8 @@
 @import './theme/xnote-dark';
 @import './theme/xnote-dark-blue';
 
+@import '../../../assets/scroll';
+
 .xnote-source-code code {
   padding: 0;
   border: none;
@@ -29,6 +31,7 @@
   display: flex;
   position: relative;
   overflow: hidden;
+
   &.xnote-source-code-auto-break .xnote-source-code-line {
     word-break: break-all;
     word-wrap: break-word;
@@ -54,6 +57,7 @@ code, kbd, pre, samp {
   .xnote-source-code-line-number-bg {
     display: block;
   }
+
   .xnote-source-code-line {
     margin-left: -4em;
   }
@@ -67,6 +71,9 @@ code, kbd, pre, samp {
   position: relative;
   max-height: 450px;
   font-size: 15px;
+  margin: 0;
+
+  @include scroll();
 }
 
 .xnote-source-code-content-highlight .xnote-source-code-line {
@@ -75,7 +82,7 @@ code, kbd, pre, samp {
 
 .xnote-source-code-line {
   display: flex;
-  margin: 1px 0;
+  margin: 2px 0;
 }
 
 .xnote-source-code-line-content {
@@ -87,6 +94,7 @@ code, kbd, pre, samp {
   .xnote-source-code-line-content {
     padding: 0 20px 0 10px;
   }
+
   .xnote-source-code-line::before {
     counter-increment: codeNum;
     content: counter(codeNum);

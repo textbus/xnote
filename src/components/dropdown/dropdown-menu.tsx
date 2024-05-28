@@ -27,6 +27,7 @@ export const DropdownMenuPortal = withAnnotation({
 
   function update() {
     const menuElement = menuRef.current!
+    menuElement.style.height = 'auto'
     if (props.abreast) {
       const btnEle = props.triggerRef.current!
       const screenHeight = document.documentElement.clientHeight
@@ -68,6 +69,7 @@ export const DropdownMenuPortal = withAnnotation({
       const bottomDistance = documentClientHeight - triggerRect.bottom
       const isToTop = bottomDistance < 200 && triggerRect.top > bottomDistance
       menuElement.style.left = triggerRect.left + 'px'
+
       if (isToTop) {
         const maxHeight = Math.max(menuElement.scrollHeight, menuElement.offsetHeight)
         const height = Math.min(triggerRect.top - 20, maxHeight, 400)
@@ -91,6 +93,7 @@ export const DropdownMenuPortal = withAnnotation({
   }
 
   onUpdated(() => {
+    console.log(22)
     update()
   })
 

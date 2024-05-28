@@ -97,6 +97,9 @@ export const languageList: Array<{ label: string, value: string }> = [{
   label: 'Shell',
   value: 'shell',
 }, {
+  label: 'Katex',
+  value: 'latex',
+}, {
   label: 'Yaml',
   value: 'yaml',
 }, {
@@ -589,7 +592,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
           <div class="xnote-source-code-line-number-bg" style={{
             width: Math.max(String(slots.length).length, 2.5) + 'em'
           }}/>
-          <div onScroll={updateCaret} class={{
+          <pre onScroll={updateCaret} class={{
             'xnote-source-code-content': true,
             'xnote-source-code-content-highlight': blockHighlight
           }} style={{
@@ -612,7 +615,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                       children.push(br)
                     }
                   }
-                  return createVNode('pre', {
+                  return createVNode('div', {
                     class: 'xnote-source-code-line' + (item.emphasize ? ' xnote-source-code-line-emphasize' : '')
                   }, [
                     createVNode('span', { class: 'xnote-source-code-line-content' }, children)
@@ -620,7 +623,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                 }, readonly())
               })
             }
-          </div>
+          </pre>
           <span class="xnote-source-code-lang">{lang}</span>
         </div>
       </div>
