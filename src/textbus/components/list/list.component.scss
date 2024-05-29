@@ -23,6 +23,7 @@ ul.xnote-list .xnote-list-type {
   color: #296eff;
   white-space: nowrap;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .xnote-order-btn {

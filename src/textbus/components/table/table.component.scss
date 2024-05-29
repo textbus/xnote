@@ -2,6 +2,8 @@
   margin-top: 16px;
   margin-bottom: 16px;
   position: relative;
+  display: inline-block;
+  max-width: 100%;
 
   //&:hover {
   //  .xnote-table-bar-v, .xnote-table-bar-h {
@@ -14,12 +16,15 @@
 .xnote-table-content {
   border-spacing: 0;
   border-collapse: collapse;
+  table-layout: fixed;
+  width: 0;
 
   &.hide-selection {
     * ::selection {
       background: none;
     }
   }
+
   td {
     border: 1px solid #ddd;
     padding: 0 10px;
