@@ -236,7 +236,9 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
 
     onBreak(ev => {
       const slots = this.state.slots
-      if (ev.target.isEmpty && ev.target === slots[slots.length - 1].slot) {
+      const parentComponent = selection.commonAncestorComponent!
+      const parentSlot = parentComponent.parent!
+      if (parentSlot && ev.target.isEmpty && ev.target === slots[slots.length - 1].slot) {
         const prevSlot = slots[slots.length - 2]
         if (prevSlot?.slot.isEmpty) {
           const slot = new Slot([
@@ -246,8 +248,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
           const paragraph = new ParagraphComponent(textbus, {
             slot
           })
-          const parentComponent = selection.commonAncestorComponent!
-          const parentSlot = parentComponent.parent!
+
           const index = parentSlot.indexOf(parentComponent)
           parentSlot.retain(index + 1)
           slots.pop()
@@ -501,32 +502,6 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
       }
     }
 
-    function nodesToVNodes(slot: Slot, nodes: Node[], index: number) {
-      return nodes.map(i => {
-        const location = {
-          slot,
-          startIndex: index,
-          endIndex: index + i.textContent!.length
-        }
-        if (i.nodeType === Node.ELEMENT_NODE) {
-          const childNodes = Array.from(i.childNodes)
-          const vEle = createVNode('span', {
-            class: (i as HTMLElement).className
-          }, nodesToVNodes(slot, childNodes, index))
-          index = location.endIndex
-
-          vEle.location = { ...location }
-          return vEle
-        }
-        index = location.endIndex
-
-        const textNode = new VTextNode(i.textContent!)
-        textNode.location = location
-        return textNode
-      })
-    }
-
-
     return (
       <div ref={props.rootRef} class={{
         'xnote-source-code': true,
@@ -629,6 +604,31 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
       </div>
     )
   }
+}
+
+function nodesToVNodes(slot: Slot, nodes: Node[], index: number) {
+  return nodes.map(i => {
+    const location = {
+      slot,
+      startIndex: index,
+      endIndex: index + i.textContent!.length
+    }
+    if (i.nodeType === Node.ELEMENT_NODE) {
+      const childNodes = Array.from(i.childNodes)
+      const vEle = createVNode('span', {
+        class: (i as HTMLElement).className
+      }, nodesToVNodes(slot, childNodes, index))
+      index = location.endIndex
+
+      vEle.location = { ...location }
+      return vEle
+    }
+    index = location.endIndex
+
+    const textNode = new VTextNode(i.textContent!)
+    textNode.location = location
+    return textNode
+  })
 }
 
 export const sourceCodeComponentLoader: ComponentLoader = {

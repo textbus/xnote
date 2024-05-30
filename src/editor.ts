@@ -17,7 +17,7 @@ import {
   HighlightBoxView,
   ImageComponent,
   imageComponentLoader,
-  ImageView,
+  ImageView, KatexComponent, katexComponentLoader, KatexComponentView,
   ListComponent,
   listComponentLoader,
   ListComponentView,
@@ -98,6 +98,7 @@ export class Editor extends Textbus {
       [ImageComponent.componentName]: ImageView,
       [VideoComponent.componentName]: VideoView,
       [AtComponent.componentName]: AtComponentView,
+      [KatexComponent.componentName]: KatexComponentView,
     }, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -120,14 +121,15 @@ export class Editor extends Textbus {
       componentLoaders: [
         atComponentLoader,
         sourceCodeComponentLoader,
+        listComponentLoader,
         tableComponentLoader,
         imageComponentLoader,
-        videoComponentLoader,
         highlightBoxComponentLoader,
         blockquoteComponentLoader,
-        paragraphComponentLoader,
+        videoComponentLoader,
         todolistComponentLoader,
-        listComponentLoader,
+        katexComponentLoader,
+        paragraphComponentLoader,
       ],
       formatLoaders: [
         backgroundColorFormatLoader,
@@ -164,7 +166,8 @@ export class Editor extends Textbus {
       [ListComponent.componentName]: ListComponentView,
       [ImageComponent.componentName]: ImageView,
       [VideoComponent.componentName]: VideoView,
-      [AtComponent.componentName]: AtComponentView
+      [AtComponent.componentName]: AtComponentView,
+      [KatexComponent.componentName]: KatexComponentView
     } as any, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -199,7 +202,8 @@ export class Editor extends Textbus {
         HighlightBoxComponent,
         ListComponent,
         VideoComponent,
-        AtComponent
+        AtComponent,
+        KatexComponent
       ],
       formatters: [
         backgroundColorFormatter,

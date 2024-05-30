@@ -11,12 +11,13 @@ Xnote 底层依赖于开源富文本框架 [Textbus](https://textbus.io) 和前�
 ## 安装
 
 ```
-npm install @textbus/xnote
+npm install @textbus/xnote katex
 ```
 
 ## 使用
 
 ```ts
+import 'katex/dist/katex.min.css'
 import { Editor } from '@textbus/xnote'
 
 const editor = new Editor()

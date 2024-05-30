@@ -11,6 +11,7 @@ export interface DropdownMenuProps extends Props {
   triggerRef: StaticRef<HTMLElement>
   width?: string
   noTrigger?: boolean
+  padding?: string
 }
 
 export const DropdownMenuPortal = withAnnotation({
@@ -93,7 +94,6 @@ export const DropdownMenuPortal = withAnnotation({
   }
 
   onUpdated(() => {
-    console.log(22)
     update()
   })
 
@@ -122,7 +122,9 @@ export const DropdownMenuPortal = withAnnotation({
       <div onMouseenter={onEnter} onMouseleave={onLeave} ref={menuRef} style={{
         width: props.width
       }} class="dropdown-menu">
-        <div class="dropdown-menu-content">
+        <div class="dropdown-menu-content" style={{
+          padding: props.padding
+        }}>
           {
             props.children
           }

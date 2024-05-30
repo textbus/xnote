@@ -17,6 +17,7 @@ import { FileUploader } from '../../interfaces'
 import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
 import { MenuHeading } from '../../components/menu-heading/menu-heading'
+import { KatexComponent } from '../../textbus/components/katex/katex.component'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -146,6 +147,14 @@ export function InsertTool(props: InsertToolProps) {
         selection.setPosition(p.state.slot, 0)
       }
         break
+      case 'katex': {
+        const p = new ParagraphComponent(textbus)
+        const comp = new KatexComponent(textbus)
+        p.state.slot.insert(comp)
+        insertComponent(p)
+        selection.selectComponent(comp)
+      }
+        break
     }
   }
 
@@ -192,6 +201,7 @@ export function InsertTool(props: InsertToolProps) {
       <MenuItem onClick={() => insert('image')} icon={<span class="xnote-icon-image"/>}>图片</MenuItem>
       <MenuItem onClick={() => insert('video')} icon={<span class="xnote-icon-video"/>}>视频</MenuItem>
       <MenuItem onClick={() => insert('highlightBox')} icon={<span class="xnote-icon-warning"/>}>高亮块</MenuItem>
+      <MenuItem onClick={() => insert('katex')} icon={<span class="xnote-icon-opt"/>}>数学公式</MenuItem>
     </>
   })
 }
