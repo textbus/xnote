@@ -125,8 +125,7 @@ export class ListComponent extends Component<ListComponentState> {
 
       for (const item of afterContent) {
         if (item instanceof ListComponent &&
-          item.state.type === 'OrderedList' &&
-          item.state.slot.getAttribute(textIndentAttr) === this.state.slot.getAttribute(textIndentAttr)) {
+          item.state.type === 'OrderedList') {
           if (item.state.reorder) {
             break
           }
