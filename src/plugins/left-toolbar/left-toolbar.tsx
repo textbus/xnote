@@ -260,7 +260,7 @@ export const LeftToolbar = withAnnotation({
           top: position.top + 'px',
           display: position.display && selection.isCollapsed ? 'block' : 'none'
         }}>
-          <Dropdown onExpendStateChange={changeIgnoreMove} abreast={true} style={{
+          <Dropdown toLeft={true} onExpendStateChange={changeIgnoreMove} abreast={true} style={{
             position: 'absolute',
             right: 0,
             top: 0

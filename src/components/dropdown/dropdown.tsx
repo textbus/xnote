@@ -32,6 +32,7 @@ export interface DropdownProps extends Props {
   style?: HTMLAttributes<HTMLElement>['style']
   abreast?: boolean
   padding?: string
+  toLeft?: boolean
 
   onCheck?(value: any): void
 
@@ -115,7 +116,7 @@ export const Dropdown = withAnnotation({
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <DropdownMenuPortal padding={props.padding} noTrigger={props.trigger === 'none'} width={props.width} abreast={props.abreast} triggerRef={triggerRef}>
+            isShow() && <DropdownMenuPortal toLeft={props.toLeft} padding={props.padding} noTrigger={props.trigger === 'none'} width={props.width} abreast={props.abreast} triggerRef={triggerRef}>
               {
                 Array.isArray(props.menu) ?
                   props.menu.map(menu => {

@@ -1,6 +1,7 @@
 import { createRef, inject, onUnmounted, onUpdated, Props, StaticRef, withAnnotation } from '@viewfly/core'
 import { createPortal } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
+import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
 import css from './dropdown-menu.scoped.scss'
 import { DropdownContextService } from './dropdown-context.service'
@@ -12,6 +13,7 @@ export interface DropdownMenuProps extends Props {
   width?: string
   noTrigger?: boolean
   padding?: string
+  toLeft?: boolean
 }
 
 export const DropdownMenuPortal = withAnnotation({
@@ -20,6 +22,7 @@ export const DropdownMenuPortal = withAnnotation({
   ]
 }, function DropdownMenuPortal(props: DropdownMenuProps) {
   const dropdownContextService = inject(DropdownContextService)
+  const container = inject(VIEW_CONTAINER)
 
   const menuRef = createRef<HTMLElement>()
 
@@ -29,6 +32,7 @@ export const DropdownMenuPortal = withAnnotation({
   function update() {
     const menuElement = menuRef.current!
     menuElement.style.height = 'auto'
+    const containerRect = container.getBoundingClientRect()
     if (props.abreast) {
       const btnEle = props.triggerRef.current!
       const screenHeight = document.documentElement.clientHeight
@@ -44,19 +48,19 @@ export const DropdownMenuPortal = withAnnotation({
       } else if (offsetTop + maxHeight > screenHeight - 10) {
         offsetTop = screenHeight - 10 - maxHeight
       }
-      menuElement.style.top = offsetTop + 'px'
+      menuElement.style.top = offsetTop - containerRect.top + 'px'
 
       const triggerRect = props.triggerRef.current!.getBoundingClientRect()
       const leftDistance = triggerRect.left
       const isToLeft = leftDistance >= menuElement.offsetWidth + 20
-      if (isToLeft) {
-        menuElement.style.left = leftDistance - menuElement.offsetWidth - 20 + 'px'
+      if (isToLeft && props.toLeft) {
+        menuElement.style.left = leftDistance - menuElement.offsetWidth - 20 - containerRect.left + 'px'
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateX(10px)'
           menuElement.style.opacity = '1'
         }, delay)
       } else {
-        menuElement.style.left = triggerRect.right + 20 + 'px'
+        menuElement.style.left = triggerRect.right + 20 - containerRect.left + 'px'
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateX(-10px)'
           menuElement.style.opacity = '1'
@@ -69,13 +73,13 @@ export const DropdownMenuPortal = withAnnotation({
 
       const bottomDistance = documentClientHeight - triggerRect.bottom
       const isToTop = bottomDistance < 200 && triggerRect.top > bottomDistance
-      menuElement.style.left = triggerRect.left + 'px'
+      menuElement.style.left = triggerRect.left - containerRect.left + 'px'
 
       if (isToTop) {
         const maxHeight = Math.max(menuElement.scrollHeight, menuElement.offsetHeight)
         const height = Math.min(triggerRect.top - 20, maxHeight, 400)
         menuElement.style.height = height + 'px'
-        menuElement.style.top = triggerRect.top - 20 - height + 'px'
+        menuElement.style.top = triggerRect.top - 20 - height - containerRect.top + 'px'
 
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateY(10px)'
@@ -83,7 +87,7 @@ export const DropdownMenuPortal = withAnnotation({
         }, delay)
       } else {
         menuElement.style.height = Math.min(bottomDistance - 20, menuElement.scrollHeight) + 'px'
-        menuElement.style.top = triggerRect.bottom + 20 + 'px'
+        menuElement.style.top = triggerRect.bottom + 20 - containerRect.top + 'px'
 
         timer = setTimeout(() => {
           menuElement.style.transform = 'translateY(-10px)'
@@ -131,5 +135,5 @@ export const DropdownMenuPortal = withAnnotation({
         </div>
       </div>
     )
-  }), document.body)
+  }), container)
 })

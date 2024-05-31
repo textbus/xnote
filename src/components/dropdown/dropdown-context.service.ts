@@ -48,6 +48,7 @@ export class DropdownContextService {
     if (this.parentDropdownContextService) {
       this.parentDropdownContextService.hide()
     }
+
     if (delay) {
       this.timer = setTimeout(() => {
         this.isOpen = false

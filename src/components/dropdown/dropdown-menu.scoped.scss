@@ -1,7 +1,7 @@
 @import "../../assets/scroll";
 
 .dropdown-menu {
-  position: fixed;
+  position: absolute;
   z-index: 10;
   border: 1px solid #ddd;
   width: 200px;

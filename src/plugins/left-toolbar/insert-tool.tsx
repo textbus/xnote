@@ -18,6 +18,7 @@ import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
 import { MenuHeading } from '../../components/menu-heading/menu-heading'
 import { KatexComponent } from '../../textbus/components/katex/katex.component'
+import { DropdownContextService } from '../../components/dropdown/dropdown-context.service'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -30,6 +31,7 @@ export function InsertTool(props: InsertToolProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const fileUploader = inject(FileUploader, null)
+  const dropdownContextService = inject(DropdownContextService)
 
   function insert(type: string) {
     const component = props.slot?.parent
@@ -43,6 +45,8 @@ export function InsertTool(props: InsertToolProps) {
       } else {
         commander.insertAfter(comp, component!)
       }
+      dropdownContextService.canHide = true
+      dropdownContextService.hide(false)
     }
 
     switch (type) {
