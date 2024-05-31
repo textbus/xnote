@@ -200,8 +200,8 @@ export function InsertTool(props: InsertToolProps) {
       <MenuItem onClick={() => insert('todolist')} icon={<span class="xnote-icon-checkbox-checked"/>}>待办列表</MenuItem>
       <MenuItem onClick={() => insert('image')} icon={<span class="xnote-icon-image"/>}>图片</MenuItem>
       <MenuItem onClick={() => insert('video')} icon={<span class="xnote-icon-video"/>}>视频</MenuItem>
-      <MenuItem onClick={() => insert('highlightBox')} icon={<span class="xnote-icon-warning"/>}>高亮块</MenuItem>
-      <MenuItem onClick={() => insert('katex')} icon={<span class="xnote-icon-opt"/>}>数学公式</MenuItem>
+      <MenuItem onClick={() => insert('highlightBox')} icon={<span class="xnote-icon-hightlight-box"/>}>高亮块</MenuItem>
+      <MenuItem onClick={() => insert('katex')} icon={<span class="xnote-icon-function"/>}>数学公式</MenuItem>
     </>
   })
 }
