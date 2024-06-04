@@ -7,9 +7,10 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 2px 6px;
+    outline: none;
 
     &:focus {
-      border-color: #296eff;
+      border-color: rgb(41, 110, 255);
     }
   }
 

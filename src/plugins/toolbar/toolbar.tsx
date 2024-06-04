@@ -1,4 +1,4 @@
-import { createRef, inject, onUnmounted, withAnnotation } from '@viewfly/core'
+import { createRef, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { debounceTime, delay, filter, fromEvent, map, merge, Selection, Subscription, Textbus } from '@textbus/core'
 import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
@@ -129,10 +129,11 @@ export const Toolbar = withAnnotation({
     bindMouseup()
   })
 
+  const instance = getCurrentInstance()
+
   function hideToolbar() {
-    updateViewPosition(draft => {
-      draft.isHide = true
-    })
+    editorService.hideInlineToolbar = true
+    instance.markAsDirtied()
   }
 
   onUnmounted(() => {

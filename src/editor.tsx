@@ -40,7 +40,7 @@ import {
   videoComponentLoader,
   VideoView
 } from './textbus/components/_api'
-import { LeftToolbarPlugin, ToolbarPlugin } from './plugins/_api'
+import { LeftToolbarPlugin, LinkJump, ToolbarPlugin } from './plugins/_api'
 import {
   backgroundColorFormatLoader,
   backgroundColorFormatter,
@@ -104,7 +104,10 @@ export class Editor extends Textbus {
         provide: OutputInjectionToken,
         useValue: false
       }])
-      const app = createApp(root, {
+      const app = createApp(<>
+        {root}
+        <LinkJump/>
+      </>, {
         context: appInjector
       }).mount(host)
 

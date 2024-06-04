@@ -7,6 +7,7 @@ import css from './link-tool.scoped.scss'
 import { Popup } from '../../components/popup/popup'
 import { Button } from '../../components/button/button'
 import { linkFormatter } from '../../textbus/formatters/link'
+import { EditorService } from '../../services/editor.service'
 
 export interface LinkToolProps {
   hideToolbar?(): void
@@ -16,6 +17,7 @@ export function LinkTool(props: LinkToolProps) {
   const selectionBridge = inject(SelectionBridge)
   const selection = inject(Selection)
   const commander = inject(Commander)
+  const editorService = inject(EditorService)
   const container = inject(VIEW_CONTAINER)
 
   const isShow = createSignal(false)
@@ -31,6 +33,7 @@ export function LinkTool(props: LinkToolProps) {
       } as any)
     }
     isShow.set(false)
+    editorService.hideInlineToolbar = false
   }
 
   let isClickFromSelf = false
@@ -39,6 +42,7 @@ export function LinkTool(props: LinkToolProps) {
       isClickFromSelf = false
       return
     }
+    editorService.hideInlineToolbar = false
     isShow.set(false)
   })
 
@@ -57,8 +61,8 @@ export function LinkTool(props: LinkToolProps) {
         <Button onClick={() => {
           isShow.set(true)
           isClickFromSelf = true
-          setTimeout(() => props.hideToolbar?.(), 10)
-        }} arrow={true}><span class="xnote-icon-link"></span></Button>
+          props.hideToolbar?.()
+        }}><span class="xnote-icon-link"></span></Button>
         {
           isShow() &&
           <Popup left={rect.left - containerRect.left} top={rect.top + rect.height - containerRect.top}>
