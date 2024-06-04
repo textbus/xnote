@@ -5,6 +5,7 @@ import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { createPortal } from '@viewfly/platform-browser'
 
 import css from './link-jump.scoped.scss'
+import { linkFormatter } from '../../textbus/formatters/link'
 
 function getLinkByDOMTree(node: HTMLElement): HTMLLinkElement | null {
   if (node.nodeType === Node.ELEMENT_NODE) {
@@ -71,12 +72,29 @@ export function LinkJump() {
   selection.onChange.pipe(delay()).subscribe(() => {
     onSelectionChange()
   })
+
+  function cleanLink() {
+    const commonAncestorSlot = selection.commonAncestorSlot!
+    const index = selection.focusOffset!
+    const ranges = commonAncestorSlot.getFormatRangesByFormatter(linkFormatter, 0, commonAncestorSlot.length)
+    ranges.forEach(range => {
+      if (range.startIndex < index && range.endIndex >= index) {
+        commonAncestorSlot.applyFormat(linkFormatter, {
+          startIndex: range.startIndex,
+          endIndex: range.endIndex,
+          value: null
+        })
+      }
+    })
+  }
+
   return createPortal(
     withScopedCSS(css, () => {
       return (
-        <a ref={ref} class="link-jump-plugin" style={{ display: isShow() ? '' : 'none' }} target="_blank" href={href()}>
-          跳转
-        </a>
+        <div ref={ref} class="link-jump-plugin" style={{ display: isShow() ? '' : 'none' }}>
+          <span onClick={cleanLink}>清除</span>
+          <a target="_blank" href={href()}>跳转</a>
+        </div>
       )
     }), container
   )
