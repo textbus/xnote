@@ -36,6 +36,7 @@ import { Button } from '../../components/button/button'
 import { AttrTool } from '../_common/attr.tool'
 import { ColorTool } from '../_common/color.tool'
 import { InsertTool } from './insert-tool'
+import { EditorService } from '../../services/editor.service'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService]
@@ -45,6 +46,7 @@ export const LeftToolbar = withAnnotation({
   const selection = inject(Selection)
   const rootComponentRef = inject(RootComponentRef)
   const refreshService = inject(RefreshService)
+  const editorService = inject(EditorService)
 
   const checkStates = useActiveBlock()
   const toBlock = useBlockTransform()
@@ -65,6 +67,17 @@ export const LeftToolbar = withAnnotation({
     left: 0,
     top: 0,
     display: false
+  })
+
+
+  const sub = editorService.onLeftToolbarCanVisibleChange.subscribe(() => {
+    updatePosition(d => {
+      d.display = editorService.canShowLeftToolbar
+    })
+  })
+
+  onUnmounted(() => {
+    sub.unsubscribe()
   })
 
   let isIgnoreMove = false
@@ -258,7 +271,7 @@ export const LeftToolbar = withAnnotation({
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
           left: position.left + 'px',
           top: position.top + 'px',
-          display: position.display && selection.isCollapsed ? 'block' : 'none'
+          display: position.display && selection.isCollapsed && editorService.canShowLeftToolbar ? 'block' : 'none'
         }}>
           <Dropdown toLeft={true} onExpendStateChange={changeIgnoreMove} abreast={true} style={{
             position: 'absolute',

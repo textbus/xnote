@@ -5,6 +5,7 @@ import { fromEvent } from '@textbus/core'
 import css from './resize-column.scoped.scss'
 import { TableComponent } from '../table.component'
 import { TableService } from '../table.service'
+import { EditorService } from '../../../../services/editor.service'
 
 export interface ResizeColumnProps {
   tableRef: StaticRef<HTMLTableElement>
@@ -17,6 +18,8 @@ export interface ResizeColumnProps {
 export function ResizeColumn(props: ResizeColumnProps) {
   const dragLineRef = createRef<HTMLDivElement>()
   let activeCol: number | null = null
+
+  const editorService = inject(EditorService)
 
   onMounted(() => {
     const { tableRef } = props
@@ -52,6 +55,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
       })
     ).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
       isDrag = true
+      editorService.changeLeftToolbarVisible(false)
       props.onActiveStateChange(true)
 
       const x = downEvent.clientX
@@ -72,6 +76,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
         props.layoutWidth.set(layoutWidthArr.slice())
       }).add(fromEvent<MouseEvent>(document, 'mouseup').subscribe(upEvent => {
         isDrag = false
+        editorService.changeLeftToolbarVisible(true)
         props.onActiveStateChange(false)
         moveEvent.unsubscribe()
         const distanceX = upEvent.clientX - x
