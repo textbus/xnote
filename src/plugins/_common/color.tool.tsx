@@ -65,6 +65,7 @@ export function ColorTool(props: ColorToolProps) {
   })
 
   const textColors: string[] = [
+    '#000',
     '#aaa',
     '#ff2e2e',
     '#ff8d45',
@@ -74,6 +75,7 @@ export function ColorTool(props: ColorToolProps) {
     '#1296db',
     '#617fff',
     '#c459ff',
+    '#fff',
   ]
 
   const backgroundColors: string[] = [
@@ -95,11 +97,12 @@ export function ColorTool(props: ColorToolProps) {
           <div class="color-type">文字颜色</div>
           <div class="text-colors">
             <div class={{
+              'no-background': true,
               active: textColor() === ''
             }} onClick={() => {
               props.applyBefore?.()
               commander.unApplyFormat(colorFormatter)
-            }}>A
+            }}>
             </div>
             {
               textColors.map(c => {

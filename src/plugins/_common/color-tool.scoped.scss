@@ -53,22 +53,23 @@
       box-shadow: 0 0 0 2px #296eff30;
     }
   }
+}
 
-  .no-background {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #eee;
-    box-sizing: border-box;
-    &:before {
-      content: "";
-      width: 100px;
-      position: absolute;
-      height: 1px;
-      background: #aaa;
-      transform: rotate(-45deg);
-      top: 0;
-      left: -28px;
-    }
+.no-background {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #eee;
+  box-sizing: border-box;
+
+  &:before {
+    content: "";
+    width: 100px;
+    position: absolute;
+    height: 1px;
+    background: #aaa;
+    transform: rotate(-45deg);
+    top: 0;
+    left: -28px;
   }
 }
 
