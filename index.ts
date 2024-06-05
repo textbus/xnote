@@ -67,7 +67,8 @@ const editor = new Editor({
   readonly: false,
   content: document.getElementById('article')!.innerHTML,
   collaborateConfig: {
-    url: 'ws://localhost:1234',
+    // url: 'ws://localhost:1234',
+    url: 'wss://textbus.io/api',
     roomName: 'xnote',
     userinfo: user
   },

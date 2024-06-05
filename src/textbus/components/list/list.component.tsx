@@ -80,7 +80,7 @@ export class ListComponent extends Component<ListComponentState> {
     match(content, textbus) {
       const selection = textbus.get(Selection)
       if (selection.commonAncestorComponent instanceof ParagraphComponent) {
-        return /^([1-9]\.|[+*])$/.test(content)
+        return /^([1-9]\.|[+*-])$/.test(content)
       }
       return false
     },
