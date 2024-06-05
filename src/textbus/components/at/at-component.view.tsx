@@ -38,10 +38,14 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
     if (container) {
       const focusItem = container.children[props.component.selectedIndex()]
       if (focusItem) {
-        focusItem.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        })
+        const itemRect = focusItem.getBoundingClientRect()
+        const dropdownMenu = container.parentNode!.parentNode as HTMLElement
+        const containerRect = dropdownMenu.getBoundingClientRect()
+        if (itemRect.top - 5 < containerRect.top) {
+          dropdownMenu.scrollTop += itemRect.top - 5 - containerRect.top
+        } else if (itemRect.bottom + 5 > containerRect.bottom) {
+          dropdownMenu.scrollTop += itemRect.bottom + 5 - containerRect.bottom
+        }
       }
     }
   })
