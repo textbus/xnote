@@ -86,7 +86,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
         {
           adapter.slotRender(slot, children => {
             return (
-              createVNode('p', null, children)
+              createVNode('div', null, children)
             )
           }, readonly() || output())
         }
@@ -97,7 +97,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
 
 export const paragraphComponentLoader: ComponentLoader = {
   match(element: HTMLElement, returnableContentTypes): boolean {
-    return returnableContentTypes.includes(ContentType.BlockComponent) && (element.dataset.compoment === ParagraphComponent.componentName || /^P|H[1-6]$/.test(element.tagName))
+    return returnableContentTypes.includes(ContentType.BlockComponent) && (element.dataset.component === ParagraphComponent.componentName || /^P|H[1-6]$/.test(element.tagName))
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
     const content = /^P|H[1-6]$/.test(element.tagName) ? element : element.children[0] as HTMLElement

@@ -109,7 +109,7 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
     return (
       <span onClick={() => {
         dropdownRef.current?.isShow(true)
-      }} ref={props.rootRef} data-component={KatexComponent.componentName} data-katex={btoa(text)} class="xnote-katex">
+      }} ref={props.rootRef} data-component={KatexComponent.componentName} data-katex={encodeURIComponent(text)} class="xnote-katex">
        {
          (output() || readonly()) ?
            domToVDom(toDOM(text))
@@ -133,7 +133,7 @@ export const katexComponentLoader: ComponentLoader = {
   read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
     const value = element.dataset.katex || ''
     return new KatexComponent(textbus, {
-      text: atob(value)
+      text: decodeURIComponent(value)
     })
   }
 }

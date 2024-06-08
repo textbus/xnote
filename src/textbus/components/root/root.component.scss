@@ -19,7 +19,9 @@
 //}
 
 .xnote-content {
-  font-size: 16px;
+  font-size: initial;
+  font-family: initial;
+  color: initial;
   line-height: 1.65;
 
   &:before {

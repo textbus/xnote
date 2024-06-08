@@ -1,6 +1,6 @@
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
-import { Component, createVNode, Selection, Slot, Textbus } from '@textbus/core'
+import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { Component, ContentType, createVNode, Selection, Slot, Textbus } from '@textbus/core'
 import { createRef, inject, onUnmounted, onUpdated } from '@viewfly/core'
 import { any2Hsl, ColorHSL, hsl2Rgb } from '@tanbo/color'
 
@@ -55,14 +55,18 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
     const selectedIndex = props.component.selectedIndex()
     if (userInfo) {
       return (
-        <span class="xnote-at xnote-at-complete" ref={props.rootRef} data-component={props.component.name}>
-          @{userInfo.name}
-        </span>
+        <div class="xnote-at xnote-at-complete"
+              data-info={encodeURIComponent(JSON.stringify(userInfo))}
+              ref={props.rootRef} data-component={props.component.name}>
+          <span>@</span>{userInfo.name}
+        </div>
       )
     }
     if (readonly() || output()) {
       return (
-        <span class="xnote-at" ref={props.rootRef} data-component={props.component.name}>
+        <div class="xnote-at"
+              ref={props.rootRef}
+              data-component={props.component.name}>
           <span>@</span>
           {
             slot && adapter.slotRender(slot, children => {
@@ -71,13 +75,15 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
               }, children)
             })
           }
-        </span>
+        </div>
       )
     }
     const members = props.component.members()
 
     return (
-      <span class="xnote-at" ref={props.rootRef} data-component={props.component.name}>
+      <div class="xnote-at"
+            ref={props.rootRef}
+            data-component={props.component.name}>
         <Dropdown trigger={'none'} ref={dropdownRef} menu={
           <div class="xnote-at-menu" ref={membersRef}>
             {
@@ -118,7 +124,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
             })
           }
         </Dropdown>
-      </span>
+      </div>
     )
   }
 }
@@ -127,7 +133,19 @@ export const atComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.component === AtComponent.componentName
   },
-  read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
-    return new AtComponent(textbus)
+  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
+    const data = element.dataset.info
+    if (data) {
+      return new AtComponent(textbus, {
+        userInfo: JSON.parse(decodeURIComponent(data))
+      })
+    }
+    const slot = slotParser(
+      new Slot([ContentType.Text]),
+      element.querySelector('.xnote-at-input') || document.createElement('div')
+    )
+    return new AtComponent(textbus, {
+      slot
+    })
   }
 }

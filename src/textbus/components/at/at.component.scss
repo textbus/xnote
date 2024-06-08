@@ -1,15 +1,19 @@
 .xnote-at {
   color: #296eff;
+  display: inline-block;
+  line-height: 1em;
 
   &-complete {
     background-color: #296eff;
     color: #fff;
     border-radius: 1em;
-    padding: 2px 6px;
+    padding: 4px 6px;
     font-size: .9em;
     margin-left: 2px;
     margin-right: 2px;
   }
+
+
 
   &-input {
     display: inline-block;
