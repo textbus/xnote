@@ -103,6 +103,19 @@ export class AtComponent extends Component<AtComponentState> {
     onBlur(() => {
       isFocus = false
       this.focus.next(false)
+      setTimeout(() => {
+        if (this.parent && !this.state.userInfo) {
+          const slot = this.state.slot
+          let text = '@'
+          if (slot) {
+            text += slot.isEmpty ? '' : slot.toString()
+          }
+          const snapshot = selection.createSnapshot()
+          selection.selectComponent(this)
+          commander.insert(text)
+          snapshot.restore(true)
+        }
+      })
     })
 
     const organization = useContext(Organization)
