@@ -86,7 +86,11 @@ export function FontFamilyTool() {
   const commander = inject(Commander)
 
   function check(v: string) {
-    commander.applyFormat(fontFamilyFormatter, v)
+    if (v) {
+      commander.applyFormat(fontFamilyFormatter, v)
+    } else {
+      commander.unApplyFormat(fontFamilyFormatter)
+    }
   }
 
   const refreshService = inject(RefreshService)

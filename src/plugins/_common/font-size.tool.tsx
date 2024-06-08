@@ -29,7 +29,11 @@ export function FontSizeTool() {
   const commander = inject(Commander)
 
   function check(v: string) {
-    commander.applyFormat(fontSizeFormatter, v)
+    if (v) {
+      commander.applyFormat(fontSizeFormatter, v)
+    } else {
+      commander.unApplyFormat(fontSizeFormatter)
+    }
   }
 
   const refreshService = inject(RefreshService)
