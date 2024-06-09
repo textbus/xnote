@@ -1,6 +1,6 @@
 import { ViewflyAdapter, ViewflyVDomAdapter } from '@textbus/adapter-viewfly'
 import { createApp, HTMLRenderer, OutputTranslator } from '@viewfly/platform-browser'
-import { BrowserModule, DomAdapter, Parser, ViewOptions } from '@textbus/platform-browser'
+import { CollaborateSelectionAwarenessDelegate, BrowserModule, DomAdapter, Parser, ViewOptions } from '@textbus/platform-browser'
 import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus, TextbusConfig } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
@@ -73,6 +73,7 @@ import { headingAttr, headingAttrLoader, registerHeadingShortcut } from './textb
 import { registerTextAlignShortcut, textAlignAttr, textAlignAttrLoader } from './textbus/attributes/text-align.attr'
 import { registerTextIndentShortcut, textIndentAttr, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
 import { OutputInjectionToken } from './textbus/injection-tokens'
+import { TableSelectionAwarenessDelegate } from './textbus/components/table/table-selection-awareness-delegate'
 
 export interface EditorConfig extends TextbusConfig {
   content?: string,
@@ -157,6 +158,10 @@ export class Editor extends Textbus {
     const modules: Module[] = [browserModule]
     if (editorConfig.collaborateConfig) {
       modules.push(new CollaborateModule(editorConfig.collaborateConfig))
+      browserModule.providers.push({
+        provide: CollaborateSelectionAwarenessDelegate,
+        useClass: TableSelectionAwarenessDelegate
+      })
     }
     const vDomAdapter = new ViewflyVDomAdapter({
       [ParagraphComponent.componentName]: ParagraphView,
