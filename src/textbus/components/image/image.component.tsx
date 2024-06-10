@@ -59,8 +59,11 @@ export const imageComponentLoader: ComponentLoader = {
     return element.tagName === 'IMG' || element.dataset.component === ImageComponent.componentName
   },
   read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
+    const img = element instanceof HTMLImageElement ? element : (element.querySelector('img') || document.createElement('img'))
     return new ImageComponent(textbus, {
-      src: element instanceof HTMLImageElement ? element.src : element.querySelector('img')?.src || ''
+      src: img.src,
+      width: img.style.width || 'auto',
+      height: img.style.height || 'auto'
     })
   }
 }
