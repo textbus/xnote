@@ -57,104 +57,106 @@ export const TableComponentView = withAnnotation({
 
     if (readonly() || output()) {
       return (
-        <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
-             ref={props.rootRef}>
-          <div class="xnote-table-container">
-            <table class={[
-              'xnote-table-content',
-              {
-                'hide-selection': props.component.tableSelection()
-              }
-            ]}>
-              <colgroup>
+        <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}>
+          <div class="xnote-table-inner" ref={props.rootRef}>
+            <div class="xnote-table-container">
+              <table class={[
+                'xnote-table-content',
                 {
-                  layoutWidth().map(w => {
-                    return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                  'hide-selection': props.component.tableSelection()
+                }
+              ]}>
+                <colgroup>
+                  {
+                    layoutWidth().map(w => {
+                      return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                    })
+                  }
+                </colgroup>
+                <tbody>
+                {
+                  rows.map((row) => {
+                    return (
+                      <tr key={rowMapping.get(row)}>
+                        {
+                          row.cells.map(cell => {
+                            return adapter.slotRender(cell.slot, children => {
+                              return createVNode('td', {
+                                key: cell.slot.id
+                              }, children)
+                            }, readonly() || output())
+                          })
+                        }
+                      </tr>
+                    )
                   })
                 }
-              </colgroup>
-              <tbody>
-              {
-                rows.map((row) => {
-                  return (
-                    <tr key={rowMapping.get(row)}>
-                      {
-                        row.cells.map(cell => {
-                          return adapter.slotRender(cell.slot, children => {
-                            return createVNode('td', {
-                              key: cell.slot.id
-                            }, children)
-                          }, readonly() || output())
-                        })
-                      }
-                    </tr>
-                  )
-                })
-              }
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )
     }
     return (
-      <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
-           ref={props.rootRef}>
-        <TopBar
-          isFocus={isFocus}
-          layoutWidth={layoutWidth}
-          component={props.component}
-          scrollRef={scrollRef}/>
-        <LeftBar
-          tableRef={tableRef}
-          isFocus={isFocus}
-          component={props.component}/>
-        <Scroll scrollRef={scrollRef} isFocus={isFocus}>
-          <div class="xnote-table-container">
-            <table ref={tableRef} class={[
-              'xnote-table-content',
-              {
-                'hide-selection': props.component.tableSelection()
-              }
-            ]}>
-              <colgroup>
+      <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}>
+        <div class="xnote-table-inner" ref={props.rootRef}>
+          <TopBar
+            isFocus={isFocus}
+            layoutWidth={layoutWidth}
+            component={props.component}
+            scrollRef={scrollRef}/>
+          <LeftBar
+            tableRef={tableRef}
+            isFocus={isFocus}
+            component={props.component}/>
+          <Scroll scrollRef={scrollRef} isFocus={isFocus}>
+            <div class="xnote-table-container">
+              <table ref={tableRef} class={[
+                'xnote-table-content',
                 {
-                  layoutWidth().map(w => {
-                    return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                  'hide-selection': props.component.tableSelection()
+                }
+              ]}>
+                <colgroup>
+                  {
+                    layoutWidth().map(w => {
+                      return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                    })
+                  }
+                </colgroup>
+                <tbody>
+                {
+                  rows.map((row) => {
+                    return (
+                      <tr key={rowMapping.get(row)}>
+                        {
+                          row.cells.map(cell => {
+                            return adapter.slotRender(cell.slot, children => {
+                              return createVNode('td', {
+                                key: cell.slot.id
+                              }, children)
+                            }, readonly() || output())
+                          })
+                        }
+                      </tr>
+                    )
                   })
                 }
-              </colgroup>
-              <tbody>
-              {
-                rows.map((row) => {
-                  return (
-                    <tr key={rowMapping.get(row)}>
-                      {
-                        row.cells.map(cell => {
-                          return adapter.slotRender(cell.slot, children => {
-                            return createVNode('td', {
-                              key: cell.slot.id
-                            }, children)
-                          }, readonly() || output())
-                        })
-                      }
-                    </tr>
-                  )
-                })
-              }
-              </tbody>
-            </table>
-            <ResizeColumn
-              tableRef={tableRef}
-              component={props.component}
-              layoutWidth={layoutWidth}
-              onActiveStateChange={isActive => {
-                isResizeColumn.set(isActive)
-              }}/>
-            <SelectionMask tableRef={tableRef} component={props.component}/>
-          </div>
-        </Scroll>
-        <ResizeRow component={props.component} tableRef={tableRef}/>
+                </tbody>
+              </table>
+              <ResizeColumn
+                tableRef={tableRef}
+                component={props.component}
+                layoutWidth={layoutWidth}
+                onActiveStateChange={isActive => {
+                  isResizeColumn.set(isActive)
+                }}/>
+              <SelectionMask tableRef={tableRef} component={props.component}/>
+            </div>
+          </Scroll>
+          <ResizeRow component={props.component} tableRef={tableRef}/>
+        </div>
       </div>
     )
   }
