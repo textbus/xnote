@@ -32,6 +32,11 @@ export function LinkJump() {
             top: rect.top - offsetRect.top + 'px'
           })
           isShow.set(true)
+          let url = queryState.value!.href
+          if (url.indexOf('://') < 0) {
+            url = 'http://' + url
+          }
+          href.set(url)
           return
         }
       }
