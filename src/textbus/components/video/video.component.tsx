@@ -60,11 +60,14 @@ export function VideoView(props: ViewComponentProps<VideoComponent>) {
 
 export const videoComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
-    return element.tagName === 'IMG' || element.dataset.component === VideoComponent.componentName
+    return element.tagName === 'VIDEO' || element.dataset.component === VideoComponent.componentName
   },
   read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
+    const video = element instanceof HTMLVideoElement ? element : (element.querySelector('video') || document.createElement('video'))
     return new VideoComponent(textbus, {
-      src: element instanceof HTMLImageElement ? element.src : element.querySelector('video')?.src || ''
+      src: video.src,
+      width: video.style.width || 'auto',
+      height: video.style.height || 'auto'
     })
   }
 }
