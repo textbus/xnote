@@ -260,14 +260,14 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
   return () => {
     const ListType = component.state.type === 'UnorderedList' ? 'ul' : 'ol'
     const ulIcons = ['•', '◦', '▪']
-    let icon = ''
+    let icon: string
+    let listStep = 0
     const indent = component.state.slot.getAttribute(textIndentAttr) || 0
     if (ListType === 'ul') {
       icon = ulIcons[indent % 3]
     } else {
       const parentSlot = component.parent!
       const index = parentSlot.indexOf(component)
-      let listStep = 0
       if (!component.state.reorder) {
         const beforeContent = parentSlot.sliceContent(0, index)
         while (beforeContent.length) {
@@ -297,7 +297,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
       }
     }
     return (
-      <ListType ref={props.rootRef} data-component={component.name} class="xnote-list" style={{
+      <ListType ref={props.rootRef} data-component={component.name} data-reorder={listStep === 0} class="xnote-list" style={{
         marginLeft: indent * 24 + 'px'
       }}>
         <li style={{
@@ -341,7 +341,7 @@ export const listComponentLoader: ComponentLoader = {
       ]), element.querySelector('.xnote-list-content') || document.createElement('div'))
       return new ListComponent(textbus, {
         slot,
-        reorder: true,
+        reorder: element.dataset.reorder !== 'false',
         type
       })
     }
