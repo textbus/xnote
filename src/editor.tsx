@@ -1,6 +1,13 @@
 import { ViewflyAdapter, ViewflyVDomAdapter } from '@textbus/adapter-viewfly'
 import { createApp, HTMLRenderer, OutputTranslator } from '@viewfly/platform-browser'
-import { CollaborateSelectionAwarenessDelegate, BrowserModule, DomAdapter, Parser, ViewOptions } from '@textbus/platform-browser'
+import {
+  CollaborateSelectionAwarenessDelegate,
+  BrowserModule,
+  DomAdapter,
+  Parser,
+  ViewOptions,
+  isMobileBrowser
+} from '@textbus/platform-browser'
 import { CollaborateConfig, CollaborateModule } from '@textbus/collaborate'
 import { Component, ContentType, Module, Slot, Textbus, TextbusConfig } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
@@ -121,6 +128,7 @@ export class Editor extends Textbus {
       renderTo: (): HTMLElement => {
         return this.host
       },
+      useContentEditable: isMobileBrowser(),
       adapter,
       componentLoaders: [
         atComponentLoader,
