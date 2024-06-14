@@ -297,7 +297,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
       }
     }
     return (
-      <ListType ref={props.rootRef} data-component={component.name} data-reorder={listStep === 0} class="xnote-list" style={{
+      <ListType ref={props.rootRef} data-component={component.name} data-reorder={(listStep === 0) + ''} class="xnote-list" style={{
         marginLeft: indent * 24 + 'px'
       }}>
         <li style={{
