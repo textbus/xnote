@@ -37,7 +37,7 @@ export function VideoView(props: ViewComponentProps<VideoComponent>) {
   return () => {
     if (readonly() || output()) {
       return (
-        <div class="xnote-video" data-component={name}>
+        <div class="xnote-video" ref={props.rootRef} data-component={name}>
           <video ref={videoRef} src={state.src} style={{
             width: state.width,
             height: state.height
