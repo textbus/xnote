@@ -125,7 +125,7 @@ export function InsertTool(props: InsertToolProps) {
         break
       case 'image':
         if (fileUploader) {
-          Promise.resolve(fileUploader.uploadFile('image')).then(url => {
+          Promise.resolve().then(() => fileUploader.uploadFile('image')).then(url => {
             const img = new ImageComponent(textbus, {
               src: url
             })
@@ -135,7 +135,7 @@ export function InsertTool(props: InsertToolProps) {
         break
       case 'video':
         if (fileUploader) {
-          Promise.resolve(fileUploader.uploadFile('video')).then(url => {
+          Promise.resolve().then(() => fileUploader.uploadFile('video')).then(url => {
             const img = new VideoComponent(textbus, {
               src: url
             })
