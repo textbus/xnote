@@ -1,6 +1,6 @@
 import { Keymap } from '@textbus/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { ViewNode } from '@viewfly/core'
+import { JSXNode } from '@viewfly/core'
 import { isMac } from '@textbus/platform-browser'
 
 import css from './keymap.scoped.scss'
@@ -10,7 +10,7 @@ export interface KeymapProps {
 }
 
 export function Keymap(props: KeymapProps) {
-  const arr: ViewNode[] = []
+  const arr: JSXNode[] = []
   const keymap = props.keymap
   if (keymap.ctrlKey) {
     arr.push(isMac() ? <span class="xnote-icon-command"></span> : <span>Ctrl</span>)

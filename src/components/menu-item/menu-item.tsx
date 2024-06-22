@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, inject, onUnmounted, Props, ViewNode } from '@viewfly/core'
+import { createSignal, inject, onUnmounted, Props, JSXNode } from '@viewfly/core'
 
 import css from './menu-item.scoped.scss'
 import { DropdownContextService } from '../dropdown/dropdown-context.service'
@@ -7,10 +7,10 @@ import { DropdownContextService } from '../dropdown/dropdown-context.service'
 export interface MenuItemProps extends Props {
   disabled?: boolean
   checked?: boolean
-  icon?: ViewNode
+  icon?: JSXNode
   value?: any
   arrow?: boolean
-  desc?: ViewNode
+  desc?: JSXNode
 
   onClick?(value: any): void
 }

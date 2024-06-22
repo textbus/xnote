@@ -111,6 +111,8 @@ export function useBlockTransform() {
                 lineNumber: true,
                 autoBreak: true,
                 slots: slots.map(slot => {
+                  slot.cleanFormats()
+                  slot.cleanAttributes()
                   return {
                     slot,
                     emphasize: false

@@ -1,7 +1,7 @@
 import { createRef, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { debounceTime, delay, filter, fromEvent, map, merge, Selection, Subscription, Textbus } from '@textbus/core'
-import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
+import { debounceTime, delay, filter, fromEvent, map, merge, RootComponentRef, Selection, Subscription, Textbus } from '@textbus/core'
+import { DomAdapter, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { useProduce } from '@viewfly/hooks'
 
 import css from './toolbar.scoped.scss'
@@ -26,6 +26,8 @@ export const Toolbar = withAnnotation({
 }, function Toolbar() {
   const selection = inject(Selection)
   const viewDocument = inject(VIEW_CONTAINER)
+  const rootComponentRef = inject(RootComponentRef)
+  const adapter = inject(DomAdapter)
   const bridge = inject(SelectionBridge)
   const textbus = inject(Textbus)
   const editorService = inject(EditorService)
@@ -54,7 +56,7 @@ export const Toolbar = withAnnotation({
 
   function getTop() {
     const docRect = viewDocument.getBoundingClientRect()
-    const toolbarRect = toolbarRef.current!.getBoundingClientRect()
+    const toolbarHeight = 36
     // const documentHeight = document.documentElement.clientHeight
     const selectionFocusRect = bridge.getRect({
       slot: selection.focusSlot!,
@@ -64,12 +66,11 @@ export const Toolbar = withAnnotation({
       return null
     }
 
-    // console.log(selectionFocusRect.top, toolbarRect.height)
     const centerLeft = selectionFocusRect.left
-    const toBottom = selectionFocusRect.top < toolbarRect.height + 10
+    const toBottom = selectionFocusRect.top < toolbarHeight + 10
     const top = toBottom ?
       selectionFocusRect.top + selectionFocusRect.height - docRect.top + 10 :
-      selectionFocusRect.top - docRect.top - toolbarRect.height - 10
+      selectionFocusRect.top - docRect.top - toolbarHeight - 10
 
     updateViewPosition(draft => {
       draft.transitionDuration = .15
@@ -95,7 +96,8 @@ export const Toolbar = withAnnotation({
   })
 
   function bindMouseup() {
-    mouseupSubscription = fromEvent<MouseEvent>(viewDocument, 'mouseup').pipe(
+    const docElement = adapter.getNativeNodeByComponent(rootComponentRef.component)!
+    mouseupSubscription = fromEvent<MouseEvent>(docElement, 'mouseup').pipe(
       filter(ev => {
         return !ev.composedPath().includes(toolbarRef.current!)
       }),
