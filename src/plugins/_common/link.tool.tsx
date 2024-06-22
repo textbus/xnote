@@ -33,7 +33,6 @@ export function LinkTool(props: LinkToolProps) {
       } as any)
     }
     isShow.set(false)
-    editorService.hideInlineToolbar = false
   }
 
   let isClickFromSelf = false

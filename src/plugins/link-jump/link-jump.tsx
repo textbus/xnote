@@ -49,6 +49,7 @@ export function LinkJump() {
   })
 
   function cleanLink() {
+    isShow.set(false)
     const commonAncestorSlot = selection.commonAncestorSlot!
     const index = selection.focusOffset!
     const ranges = commonAncestorSlot.getFormatRangesByFormatter(linkFormatter, 0, commonAncestorSlot.length)

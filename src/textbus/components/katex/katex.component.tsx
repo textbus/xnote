@@ -6,7 +6,7 @@ import {
   Textbus,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { createDynamicRef, createRef, inject, jsx, ViewNode } from '@viewfly/core'
+import { createDynamicRef, createRef, inject, jsx, JSXNode } from '@viewfly/core'
 import { ComponentLoader } from '@textbus/platform-browser'
 // @ts-ignore
 import Katex from 'katex'
@@ -40,7 +40,7 @@ export class KatexComponent extends Component<KatexComponentState> {
   }
 }
 
-function domToVDom(el: HTMLElement): ViewNode {
+function domToVDom(el: HTMLElement): JSXNode {
   const attrs: { [key: string]: any } = {}
   el.getAttributeNames().forEach(key => {
     attrs[key] = el.getAttribute(key)!
