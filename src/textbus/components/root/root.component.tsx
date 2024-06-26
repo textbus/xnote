@@ -84,7 +84,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     const { rootRef } = props
 
     return (
-      <div class="xnote-root" ref={[rootRef, ref]} data-comopnent={props.component.name}>
+      <div class="xnote-root" dir="auto" ref={[rootRef, ref]} data-comopnent={props.component.name}>
         {
           adapter.slotRender(content, children => {
             return (

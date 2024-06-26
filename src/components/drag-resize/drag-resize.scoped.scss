@@ -2,6 +2,11 @@
   position: relative;
   width: 100%;
 
+  .container {
+    font-size: 0;
+    text-indent: initial;
+  }
+
   .resize-tool {
     position: absolute;
     pointer-events: none;
