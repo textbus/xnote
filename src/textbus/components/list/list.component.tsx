@@ -3,7 +3,6 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
   onBreak,
   onParentSlotUpdated,
   Registry,
@@ -14,8 +13,7 @@ import {
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject } from '@viewfly/core'
-import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 
 import './list.component.scss'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
@@ -27,6 +25,7 @@ import { textAlignAttr } from '../../attributes/text-align.attr'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
+import { SlotRender } from '../SlotRender'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -194,7 +193,6 @@ function numberToLetter(num: number) {
 }
 
 export function ListComponentView(props: ViewComponentProps<ListComponent>) {
-  const adapter = inject(DomAdapter)
   const component = props.component
 
   function reorder(is: boolean) {
@@ -279,13 +277,11 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
                 <Button style={{ color: 'inherit' }}>{icon}</Button>
               </Dropdown>
           }</div>
-          {
-            adapter.slotRender(component.state.slot, children => {
-              return createVNode('div', {
-                class: 'xnote-list-content'
-              }, children)
-            }, readonly() || output())
-          }
+          <SlotRender
+            slot={component.state.slot}
+            class='xnote-list-content'
+            renderEnv={readonly() || output()}
+          />
         </li>
       </ListType>
     )

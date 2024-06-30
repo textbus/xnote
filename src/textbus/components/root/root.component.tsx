@@ -3,7 +3,6 @@ import {
   CompositionStartEventData,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
   Event,
   onCompositionStart,
   Slot,
@@ -11,8 +10,8 @@ import {
   Textbus,
   Registry,
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { inject, createDynamicRef, onUpdated } from '@viewfly/core'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import { createDynamicRef, onUpdated } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -22,6 +21,7 @@ import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { ListComponent } from '../list/list.component'
 import { TodolistComponent } from '../todolist/todolist.component'
+import { SlotRender } from '../SlotRender'
 
 export interface RootComponentState {
   content: Slot
@@ -63,7 +63,6 @@ export class RootComponent extends Component<RootComponentState> {
 }
 
 export function RootView(props: ViewComponentProps<RootComponent>) {
-  const adapter = inject(DomAdapter)
   const { content } = props.component.state
   const ref = createDynamicRef<HTMLDivElement>(node => {
     const sub = props.component.onCompositionStart.subscribe(() => {
@@ -85,16 +84,13 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
 
     return (
       <div class="xnote-root" ref={[rootRef, ref]} data-comopnent={props.component.name}>
-        {
-          adapter.slotRender(content, children => {
-            return (
-              createVNode('div', {
-                class: 'xnote-content',
-                'data-placeholder': content.isEmpty ? '请输入内容' : ''
-              }, children)
-            )
-          }, readonly() || output())
-        }
+        <SlotRender
+          slot={content}
+          tag='div'
+          class="xnote-content"
+          data-placeholder={content.isEmpty ? '请输入内容' : ''}
+          renderEnv={readonly() || output()}
+        />
       </div>
     )
   }

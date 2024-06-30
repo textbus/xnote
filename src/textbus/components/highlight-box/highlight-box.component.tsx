@@ -1,7 +1,7 @@
-import { Component, ComponentStateLiteral, ContentType, createVNode, Registry, Slot, Textbus, } from '@textbus/core'
+import { Component, ComponentStateLiteral, ContentType, Registry, Slot, Textbus, } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { createRef, inject } from '@viewfly/core'
-import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { createRef } from '@viewfly/core'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 
 import { deltaToBlock } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
@@ -9,6 +9,7 @@ import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useBlockContent } from '../../hooks/use-block-content'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { SlotRender } from '../SlotRender'
 
 export interface HighlightBoxComponentState {
   type: string
@@ -42,7 +43,6 @@ export class HighlightBoxComponent extends Component<HighlightBoxComponentState>
 }
 
 export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent>) {
-  const adapter = inject(DomAdapter)
   const readonly = useReadonly()
   const output = useOutput()
   const emoji: number[] = []
@@ -66,13 +66,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
               <button type="button">{state.type || '❤️'}</button>
             </div>
           </div>
-          {
-            adapter.slotRender(state.slot, children => {
-              return createVNode('div', {
-                class: 'xnote-highlight-box-content'
-              }, children)
-            }, readonly() || output())
-          }
+          <SlotRender slot={state.slot} class='xnote-highlight-box-content' renderEnv={readonly() || output()} />
         </div>
       )
     }
@@ -105,13 +99,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
             </div>
           </Dropdown>
         </div>
-        {
-          adapter.slotRender(state.slot, children => {
-            return createVNode('div', {
-              class: 'xnote-highlight-box-content'
-            }, children)
-          }, readonly() || output())
-        }
+        <SlotRender slot={state.slot} class='xnote-highlight-box-content' renderEnv={readonly() || output()} />
       </div>
     )
   }

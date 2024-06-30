@@ -3,7 +3,6 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
   onBreak,
   Registry,
   Selection,
@@ -12,9 +11,8 @@ import {
   useContext, useDynamicShortcut,
   ZenCodingGrammarInterceptor
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject } from '@viewfly/core'
 
 import './todolist.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
@@ -24,6 +22,7 @@ import { textAlignAttr } from '../../attributes/text-align.attr'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
+import { SlotRender } from '../SlotRender'
 
 export interface TodolistComponentState {
   checked: boolean
@@ -123,7 +122,6 @@ export class TodolistComponent extends Component<TodolistComponentState> {
 }
 
 export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
-  const adapter = inject(DomAdapter)
   const component = props.component
   const state = component.state
 
@@ -157,16 +155,11 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
         textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
       }}>
         <div class="xnote-todolist-icon" onClick={toggle}>
-          <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']}/>
+          <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']} />
         </div>
-        {
-          adapter.slotRender(slot, children => {
-            return createVNode('div', {
-              class: 'xnote-todolist-content'
-            }, children)
-          }, readonly() || output())
-        }
-      </div>
+
+        <SlotRender slot={slot} tag='div' class='xnote-todolist-content' renderEnv={readonly() || output()} />
+      </div >
     )
   }
 }

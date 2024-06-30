@@ -3,7 +3,6 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode,
   DeltaLite,
   onBreak,
   Registry,
@@ -12,9 +11,8 @@ import {
   Textbus,
   useContext,
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject } from '@viewfly/core'
 
 import './paragraph.component.scss'
 import { useReadonly } from '../../hooks/use-readonly'
@@ -22,6 +20,7 @@ import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
 import { BlockquoteComponent } from '../blockqoute/blockquote.component'
 import { HighlightBoxComponent } from '../highlight-box/highlight-box.component'
+import { SlotRender } from '../SlotRender'
 
 export interface ParagraphComponentState {
   slot: Slot
@@ -76,21 +75,19 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
 }
 
 export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
-  const adapter = inject(DomAdapter)
   const readonly = useReadonly()
   const output = useOutput()
   return () => {
     const slot = props.component.state.slot
     return (
-      <div class="xnote-paragraph" ref={props.rootRef} data-component={ParagraphComponent.componentName}>
-        {
-          adapter.slotRender(slot, children => {
-            return (
-              createVNode('p', null, children)
-            )
-          }, readonly() || output())
-        }
-      </div>
+      <SlotRender
+        tag='p'
+        slot={slot}
+        class="xnote-paragraph"
+        elRef={props.rootRef}
+        data-component={ParagraphComponent.componentName}
+        renderEnv={readonly() || output()}
+      />
     )
   }
 }

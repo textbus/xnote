@@ -16,6 +16,7 @@ import { deltaToBlock } from '../paragraph/paragraph.component'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { EditorService } from '../../../services/editor.service'
+// import { SlotRender } from '../SlotRender'
 
 export const TableComponentView = withAnnotation({
   providers: [TableService]
@@ -61,7 +62,7 @@ export const TableComponentView = withAnnotation({
     if (readonly() || output()) {
       return (
         <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
-             ref={props.rootRef}>
+          ref={props.rootRef}>
           <div class="xnote-table-container">
             <table class={[
               'xnote-table-content',
@@ -72,28 +73,30 @@ export const TableComponentView = withAnnotation({
               <colgroup>
                 {
                   layoutWidth().map(w => {
-                    return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                    return <col style={{ width: w + 'px', minWidth: w + 'px' }} />
                   })
                 }
               </colgroup>
               <tbody>
-              {
-                rows.map((row) => {
-                  return (
-                    <tr key={rowMapping.get(row)}>
-                      {
-                        row.cells.map(cell => {
-                          return adapter.slotRender(cell.slot, children => {
-                            return createVNode('td', {
-                              key: cell.slot.id
-                            }, children)
-                          }, readonly() || output())
-                        })
-                      }
-                    </tr>
-                  )
-                })
-              }
+                {
+                  rows.map((row) => {
+                    return (
+                      <tr key={rowMapping.get(row)}>
+                        {
+                          row.cells.map(cell => {
+                            return adapter.slotRender(cell.slot, children => {
+                              return createVNode('td', {
+                                key: cell.slot.id
+                              }, children)
+                            }, readonly() || output())
+                            // 使用 SlotRender, 表格的删除行为会有变化，不知识是啥原因。在空单元格里面按backspace键的时候，整个表格会被删除
+                            // return <SlotRender slot={cell.slot} tag="td" elKey={cell.slot.id} renderEnv={readonly() || output()} />
+                          })
+                        }
+                      </tr>
+                    )
+                  })
+                }
               </tbody>
             </table>
           </div>
@@ -102,16 +105,16 @@ export const TableComponentView = withAnnotation({
     }
     return (
       <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}
-           ref={props.rootRef}>
+        ref={props.rootRef}>
         <TopBar
           isFocus={isFocus}
           layoutWidth={layoutWidth}
           component={props.component}
-          scrollRef={scrollRef}/>
+          scrollRef={scrollRef} />
         <LeftBar
           tableRef={tableRef}
           isFocus={isFocus}
-          component={props.component}/>
+          component={props.component} />
         <Scroll scrollRef={scrollRef} isFocus={isFocus}>
           <div class="xnote-table-container">
             <table ref={tableRef} class={[
@@ -123,28 +126,29 @@ export const TableComponentView = withAnnotation({
               <colgroup>
                 {
                   layoutWidth().map(w => {
-                    return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                    return <col style={{ width: w + 'px', minWidth: w + 'px' }} />
                   })
                 }
               </colgroup>
               <tbody>
-              {
-                rows.map((row) => {
-                  return (
-                    <tr key={rowMapping.get(row)}>
-                      {
-                        row.cells.map(cell => {
-                          return adapter.slotRender(cell.slot, children => {
-                            return createVNode('td', {
-                              key: cell.slot.id
-                            }, children)
-                          }, readonly() || output())
-                        })
-                      }
-                    </tr>
-                  )
-                })
-              }
+                {
+                  rows.map((row) => {
+                    return (
+                      <tr key={rowMapping.get(row)}>
+                        {
+                          row.cells.map(cell => {
+                            return adapter.slotRender(cell.slot, children => {
+                              return createVNode('td', {
+                                key: cell.slot.id
+                              }, children)
+                            }, readonly() || output())
+                            // return <SlotRender slot={cell.slot} tag="td" elKey={cell.slot.id} renderEnv={readonly() || output()} />
+                          })
+                        }
+                      </tr>
+                    )
+                  })
+                }
               </tbody>
             </table>
             <ResizeColumn
@@ -153,11 +157,11 @@ export const TableComponentView = withAnnotation({
               layoutWidth={layoutWidth}
               onActiveStateChange={isActive => {
                 isResizeColumn.set(isActive)
-              }}/>
-            <SelectionMask tableRef={tableRef} component={props.component}/>
+              }} />
+            <SelectionMask tableRef={tableRef} component={props.component} />
           </div>
         </Scroll>
-        <ResizeRow component={props.component} tableRef={tableRef}/>
+        <ResizeRow component={props.component} tableRef={tableRef} />
       </div>
     )
   }
