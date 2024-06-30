@@ -3,16 +3,15 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  createVNode, Keyboard, Query, QueryStateType,
+  Keyboard, Query, QueryStateType,
   Registry,
   Selection,
   Slot,
   Textbus,
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { inject } from '@viewfly/core'
 
 import './blockquote.component.scss'
 import { deltaToBlock, ParagraphComponent } from '../paragraph/paragraph.component'
@@ -20,6 +19,7 @@ import { useBlockContent } from '../../hooks/use-block-content'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
+import { SlotRender } from '../SlotRender'
 
 export interface BlockquoteComponentState {
   slot: Slot
@@ -129,18 +129,13 @@ export function registerBlockquoteShortcut(textbus: Textbus) {
 }
 
 export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
-  const adapter = inject(DomAdapter)
   const readonly = useReadonly()
   const output = useOutput()
   return () => {
     const slot = props.component.state.slot
     return (
       <blockquote class="xnote-blockquote" ref={props.rootRef} data-component={props.component.name}>
-        {
-          adapter.slotRender(slot, children => {
-            return createVNode('div', null, children)
-          }, readonly() || output())
-        }
+        <SlotRender slot={slot} renderEnv={readonly() || output()} />
       </blockquote>
     )
   }
