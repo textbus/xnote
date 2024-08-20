@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.0.1-alpha.39",
+  "version": "0.0.1-alpha.40",
   "description": "A high-performance rich text editor that supports multiplayer online collaboration.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@tanbo/color": "^0.1.1",
-    "@textbus/adapter-viewfly": "^4.0.0-alpha.66",
+    "@textbus/adapter-viewfly": "^4.0.0-alpha.67",
     "@textbus/collaborate": "^4.0.0-alpha.66",
     "@textbus/core": "^4.0.0-alpha.66",
     "@textbus/platform-browser": "^4.0.0-alpha.66",
