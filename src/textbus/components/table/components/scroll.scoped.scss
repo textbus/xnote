@@ -1,7 +1,8 @@
 @import "../../../../assets/scroll";
 
 .scroll-container {
-  overflow-y: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   @include scroll();
 
   &:before {

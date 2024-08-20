@@ -81,7 +81,7 @@ export function ParagraphView(props: ViewComponentProps<ParagraphComponent>) {
     const slot = props.component.state.slot
     return (
       <SlotRender
-        tag='div'
+        tag="div"
         slot={slot}
         class="xnote-paragraph"
         elRef={props.rootRef}
@@ -97,7 +97,18 @@ export const paragraphComponentLoader: ComponentLoader = {
     return returnableContentTypes.includes(ContentType.BlockComponent) && (element.dataset.component === ParagraphComponent.componentName || /^P|H[1-6]$/.test(element.tagName))
   },
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
-    const content = /^P|H[1-6]$/.test(element.tagName) ? element : element.children[0] as HTMLElement
+    let content: HTMLElement
+    if (/^P|H[1-6]$/.test(element.tagName)) {
+      content = element
+    } else {
+      content = element.children[0] as HTMLElement
+      if (!content) {
+        const p = document.createElement('p')
+        p.append(element.innerText)
+        content = p
+      }
+    }
+
     const delta = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent,
