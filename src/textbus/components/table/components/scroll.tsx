@@ -55,7 +55,7 @@ export function Scroll(props: ScrollProps) {
     }]} onScroll={ev => {
       setTimeout(() => {
         tableService.onScroll.next((ev.target as HTMLDivElement).scrollLeft)
-      }, 10)
+      }, 30)
     }}>{props.children}</div>
   })
 }
