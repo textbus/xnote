@@ -26,3 +26,80 @@ editor.mount(document.getElementById('editor')).then(() => {
 })
 ```
 
+## 文件上传
+
+要实现文件上传需实现 FileUploader 接口
+
+```ts
+import { FileUploader } from '@textbus/xnote'
+
+class YourUploader extends FileUploader {
+  uploadFile(type: string): string | Promise<string> {
+    if (type === 'image') {
+      return 'imageUrl'
+    }
+    if (type === 'video') {
+      return 'videoUrl'
+    }
+  }
+}
+
+const editor = new Editor({
+  providers: [{
+    provide: FileUploader,
+    useFactory() {
+      return new YourFileUplader()
+    }
+  }]
+})
+```
+
+## 粘贴图片 Base64 转 URL
+
+base64 转 url 实现思路为 base64 转
+
+```ts
+import { Commander } from '@textbus/core'
+import { Injectable } from '@viewfly/core'
+import { ImageComponent } from '@textbus/xnote'
+
+@Injectable()
+class YourCommander extends Commander {
+  paste(slot: Slot, text: string) {
+    slot.sliceContent().forEach(content => {
+      if (content instanceof ImageComponent) {
+        const base64 = content.state.url
+        // base64 转 url，请自行实现
+        content.state.url = 'https://xxx.com/xxx.jpg'
+      }
+    })
+    
+    // 待图片转换完成后，可调用超类的 paste 方法
+    super.paste(slot, text)
+    return true
+  }
+}
+
+const editor = new Editor({
+  providers: [{
+    provide: Commander,
+    useClass: YourCommander
+  }]
+})
+```
+
+## 获取 HTML
+
+```ts
+const html = editor.getHTML()
+```
+
+## 设置初始 HTML
+
+```ts
+const editor = new Editor({
+  content: '<div>HTML 内容</div>'
+})
+```
+
+
