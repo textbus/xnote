@@ -8,7 +8,7 @@ import {
   Slot,
   Subject,
   Textbus,
-  Registry,
+  Registry, onSlotSetAttribute, onSlotApplyFormat,
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { createDynamicRef, onUpdated } from '@viewfly/core'
@@ -45,6 +45,12 @@ export class RootComponent extends Component<RootComponentState> {
 
     onCompositionStart(ev => {
       this.onCompositionStart.next(ev)
+    })
+    onSlotSetAttribute(ev => {
+      ev.preventDefault()
+    })
+    onSlotApplyFormat(ev => {
+      ev.preventDefault()
     })
   }
 
@@ -83,10 +89,10 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     const { rootRef } = props
 
     return (
-      <div class="xnote-root" dir='auto' ref={[rootRef, ref]} data-component={props.component.name}>
+      <div class="xnote-root" dir="auto" ref={[rootRef, ref]} data-component={props.component.name}>
         <SlotRender
           slot={content}
-          tag='div'
+          tag="div"
           class="xnote-content"
           data-placeholder={content.isEmpty ? '请输入内容' : ''}
           renderEnv={readonly() || output()}
