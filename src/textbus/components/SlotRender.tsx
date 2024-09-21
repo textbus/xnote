@@ -15,7 +15,7 @@ interface Props extends HTMLAttributes<unknown> {
 }
 
 export function SlotRender(props: Props) {
-  const adaper = inject(DomAdapter)
+  const adapter = inject(DomAdapter)
 
   const instance = getCurrentInstance()
   const slot = props.slot
@@ -31,7 +31,7 @@ export function SlotRender(props: Props) {
 
   return () => {
     const { slot, tag = 'div', renderEnv = false, elRef, elKey, ...rest } = props
-    return adaper.slotRender(slot, children => {
+    return adapter.slotRender(slot, children => {
       return createVNode(tag, { ref: elRef, key: elKey, ...rest }, children)
     }, renderEnv)
   }
