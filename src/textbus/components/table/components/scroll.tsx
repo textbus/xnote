@@ -33,16 +33,18 @@ export function Scroll(props: ScrollProps) {
       })
     }
 
-    update()
+    setTimeout(update)
     const s = fromEvent(el, 'scroll').subscribe(update)
     return () => s.unsubscribe()
   })
 
   onUpdated(() => {
     const el = scrollRef.current!
-    updateShowShadow(draft => {
-      draft.leftEnd = el.scrollLeft === 0
-      draft.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
+    setTimeout(() => {
+      updateShowShadow(draft => {
+        draft.leftEnd = el.scrollLeft === 0
+        draft.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
+      })
     })
   })
 
