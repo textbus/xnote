@@ -19,6 +19,7 @@ import { VideoComponent } from '../../textbus/components/video/video.component'
 import { MenuHeading } from '../../components/menu-heading/menu-heading'
 import { KatexComponent } from '../../textbus/components/katex/katex.component'
 import { DropdownContextService } from '../../components/dropdown/dropdown-context.service'
+import { createTimelineItem, TimelineComponent } from '../../textbus/components/timeline/timeline.component'
 import { createStepItem, StepComponent } from '../../textbus/components/step/step.component'
 
 export interface InsertToolProps {
@@ -169,6 +170,14 @@ export function InsertTool(props: InsertToolProps) {
         selection.selectFirstPosition(step, false, true)
       }
         break
+      case 'timeline': {
+        const timeline = new TimelineComponent(textbus, {
+          items: [createTimelineItem(textbus, '#296eff')]
+        })
+        insertComponent(timeline)
+        selection.selectFirstPosition(timeline, false, true)
+        break
+      }
     }
   }
 
@@ -217,6 +226,7 @@ export function InsertTool(props: InsertToolProps) {
       <MenuItem onClick={() => insert('highlightBox')} icon={<span class="xnote-icon-hightlight-box"/>}>高亮块</MenuItem>
       <MenuItem onClick={() => insert('katex')} icon={<span class="xnote-icon-function"/>}>数学公式</MenuItem>
       <MenuItem onClick={() => insert('step')} icon={<span class="xnote-icon-step"/>}>步骤条</MenuItem>
+      <MenuItem onClick={() => insert('timeline')} icon={<span class="xnote-icon-timeline"/>}>时间轴</MenuItem>
     </>
   })
 }

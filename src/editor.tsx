@@ -81,6 +81,8 @@ import { registerTextAlignShortcut, textAlignAttr, textAlignAttrLoader } from '.
 import { registerTextIndentShortcut, textIndentAttr, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
 import { OutputInjectionToken } from './textbus/injection-tokens'
 import { TableSelectionAwarenessDelegate } from './textbus/components/table/table-selection-awareness-delegate'
+import { TimelineComponent } from './textbus/components/timeline/timeline.component'
+import { timelineComponentLoader, TimelineComponentView } from './textbus/components/timeline/timeline-component.view'
 import { StepComponent } from './textbus/components/step/step.component'
 import {
   stepComponentLoader,
@@ -112,7 +114,8 @@ export class Editor extends Textbus {
       [VideoComponent.componentName]: VideoView,
       [AtComponent.componentName]: AtComponentView,
       [KatexComponent.componentName]: KatexComponentView,
-      [StepComponent.componentName]: StepComponentView
+      [StepComponent.componentName]: StepComponentView,
+      [TimelineComponent.componentName]: TimelineComponentView,
     }, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -149,6 +152,7 @@ export class Editor extends Textbus {
         katexComponentLoader,
         paragraphComponentLoader,
         stepComponentLoader,
+        timelineComponentLoader
       ],
       formatLoaders: [
         backgroundColorFormatLoader,
@@ -192,6 +196,7 @@ export class Editor extends Textbus {
       [AtComponent.componentName]: AtComponentView,
       [KatexComponent.componentName]: KatexComponentView,
       [StepComponent.componentName]: StepComponentView,
+      [TimelineComponent.componentName]: TimelineComponentView,
     } as any, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -229,6 +234,7 @@ export class Editor extends Textbus {
         AtComponent,
         KatexComponent,
         StepComponent,
+        TimelineComponent
       ],
       formatters: [
         backgroundColorFormatter,
