@@ -1,7 +1,7 @@
 /* eslint-disable */
 import 'reflect-metadata'
 import { Editor, Member, Organization } from './src/public-api'
-import { UserInfo } from '@textbus/collaborate'
+import { SyncConnector, UserInfo, YWebsocketConnector } from '@textbus/collaborate'
 import { FileUploader } from './src/interfaces'
 
 const firstNameText = '王、李、张、刘、陈、杨、黄、赵、周、吴、徐、孙、马、胡、朱、郭、何、罗、高、林'.replace(/、/g, '')
@@ -68,10 +68,11 @@ const editor = new Editor({
   readonly: false,
   content: document.getElementById('article')!.innerHTML,
   collaborateConfig: {
-    // url: 'ws://localhost:1234',
-    url: 'wss://textbus.io/api',
-    roomName: 'xnote',
-    userinfo: user
+    userinfo: user,
+    createConnector(yDoc): SyncConnector {
+      // return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
+      return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
+    }
   },
   providers: [
     {
