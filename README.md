@@ -56,8 +56,6 @@ const editor = new Editor({
 
 ## 粘贴图片 Base64 转 URL
 
-base64 转 url 实现思路为 base64 转
-
 ```ts
 import { Commander } from '@textbus/core'
 import { Injectable } from '@viewfly/core'
@@ -101,5 +99,43 @@ const editor = new Editor({
   content: '<div>HTML 内容</div>'
 })
 ```
+
+## @ 人
+
+在文档中 @ 人功能需实现以下接口，以对接用户信息
+
+```ts
+export abstract class Organization {
+  abstract getMembers(name?: string): Promise<Member[]>
+
+  abstract getMemberById(id: string): Promise<Member | null>
+}
+```
+然后在编辑器初始化时传入你的实现
+```ts
+const editor = new Editor({
+  providers: [{
+    provide: Organization,
+    useValue: new YourOrganization()
+  }]
+})
+```
+
+## 协作支持
+
+Textbus 天然支持协作，只需要在编辑器配置项中添加协作配置信息即可，具体配置你可以参考 [https://textbus.io/guide/collab/](https://textbus.io/guide/collab/)
+
+```ts
+const editor = new Editor({
+  collaborateConfig: {
+    userinfo: user, // 用户信息
+    createConnector(yDoc): SyncConnector {
+      // 返回连接器
+      return new YWebsocketConnector('wss://example.com', 'docName', yDoc)
+    }
+  }
+})
+```
+
 
 
