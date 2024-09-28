@@ -38,7 +38,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
         const leftDistance = ev.clientX - tableRect.x
         const state = props.component.state
         let x = 0
-        for (let i = 0; i < state.layoutWidth.length + 1; i++) {
+        for (let i = 0; i < state.columnsConfig.length + 1; i++) {
           const n = leftDistance - x
           if (i > 0 && Math.abs(n) < 5) {
             Object.assign(dragLineRef.current!.style, {
@@ -50,7 +50,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
           }
           activeCol = null
           dragLineRef.current!.style.display = 'none'
-          x += state.layoutWidth[i]
+          x += state.columnsConfig[i].width
         }
       })
     ).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
@@ -59,7 +59,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
       props.onActiveStateChange(true)
 
       const x = downEvent.clientX
-      const layoutWidth = props.component.state.layoutWidth
+      const layoutWidth = props.component.state.columnsConfig.map(i => i.width)
       const initWidth = layoutWidth[activeCol! - 1]
 
       const initLeft = layoutWidth.slice(0, activeCol!).reduce((a, b) => a + b, 0)
@@ -80,8 +80,8 @@ export function ResizeColumn(props: ResizeColumnProps) {
         props.onActiveStateChange(false)
         moveEvent.unsubscribe()
         const distanceX = upEvent.clientX - x
-        props.component.state.layoutWidth[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
-        props.layoutWidth.set(props.component.state.layoutWidth)
+        props.component.state.columnsConfig[activeCol! - 1].width = Math.max(initWidth + distanceX, minWidth)
+        props.layoutWidth.set(props.component.state.columnsConfig.map(i => i.width))
       }))
     }))
 
@@ -99,7 +99,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
         return
       }
       const state = props.component.state
-      const left = state.layoutWidth.slice(0, n).reduce((a, b) => a + b, 0) - 0.5
+      const left = state.columnsConfig.map(i => i.width).slice(0, n).reduce((a, b) => a + b, 0) - 0.5
 
       dragLineRef.current!.style.display = 'block'
       dragLineRef.current!.style.left = left + 'px'

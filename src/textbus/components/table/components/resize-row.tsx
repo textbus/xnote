@@ -44,7 +44,7 @@ export function ResizeRow(props: ResizeRowProps) {
                 style={{
                   display: styles().visible ? 'block' : 'none',
                   top: styles().top + 'px',
-                  width: sum(props.component.state.layoutWidth) + 'px'
+                  width: sum(props.component.state.columnsConfig.map(i => i.width)) + 'px'
                 }}
                 class={'drag-line'}/>
   })

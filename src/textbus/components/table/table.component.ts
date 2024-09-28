@@ -15,6 +15,7 @@ import {
   useContext,
 } from '@textbus/core'
 import { createSignal } from '@viewfly/core'
+import { v4 as uuid } from 'uuid'
 
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { TableSelection } from './components/selection-mask'
@@ -28,12 +29,26 @@ export interface TableCellConfig {
 
 export interface Row {
   height: number
-  cells: TableCellConfig[]
+  cells: Slot[]
+  id: string
+}
+
+export interface ColumnConfig {
+  width: number
+  id: string
+}
+
+export interface TableComponentMergeCellConfig {
+  startRowId: string
+  startColumnId: string
+  endRowId: string
+  endColumnId: string
 }
 
 export interface TableComponentState {
-  layoutWidth: number[]
+  columnsConfig: ColumnConfig[]
   rows: Row[]
+  mergeConfig: TableComponentMergeCellConfig[]
 }
 
 const defaultRowHeight = 30
@@ -46,16 +61,14 @@ export class TableComponent extends Component<TableComponentState> {
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<TableComponentState>) {
     const registry = textbus.get(Registry)
     return new TableComponent(textbus, {
-      layoutWidth: json.layoutWidth || [],
+      columnsConfig: json.columnsConfig || [],
+      mergeConfig: json.mergeConfig || [],
       rows: json.rows.map<Row>(row => {
         return {
           height: row.height,
+          id: row.id,
           cells: row.cells.map(cell => {
-            return {
-              colspan: cell.colspan,
-              rowspan: cell.rowspan,
-              slot: registry.createSlot(cell.slot)
-            }
+            return registry.createSlot(cell)
           })
         }
       })
@@ -65,19 +78,22 @@ export class TableComponent extends Component<TableComponentState> {
   private selection = this.textbus.get(Selection)
 
   constructor(textbus: Textbus, state: TableComponentState = {
-    layoutWidth: Array.from<number>({ length: 5 }).fill(100),
+    columnsConfig: Array.from<number>({ length: 5 }).map(() => {
+      return {
+        id: uuid(),
+        width: 100
+      }
+    }),
+    mergeConfig: [],
     rows: Array.from({ length: 3 }).map(() => {
       return {
         height: defaultRowHeight,
+        id: uuid(),
         cells: Array.from({ length: 5 }).map(() => {
           const p = new ParagraphComponent(textbus)
           const slot = new Slot([ContentType.BlockComponent])
           slot.insert(p)
-          return {
-            rowspan: 1,
-            colspan: 1,
-            slot
-          }
+          return slot
         })
       }
     })
@@ -89,7 +105,7 @@ export class TableComponent extends Component<TableComponentState> {
   tableSelection = createSignal<TableSelection | null>(null)
 
   override getSlots(): Slot[] {
-    return this.state.rows.map(i => i.cells.map(j => j.slot)).flat()
+    return this.state.rows.map(i => [...i.cells]).flat()
   }
 
   override setup() {
@@ -125,7 +141,7 @@ export class TableComponent extends Component<TableComponentState> {
         for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
           const row = rows[rowIndex].cells
           for (let colIndex = 0; colIndex < row.length; colIndex++) {
-            const item = row[colIndex].slot
+            const item = row[colIndex]
             if (item === cell) {
               return {
                 rowIndex,
@@ -143,7 +159,7 @@ export class TableComponent extends Component<TableComponentState> {
       if (selectPosition) {
         const cells: Slot[] = []
         this.state.rows.slice(selectPosition.startRow, selectPosition.endRow).forEach(row => {
-          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn).map(i => i.slot))
+          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn))
         })
         ev.useRanges(cells.map(i => {
           return {
@@ -217,7 +233,7 @@ export class TableComponent extends Component<TableComponentState> {
   // }
 
   deleteColumn(index: number) {
-    this.state.layoutWidth.splice(index, 1)
+    this.state.columnsConfig.splice(index, 1)
     this.state.rows.forEach(row => {
       row.cells.splice(index, 1)
     })
@@ -230,7 +246,10 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   insertColumn(index: number) {
-    this.state.layoutWidth.splice(index, 0, defaultColumnWidth)
+    this.state.columnsConfig.splice(index, 0, {
+      id: uuid(),
+      width: defaultColumnWidth
+    })
     this.state.rows.forEach(row => {
       const slot = new Slot([
         ContentType.BlockComponent,
@@ -241,14 +260,10 @@ export class TableComponent extends Component<TableComponentState> {
           ContentType.Text
         ])
       }))
-      row.cells.splice(index, 0, {
-        rowspan: 1,
-        colspan: 1,
-        slot
-      })
+      row.cells.splice(index, 0, slot)
     })
     this.textbus.nextTick(() => {
-      const slot = this.state.rows[0].cells[index]?.slot
+      const slot = this.state.rows[0].cells[index]
       if (slot) {
         this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
       }
@@ -258,7 +273,8 @@ export class TableComponent extends Component<TableComponentState> {
   insertRow(index: number) {
     this.state.rows.splice(index, 0, {
       height: defaultRowHeight,
-      cells: this.state.layoutWidth.map(() => {
+      id: uuid(),
+      cells: this.state.columnsConfig.map(() => {
         const slot = new Slot([
           ContentType.BlockComponent,
         ])
@@ -268,15 +284,11 @@ export class TableComponent extends Component<TableComponentState> {
             ContentType.Text
           ])
         }))
-        return {
-          rowspan: 1,
-          colspan: 1,
-          slot
-        }
+        return slot
       })
     })
     this.textbus.nextTick(() => {
-      const slot = this.state.rows[index].cells[0]?.slot
+      const slot = this.state.rows[index].cells[0]
       if (slot) {
         this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
       }

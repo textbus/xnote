@@ -24,7 +24,7 @@ export const TableComponentView = withAnnotation({
   const adapter = inject(DomAdapter)
   const editorService = inject(EditorService)
   const isFocus = createSignal(false)
-  const layoutWidth = createSignal(props.component.state.layoutWidth)
+  const layoutWidth = createSignal(props.component.state.columnsConfig.map(i => i.width))
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
     if (!b) {
@@ -57,7 +57,10 @@ export const TableComponentView = withAnnotation({
 
     if (readonly() || output()) {
       return (
-        <div class="xnote-table" data-component={props.component.name} data-layout-width={state.layoutWidth}>
+        <div class="xnote-table"
+             data-component={props.component.name}
+             data-layout-width={`[${state.columnsConfig.map(i => i.width).join(',')}]`}
+        >
           <div class="xnote-table-inner" ref={props.rootRef}>
             <div class="xnote-table-container">
               <table class={[
@@ -68,8 +71,8 @@ export const TableComponentView = withAnnotation({
               ]}>
                 <colgroup>
                   {
-                    layoutWidth().map(w => {
-                      return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
+                    state.columnsConfig.map(w => {
+                      return <col style={{ width: w.width + 'px', minWidth: w.width + 'px' }}/>
                     })
                   }
                 </colgroup>
@@ -80,9 +83,9 @@ export const TableComponentView = withAnnotation({
                       <tr key={rowMapping.get(row)}>
                         {
                           row.cells.map(cell => {
-                            return adapter.slotRender(cell.slot, children => {
+                            return adapter.slotRender(cell, children => {
                               return createVNode('td', {
-                                key: cell.slot.id
+                                key: cell.id
                               }, children)
                             }, readonly() || output())
                           })
@@ -99,7 +102,9 @@ export const TableComponentView = withAnnotation({
       )
     }
     return (
-      <div class="xnote-table" data-component={props.component.name} data-layout-width={`[${state.layoutWidth.join(',')}]`}>
+      <div class="xnote-table"
+           data-component={props.component.name}
+           data-layout-width={`[${state.columnsConfig.map(i => i.width).join(',')}]`}>
         <div class="xnote-table-inner" ref={props.rootRef}>
           <TopBar
             isFocus={isFocus}
@@ -132,9 +137,9 @@ export const TableComponentView = withAnnotation({
                       <tr key={rowMapping.get(row)}>
                         {
                           row.cells.map(cell => {
-                            return adapter.slotRender(cell.slot, children => {
+                            return adapter.slotRender(cell, children => {
                               return createVNode('td', {
-                                key: cell.slot.id
+                                key: cell.id
                               }, children)
                             }, readonly() || output())
                           })
@@ -250,13 +255,9 @@ export const tableComponentLoader: ComponentLoader = {
 
 
     return new TableComponent(textbus, {
-      rows: cells.map(i => {
-        return {
-          height: 30,
-          cells: i
-        }
-      }),
-      layoutWidth
+      columnsConfig: [],
+      mergeConfig: [],
+      rows: [] // TODO：这里内容未添加
     })
   }
 }

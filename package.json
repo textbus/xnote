@@ -36,13 +36,15 @@
     "@viewfly/platform-browser": "^1.0.3",
     "@viewfly/scoped-css": "^1.0.2",
     "highlight.js": "^11.9.0",
-    "katex": "^0.16.10"
+    "katex": "^0.16.10",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",
     "@babel/preset-env": "^7.16.5",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@types/jest": "^29.5.2",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "@viewfly/devtools": "^1.0.2",

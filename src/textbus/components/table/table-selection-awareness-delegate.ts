@@ -47,8 +47,8 @@ export class TableSelectionAwarenessDelegate extends CollaborateSelectionAwarene
     )
     const rows = commonAncestorComponent.state.rows
 
-    const startFocusSlot = rows[range.startRow].cells[range.startColumn].slot
-    const endFocusSlot = rows[range.endRow].cells[range.endColumn].slot
+    const startFocusSlot = rows[range.startRow].cells[range.startColumn]
+    const endFocusSlot = rows[range.endRow].cells[range.endColumn]
 
     const renderer = this.domAdapter
     const startRect = (renderer.getNativeNodeBySlot(startFocusSlot) as HTMLElement).getBoundingClientRect()
@@ -80,7 +80,7 @@ function finedPosition(component: TableComponent, slot: Slot) {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     for (let j = 0; j < row.cells.length; j++) {
-      const cell = row.cells[j].slot
+      const cell = row.cells[j]
       if (cell === slot) {
         return {
           rowIndex: i,
