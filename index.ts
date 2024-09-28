@@ -70,8 +70,8 @@ const editor = new Editor({
   collaborateConfig: {
     userinfo: user,
     createConnector(yDoc): SyncConnector {
-      // return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
-      return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
+      return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
+      // return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
     }
   },
   providers: [
