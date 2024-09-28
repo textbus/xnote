@@ -81,6 +81,11 @@ import { registerTextAlignShortcut, textAlignAttr, textAlignAttrLoader } from '.
 import { registerTextIndentShortcut, textIndentAttr, textIndentAttrLoader } from './textbus/attributes/text-indent.attr'
 import { OutputInjectionToken } from './textbus/injection-tokens'
 import { TableSelectionAwarenessDelegate } from './textbus/components/table/table-selection-awareness-delegate'
+import {StepComponent} from "./textbus/components/step/step.component";
+import {
+  stepComponentLoader,
+  StepComponentView
+} from "./textbus/components/step/step-component.view";
 
 export interface EditorConfig extends TextbusConfig {
   content?: string,
@@ -107,6 +112,7 @@ export class Editor extends Textbus {
       [VideoComponent.componentName]: VideoView,
       [AtComponent.componentName]: AtComponentView,
       [KatexComponent.componentName]: KatexComponentView,
+      [StepComponent.componentName]: StepComponentView
     }, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -142,6 +148,7 @@ export class Editor extends Textbus {
         todolistComponentLoader,
         katexComponentLoader,
         paragraphComponentLoader,
+        stepComponentLoader,
       ],
       formatLoaders: [
         backgroundColorFormatLoader,
@@ -183,7 +190,8 @@ export class Editor extends Textbus {
       [ImageComponent.componentName]: ImageView,
       [VideoComponent.componentName]: VideoView,
       [AtComponent.componentName]: AtComponentView,
-      [KatexComponent.componentName]: KatexComponentView
+      [KatexComponent.componentName]: KatexComponentView,
+      [StepComponent.componentName]: StepComponentView,
     } as any, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -219,7 +227,8 @@ export class Editor extends Textbus {
         ListComponent,
         VideoComponent,
         AtComponent,
-        KatexComponent
+        KatexComponent,
+        StepComponent,
       ],
       formatters: [
         backgroundColorFormatter,
