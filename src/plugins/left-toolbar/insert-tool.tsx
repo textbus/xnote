@@ -19,7 +19,7 @@ import { VideoComponent } from '../../textbus/components/video/video.component'
 import { MenuHeading } from '../../components/menu-heading/menu-heading'
 import { KatexComponent } from '../../textbus/components/katex/katex.component'
 import { DropdownContextService } from '../../components/dropdown/dropdown-context.service'
-import {createStepItem, StepComponent} from "../../textbus/components/step/step.component";
+import { createStepItem, StepComponent } from '../../textbus/components/step/step.component'
 
 export interface InsertToolProps {
   slot: Slot | null

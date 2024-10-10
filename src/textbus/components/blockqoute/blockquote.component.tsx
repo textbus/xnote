@@ -139,7 +139,7 @@ export function BlockquoteView(props: ViewComponentProps<BlockquoteComponent>) {
     const slot = props.component.state.slot
     return (
       <blockquote class="xnote-blockquote" ref={props.rootRef} data-component={props.component.name}>
-        <SlotRender slot={slot} renderEnv={readonly() || output()} />
+        <SlotRender slot={slot} renderEnv={readonly() || output()}/>
       </blockquote>
     )
   }

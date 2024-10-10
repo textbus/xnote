@@ -9,6 +9,7 @@ export interface ComponentToolbarProps extends Props {
   style?: StyleValue
   innerStyle?: StyleValue
 }
+
 export function ComponentToolbar(props: ComponentToolbarProps) {
   return withScopedCSS(css, () => {
     return (

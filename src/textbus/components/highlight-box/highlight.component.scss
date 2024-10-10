@@ -36,6 +36,7 @@
 
 .xnote-highlight-box-icons {
   text-align: left;
+
   button {
     width: 30px;
     height: 30px;
@@ -45,11 +46,13 @@
     padding: 0;
     cursor: pointer;
     border-radius: 4px;
+
     &:hover {
       background: rgba(0, 0, 0, .1);
     }
   }
 }
+
 .xnote-highlight-box-content {
   padding: 5px;
 }

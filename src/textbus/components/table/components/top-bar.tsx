@@ -60,6 +60,7 @@ export function TopBar(props: TopBarProps) {
       textbus.focus()
     })
   }
+
   let mouseDownFromToolbar = false
 
   onMounted(() => {

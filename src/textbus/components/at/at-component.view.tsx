@@ -56,8 +56,8 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
     if (userInfo) {
       return (
         <div class="xnote-at xnote-at-complete"
-          data-info={encodeURIComponent(JSON.stringify(userInfo))}
-          ref={props.rootRef} data-component={props.component.name}>
+             data-info={encodeURIComponent(JSON.stringify(userInfo))}
+             ref={props.rootRef} data-component={props.component.name}>
           <span>@</span>{userInfo.name}
         </div>
       )
@@ -65,10 +65,10 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
     if (readonly() || output()) {
       return (
         <div class="xnote-at"
-          ref={props.rootRef}
-          data-component={props.component.name}>
+             ref={props.rootRef}
+             data-component={props.component.name}>
           <span>@</span>
-          {slot && <SlotRender slot={slot} class='xnote-at-input' tag="span" />}
+          {slot && <SlotRender slot={slot} class="xnote-at-input" tag="span"/>}
         </div>
       )
     }
@@ -76,8 +76,8 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
 
     return (
       <div class="xnote-at"
-        ref={props.rootRef}
-        data-component={props.component.name}>
+           ref={props.rootRef}
+           data-component={props.component.name}>
         <Dropdown trigger={'none'} ref={dropdownRef} menu={
           <div class="xnote-at-menu" ref={membersRef}>
             {
@@ -96,7 +96,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
                     selection.selectComponentEnd(props.component)
                   }} key={member.id} class={['xnote-at-member', { selected: index === selectedIndex }]}>
                     <div class="xnote-at-member-avatar">{
-                      member.avatar ? <img src={member.avatar} alt={member.name} /> :
+                      member.avatar ? <img src={member.avatar} alt={member.name}/> :
                         <span class="xnote-at-member-avatar-bg" style={{ background: member.color, color }}>{member.name}</span>
                     }</div>
                     <div class="xnote-at-member-info">
@@ -110,7 +110,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
           </div>
         }>
           <span>@</span>
-          {slot && <SlotRender slot={slot} tag='span' class='xnote-at-input' />}
+          {slot && <SlotRender slot={slot} tag="span" class="xnote-at-input"/>}
         </Dropdown>
       </div>
     )

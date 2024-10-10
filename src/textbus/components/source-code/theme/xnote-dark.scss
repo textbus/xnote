@@ -4,9 +4,11 @@
     overflow-x: auto;
     padding: 1em
   }
+
   code.hljs {
     padding: 3px 5px
   }
+
   /*
 
   Atom One Dark by Daniel Gamage
@@ -30,25 +32,30 @@
     color: #a9aeb2;
     background: #182324
   }
+
   .hljs-comment,
   .hljs-quote {
     color: #5c6d6e;
     font-style: italic
   }
+
   .hljs-doctag,
   .hljs-keyword,
   .hljs-formula {
     color: #71b155;
     font-weight: bold;
   }
+
   .hljs-section,
   .hljs-selector-tag,
   .hljs-deletion {
     color: #e06c75
   }
+
   .hljs-literal {
     color: #388138
   }
+
   .hljs-string,
   .hljs-regexp,
   .hljs-addition,
@@ -56,6 +63,7 @@
   .hljs-meta .hljs-string {
     color: #dd7600
   }
+
   //.hljs-attr,
   .hljs-variable,
   .hljs-template-variable,
@@ -66,6 +74,7 @@
   .hljs-number {
     color: #388138
   }
+
   .hljs-subst,
   .hljs-name,
   .hljs-symbol,
@@ -76,17 +85,21 @@
   .hljs-title {
     color: #2e89c1
   }
+
   .hljs-built_in,
   .hljs-title.class_,
   .hljs-class .hljs-title {
     color: #e6c07b
   }
+
   .hljs-emphasis {
     font-style: italic
   }
+
   .hljs-strong {
     font-weight: bold
   }
+
   .hljs-link {
     text-decoration: underline
   }

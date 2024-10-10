@@ -18,6 +18,7 @@
     align-items: center;
     justify-content: center;
     display: none;
+
     &.active {
       display: flex;
     }

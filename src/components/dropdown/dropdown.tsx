@@ -116,7 +116,9 @@ export const Dropdown = withAnnotation({
             <div class="dropdown-btn-arrow"/>
           </div>
           {
-            isShow() && <DropdownMenuPortal toLeft={props.toLeft} padding={props.padding} noTrigger={props.trigger === 'none'} width={props.width} abreast={props.abreast} triggerRef={triggerRef}>
+            isShow() &&
+            <DropdownMenuPortal toLeft={props.toLeft} padding={props.padding} noTrigger={props.trigger === 'none'} width={props.width}
+                                abreast={props.abreast} triggerRef={triggerRef}>
               {
                 Array.isArray(props.menu) ?
                   props.menu.map(menu => {

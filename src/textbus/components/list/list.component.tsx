@@ -320,7 +320,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
           }</div>
           <SlotRender
             slot={component.state.slot}
-            class='xnote-list-content'
+            class="xnote-list-content"
             renderEnv={readonly() || output()}
           />
         </li>

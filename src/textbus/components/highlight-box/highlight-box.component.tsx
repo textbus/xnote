@@ -70,7 +70,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
               <button type="button">{state.type || '❤️'}</button>
             </div>
           </div>
-          <SlotRender slot={state.slot} class='xnote-highlight-box-content' renderEnv={readonly() || output()} />
+          <SlotRender slot={state.slot} class="xnote-highlight-box-content" renderEnv={readonly() || output()}/>
         </div>
       )
     }
@@ -103,7 +103,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
             </div>
           </Dropdown>
         </div>
-        <SlotRender slot={state.slot} class='xnote-highlight-box-content' renderEnv={readonly() || output()} />
+        <SlotRender slot={state.slot} class="xnote-highlight-box-content" renderEnv={readonly() || output()}/>
       </div>
     )
   }

@@ -46,6 +46,7 @@ export function registerItalicShortcut(textbus: Textbus) {
     }
   })
 }
+
 export const italicFormatLoader: FormatLoader<boolean> = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'EM' || element.tagName === 'I' || /italic/.test(element.style.fontStyle)

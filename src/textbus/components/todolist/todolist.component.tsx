@@ -160,11 +160,11 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
         textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
       }}>
         <div class="xnote-todolist-icon" onClick={toggle}>
-          <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']} />
+          <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']}/>
         </div>
 
-        <SlotRender slot={slot} tag='div' class='xnote-todolist-content' renderEnv={readonly() || output()} />
-      </div >
+        <SlotRender slot={slot} tag="div" class="xnote-todolist-content" renderEnv={readonly() || output()}/>
+      </div>
     )
   }
 }

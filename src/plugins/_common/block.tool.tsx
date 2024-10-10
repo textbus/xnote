@@ -91,13 +91,16 @@ export function BlockTool() {
           label: <MenuItem icon={<span class="xnote-icon-checkbox-checked"/>} checked={states.todolist}>待办事项</MenuItem>,
           value: 'todolist'
         }, {
-          label: <MenuItem desc={<Keymap keymap={{key: 'O', shiftKey: true, ctrlKey: true}}/>} icon={<span class="xnote-icon-list-numbered"></span>} checked={states.orderedList}>有序列表</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{ key: 'O', shiftKey: true, ctrlKey: true }}/>}
+                           icon={<span class="xnote-icon-list-numbered"></span>} checked={states.orderedList}>有序列表</MenuItem>,
           value: 'ol'
         }, {
-          label: <MenuItem desc={<Keymap keymap={{key: 'U', shiftKey: true, ctrlKey: true}}/>} icon={<span class="xnote-icon-list"/>} checked={states.unorderedList}>无序列表</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{ key: 'U', shiftKey: true, ctrlKey: true }}/>} icon={<span class="xnote-icon-list"/>}
+                           checked={states.unorderedList}>无序列表</MenuItem>,
           value: 'ul'
         }, {
-          label: <MenuItem desc={<Keymap keymap={{key: '\'', ctrlKey: true}}/>} icon={<span class="xnote-icon-quotes-right"/>} checked={states.blockquote}>引用</MenuItem>,
+          label: <MenuItem desc={<Keymap keymap={{ key: '\'', ctrlKey: true }}/>} icon={<span class="xnote-icon-quotes-right"/>}
+                           checked={states.blockquote}>引用</MenuItem>,
           value: 'blockquote'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-source-code"/>} checked={states.sourceCode}>代码块</MenuItem>,
