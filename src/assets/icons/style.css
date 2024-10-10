@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'textbus';
   src:
-    url('fonts/textbus.ttf?ckj6yl') format('truetype'),
-    url('fonts/textbus.woff?ckj6yl') format('woff'),
-    url('fonts/textbus.svg?ckj6yl#textbus') format('svg');
+    url('fonts/textbus.ttf?iigo9d') format('truetype'),
+    url('fonts/textbus.woff?iigo9d') format('woff'),
+    url('fonts/textbus.svg?iigo9d#textbus') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -24,50 +24,62 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.xnote-icon-hightlight-box:before {
-  content: "\e90e";
-}
-.xnote-icon-arrow-left:before {
+.xnote-icon-timeline:before {
   content: "\e900";
 }
-.xnote-icon-arrow-right:before {
+.xnote-icon-step:before {
   content: "\e901";
 }
-.xnote-icon-arrow-top:before {
+.xnote-icon-arrow-left:before {
   content: "\e902";
 }
-.xnote-icon-arrow-bottom:before {
+.xnote-icon-arrow-right:before {
   content: "\e903";
 }
-.xnote-icon-source-code:before {
+.xnote-icon-arrow-top:before {
   content: "\e904";
 }
-.xnote-icon-insert-paragraph-after:before {
+.xnote-icon-arrow-bottom:before {
   content: "\e905";
 }
-.xnote-icon-insert-paragraph-before:before {
+.xnote-icon-source-code:before {
   content: "\e906";
 }
-.xnote-icon-table-border:before {
+.xnote-icon-insert-paragraph-after:before {
+  content: "\e907";
+}
+.xnote-icon-insert-paragraph-before:before {
   content: "\e908";
 }
-.xnote-icon-table-remove:before {
+.xnote-icon-plus:before {
   content: "\e909";
 }
-.xnote-icon-paint-bucket:before {
+.xnote-icon-table-border:before {
+  content: "\e90a";
+}
+.xnote-icon-table-remove:before {
   content: "\e90b";
 }
-.xnote-icon-background-color:before {
+.xnote-icon-function:before {
   content: "\e90c";
 }
-.xnote-icon-color:before {
+.xnote-icon-paint-bucket:before {
   content: "\e90d";
 }
-.xnote-icon-table-edit:before {
+.xnote-icon-background-color:before {
+  content: "\e90e";
+}
+.xnote-icon-color:before {
   content: "\e90f";
 }
-.xnote-icon-table-split-columns:before {
+.xnote-icon-hightlight-box:before {
   content: "\e910";
+}
+.xnote-icon-table-edit:before {
+  content: "\e911";
+}
+.xnote-icon-table-split-columns:before {
+  content: "\e912";
 }
 .xnote-icon-image:before {
   content: "\e919";
@@ -224,10 +236,4 @@
 }
 .xnote-icon-code:before {
   content: "\ea80";
-}
-.xnote-icon-plus:before {
-  content: "\e907";
-}
-.xnote-icon-function:before {
-  content: "\e90a";
 }
