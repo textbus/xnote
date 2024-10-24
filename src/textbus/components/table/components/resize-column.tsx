@@ -50,7 +50,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
           }
           activeCol = null
           dragLineRef.current!.style.display = 'none'
-          x += state.columnsConfig[i].width
+          x += state.columnsConfig[i]?.width || 0
         }
       })
     ).add(fromEvent<MouseEvent>(dragLineRef.current!, 'mousedown').subscribe(downEvent => {
