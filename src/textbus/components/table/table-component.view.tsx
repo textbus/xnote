@@ -4,7 +4,7 @@ import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-brows
 import { createRef, createSignal, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 
 import './table.component.scss'
-import { TableComponent } from './table.component'
+import { Row, TableComponent } from './table.component'
 import { ResizeColumn } from './components/resize-column'
 import { TopBar } from './components/top-bar'
 import { Scroll } from './components/scroll'
@@ -42,19 +42,20 @@ export const TableComponentView = withAnnotation({
 
   const isResizeColumn = createSignal(false)
 
-  const rowMapping = new WeakMap<object, number>()
+  const rowMapping = new WeakMap<Row, number>()
 
   const readonly = useReadonly()
   const output = useOutput()
   return () => {
+    const normalizedData = props.component.getNormalizedData()
     const state = props.component.state
-    const rows = state.rows
+    // const rows = state.rows
 
-    rows.forEach(row => {
-      if (rowMapping.has(row)) {
+    normalizedData.forEach(row => {
+      if (rowMapping.has(row.rawRow)) {
         return
       }
-      rowMapping.set(row, Math.random())
+      rowMapping.set(row.rawRow, Math.random())
     })
 
     if (readonly() || output()) {
@@ -80,14 +81,16 @@ export const TableComponentView = withAnnotation({
                 </colgroup>
                 <tbody>
                 {
-                  rows.map((row) => {
+                  normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row)}>
+                      <tr key={rowMapping.get(row.rawRow)}>
                         {
                           row.cells.map(cell => {
-                            return adapter.slotRender(cell.slot, children => {
+                            return adapter.slotRender(cell.raw.slot, children => {
                               return createVNode('td', {
-                                key: cell.id
+                                key: cell.raw.id,
+                                rowspan: cell.rowspan,
+                                colspan: cell.colspan
                               }, children)
                             }, readonly() || output())
                           })
@@ -134,14 +137,16 @@ export const TableComponentView = withAnnotation({
                 </colgroup>
                 <tbody>
                 {
-                  rows.map((row) => {
+                  normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row)}>
+                      <tr key={rowMapping.get(row.rawRow)}>
                         {
                           row.cells.map(cell => {
-                            return adapter.slotRender(cell.slot, children => {
+                            return adapter.slotRender(cell.raw.slot, children => {
                               return createVNode('td', {
-                                key: cell.id
+                                key: cell.raw.id,
+                                rowspan: cell.rowspan,
+                                colspan: cell.colspan
                               }, children)
                             }, readonly() || output())
                           })

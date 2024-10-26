@@ -20,6 +20,7 @@ import { v4 } from 'uuid'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { TableSelection } from './components/selection-mask'
 import { useBlockContent } from '../../hooks/use-block-content'
+import { applyRectangles, findNonIntersectingRectangles, Rectangle } from './tools/merge'
 
 export interface Cell {
   id: string
@@ -94,6 +95,55 @@ export class TableComponent extends Component<TableComponentState> {
   override getSlots(): Slot[] {
     // TODO: 这里没排除已合并的单元格
     return this.state.rows.map(i => [...i.cells].map(i => i.slot)).flat()
+  }
+
+  merge(startCell: Cell, endCell: Cell) {
+    const slots = this.getSlots()
+    const index1 = slots.findIndex(i => i === startCell.slot)
+    const index2 = slots.findIndex(i => i === endCell.slot)
+    if (index1 > -1 && index2 > -1) {
+      if (index1 < index2) {
+        this.state.mergeConfig[startCell.id] = endCell.id
+      } else {
+        this.state.mergeConfig[endCell.id] = startCell.id
+      }
+    }
+  }
+
+  split(startCell: Cell) {
+    Reflect.deleteProperty(this.state.mergeConfig, startCell.id)
+  }
+
+  getNormalizedData() {
+    const rectangles: Rectangle[] = []
+    Object.entries(this.state.mergeConfig).forEach(([key, value]) => {
+      const p1 = this.getCoordinateById(key)
+      if (p1) {
+        const p2 = this.getCoordinateById(value)
+        if (p2) {
+          rectangles.push(new Rectangle(p1[0], p1[1], p2[0], p2[1]))
+        }
+      }
+    })
+    const nonIntersectingRectangles = findNonIntersectingRectangles(rectangles)
+    return applyRectangles(this.state.rows, nonIntersectingRectangles).map(i => {
+      return {
+        rawRow: i.row,
+        cells: i.cells.filter(j => j.visible)
+      }
+    })
+  }
+
+  private getCoordinateById(id: string) {
+    const rows = this.state.rows
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i]
+      const colIndex = row.cells.findIndex(i => i.id === id)
+      if (colIndex > -1) {
+        return [colIndex, i]
+      }
+    }
+    return null
   }
 
   override setup() {
