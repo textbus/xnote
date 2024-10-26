@@ -44,7 +44,7 @@ export function TopBar(props: TopBarProps) {
     const selectedSlots: Slot[] = []
     const rows = props.component.state.rows
     rows.forEach(row => {
-      selectedSlots.push(...row.cells.slice(startIndex, endIndex + 1))
+      selectedSlots.push(...row.cells.slice(startIndex, endIndex + 1).map(i => i.slot))
     })
 
     textbus.nextTick(() => {

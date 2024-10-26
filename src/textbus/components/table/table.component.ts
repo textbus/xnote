@@ -15,40 +15,28 @@ import {
   useContext,
 } from '@textbus/core'
 import { createSignal } from '@viewfly/core'
-import { v4 as uuid } from 'uuid'
+import { v4 } from 'uuid'
 
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { TableSelection } from './components/selection-mask'
 import { useBlockContent } from '../../hooks/use-block-content'
 
-export interface TableCellConfig {
-  rowspan: number
-  colspan: number
+export interface Cell {
+  id: string
   slot: Slot
 }
 
 export interface Row {
   height: number
-  cells: Slot[]
-  id: string
+  cells: Cell[]
 }
 
-export interface ColumnConfig {
-  width: number
-  id: string
-}
-
-export interface TableComponentMergeCellConfig {
-  startRowId: string
-  startColumnId: string
-  endRowId: string
-  endColumnId: string
-}
+export type TableComponentMergeCellConfig = Record<string, string>
 
 export interface TableComponentState {
-  columnsConfig: ColumnConfig[]
+  columnsConfig: number[]
   rows: Row[]
-  mergeConfig: TableComponentMergeCellConfig[]
+  mergeConfig: TableComponentMergeCellConfig
 }
 
 const defaultRowHeight = 30
@@ -66,9 +54,11 @@ export class TableComponent extends Component<TableComponentState> {
       rows: json.rows.map<Row>(row => {
         return {
           height: row.height,
-          id: row.id,
           cells: row.cells.map(cell => {
-            return registry.createSlot(cell)
+            return {
+              id: cell.id,
+              slot: registry.createSlot(cell.slot)
+            }
           })
         }
       })
@@ -78,22 +68,19 @@ export class TableComponent extends Component<TableComponentState> {
   private selection = this.textbus.get(Selection)
 
   constructor(textbus: Textbus, state: TableComponentState = {
-    columnsConfig: Array.from<number>({ length: 5 }).map(() => {
-      return {
-        id: uuid(),
-        width: 100
-      }
-    }),
-    mergeConfig: [],
+    columnsConfig: Array.from<number>({ length: 5 }).fill(defaultColumnWidth),
+    mergeConfig: {},
     rows: Array.from({ length: 3 }).map(() => {
       return {
         height: defaultRowHeight,
-        id: uuid(),
         cells: Array.from({ length: 5 }).map(() => {
           const p = new ParagraphComponent(textbus)
           const slot = new Slot([ContentType.BlockComponent])
           slot.insert(p)
-          return slot
+          return {
+            slot,
+            id: v4()
+          }
         })
       }
     })
@@ -105,7 +92,8 @@ export class TableComponent extends Component<TableComponentState> {
   tableSelection = createSignal<TableSelection | null>(null)
 
   override getSlots(): Slot[] {
-    return this.state.rows.map(i => [...i.cells]).flat()
+    // TODO: 这里没排除已合并的单元格
+    return this.state.rows.map(i => [...i.cells].map(i => i.slot)).flat()
   }
 
   override setup() {
@@ -142,7 +130,7 @@ export class TableComponent extends Component<TableComponentState> {
           const row = rows[rowIndex].cells
           for (let colIndex = 0; colIndex < row.length; colIndex++) {
             const item = row[colIndex]
-            if (item === cell) {
+            if (item.slot === cell) {
               return {
                 rowIndex,
                 colIndex
@@ -159,7 +147,8 @@ export class TableComponent extends Component<TableComponentState> {
       if (selectPosition) {
         const cells: Slot[] = []
         this.state.rows.slice(selectPosition.startRow, selectPosition.endRow).forEach(row => {
-          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn))
+          // TODO: 这里没有排除已合并的单元格
+          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn).map(i => i.slot))
         })
         ev.useRanges(cells.map(i => {
           return {
@@ -206,32 +195,6 @@ export class TableComponent extends Component<TableComponentState> {
     })
   }
 
-  // afterContentCheck() {
-  //   const selection = this.selection
-  //   const rows = this.state.rows
-  //   rows.forEach(row => {
-  //     row.cells.forEach(cell => {
-  //       const slot = cell.slot
-  //       if (slot.isEmpty) {
-  //         const childSlot = new Slot([
-  //           ContentType.Text,
-  //           ContentType.InlineComponent
-  //         ])
-  //         const p = new ParagraphComponent(this.textbus, {
-  //           slot: childSlot
-  //         })
-  //         slot.insert(p)
-  //         if (slot === selection.anchorSlot) {
-  //           selection.setAnchor(childSlot, 0)
-  //         }
-  //         if (slot === selection.focusSlot) {
-  //           selection.setFocus(childSlot, 0)
-  //         }
-  //       }
-  //     })
-  //   })
-  // }
-
   deleteColumn(index: number) {
     this.state.columnsConfig.splice(index, 1)
     this.state.rows.forEach(row => {
@@ -246,10 +209,7 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   insertColumn(index: number) {
-    this.state.columnsConfig.splice(index, 0, {
-      id: uuid(),
-      width: defaultColumnWidth
-    })
+    this.state.columnsConfig.splice(index, 0, defaultColumnWidth)
     this.state.rows.forEach(row => {
       const slot = new Slot([
         ContentType.BlockComponent,
@@ -260,10 +220,13 @@ export class TableComponent extends Component<TableComponentState> {
           ContentType.Text
         ])
       }))
-      row.cells.splice(index, 0, slot)
+      row.cells.splice(index, 0, {
+        id: v4(),
+        slot
+      })
     })
     this.textbus.nextTick(() => {
-      const slot = this.state.rows[0].cells[index]
+      const slot = this.state.rows[0].cells[index].slot
       if (slot) {
         this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
       }
@@ -273,7 +236,6 @@ export class TableComponent extends Component<TableComponentState> {
   insertRow(index: number) {
     this.state.rows.splice(index, 0, {
       height: defaultRowHeight,
-      id: uuid(),
       cells: this.state.columnsConfig.map(() => {
         const slot = new Slot([
           ContentType.BlockComponent,
@@ -284,11 +246,14 @@ export class TableComponent extends Component<TableComponentState> {
             ContentType.Text
           ])
         }))
-        return slot
+        return {
+          id: v4(),
+          slot
+        }
       })
     })
     this.textbus.nextTick(() => {
-      const slot = this.state.rows[index].cells[0]
+      const slot = this.state.rows[index].cells[0].slot
       if (slot) {
         this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
       }

@@ -90,7 +90,7 @@ export function LeftBar(props: TopBarProps) {
     const selectedSlots: Slot[] = []
     const rows = props.component.state.rows
     rows.slice(startIndex, endIndex + 1).forEach(row => {
-      selectedSlots.push(...row.cells)
+      selectedSlots.push(...row.cells.map(i => i.slot))
     })
     textbus.nextTick(() => {
       selection.setSelectedRanges(selectedSlots.map(i => {

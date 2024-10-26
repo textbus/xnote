@@ -4,7 +4,7 @@ import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-brows
 import { createRef, createSignal, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 
 import './table.component.scss'
-import { TableCellConfig, TableComponent } from './table.component'
+import { TableComponent } from './table.component'
 import { ResizeColumn } from './components/resize-column'
 import { TopBar } from './components/top-bar'
 import { Scroll } from './components/scroll'
@@ -16,6 +16,8 @@ import { deltaToBlock } from '../paragraph/paragraph.component'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { EditorService } from '../../../services/editor.service'
+import { autoComplete, TableCellConfig } from './tools/complete'
+import { v4 } from 'uuid'
 // import { SlotRender } from '../SlotRender'
 
 export const TableComponentView = withAnnotation({
@@ -24,7 +26,7 @@ export const TableComponentView = withAnnotation({
   const adapter = inject(DomAdapter)
   const editorService = inject(EditorService)
   const isFocus = createSignal(false)
-  const layoutWidth = createSignal(props.component.state.columnsConfig.map(i => i.width))
+  const layoutWidth = createSignal(props.component.state.columnsConfig.slice())
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
     if (!b) {
@@ -59,7 +61,7 @@ export const TableComponentView = withAnnotation({
       return (
         <div class="xnote-table"
              data-component={props.component.name}
-             data-layout-width={`[${state.columnsConfig.map(i => i.width).join(',')}]`}
+             data-layout-width={`[${state.columnsConfig.join(',')}]`}
         >
           <div class="xnote-table-inner" ref={props.rootRef}>
             <div class="xnote-table-container">
@@ -72,7 +74,7 @@ export const TableComponentView = withAnnotation({
                 <colgroup>
                   {
                     state.columnsConfig.map(w => {
-                      return <col style={{ width: w.width + 'px', minWidth: w.width + 'px' }}/>
+                      return <col style={{ width: w + 'px', minWidth: w + 'px' }}/>
                     })
                   }
                 </colgroup>
@@ -83,7 +85,7 @@ export const TableComponentView = withAnnotation({
                       <tr key={rowMapping.get(row)}>
                         {
                           row.cells.map(cell => {
-                            return adapter.slotRender(cell, children => {
+                            return adapter.slotRender(cell.slot, children => {
                               return createVNode('td', {
                                 key: cell.id
                               }, children)
@@ -104,7 +106,7 @@ export const TableComponentView = withAnnotation({
     return (
       <div class="xnote-table"
            data-component={props.component.name}
-           data-layout-width={`[${state.columnsConfig.map(i => i.width).join(',')}]`}>
+           data-layout-width={`[${state.columnsConfig.join(',')}]`}>
         <div class="xnote-table-inner" ref={props.rootRef}>
           <TopBar
             isFocus={isFocus}
@@ -137,7 +139,7 @@ export const TableComponentView = withAnnotation({
                       <tr key={rowMapping.get(row)}>
                         {
                           row.cells.map(cell => {
-                            return adapter.slotRender(cell, children => {
+                            return adapter.slotRender(cell.slot, children => {
                               return createVNode('td', {
                                 key: cell.id
                               }, children)
@@ -188,6 +190,7 @@ export const tableComponentLoader: ComponentLoader = {
             ContentType.BlockComponent,
           ])
           arr.push({
+            id: v4(),
             slot,
             rowspan: cell.rowSpan,
             colspan: cell.colSpan
@@ -217,6 +220,7 @@ export const tableComponentLoader: ComponentLoader = {
             ContentType.BlockComponent,
           ])
           arr.push({
+            id: v4(),
             slot,
             rowspan: cell.rowSpan,
             colspan: cell.colSpan
@@ -238,7 +242,7 @@ export const tableComponentLoader: ComponentLoader = {
 
     const cells = autoComplete(bodies)
 
-    let layoutWidth: number[] | null = null
+    let layoutWidth: number[] = []
 
     try {
       const columnWidth = JSON.parse(element.dataset.layoutWidth || '')
@@ -249,88 +253,26 @@ export const tableComponentLoader: ComponentLoader = {
       //
     }
 
-    if (!layoutWidth) {
-      layoutWidth = Array.from<number>({ length: cells[0].length }).fill(100)
+    const length = cells.table[0].length
+
+    for (let i = 0; i < length; i++) {
+      layoutWidth[i] = layoutWidth[i] || 100
     }
+
+    layoutWidth.length = length
 
 
     return new TableComponent(textbus, {
-      columnsConfig: [],
-      mergeConfig: [],
-      rows: [] // TODO：这里内容未添加
+      columnsConfig: layoutWidth,
+      mergeConfig: cells.mergedConfig,
+      rows: cells.table.map(i => {
+        return {
+          height: 30,
+          cells: i
+        }
+      })
     })
   }
 }
 
 
-export function autoComplete(table: TableCellConfig[][]) {
-  const newTable: TableCellConfig[][] = []
-
-  table.forEach((tr, rowIndex) => {
-    if (!newTable[rowIndex]) {
-      newTable[rowIndex] = []
-    }
-    const row = newTable[rowIndex]
-
-    let startColumnIndex = 0
-
-    tr.forEach(td => {
-      while (row[startColumnIndex]) {
-        startColumnIndex++
-      }
-
-      let maxColspan = 1
-
-      while (maxColspan < td.colspan) {
-        if (!row[startColumnIndex + maxColspan]) {
-          maxColspan++
-        } else {
-          break
-        }
-      }
-
-      td.colspan = maxColspan
-
-      for (let i = rowIndex, len = td.rowspan + rowIndex; i < len; i++) {
-        if (!newTable[i]) {
-          newTable[i] = []
-        }
-        const row = newTable[i]
-
-        for (let j = startColumnIndex, max = startColumnIndex + maxColspan; j < max; j++) {
-          row[j] = td
-        }
-      }
-
-      startColumnIndex += maxColspan
-    })
-  })
-
-  const maxColumns = Math.max(...newTable.map(i => i.length))
-  newTable.forEach(tr => {
-    for (let i = 0; i < maxColumns; i++) {
-      if (!tr[i]) {
-        tr[i] = {
-          rowspan: 1,
-          colspan: 1,
-          slot: new Slot([
-            ContentType.BlockComponent
-          ])
-        }
-      }
-    }
-  })
-
-  const recordCells: TableCellConfig[] = []
-
-  return newTable.map(tr => {
-    return tr.filter(td => {
-      const is = recordCells.includes(td)
-      if (is) {
-        return false
-      }
-      recordCells.push(td)
-      return true
-    })
-  })
-}
