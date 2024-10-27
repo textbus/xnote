@@ -20,6 +20,10 @@ import { FontFamilyTool } from '../_common/font-family.tool'
 import { EditorService } from '../../services/editor.service'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { LinkTool } from '../_common/link.tool'
+import { MergeCellsTool } from '../_common/table/merge-cells.tool'
+import { SplitCellsTool } from '../_common/table/split-cells.tool'
+import { CellBackgroundTool } from '../_common/table/cell-background.tool'
+import { CellAlignTool } from '../_common/table/cell-align.tool'
 
 export const Toolbar = withAnnotation({
   providers: [RefreshService]
@@ -154,6 +158,18 @@ export const Toolbar = withAnnotation({
         display: editorService.hideInlineToolbar ? 'none' : '',
         transitionDuration: p.transitionDuration + 's'
       }}>
+        <ToolbarItem>
+          <MergeCellsTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <SplitCellsTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <CellBackgroundTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <CellAlignTool/>
+        </ToolbarItem>
         <ToolbarItem>
           <BlockTool/>
         </ToolbarItem>
