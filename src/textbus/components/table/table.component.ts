@@ -9,7 +9,7 @@ import {
   onGetRanges,
   Registry,
   Selection,
-  Slot,
+  Slot, SlotRange,
   Subject,
   Textbus,
   useContext,
@@ -20,7 +20,7 @@ import { v4 } from 'uuid'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { TableSelection } from './components/selection-mask'
 import { useBlockContent } from '../../hooks/use-block-content'
-import { applyRectangles, findNonIntersectingRectangles, Rectangle } from './tools/merge'
+import { applyRectangles, findNonIntersectingRectangles, getMaxRectangle, Rectangle, RenderRow } from './tools/merge'
 
 export interface Cell {
   id: string
@@ -92,9 +92,12 @@ export class TableComponent extends Component<TableComponentState> {
   focus = new Subject<boolean>()
   tableSelection = createSignal<TableSelection | null>(null)
 
+  private normalizedData: RenderRow[] = []
+
   override getSlots(): Slot[] {
-    // TODO: 这里没排除已合并的单元格
-    return this.state.rows.map(i => [...i.cells].map(i => i.slot)).flat()
+    return this.normalizedData.map(item => {
+      return item.cells.filter(i => i.visible).map(i => i.raw.slot)
+    }).flat()
   }
 
   merge(startCell: Cell, endCell: Cell) {
@@ -110,28 +113,101 @@ export class TableComponent extends Component<TableComponentState> {
     }
   }
 
+  getMaxRectangle(startSlot: Slot, endSlot: Slot): Rectangle | null {
+    let index1 = -1
+    let index2 = -1
+
+    let x1 = -1
+    let x2 = -1
+    let y1 = -1
+    let y2 = -1
+
+    let index = 0
+    for (let i = 0; i < this.state.rows.length; i++) {
+      const row = this.state.rows[i]
+      for (let j = 0; j < row.cells.length; j++) {
+        const item = row.cells[j]
+        if (item.slot === startSlot) {
+          index1 = index
+          x1 = j
+          y1 = i
+        }
+        if (item.slot === endSlot) {
+          index2 = index
+          x2 = j
+          y2 = i
+        }
+        index++
+      }
+    }
+    if (index1 === -1 || index2 === -1) {
+      return null
+    }
+
+    if (x1 > x2) {
+      [x1, x2] = [x2, x1]
+    }
+    if (y1 > y2) {
+      [y1, y2] = [y2, y1]
+    }
+
+    return getMaxRectangle(new Rectangle(x1, y1, x2 + 1, y2 + 1), this.getMergedRectangles())
+  }
+
+  getSelectedNormalizedSlots(startSlot: Slot, endSlot: Slot): RenderRow[] {
+    const rectangle = this.getMaxRectangle(startSlot, endSlot)
+    if (!rectangle) {
+      return []
+    }
+    return this.getSelectedNormalizedSlotsByRectangle(rectangle)
+  }
+
+  getSelectedNormalizedSlotsByRectangle(rectangle: Rectangle) {
+    return this.normalizedData.slice(rectangle.y1, rectangle.y2).map(item => {
+      return {
+        row: item.row,
+        cells: item.cells.slice(rectangle.x1, rectangle.x2)
+      }
+    })
+  }
+
+  getCellBySlot(slot: Slot): Cell | null {
+    for (const row of this.state.rows) {
+      for (const cell of row.cells) {
+        if (cell.slot === slot) {
+          return cell
+        }
+      }
+    }
+    return null
+  }
+
   split(startCell: Cell) {
     Reflect.deleteProperty(this.state.mergeConfig, startCell.id)
   }
 
   getNormalizedData() {
+    if (!this.changeMarker.dirty) {
+      return this.normalizedData
+    }
+
+    const nonIntersectingRectangles = this.getMergedRectangles()
+    this.normalizedData = applyRectangles(this.state.rows, nonIntersectingRectangles)
+    return this.normalizedData
+  }
+
+  private getMergedRectangles() {
     const rectangles: Rectangle[] = []
     Object.entries(this.state.mergeConfig).forEach(([key, value]) => {
       const p1 = this.getCoordinateById(key)
       if (p1) {
         const p2 = this.getCoordinateById(value)
         if (p2) {
-          rectangles.push(new Rectangle(p1[0], p1[1], p2[0], p2[1]))
+          rectangles.push(new Rectangle(p1[0], p1[1], p2[0] + 1, p2[1] + 1))
         }
       }
     })
-    const nonIntersectingRectangles = findNonIntersectingRectangles(rectangles)
-    return applyRectangles(this.state.rows, nonIntersectingRectangles).map(i => {
-      return {
-        rawRow: i.row,
-        cells: i.cells.filter(j => j.visible)
-      }
-    })
+    return findNonIntersectingRectangles(rectangles)
   }
 
   private getCoordinateById(id: string) {
@@ -169,78 +245,40 @@ export class TableComponent extends Component<TableComponentState> {
       sub.unsubscribe()
     })
 
-    const findPosition = (slot: Slot) => {
+    const getSelfSlot = (slot: Slot): Slot | null => {
       let cell: Slot | null = slot
       while (cell?.parent && cell.parent !== this) {
         cell = cell.parentSlot
       }
-      if (cell) {
-        const rows = this.state.rows
-        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-          const row = rows[rowIndex].cells
-          for (let colIndex = 0; colIndex < row.length; colIndex++) {
-            const item = row[colIndex]
-            if (item.slot === cell) {
-              return {
-                rowIndex,
-                colIndex
-              }
-            }
-          }
-        }
-      }
-      return null
-    }
-
-    const select = (ev: GetRangesEvent<any>, selectPosition: TableSelection | null) => {
-      this.tableSelection.set(selectPosition)
-      if (selectPosition) {
-        const cells: Slot[] = []
-        this.state.rows.slice(selectPosition.startRow, selectPosition.endRow).forEach(row => {
-          // TODO: 这里没有排除已合并的单元格
-          cells.push(...row.cells.slice(selectPosition.startColumn, selectPosition.endColumn).map(i => i.slot))
-        })
-        ev.useRanges(cells.map(i => {
-          return {
-            slot: i,
-            startIndex: 0,
-            endIndex: i.length
-          }
-        }))
-        ev.preventDefault()
-      }
+      return cell
     }
 
     onGetRanges(ev => {
-      const startPosition = findPosition(selection.startSlot!)
-      const endPosition = findPosition(selection.endSlot!)
+      const start = getSelfSlot(selection.startSlot!)
+      const end = getSelfSlot(selection.endSlot!)
 
-      if (startPosition && endPosition) {
-        if (startPosition.rowIndex === endPosition.rowIndex && startPosition.colIndex === endPosition.colIndex) {
-          if (selection.startSlot === selection.endSlot && selection.startOffset === 0 && selection.endOffset === selection.startSlot?.length) {
-
-            select(ev, {
-              startColumn: startPosition.colIndex,
-              startRow: startPosition.rowIndex,
-              endColumn: endPosition.colIndex + 1,
-              endRow: endPosition.rowIndex + 1
+      if (start && end) {
+        const rect = this.getMaxRectangle(start, end)
+        if (rect) {
+          this.tableSelection.set({
+            startColumn: rect.x1,
+            endColumn: rect.x2,
+            startRow: rect.y1,
+            endRow: rect.y2
+          })
+          const selectedSlots = this.getSelectedNormalizedSlotsByRectangle(rect)
+          ev.useRanges(selectedSlots.map(item => {
+            return item.cells.filter(i => {
+              return i.visible
+            }).map<SlotRange>(i => {
+              return {
+                startIndex: 0,
+                endIndex: i.raw.slot.length,
+                slot: i.raw.slot
+              }
             })
-            return
-          }
-          select(ev, null)
-          return
+          }).flat())
         }
-        const [startColumn, endColumn] = [startPosition.colIndex, endPosition.colIndex].sort((a, b) => a - b)
-        const [startRow, endRow] = [startPosition.rowIndex, endPosition.rowIndex].sort((a, b) => a - b)
-
-        select(ev, {
-          startColumn,
-          startRow,
-          endColumn: endColumn + 1,
-          endRow: endRow + 1
-        })
-      } else {
-        select(ev, null)
       }
     })
   }

@@ -18,6 +18,7 @@ import { useOutput } from '../../hooks/use-output'
 import { EditorService } from '../../../services/editor.service'
 import { autoComplete, TableCellConfig } from './tools/complete'
 import { v4 } from 'uuid'
+import { RenderRow } from './tools/merge'
 // import { SlotRender } from '../SlotRender'
 
 export const TableComponentView = withAnnotation({
@@ -42,7 +43,7 @@ export const TableComponentView = withAnnotation({
 
   const isResizeColumn = createSignal(false)
 
-  const rowMapping = new WeakMap<Row, number>()
+  const rowMapping = new WeakMap<RenderRow, number>()
 
   const readonly = useReadonly()
   const output = useOutput()
@@ -52,10 +53,10 @@ export const TableComponentView = withAnnotation({
     // const rows = state.rows
 
     normalizedData.forEach(row => {
-      if (rowMapping.has(row.rawRow)) {
+      if (rowMapping.has(row)) {
         return
       }
-      rowMapping.set(row.rawRow, Math.random())
+      rowMapping.set(row, Math.random())
     })
 
     if (readonly() || output()) {
@@ -83,7 +84,7 @@ export const TableComponentView = withAnnotation({
                 {
                   normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row.rawRow)}>
+                      <tr key={rowMapping.get(row)}>
                         {
                           row.cells.map(cell => {
                             return adapter.slotRender(cell.raw.slot, children => {
@@ -139,9 +140,11 @@ export const TableComponentView = withAnnotation({
                 {
                   normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row.rawRow)}>
+                      <tr key={rowMapping.get(row)}>
                         {
-                          row.cells.map(cell => {
+                          row.cells.filter(i => {
+                            return i.visible
+                          }).map(cell => {
                             return adapter.slotRender(cell.raw.slot, children => {
                               return createVNode('td', {
                                 key: cell.raw.id,

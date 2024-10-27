@@ -45,6 +45,19 @@ export function findNonIntersectingRectangles(rectangles: Rectangle[]): Rectangl
   return merged
 }
 
+export function getMaxRectangle(start: Rectangle, rectangles: Rectangle[]): Rectangle {
+  let merged = start
+  let remaining: Rectangle[] = [...rectangles]
+
+  while (remaining.length > 0) {
+    let current = remaining.shift()!
+    if (current.intersects(merged)) {
+      merged = current.merge(merged)
+    }
+  }
+  return merged
+}
+
 export interface RenderRow {
   row: Row
   cells: RenderCell[]
@@ -74,11 +87,11 @@ export function applyRectangles(rows: Row[], rectangles: Rectangle[]) {
   rectangles.forEach(rect => {
     const { x1, y1, x2, y2 } = rect
 
-    const rowspan = y2 - y1 + 1
-    const colspan = x2 - x1 + 1
+    const rowspan = y2 - y1
+    const colspan = x2 - x1
 
-    for (let i = y1; i <= y2; i++) {
-      for (let j = x1; j <= x2; j++) {
+    for (let i = y1; i < y2; i++) {
+      for (let j = x1; j < x2; j++) {
         const item = table[i].cells[j]
         if (i === y1 && j === x1) {
           item.visible = true

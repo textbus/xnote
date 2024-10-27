@@ -48,7 +48,7 @@ export function SelectionMask(props: SelectionMaskProps) {
       if (selection.startRow > 0) {
         heightCompensation = -1
       }
-      if (selection.endRow === state.rows.length) {
+      if (selection.endRow + 1 === state.rows.length) {
         heightCompensation += 0.5
       }
       const trs = Array.from(props.tableRef.current!.rows)
