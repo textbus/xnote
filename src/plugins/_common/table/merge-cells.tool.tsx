@@ -18,14 +18,7 @@ export function MergeCellsTool() {
   function merge() {
     const commonAncestorComponent = selection.commonAncestorComponent
     if (commonAncestorComponent instanceof TableComponent) {
-      const scopes = selection.getSelectedScopes()
-      if (scopes.length) {
-        const start = commonAncestorComponent.getCellBySlot(scopes.at(0)!.slot)
-        const end = commonAncestorComponent.getCellBySlot(scopes.at(-1)!.slot)
-        if (start && end) {
-          commonAncestorComponent.merge(start, end)
-        }
-      }
+      commonAncestorComponent.mergeCellBySelection()
     }
   }
 

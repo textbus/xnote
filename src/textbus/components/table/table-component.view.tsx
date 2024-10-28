@@ -27,7 +27,7 @@ export const TableComponentView = withAnnotation({
   const adapter = inject(DomAdapter)
   const editorService = inject(EditorService)
   const isFocus = createSignal(false)
-  const layoutWidth = createSignal(props.component.state.columnsConfig.slice())
+  const layoutWidth = createSignal(props.component.state.columnsConfig)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
     if (!b) {
@@ -39,11 +39,15 @@ export const TableComponentView = withAnnotation({
     subscription.unsubscribe()
   })
 
+  function resetIgnore() {
+    props.component.ignoreSelectionChanges = false
+  }
+
   const tableRef = createRef<HTMLTableElement>()
 
   const isResizeColumn = createSignal(false)
 
-  const rowMapping = new WeakMap<RenderRow, number>()
+  const rowMapping = new WeakMap<Row, number>()
 
   const readonly = useReadonly()
   const output = useOutput()
@@ -53,10 +57,10 @@ export const TableComponentView = withAnnotation({
     // const rows = state.rows
 
     normalizedData.forEach(row => {
-      if (rowMapping.has(row)) {
+      if (rowMapping.has(row.row)) {
         return
       }
-      rowMapping.set(row, Math.random())
+      rowMapping.set(row.row, Math.random())
     })
 
     if (readonly() || output()) {
@@ -84,7 +88,7 @@ export const TableComponentView = withAnnotation({
                 {
                   normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row)}>
+                      <tr key={rowMapping.get(row.row)}>
                         {
                           row.cells.map(cell => {
                             return adapter.slotRender(cell.raw.slot, children => {
@@ -136,11 +140,11 @@ export const TableComponentView = withAnnotation({
                     })
                   }
                 </colgroup>
-                <tbody>
+                <tbody onMousedown={resetIgnore}>
                 {
                   normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row)}>
+                      <tr key={rowMapping.get(row.row)}>
                         {
                           row.cells.filter(i => {
                             return i.visible

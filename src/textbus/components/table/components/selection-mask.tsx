@@ -37,6 +37,7 @@ export function SelectionMask(props: SelectionMaskProps) {
 
   function update() {
     const selection = props.component.tableSelection()
+    console.log(selection)
     const state = props.component.state
     if (selection) {
       let topCompensation = 0.5
@@ -53,11 +54,15 @@ export function SelectionMask(props: SelectionMaskProps) {
       }
       const trs = Array.from(props.tableRef.current!.rows)
       updateStyles(draft => {
+
+        const height = trs[selection.endRow - 1].offsetHeight ||
+          (trs[selection.endRow - 1].children[0] as HTMLElement)?.offsetHeight || 0
+
         draft.visible = true
         draft.left = sum(state.columnsConfig.slice(0, selection.startColumn))
         draft.top = trs[selection.startRow].offsetTop + topCompensation
         draft.width = sum(state.columnsConfig.slice(selection.startColumn, selection.endColumn)) - 1 + 'px'
-        draft.height = trs[selection.endRow - 1].offsetTop + trs[selection.endRow - 1].offsetHeight + heightCompensation - draft.top + 'px'
+        draft.height = trs[selection.endRow - 1].offsetTop + height + heightCompensation - draft.top + 'px'
       })
     } else {
       updateStyles(draft => {

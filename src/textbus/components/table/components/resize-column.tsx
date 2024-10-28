@@ -30,6 +30,11 @@ export function ResizeColumn(props: ResizeColumnProps) {
     }).add(fromEvent(document, 'mouseup').subscribe(() => {
       ignoreMove = false
     })).add(
+      fromEvent(tableRef.current!.parentNode as HTMLElement, 'mouseleave').subscribe(() => {
+        if (!isDrag) {
+          dragLineRef.current!.style.display = 'none'
+        }
+      }),
       fromEvent<MouseEvent>(tableRef.current!.parentNode as HTMLElement, 'mousemove').subscribe(ev => {
         if (isDrag || ignoreMove) {
           return

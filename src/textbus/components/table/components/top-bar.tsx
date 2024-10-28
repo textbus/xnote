@@ -1,6 +1,6 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createSignal, getCurrentInstance, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
-import { Slot, Selection, Textbus, fromEvent } from '@textbus/core'
+import { delay, fromEvent } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'
@@ -18,9 +18,7 @@ export interface TopBarProps {
 
 export function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
-  const selection = inject(Selection)
   const tableService = inject(TableService)
-  const textbus = inject(Textbus)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
 
   function selectColumn(index: number, isMultiple: boolean) {
@@ -38,27 +36,12 @@ export function TopBar(props: TopBarProps) {
       })
     }
 
-    const range = selectedColumnRange()!
-    const [startIndex, endIndex] = [range.startIndex, range.endIndex].sort((a, b) => a - b)
+    let { startIndex, endIndex } = selectedColumnRange()!
 
-    const selectedSlots: Slot[] = []
-    const rows = props.component.state.rows
-    rows.forEach(row => {
-      selectedSlots.push(...row.cells.slice(startIndex, endIndex + 1).map(i => i.slot))
-    })
-
-    textbus.nextTick(() => {
-      selection.setSelectedRanges(selectedSlots.map(i => {
-        return {
-          slot: i,
-          startIndex: 0,
-          endIndex: i.length
-        }
-      }))
-
-      selection.restore()
-      textbus.focus()
-    })
+    if (startIndex > endIndex) {
+      [startIndex, endIndex] = [endIndex, startIndex]
+    }
+    props.component.selectColumn(startIndex, endIndex + 1)
   }
 
   let mouseDownFromToolbar = false
@@ -150,6 +133,7 @@ export function TopBar(props: TopBarProps) {
                             <ToolbarItem>
                               <Button onClick={() => {
                                 props.component.deleteColumn(index)
+                                props.component.tableSelection.set(null)
                                 deleteIndex.set(null)
                               }}><span class="xnote-icon-bin"></span></Button>
                             </ToolbarItem>
@@ -171,7 +155,7 @@ export function TopBar(props: TopBarProps) {
               <tr>
                 {
                   props.layoutWidth().map((i, index) => {
-                    return <td onClick={ev => {
+                    return <td onMousedown={ev => ev.preventDefault()} onClick={ev => {
                       mouseDownFromToolbar = true
                       if (!ev.shiftKey) {
                         deleteIndex.set(index)

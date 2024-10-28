@@ -18,19 +18,27 @@ export function SplitCellsTool() {
   function split() {
     const commonAncestorComponent = selection.commonAncestorComponent
     if (commonAncestorComponent instanceof TableComponent) {
-      const scopes = selection.getSelectedScopes()
-      if (scopes.length) {
-        const start = commonAncestorComponent.getCellBySlot(scopes.at(0)!.slot)
-        const end = commonAncestorComponent.getCellBySlot(scopes.at(-1)!.slot)
-        // Re
-      }
+      commonAncestorComponent.splitCellsBySelection()
     }
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
     const commonAncestorComponent = selection.commonAncestorComponent
     update(draft => {
-      draft.disabled = !(commonAncestorComponent instanceof TableComponent)
+      if (commonAncestorComponent instanceof TableComponent) {
+        const slots = commonAncestorComponent.getSelectedNormalizedSlots()
+        if (slots) {
+          for (const item of slots) {
+            for (const cell of item.cells) {
+              if (cell.visible && cell.colspan > 1 || cell.colspan > 1) {
+                draft.disabled = false
+                return
+              }
+            }
+          }
+        }
+      }
+      draft.disabled = true
     })
   })
 

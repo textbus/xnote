@@ -9,7 +9,7 @@ import {
   Signal,
   StaticRef
 } from '@viewfly/core'
-import { Slot, Selection, Textbus, fromEvent } from '@textbus/core'
+import { Slot, Selection, Textbus, fromEvent, delay } from '@textbus/core'
 
 import css from './left-bar.scoped.scss'
 import { TableComponent } from '../table.component'
@@ -39,8 +39,9 @@ export function LeftBar(props: TopBarProps) {
     const actionBarRows = actionBarRef.current!.rows
     setTimeout(() => {
       Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
-        insertBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
-        actionBarRows.item(i)!.style.height = tr.getBoundingClientRect().height + 'px'
+        const height = tr.offsetHeight || (tr.children[0] as HTMLTableCellElement)?.offsetHeight || 0
+        insertBarRows.item(i)!.style.height = height + 'px'
+        actionBarRows.item(i)!.style.height = height + 'px'
       })
     })
   })
@@ -84,40 +85,34 @@ export function LeftBar(props: TopBarProps) {
       })
     }
 
-    const range = selectedRowRange()!
-    const [startIndex, endIndex] = [range.startIndex, range.endIndex].sort((a, b) => a - b)
-
-    const selectedSlots: Slot[] = []
-    const rows = props.component.state.rows
-    rows.slice(startIndex, endIndex + 1).forEach(row => {
-      selectedSlots.push(...row.cells.map(i => i.slot))
-    })
-    textbus.nextTick(() => {
-      selection.setSelectedRanges(selectedSlots.map(i => {
-        return {
-          slot: i,
-          startIndex: 0,
-          endIndex: i.length
-        }
-      }))
-      selection.restore()
-      textbus.focus()
-    })
+    let { startIndex, endIndex } = selectedRowRange()!
+    if (startIndex > endIndex) {
+      [startIndex, endIndex] = [endIndex, startIndex]
+    }
+    props.component.selectRow(startIndex, endIndex + 1)
   }
 
   return withScopedCSS(css, () => {
-    const { state, tableSelection } = props.component
-
-    const position = tableSelection()
+    const position = props.component.tableSelection()
+    const normalizedData = props.component.getNormalizedData()
     return (
       <div class={['left-bar', { active: props.isFocus() }]}>
         <div class="insert-bar">
           <table ref={insertBarRef}>
             <tbody>
             {
-              state.rows.map((_, index) => {
+              normalizedData.map((row, index) => {
+                let b = false
+                for (const item of row.cells) {
+                  if (item.visible) {
+                    b = true
+                    break
+                  }
+                }
                 return (
-                  <tr>
+                  <tr style={{
+                    display: b ? '' : 'none'
+                  }}>
                     <td>
                       <div class="toolbar-item">
                         {
@@ -157,6 +152,7 @@ export function LeftBar(props: TopBarProps) {
                           <ToolbarItem>
                             <Button onClick={() => {
                               props.component.deleteRow(index)
+                              props.component.tableSelection.set(null)
                               deleteIndex.set(null)
                             }}><span class="xnote-icon-bin"></span></Button>
                           </ToolbarItem>
@@ -174,9 +170,18 @@ export function LeftBar(props: TopBarProps) {
           <table ref={actionBarRef}>
             <tbody>
             {
-              props.component.state.rows.map((_, index) => {
-                return <tr>
-                  <td onMousedown={(ev) => {
+              normalizedData.map((row, index) => {
+                let b = false
+                for (const item of row.cells) {
+                  if (item.visible) {
+                    b = true
+                    break
+                  }
+                }
+                return <tr style={{
+                  display: b ? '' : 'none'
+                }}>
+                  <td onMousedown={ev => ev.preventDefault()} onClick={(ev) => {
                     mouseDownFromToolbar = true
                     if (!ev.shiftKey) {
                       deleteIndex.set(index)
@@ -187,7 +192,7 @@ export function LeftBar(props: TopBarProps) {
                   }} class={{
                     active: !position ? false :
                       (position.startColumn === 0 &&
-                        position.endColumn === state.columnsConfig.length &&
+                        position.endColumn === props.component.state.columnsConfig.length &&
                         index >= position.startRow && index < position.endRow
                       )
                   }}/>

@@ -1,38 +1,30 @@
 import { inject, onUnmounted, createSignal } from '@viewfly/core'
-import { Commander, Query, QueryStateType } from '@textbus/core'
+import { Query, QueryStateType, Selection } from '@textbus/core'
 
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { Button } from '../../../components/button/button'
 import { MenuItem } from '../../../components/menu-item/menu-item'
 import { RefreshService } from '../../../services/refresh.service'
-import { fontSizeFormatter } from '../../../textbus/formatters/font-size'
+import { cellAlignAttr } from '../../../textbus/attributes/cell-align.attr'
+import { TableComponent } from '../../../textbus/components/table/table.component'
 
 export function CellAlignTool() {
-  const currentFontSize = createSignal('')
-  const fontSizeOptions = [
-    '',
-    '12px',
-    '13px',
-    '14px',
-    '15px',
-    '16px',
-    '18px',
-    '20px',
-    '22px',
-    '26px',
-    '30px',
-    '36px',
-    '48px',
-    '72px',
-  ]
+  const currentValue = createSignal('')
 
-  const commander = inject(Commander)
+  const selection = inject(Selection)
 
   function check(v: string) {
-    if (v) {
-      commander.applyFormat(fontSizeFormatter, v)
-    } else {
-      commander.unApplyFormat(fontSizeFormatter)
+    const commonAncestorComponent = selection.commonAncestorComponent
+    if (commonAncestorComponent instanceof TableComponent) {
+      const slots = commonAncestorComponent.getSelectedNormalizedSlots()!
+
+      slots.forEach(item => {
+        item.cells.forEach(cell => {
+          if (cell.visible) {
+            cell.raw.slot.setAttribute(cellAlignAttr, v)
+          }
+        })
+      })
     }
   }
 
@@ -42,10 +34,10 @@ export function CellAlignTool() {
   const highlight = createSignal(false)
 
   const subscription = refreshService.onRefresh.subscribe(() => {
-    const result = query.queryFormat(fontSizeFormatter)
+    const result = query.queryAttribute(cellAlignAttr)
     const isHighlight = result.state === QueryStateType.Enabled
     highlight.set(isHighlight)
-    currentFontSize.set(isHighlight ? result.value! : '')
+    currentValue.set(isHighlight ? result.value! : 'middle')
   })
 
   onUnmounted(() => {
@@ -54,13 +46,21 @@ export function CellAlignTool() {
 
   return () => {
     return (
-      <Dropdown onCheck={check} menu={fontSizeOptions.map(i => {
-        return {
-          label: <MenuItem checked={currentFontSize() === i}>{i || '默认'}</MenuItem>,
-          value: i
+      <Dropdown onCheck={check} menu={[
+        {
+          label: <MenuItem checked={currentValue() === 'top'} icon={<span class="xnote-icon-align-top"></span>}>顶部对齐</MenuItem>,
+          value: 'top'
+        },
+        {
+          label: <MenuItem checked={currentValue() === 'middle'} icon={<span class="xnote-icon-align-middle"></span>}>垂直居中</MenuItem>,
+          value: 'middle'
+        },
+        {
+          label: <MenuItem checked={currentValue() === 'bottom'} icon={<span class="xnote-icon-align-bottom"></span>}>底部对齐</MenuItem>,
+          value: 'bottom'
         }
-      })}>
-        <Button arrow={true} highlight={highlight()}><span class="xnote-icon-align-top"></span></Button>
+      ]}>
+        <Button arrow={true} highlight={highlight()}><span class={'xnote-icon-align-' + (currentValue() || 'middle')}></span></Button>
       </Dropdown>
     )
   }

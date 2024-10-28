@@ -88,6 +88,7 @@ import {
   stepComponentLoader,
   StepComponentView
 } from './textbus/components/step/step-component.view'
+import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-align.attr'
 
 export interface EditorConfig extends TextbusConfig {
   content?: string,
@@ -167,6 +168,7 @@ export class Editor extends Textbus {
         underlineFormatLoader
       ],
       attributeLoaders: [
+        cellAlignAttrLoader,
         headingAttrLoader,
         textAlignAttrLoader,
         textIndentAttrLoader
@@ -249,6 +251,7 @@ export class Editor extends Textbus {
         underlineFormatter
       ],
       attributes: [
+        cellAlignAttr,
         headingAttr,
         textAlignAttr,
         textIndentAttr

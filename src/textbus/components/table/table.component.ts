@@ -2,7 +2,6 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  GetRangesEvent,
   onDestroy,
   onFocusIn,
   onFocusOut,
@@ -92,6 +91,8 @@ export class TableComponent extends Component<TableComponentState> {
   focus = new Subject<boolean>()
   tableSelection = createSignal<TableSelection | null>(null)
 
+  ignoreSelectionChanges = false
+
   private normalizedData: RenderRow[] = []
 
   override getSlots(): Slot[] {
@@ -100,15 +101,43 @@ export class TableComponent extends Component<TableComponentState> {
     }).flat()
   }
 
-  merge(startCell: Cell, endCell: Cell) {
-    const slots = this.getSlots()
-    const index1 = slots.findIndex(i => i === startCell.slot)
-    const index2 = slots.findIndex(i => i === endCell.slot)
-    if (index1 > -1 && index2 > -1) {
-      if (index1 < index2) {
-        this.state.mergeConfig[startCell.id] = endCell.id
-      } else {
-        this.state.mergeConfig[endCell.id] = startCell.id
+  mergeCellBySelection() {
+    const slots = this.getSelectedNormalizedSlots()
+    if (slots) {
+      const start = slots.at(0)?.cells.at(0)?.raw
+      const end = slots.at(-1)?.cells.at(-1)?.raw
+      if (start && end) {
+        slots.forEach(item => {
+          item.cells.forEach(cell => {
+            if (cell.raw.id === start.id) {
+              return
+            }
+            cell.raw.slot.cleanFormats()
+            cell.raw.slot.cleanAttributes()
+            cell.raw.slot.retain(0)
+            cell.raw.slot.delete(cell.raw.slot.length)
+
+            Reflect.deleteProperty(this.state.mergeConfig, cell.raw.id)
+          })
+        })
+        this.state.mergeConfig[start.id] = end.id
+      }
+    }
+    this.selection.collapse(true)
+  }
+
+  splitCellsBySelection() {
+    const slots = this.getSelectedNormalizedSlots()
+    if (slots) {
+      slots.forEach(item => {
+        item.cells.forEach(cell => {
+          Reflect.deleteProperty(this.state.mergeConfig, cell.raw.id)
+        })
+      })
+      const start = slots.at(0)?.cells.at(0)?.raw
+      const end = slots.at(-1)?.cells.at(-1)?.raw
+      if (start && end) {
+        this.selection.setBaseAndExtent(start.slot, 0, end.slot, end.slot.length)
       }
     }
   }
@@ -154,12 +183,28 @@ export class TableComponent extends Component<TableComponentState> {
     return getMaxRectangle(new Rectangle(x1, y1, x2 + 1, y2 + 1), this.getMergedRectangles())
   }
 
-  getSelectedNormalizedSlots(startSlot: Slot, endSlot: Slot): RenderRow[] {
-    const rectangle = this.getMaxRectangle(startSlot, endSlot)
-    if (!rectangle) {
-      return []
+  getSelectedNormalizedSlots() {
+    const rect = this.getSelectedRect()
+    if (rect) {
+      return this.getSelectedNormalizedSlotsByRectangle(rect)
     }
-    return this.getSelectedNormalizedSlotsByRectangle(rectangle)
+    return null
+  }
+
+  getSelectedRect() {
+    const getSelfSlot = (slot: Slot): Slot | null => {
+      let cell: Slot | null = slot
+      while (cell?.parent && cell.parent !== this) {
+        cell = cell.parentSlot
+      }
+      return cell
+    }
+    const start = getSelfSlot(this.selection.startSlot!)
+    const end = getSelfSlot(this.selection.endSlot!)
+    if (start && end) {
+      return this.getMaxRectangle(start, end)
+    }
+    return null
   }
 
   getSelectedNormalizedSlotsByRectangle(rectangle: Rectangle) {
@@ -182,10 +227,6 @@ export class TableComponent extends Component<TableComponentState> {
     return null
   }
 
-  split(startCell: Cell) {
-    Reflect.deleteProperty(this.state.mergeConfig, startCell.id)
-  }
-
   getNormalizedData() {
     if (!this.changeMarker.dirty) {
       return this.normalizedData
@@ -194,6 +235,84 @@ export class TableComponent extends Component<TableComponentState> {
     const nonIntersectingRectangles = this.getMergedRectangles()
     this.normalizedData = applyRectangles(this.state.rows, nonIntersectingRectangles)
     return this.normalizedData
+  }
+
+  selectRow(startIndex: number, endIndex: number = startIndex + 1) {
+    if (startIndex > endIndex) {
+      [startIndex, endIndex] = [endIndex, startIndex]
+    }
+    if (startIndex === endIndex) {
+      endIndex++
+    }
+    const selectedSlots: Slot[] = []
+    const rows = this.getNormalizedData()
+    rows.slice(startIndex, endIndex).forEach(row => {
+      selectedSlots.push(...row.cells.filter(i => i.visible).map(i => i.raw.slot))
+    })
+    this.ignoreSelectionChanges = true
+    const slotRanges = selectedSlots.map(i => {
+      return {
+        slot: i,
+        startIndex: 0,
+        endIndex: i.length
+      }
+    })
+    this.selection.setSelectedRanges(slotRanges)
+
+    this.tableSelection.set({
+      startColumn: 0,
+      endColumn: this.state.columnsConfig.length,
+      startRow: startIndex,
+      endRow: endIndex,
+    })
+
+    this.focus.next(true)
+
+    if (slotRanges.length) {
+      setTimeout(() => {
+        this.selection.restore()
+        this.textbus.focus()
+      })
+    }
+  }
+
+  selectColumn(startIndex: number, endIndex: number = startIndex + 1) {
+    if (startIndex > endIndex) {
+      [startIndex, endIndex] = [endIndex, startIndex]
+    }
+    if (startIndex === endIndex) {
+      endIndex++
+    }
+    const selectedSlots: Slot[] = []
+    const rows = this.getNormalizedData()
+    rows.forEach(row => {
+      selectedSlots.push(...row.cells.slice(startIndex, endIndex).filter(i => i.visible).map(i => i.raw.slot))
+    })
+    this.ignoreSelectionChanges = true
+    const slotRanges = selectedSlots.map(i => {
+      return {
+        slot: i,
+        startIndex: 0,
+        endIndex: i.length
+      }
+    })
+    this.selection.setSelectedRanges(slotRanges)
+
+    this.tableSelection.set({
+      startColumn: startIndex,
+      endColumn: endIndex,
+      startRow: 0,
+      endRow: this.state.rows.length,
+    })
+    this.focus.next(true)
+    this.selection.restore()
+    this.textbus.focus()
+    // if (slotRanges.length) {
+    //   setTimeout(() => {
+    //     this.selection.restore()
+    //     this.textbus.focus()
+    //   })
+    // }
   }
 
   private getMergedRectangles() {
@@ -236,6 +355,9 @@ export class TableComponent extends Component<TableComponentState> {
     })
 
     const sub = selection.onChange.subscribe(() => {
+      if (this.ignoreSelectionChanges) {
+        return
+      }
       if (selection.commonAncestorComponent !== this || selection.isCollapsed) {
         this.tableSelection.set(null)
       }
@@ -245,39 +367,32 @@ export class TableComponent extends Component<TableComponentState> {
       sub.unsubscribe()
     })
 
-    const getSelfSlot = (slot: Slot): Slot | null => {
-      let cell: Slot | null = slot
-      while (cell?.parent && cell.parent !== this) {
-        cell = cell.parentSlot
-      }
-      return cell
-    }
-
     onGetRanges(ev => {
-      const start = getSelfSlot(selection.startSlot!)
-      const end = getSelfSlot(selection.endSlot!)
-
-      if (start && end) {
-        const rect = this.getMaxRectangle(start, end)
-        if (rect) {
-          this.tableSelection.set({
-            startColumn: rect.x1,
-            endColumn: rect.x2,
-            startRow: rect.y1,
-            endRow: rect.y2
+      if (this.selection.isCollapsed || this.ignoreSelectionChanges) {
+        return
+      }
+      const rect = this.getSelectedRect()
+      if (rect) {
+        this.tableSelection.set({
+          startColumn: rect.x1,
+          endColumn: rect.x2,
+          startRow: rect.y1,
+          endRow: rect.y2
+        })
+        const selectedSlots = this.getSelectedNormalizedSlotsByRectangle(rect)
+        const slotRanges = selectedSlots.map(item => {
+          return item.cells.filter(i => {
+            return i.visible
+          }).map<SlotRange>(i => {
+            return {
+              startIndex: 0,
+              endIndex: i.raw.slot.length,
+              slot: i.raw.slot
+            }
           })
-          const selectedSlots = this.getSelectedNormalizedSlotsByRectangle(rect)
-          ev.useRanges(selectedSlots.map(item => {
-            return item.cells.filter(i => {
-              return i.visible
-            }).map<SlotRange>(i => {
-              return {
-                startIndex: 0,
-                endIndex: i.raw.slot.length,
-                slot: i.raw.slot
-              }
-            })
-          }).flat())
+        }).flat()
+        if (slotRanges.length > 1) {
+          ev.useRanges(slotRanges)
         }
       }
     })
@@ -285,13 +400,59 @@ export class TableComponent extends Component<TableComponentState> {
 
   deleteColumn(index: number) {
     this.state.columnsConfig.splice(index, 1)
+    const mergeConfig = this.state.mergeConfig
+    const keys = Object.keys(mergeConfig)
+
     this.state.rows.forEach(row => {
+      const cell = row.cells.at(index)!
+      const before = row.cells.at(index - 1)
+      const after = row.cells.at(index + 1)
+
       row.cells.splice(index, 1)
+
+      if (keys.includes(cell.id)) {
+        if (after) {
+          mergeConfig[after.id] = mergeConfig[cell.id]
+        }
+        Reflect.deleteProperty(mergeConfig, cell.id)
+      }
+      if (before) {
+        keys.forEach(key => {
+          if (mergeConfig[key] === cell.id) {
+            mergeConfig[key] = before.id
+          }
+        })
+      }
     })
     this.selection.unSelect()
   }
 
   deleteRow(index: number) {
+    const mergeConfig = this.state.mergeConfig
+    const keys = Object.keys(mergeConfig)
+
+    const rows = this.state.rows
+    const row = rows.at(index)!
+
+    row.cells.forEach((cell, colIndex) => {
+      const before = rows.at(index - 1)?.cells.at(colIndex)!
+      const after = rows.at(index + 1)?.cells.at(colIndex)!
+
+      if (keys.includes(cell.id)) {
+        if (after) {
+          mergeConfig[after.id] = mergeConfig[cell.id]
+        }
+        Reflect.deleteProperty(mergeConfig, cell.id)
+      }
+      if (before) {
+        keys.forEach(key => {
+          if (mergeConfig[key] === cell.id) {
+            mergeConfig[key] = before.id
+          }
+        })
+      }
+    })
+
     this.state.rows.splice(index, 1)
     this.selection.unSelect()
   }
