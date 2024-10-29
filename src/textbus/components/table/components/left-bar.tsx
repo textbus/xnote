@@ -39,7 +39,8 @@ export function LeftBar(props: TopBarProps) {
     const actionBarRows = actionBarRef.current!.rows
     setTimeout(() => {
       Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
-        const height = tr.offsetHeight || (tr.children[0] as HTMLTableCellElement)?.offsetHeight || 0
+        const height = tr.offsetHeight ||
+          Math.min(...Array.from(tr.children).map<number>(i => (i as HTMLElement).offsetHeight)) || 0
         insertBarRows.item(i)!.style.height = height + 'px'
         actionBarRows.item(i)!.style.height = height + 'px'
       })
@@ -89,6 +90,7 @@ export function LeftBar(props: TopBarProps) {
     if (startIndex > endIndex) {
       [startIndex, endIndex] = [endIndex, startIndex]
     }
+    deleteIndex.set(startIndex)
     props.component.selectRow(startIndex, endIndex + 1)
   }
 
@@ -135,6 +137,11 @@ export function LeftBar(props: TopBarProps) {
                         }} onMouseleave={() => {
                           tableService.onInsertRowBefore.next(null)
                         }} class="insert-btn-wrap" onClick={() => {
+                          const cells = row.cells.filter(i => i.visible)
+                          if (cells.length < 2) {
+                            props.component.insertRow(index + row.cells.at(0)!.rowspan)
+                            return
+                          }
                           props.component.insertRow(index + 1)
                         }}>
                           <button class="insert-btn" type="button">+</button>
@@ -151,8 +158,7 @@ export function LeftBar(props: TopBarProps) {
                           visible={deleteIndex() === index}>
                           <ToolbarItem>
                             <Button onClick={() => {
-                              props.component.deleteRow(index)
-                              props.component.tableSelection.set(null)
+                              props.component.deleteRows()
                               deleteIndex.set(null)
                             }}><span class="xnote-icon-bin"></span></Button>
                           </ToolbarItem>
@@ -183,11 +189,6 @@ export function LeftBar(props: TopBarProps) {
                 }}>
                   <td onMousedown={ev => ev.preventDefault()} onClick={(ev) => {
                     mouseDownFromToolbar = true
-                    if (!ev.shiftKey) {
-                      deleteIndex.set(index)
-                    } else {
-                      deleteIndex.set(null)
-                    }
                     selectRow(index, ev.shiftKey)
                   }} class={{
                     active: !position ? false :

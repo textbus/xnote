@@ -1,4 +1,5 @@
 import {
+  Commander,
   Component,
   ComponentStateLiteral,
   ContentType,
@@ -66,6 +67,7 @@ export class TableComponent extends Component<TableComponentState> {
   }
 
   private selection = this.textbus.get(Selection)
+  private commander = this.textbus.get(Commander)
 
   constructor(textbus: Textbus, state: TableComponentState = {
     columnsConfig: Array.from<number>({ length: 5 }).fill(defaultColumnWidth),
@@ -398,62 +400,79 @@ export class TableComponent extends Component<TableComponentState> {
     })
   }
 
-  deleteColumn(index: number) {
-    this.state.columnsConfig.splice(index, 1)
-    const mergeConfig = this.state.mergeConfig
-    const keys = Object.keys(mergeConfig)
-
-    this.state.rows.forEach(row => {
-      const cell = row.cells.at(index)!
-      const before = row.cells.at(index - 1)
-      const after = row.cells.at(index + 1)
-
-      row.cells.splice(index, 1)
-
-      if (keys.includes(cell.id)) {
-        if (after) {
-          mergeConfig[after.id] = mergeConfig[cell.id]
-        }
-        Reflect.deleteProperty(mergeConfig, cell.id)
+  deleteColumns() {
+    const selection = this.tableSelection()
+    if (selection) {
+      const { startColumn, endColumn } = selection
+      if (startColumn === 0 && endColumn === this.state.columnsConfig.length) {
+        this.commander.removeComponent(this)
+        return
       }
-      if (before) {
-        keys.forEach(key => {
-          if (mergeConfig[key] === cell.id) {
-            mergeConfig[key] = before.id
+      this.state.columnsConfig.splice(startColumn, endColumn - startColumn)
+      const mergeConfig = this.state.mergeConfig
+      const keys = Object.keys(mergeConfig)
+
+      this.state.rows.forEach(row => {
+        const before = row.cells.at(startColumn - 1)
+        const after = row.cells.at(endColumn)
+        const cells = row.cells.splice(startColumn, endColumn - startColumn)
+
+        cells.forEach(cell => {
+          if (keys.includes(cell.id)) {
+            if (after) {
+              mergeConfig[after.id] = mergeConfig[cell.id]
+            }
+            Reflect.deleteProperty(mergeConfig, cell.id)
+          }
+          if (before) {
+            keys.forEach(key => {
+              if (mergeConfig[key] === cell.id) {
+                mergeConfig[key] = before.id
+              }
+            })
           }
         })
-      }
-    })
+      })
+    }
+    this.tableSelection.set(null)
     this.selection.unSelect()
   }
 
-  deleteRow(index: number) {
-    const mergeConfig = this.state.mergeConfig
-    const keys = Object.keys(mergeConfig)
-
-    const rows = this.state.rows
-    const row = rows.at(index)!
-
-    row.cells.forEach((cell, colIndex) => {
-      const before = rows.at(index - 1)?.cells.at(colIndex)!
-      const after = rows.at(index + 1)?.cells.at(colIndex)!
-
-      if (keys.includes(cell.id)) {
-        if (after) {
-          mergeConfig[after.id] = mergeConfig[cell.id]
-        }
-        Reflect.deleteProperty(mergeConfig, cell.id)
+  deleteRows() {
+    const selection = this.tableSelection()
+    if (selection) {
+      const { startRow, endRow } = selection
+      if (startRow === 0 && endRow === this.state.rows.length) {
+        this.commander.removeComponent(this)
+        return
       }
-      if (before) {
-        keys.forEach(key => {
-          if (mergeConfig[key] === cell.id) {
-            mergeConfig[key] = before.id
+      const mergeConfig = this.state.mergeConfig
+      const keys = Object.keys(mergeConfig)
+
+      const rows = this.state.rows
+      const deletedRows = rows.splice(startRow, endRow - startRow)
+      deletedRows.forEach(row => {
+        row.cells.forEach((cell, colIndex) => {
+          const before = rows.at(startRow - 1)?.cells.at(colIndex)!
+          const after = rows.at(startRow)?.cells.at(colIndex)!
+
+          if (keys.includes(cell.id)) {
+            if (after) {
+              mergeConfig[after.id] = mergeConfig[cell.id]
+            }
+            Reflect.deleteProperty(mergeConfig, cell.id)
+          }
+          if (before) {
+            keys.forEach(key => {
+              if (mergeConfig[key] === cell.id) {
+                mergeConfig[key] = before.id
+              }
+            })
           }
         })
-      }
-    })
-
-    this.state.rows.splice(index, 1)
+      })
+    }
+    this.tableSelection.set(null)
     this.selection.unSelect()
   }
 

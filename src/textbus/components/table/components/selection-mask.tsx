@@ -37,7 +37,6 @@ export function SelectionMask(props: SelectionMaskProps) {
 
   function update() {
     const selection = props.component.tableSelection()
-    console.log(selection)
     const state = props.component.state
     if (selection) {
       let topCompensation = 0.5

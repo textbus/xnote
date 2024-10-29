@@ -9,6 +9,7 @@ import { ComponentToolbar } from '../../../../components/component-toolbar/compo
 import { ToolbarItem } from '../../../../components/toolbar-item/toolbar-item'
 import { Button } from '../../../../components/button/button'
 import { TableService } from '../table.service'
+import { sum } from '../_utils'
 
 export interface TopBarProps {
   isFocus: Signal<boolean>
@@ -52,7 +53,6 @@ export function TopBar(props: TopBarProps) {
         mouseDownFromToolbar = false
         return
       }
-      deleteIndex.set(null)
       selectedColumnRange.set(null)
     })
     return () => sub.unsubscribe()
@@ -75,18 +75,46 @@ export function TopBar(props: TopBarProps) {
   onUnmounted(() => {
     s.unsubscribe()
   })
-  const deleteIndex = createSignal<null | number>(null)
+
+  function refreshLayoutWidth() {
+    props.layoutWidth.set(props.component.state.columnsConfig.slice())
+  }
 
   return withScopedCSS(css, () => {
     const { state, tableSelection } = props.component
 
     const position = tableSelection()
+    const range = selectedColumnRange()
+    let left = 0
+    if (range) {
+      left = sum(props.component.state.columnsConfig.slice(0, Math.min(range.startIndex, range.endIndex)))
+      left += sum(props.component.state.columnsConfig.slice(
+        Math.min(range.startIndex, range.endIndex),
+        Math.max(range.startIndex, range.endIndex) + 1)
+      ) / 2
+    }
     return (
       <div class={['top-bar', {
         active: props.isFocus()
       }]}>
         <div class="toolbar-wrapper">
           <div class="insert-bar">
+            <ComponentToolbar
+              style={{
+                left: left - leftDistance() + 'px',
+                display: selectedColumnRange() ? 'inline-block' : 'none',
+              }}
+              innerStyle={{
+                transform: 'translateX(-50%)'
+              }}
+              visible={!!selectedColumnRange()}>
+              <ToolbarItem>
+                <Button onClick={() => {
+                  props.component.deleteColumns()
+                  refreshLayoutWidth()
+                }}><span class="xnote-icon-bin"></span></Button>
+              </ToolbarItem>
+            </ComponentToolbar>
             <table style={{
               transform: `translateX(${-leftDistance()}px)`
             }}>
@@ -107,6 +135,7 @@ export function TopBar(props: TopBarProps) {
                                 left: '-10px'
                               }} onClick={() => {
                                 props.component.insertColumn(0)
+                                refreshLayoutWidth()
                               }}>
                               <button class="insert-btn" type="button">+</button>
                             </span>
@@ -118,26 +147,10 @@ export function TopBar(props: TopBarProps) {
                             tableService.onInsertColumnBefore.next(null)
                           }} onClick={() => {
                             props.component.insertColumn(index + 1)
+                            refreshLayoutWidth()
                           }}>
                             <button class="insert-btn" type="button">+</button>
                           </span>
-                          <ComponentToolbar
-                            style={{
-                              display: deleteIndex() === index ? 'inline-block' : 'none',
-                              left: '50%',
-                            }}
-                            innerStyle={{
-                              transform: 'translateX(-50%)'
-                            }}
-                            visible={deleteIndex() === index}>
-                            <ToolbarItem>
-                              <Button onClick={() => {
-                                props.component.deleteColumn(index)
-                                props.component.tableSelection.set(null)
-                                deleteIndex.set(null)
-                              }}><span class="xnote-icon-bin"></span></Button>
-                            </ToolbarItem>
-                          </ComponentToolbar>
                         </div>
                       </td>
                     )
@@ -157,11 +170,6 @@ export function TopBar(props: TopBarProps) {
                   props.layoutWidth().map((i, index) => {
                     return <td onMousedown={ev => ev.preventDefault()} onClick={ev => {
                       mouseDownFromToolbar = true
-                      if (!ev.shiftKey) {
-                        deleteIndex.set(index)
-                      } else {
-                        deleteIndex.set(null)
-                      }
                       selectColumn(index, ev.shiftKey)
                     }} class={{
                       active: !position ? false :
