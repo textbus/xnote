@@ -9,7 +9,7 @@ import {
   Signal,
   StaticRef
 } from '@viewfly/core'
-import { Slot, Selection, Textbus, fromEvent, delay } from '@textbus/core'
+import { fromEvent } from '@textbus/core'
 
 import css from './left-bar.scoped.scss'
 import { TableComponent } from '../table.component'
@@ -27,10 +27,8 @@ export interface TopBarProps {
 
 export function LeftBar(props: TopBarProps) {
   const editorService = inject(EditorService)
-  const selection = inject(Selection)
   const actionBarRef = createRef<HTMLTableElement>()
   const insertBarRef = createRef<HTMLTableElement>()
-  const textbus = inject(Textbus)
 
   const tableService = inject(TableService)
   // 同步行高度

@@ -453,8 +453,8 @@ export class TableComponent extends Component<TableComponentState> {
       const deletedRows = rows.splice(startRow, endRow - startRow)
       deletedRows.forEach(row => {
         row.cells.forEach((cell, colIndex) => {
-          const before = rows.at(startRow - 1)?.cells.at(colIndex)!
-          const after = rows.at(startRow)?.cells.at(colIndex)!
+          const before = rows.at(startRow - 1)?.cells.at(colIndex)
+          const after = rows.at(startRow)?.cells.at(colIndex)
 
           if (keys.includes(cell.id)) {
             if (after) {

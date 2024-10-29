@@ -16,15 +16,15 @@ export function CellBackgroundTool() {
   })
 
   function split() {
-    const commonAncestorComponent = selection.commonAncestorComponent
-    if (commonAncestorComponent instanceof TableComponent) {
-      const scopes = selection.getSelectedScopes()
-      if (scopes.length) {
-        const start = commonAncestorComponent.getCellBySlot(scopes.at(0)!.slot)
-        const end = commonAncestorComponent.getCellBySlot(scopes.at(-1)!.slot)
-        // Re
-      }
-    }
+    // const commonAncestorComponent = selection.commonAncestorComponent
+    // if (commonAncestorComponent instanceof TableComponent) {
+    //   const scopes = selection.getSelectedScopes()
+    //   if (scopes.length) {
+    //     const start = commonAncestorComponent.getCellBySlot(scopes.at(0)!.slot)
+    //     const end = commonAncestorComponent.getCellBySlot(scopes.at(-1)!.slot)
+    //     // Re
+    //   }
+    // }
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {

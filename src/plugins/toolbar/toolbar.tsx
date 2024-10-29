@@ -22,7 +22,6 @@ import { SourceCodeComponent } from '../../textbus/components/source-code/source
 import { LinkTool } from '../_common/link.tool'
 import { MergeCellsTool } from '../_common/table/merge-cells.tool'
 import { SplitCellsTool } from '../_common/table/split-cells.tool'
-import { CellBackgroundTool } from '../_common/table/cell-background.tool'
 import { CellAlignTool } from '../_common/table/cell-align.tool'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { sum } from '../../textbus/components/table/_utils'

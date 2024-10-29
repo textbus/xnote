@@ -1,5 +1,6 @@
 import { ContentType, Slot } from '@textbus/core'
 import { v4 } from 'uuid'
+
 import { TableComponentMergeCellConfig } from '../table.component'
 
 export interface TableCellConfig {

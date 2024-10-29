@@ -1,6 +1,6 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createSignal, getCurrentInstance, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
-import { delay, fromEvent } from '@textbus/core'
+import { fromEvent } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'

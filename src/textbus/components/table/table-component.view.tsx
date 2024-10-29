@@ -2,6 +2,7 @@ import { ContentType, createVNode, Slot, Textbus } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { createRef, createSignal, inject, onUnmounted, withAnnotation } from '@viewfly/core'
+import { v4 } from 'uuid'
 
 import './table.component.scss'
 import { Row, TableComponent } from './table.component'
@@ -17,9 +18,6 @@ import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { EditorService } from '../../../services/editor.service'
 import { autoComplete, TableCellConfig } from './tools/complete'
-import { v4 } from 'uuid'
-import { RenderRow } from './tools/merge'
-// import { SlotRender } from '../SlotRender'
 
 export const TableComponentView = withAnnotation({
   providers: [TableService]

@@ -22,11 +22,11 @@ export class Rectangle {
 }
 
 export function findNonIntersectingRectangles(rectangles: Rectangle[]): Rectangle[] {
-  let merged: Rectangle[] = []
-  let remaining: Rectangle[] = [...rectangles]
+  const merged: Rectangle[] = []
+  const remaining: Rectangle[] = [...rectangles]
 
   while (remaining.length > 0) {
-    let current = remaining.shift()!
+    const current = remaining.shift()!
     let mergedWithCurrent = false
 
     for (let i = 0; i < merged.length; i++) {
@@ -47,10 +47,10 @@ export function findNonIntersectingRectangles(rectangles: Rectangle[]): Rectangl
 
 export function getMaxRectangle(start: Rectangle, rectangles: Rectangle[]): Rectangle {
   let merged = start
-  let remaining: Rectangle[] = [...rectangles]
+  const remaining: Rectangle[] = [...rectangles]
 
   while (remaining.length > 0) {
-    let current = remaining.shift()!
+    const current = remaining.shift()!
     if (current.intersects(merged)) {
       merged = current.merge(merged)
     }
