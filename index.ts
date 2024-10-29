@@ -66,14 +66,14 @@ class Http extends Organization {
 
 const editor = new Editor({
   readonly: false,
-  content: document.getElementById('article')!.innerHTML,
-  // collaborateConfig: {
-  //   userinfo: user,
-  //   createConnector(yDoc): SyncConnector {
-  //     return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
-  //     // return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
-  //   }
-  // },
+  // content: document.getElementById('article')!.innerHTML,
+  collaborateConfig: {
+    userinfo: user,
+    createConnector(yDoc): SyncConnector {
+      return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
+      // return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
+    }
+  },
   providers: [
     {
       provide: Organization,

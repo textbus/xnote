@@ -41,54 +41,32 @@ export class TableSelectionAwarenessDelegate extends CollaborateSelectionAwarene
       return false
     }
 
-    const range = getSelectedRanges(commonAncestorComponent,
+    const rect = commonAncestorComponent.getMaxRectangle(
       findFocusCell(commonAncestorComponent, startSlot!)!,
-      findFocusCell(commonAncestorComponent, endSlot!)!
-    )
-    const rows = commonAncestorComponent.state.rows
-
-    const startFocusSlot = rows[range.startRow].cells[range.startColumn].slot
-    const endFocusSlot = rows[range.endRow].cells[range.endColumn].slot
-
+      findFocusCell(commonAncestorComponent, endSlot!)!)
     const renderer = this.domAdapter
-    const startRect = (renderer.getNativeNodeBySlot(startFocusSlot) as HTMLElement).getBoundingClientRect()
-    const endRect = (renderer.getNativeNodeBySlot(endFocusSlot) as HTMLElement).getBoundingClientRect()
 
+    if (!rect) {
+      return false
+    }
+    const normalizedSlots = commonAncestorComponent.getSelectedNormalizedSlotsByRectangle(rect)
+    const rects = normalizedSlots.map(row => {
+      return row.cells.filter(i => i.visible).map(i => {
+        const td = renderer.getNativeNodeBySlot(i.raw.slot) as HTMLElement
+        return td.getBoundingClientRect()
+      })
+    }).flat()
+
+
+    const left = Math.min(...rects.map(i => i.left))
+    const top = Math.min(...rects.map(i => i.top))
     return [{
-      left: startRect.left,
-      top: startRect.top,
-      width: endRect.left + endRect.width - startRect.left,
-      height: endRect.top + endRect.height - startRect.top
+      left,
+      top,
+      width: Math.max(...rects.map(i => i.right)) - left,
+      height: Math.max(...rects.map(i => i.bottom)) - top
     }]
   }
 }
 
-function getSelectedRanges(component: TableComponent, startSlot: Slot, endSlot: Slot) {
-  const p1 = finedPosition(component, startSlot)!
-  const p2 = finedPosition(component, endSlot)!
-
-  return {
-    startRow: Math.min(p1.rowIndex, p2.rowIndex),
-    endRow: Math.max(p1.rowIndex, p2.rowIndex),
-    startColumn: Math.min(p1.columnIndex, p2.columnIndex),
-    endColumn: Math.max(p1.columnIndex, p2.columnIndex)
-  }
-}
-
-function finedPosition(component: TableComponent, slot: Slot) {
-  const rows = component.state.rows
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]
-    for (let j = 0; j < row.cells.length; j++) {
-      const cell = row.cells[j]
-      if (cell.slot === slot) {
-        return {
-          rowIndex: i,
-          columnIndex: j
-        }
-      }
-    }
-  }
-  return null
-}
 
