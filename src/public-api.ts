@@ -5,3 +5,4 @@ export * from './textbus/_api'
 
 export * from './interfaces'
 export * from './editor'
+export * from './xnote-message-bus'
