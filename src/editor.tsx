@@ -8,8 +8,8 @@ import {
   ViewOptions,
   isMobileBrowser, CollaborateCursor
 } from '@textbus/platform-browser'
-import { CollaborateConfig, CollaborateModule, UserActivity } from '@textbus/collaborate'
-import { Component, ContentType, Module, Slot, Textbus, TextbusConfig } from '@textbus/core'
+import { CollaborateConfig, CollaborateModule, MessageBus } from '@textbus/collaborate'
+import { Component, ContentType, Module, Selection, Slot, Textbus, TextbusConfig } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
 
 import './assets/icons/style.css'
@@ -89,10 +89,19 @@ import {
   StepComponentView
 } from './textbus/components/step/step-component.view'
 import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-align.attr'
+import { XNoteMessageBug } from './xnote-message-bus'
+
+export interface XNoteCollaborateConfig extends CollaborateConfig {
+  userinfo: {
+    username: string
+    color: string
+    id: string
+  }
+}
 
 export interface EditorConfig extends TextbusConfig {
   content?: string,
-  collaborateConfig?: CollaborateConfig,
+  collaborateConfig?: XNoteCollaborateConfig,
   viewOptions?: Partial<ViewOptions>
 }
 
@@ -179,9 +188,20 @@ export class Editor extends Textbus {
     const modules: Module[] = [browserModule]
     if (editorConfig.collaborateConfig) {
       modules.push(new CollaborateModule(editorConfig.collaborateConfig))
-      browserModule.providers.push({
-        provide: CollaborateSelectionAwarenessDelegate,
-        useClass: TableSelectionAwarenessDelegate
+      modules.push({
+        providers: [{
+          provide: CollaborateSelectionAwarenessDelegate,
+          useClass: TableSelectionAwarenessDelegate
+        }, {
+          provide: MessageBus,
+          useFactory: (selection: Selection, collaborateCursor: CollaborateCursor) => {
+            return new XNoteMessageBug(selection, collaborateCursor, editorConfig.collaborateConfig!.userinfo)
+          },
+          deps: [
+            Selection,
+            CollaborateCursor
+          ]
+        }]
       })
     }
     const vDomAdapter = new ViewflyVDomAdapter({
@@ -260,18 +280,6 @@ export class Editor extends Textbus {
         new LeftToolbarPlugin(),
         new ToolbarPlugin(),
       ],
-      setup(textbus: Textbus): Promise<(() => void) | void> | (() => void) | void {
-        if (editorConfig.collaborateConfig) {
-          const activity = textbus.get(UserActivity)
-          const collabCursor = textbus.get(CollaborateCursor)
-          const sub = activity.onStateChange.subscribe(ev => {
-            collabCursor.draw(ev)
-          })
-          return () => {
-            sub.unsubscribe()
-          }
-        }
-      },
       onAfterStartup(textbus: Textbus) {
         registerBoldShortcut(textbus)
         registerCodeShortcut(textbus)

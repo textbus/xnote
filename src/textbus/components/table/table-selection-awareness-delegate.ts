@@ -1,5 +1,5 @@
 import { Injectable } from '@viewfly/core'
-import { CollaborateSelectionAwarenessDelegate, DomAdapter } from '@textbus/platform-browser'
+import { CollaborateSelectionAwarenessDelegate, DomAdapter, UserSelectionCursor } from '@textbus/platform-browser'
 import { AbstractSelection, Slot, Selection } from '@textbus/core'
 
 import { TableComponent } from './table.component'
@@ -22,7 +22,7 @@ export class TableSelectionAwarenessDelegate extends CollaborateSelectionAwarene
     super()
   }
 
-  override getRects(abstractSelection: AbstractSelection) {
+  override getRects(abstractSelection: AbstractSelection, _: any, data: UserSelectionCursor) {
     const { focusSlot, anchorSlot } = abstractSelection
     const focusPaths = this.selection.getPathsBySlot(focusSlot)!
     const anchorPaths = this.selection.getPathsBySlot(anchorSlot)!
@@ -41,7 +41,7 @@ export class TableSelectionAwarenessDelegate extends CollaborateSelectionAwarene
       return false
     }
 
-    const rect = commonAncestorComponent.getMaxRectangle(
+    const rect = data.data || commonAncestorComponent.getMaxRectangle(
       findFocusCell(commonAncestorComponent, startSlot!)!,
       findFocusCell(commonAncestorComponent, endSlot!)!)
     const renderer = this.domAdapter
