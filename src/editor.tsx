@@ -193,7 +193,7 @@ export class Editor extends Textbus {
           provide: CollaborateSelectionAwarenessDelegate,
           useClass: TableSelectionAwarenessDelegate
         }, {
-          provide: MessageBus,
+          provide: XNoteMessageBug,
           useFactory: (selection: Selection, collaborateCursor: CollaborateCursor) => {
             return new XNoteMessageBug(selection, collaborateCursor, editorConfig.collaborateConfig!.userinfo)
           },
@@ -201,6 +201,9 @@ export class Editor extends Textbus {
             Selection,
             CollaborateCursor
           ]
+        }, {
+          provide: MessageBus,
+          useExisting: XNoteMessageBug
         }]
       })
     }
