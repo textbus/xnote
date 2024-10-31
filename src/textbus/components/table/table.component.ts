@@ -259,7 +259,6 @@ export class TableComponent extends Component<TableComponentState> {
         endIndex: i.length
       }
     })
-    this.selection.setSelectedRanges(slotRanges)
 
     this.tableSelection.set({
       startColumn: 0,
@@ -267,6 +266,7 @@ export class TableComponent extends Component<TableComponentState> {
       startRow: startIndex,
       endRow: endIndex,
     })
+    this.selection.setSelectedRanges(slotRanges)
 
     this.focus.next(true)
 
@@ -298,7 +298,6 @@ export class TableComponent extends Component<TableComponentState> {
         endIndex: i.length
       }
     })
-    this.selection.setSelectedRanges(slotRanges)
 
     this.tableSelection.set({
       startColumn: startIndex,
@@ -306,6 +305,7 @@ export class TableComponent extends Component<TableComponentState> {
       startRow: 0,
       endRow: this.state.rows.length,
     })
+    this.selection.setSelectedRanges(slotRanges)
     this.focus.next(true)
     this.selection.restore()
     this.textbus.focus()

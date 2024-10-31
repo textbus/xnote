@@ -3,6 +3,7 @@ import { CollaborateSelectionAwarenessDelegate, DomAdapter, UserSelectionCursor 
 import { AbstractSelection, Slot, Selection } from '@textbus/core'
 
 import { TableComponent } from './table.component'
+import { Rectangle } from './tools/merge'
 
 export function findFocusCell(table: TableComponent, slot: Slot): Slot | null {
   while (slot) {
@@ -41,30 +42,30 @@ export class TableSelectionAwarenessDelegate extends CollaborateSelectionAwarene
       return false
     }
 
-    const rect = data.data || commonAncestorComponent.getMaxRectangle(
+    const rect: Rectangle = data.data || commonAncestorComponent.getMaxRectangle(
       findFocusCell(commonAncestorComponent, startSlot!)!,
       findFocusCell(commonAncestorComponent, endSlot!)!)
-    const renderer = this.domAdapter
 
     if (!rect) {
       return false
     }
-    const normalizedSlots = commonAncestorComponent.getSelectedNormalizedSlotsByRectangle(rect)
-    const rects = normalizedSlots.map(row => {
-      return row.cells.filter(i => i.visible).map(i => {
-        const td = renderer.getNativeNodeBySlot(i.raw.slot) as HTMLElement
-        return td.getBoundingClientRect()
-      })
-    }).flat()
+    const dom = this.domAdapter.getNativeNodeByComponent(commonAncestorComponent)!
+    const content = dom.querySelector('.xnote-table-content')!
+    const trs = content.querySelectorAll('tr')
+    const cols = content.querySelectorAll('col')
 
-
-    const left = Math.min(...rects.map(i => i.left))
-    const top = Math.min(...rects.map(i => i.top))
+    const top = trs[rect.y1].getBoundingClientRect().top
+    const left = cols[rect.x1].getBoundingClientRect().left
+    let height = trs[rect.y2 - 1].getBoundingClientRect().bottom - top
+    if (height === 0) {
+      height = trs[rect.y2 - 1].children.item(0)!.getBoundingClientRect().bottom - top
+    }
+    const width = cols[rect.x2 - 1].getBoundingClientRect().right - left
     return [{
       left,
       top,
-      width: Math.max(...rects.map(i => i.right)) - left,
-      height: Math.max(...rects.map(i => i.bottom)) - top
+      width,
+      height
     }]
   }
 }

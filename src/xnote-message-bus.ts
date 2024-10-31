@@ -28,14 +28,26 @@ export class XNoteMessageBug extends MessageBus<XNoteMessage> {
   get(): XNoteMessage {
     const selection = this.selection
     const c = selection.commonAncestorComponent
-    return {
+    const msg: XNoteMessage = {
       ...this.userinfo,
       selection: selection.getPaths(),
-      data: (!selection.isCollapsed && c instanceof TableComponent) ? c.getSelectedRect() : null
     }
+    if (!selection.isCollapsed && c instanceof TableComponent) {
+      const selection = c.tableSelection()!
+      if (selection) {
+        msg.data = {
+          x1: selection.startColumn,
+          x2: selection.endColumn,
+          y1: selection.startRow,
+          y2: selection.endRow,
+        }
+      }
+    }
+    return msg
   }
 
   consume(message: Message<XNoteMessage>[]) {
+    message = message.filter(i => i.message)
     this.messageChangeEvent.next([...message])
     this.collaborateCursor.draw(message.filter(item => {
       return item.message.id !== this.userinfo.id
