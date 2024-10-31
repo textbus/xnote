@@ -1,5 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, getCurrentInstance, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
+import { createSignal, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
@@ -68,17 +68,17 @@ export function TopBar(props: TopBarProps) {
     return () => sub.unsubscribe()
   })
 
-  const instance = getCurrentInstance()
+  // const instance = getCurrentInstance()
   const s = props.component.changeMarker.onChange.subscribe(() => {
-    instance.markAsDirtied()
+    const currentLayout = props.component.state.columnsConfig.slice()
+    if (currentLayout.join(',') !== props.layoutWidth().join(',')) {
+      props.layoutWidth.set(currentLayout)
+    }
+    // instance.markAsDirtied()
   })
   onUnmounted(() => {
     s.unsubscribe()
   })
-
-  function refreshLayoutWidth() {
-    props.layoutWidth.set(props.component.state.columnsConfig.slice())
-  }
 
   return withScopedCSS(css, () => {
     const { state, tableSelection } = props.component
@@ -111,7 +111,6 @@ export function TopBar(props: TopBarProps) {
               <ToolbarItem>
                 <Button onClick={() => {
                   props.component.deleteColumns()
-                  refreshLayoutWidth()
                 }}><span class="xnote-icon-bin"></span></Button>
               </ToolbarItem>
             </ComponentToolbar>
@@ -135,7 +134,6 @@ export function TopBar(props: TopBarProps) {
                                 left: '-10px'
                               }} onClick={() => {
                                 props.component.insertColumn(0)
-                                refreshLayoutWidth()
                               }}>
                               <button class="insert-btn" type="button">+</button>
                             </span>
@@ -147,7 +145,6 @@ export function TopBar(props: TopBarProps) {
                             tableService.onInsertColumnBefore.next(null)
                           }} onClick={() => {
                             props.component.insertColumn(index + 1)
-                            refreshLayoutWidth()
                           }}>
                             <button class="insert-btn" type="button">+</button>
                           </span>

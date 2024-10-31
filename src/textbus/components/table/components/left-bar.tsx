@@ -37,8 +37,8 @@ export function LeftBar(props: TopBarProps) {
     const actionBarRows = actionBarRef.current!.rows
     setTimeout(() => {
       Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
-        const height = tr.offsetHeight ||
-          Math.min(...Array.from(tr.children).map<number>(i => (i as HTMLElement).offsetHeight)) || 0
+        const height = tr.getBoundingClientRect().height ||
+          Math.min(...Array.from(tr.children).map<number>(i => (i as HTMLElement).getBoundingClientRect().height)) || 0
         insertBarRows.item(i)!.style.height = height + 'px'
         actionBarRows.item(i)!.style.height = height + 'px'
       })
