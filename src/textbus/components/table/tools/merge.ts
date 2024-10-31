@@ -48,12 +48,18 @@ export function findNonIntersectingRectangles(rectangles: Rectangle[]): Rectangl
 export function getMaxRectangle(start: Rectangle, rectangles: Rectangle[]): Rectangle {
   let merged = start
   const remaining: Rectangle[] = [...rectangles]
+  const unMerged: Rectangle[] = []
 
   while (remaining.length > 0) {
     const current = remaining.shift()!
     if (current.intersects(merged)) {
       merged = current.merge(merged)
+    } else {
+      unMerged.push(current)
     }
+  }
+  if (unMerged.length && merged !== start) {
+    return getMaxRectangle(merged, unMerged)
   }
   return merged
 }
