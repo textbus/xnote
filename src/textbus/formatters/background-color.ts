@@ -15,7 +15,7 @@ export const backgroundColorFormatter = new Formatter<string>('backgroundColor',
 
 export const backgroundColorFormatLoader: FormatLoader<string> = {
   match(element: HTMLElement): boolean {
-    return element.tagName !== 'TD' && !!element.style.backgroundColor
+    return element.tagName !== 'TD' && element.tagName !== 'TH' && !!element.style.backgroundColor
   },
   read(element: HTMLElement): FormatLoaderReadResult<string> {
     return {

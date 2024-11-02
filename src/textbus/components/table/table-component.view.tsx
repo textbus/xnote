@@ -214,6 +214,9 @@ export const tableComponentLoader: ComponentLoader = {
           ]), cell).toDelta()
 
           const results = deltaToBlock(delta, textbus)
+          delta.attributes.forEach((value, key) => {
+            slot.setAttribute(key, value)
+          })
           results.forEach(i => {
             slot.insert(i)
           })
@@ -244,6 +247,9 @@ export const tableComponentLoader: ComponentLoader = {
           ]), cell).toDelta()
 
           const results = deltaToBlock(delta, textbus)
+          delta.attributes.forEach((value, key) => {
+            slot.setAttribute(key, value)
+          })
           results.forEach(i => {
             slot.insert(i)
           })

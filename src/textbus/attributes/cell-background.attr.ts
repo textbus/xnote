@@ -14,7 +14,7 @@ export const cellBackgroundAttr = new Attribute<string>('cellBackground', {
       }
       hsl.s *= 0.7
       const newRgba = hsl2Rgb(hsl)
-      node.styles.set('borderColor', `rgba(${newRgba.r}, ${newRgba.g}, ${newRgba.b}, ${rgba.a})`)
+      node.styles.set('borderColor', `rgba(${newRgba.r}, ${newRgba.g}, ${newRgba.b}, ${rgba.a || 1})`)
     }
     node.styles.set('backgroundColor', formatValue)
   }
@@ -22,7 +22,7 @@ export const cellBackgroundAttr = new Attribute<string>('cellBackground', {
 
 export const cellBackgroundAttrLoader: AttributeLoader<string> = {
   match(element: Element): boolean {
-    return element instanceof HTMLTableCellElement && !!element.style.backgroundColor
+    return (element.tagName === 'TD' || element.tagName === 'TH') && !!(element as HTMLElement).style.backgroundColor
   },
   read(element: Element): AttributeLoaderReadResult<string> {
     return {
