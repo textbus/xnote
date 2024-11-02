@@ -21,6 +21,8 @@ import { headingAttr } from '../../attributes/heading.attr'
 import { BlockquoteComponent } from '../blockqoute/blockquote.component'
 import { HighlightBoxComponent } from '../highlight-box/highlight-box.component'
 import { SlotRender } from '../SlotRender'
+import { TimelineComponent } from '../timeline/timeline.component'
+import { StepComponent } from '../step/step.component'
 
 export interface ParagraphComponentState {
   slot: Slot
@@ -65,7 +67,9 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
 
       if (isEmpty && (
         this.parentComponent instanceof BlockquoteComponent ||
-        this.parentComponent instanceof HighlightBoxComponent
+        this.parentComponent instanceof HighlightBoxComponent ||
+        this.parentComponent instanceof TimelineComponent ||
+        this.parentComponent instanceof StepComponent
       )) {
         commander.insertAfter(nextParagraph, this.parentComponent)
         commander.removeComponent(this)
