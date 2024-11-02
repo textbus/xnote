@@ -88,7 +88,9 @@ export const TableComponentView = withAnnotation({
                     return (
                       <tr key={rowMapping.get(row.row)}>
                         {
-                          row.cells.map(cell => {
+                          row.cells.filter(i => {
+                            return i.visible
+                          }).map(cell => {
                             return adapter.slotRender(cell.raw.slot, children => {
                               return createVNode('td', {
                                 key: cell.raw.id,
