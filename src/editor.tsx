@@ -90,6 +90,7 @@ import {
 } from './textbus/components/step/step-component.view'
 import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-align.attr'
 import { XNoteMessageBug } from './xnote-message-bus'
+import { cellBackgroundAttr, cellBackgroundAttrLoader } from './textbus/attributes/cell-background.attr'
 
 export interface XNoteCollaborateConfig extends CollaborateConfig {
   userinfo: {
@@ -177,6 +178,7 @@ export class Editor extends Textbus {
         underlineFormatLoader
       ],
       attributeLoaders: [
+        cellBackgroundAttrLoader,
         cellAlignAttrLoader,
         headingAttrLoader,
         textAlignAttrLoader,
@@ -274,6 +276,7 @@ export class Editor extends Textbus {
         underlineFormatter
       ],
       attributes: [
+        cellBackgroundAttr,
         cellAlignAttr,
         headingAttr,
         textAlignAttr,

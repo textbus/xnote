@@ -25,6 +25,7 @@ import { SplitCellsTool } from '../_common/table/split-cells.tool'
 import { CellAlignTool } from '../_common/table/cell-align.tool'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { sum } from '../../textbus/components/table/_utils'
+import { CellBackgroundTool } from '../_common/table/cell-background.tool'
 
 export const Toolbar = withAnnotation({
   providers: [RefreshService]
@@ -198,9 +199,9 @@ export const Toolbar = withAnnotation({
             <ToolbarItem>
               <SplitCellsTool/>
             </ToolbarItem>
-            {/*<ToolbarItem>*/}
-            {/*  <CellBackgroundTool/>*/}
-            {/*</ToolbarItem>*/}
+            <ToolbarItem>
+              <CellBackgroundTool/>
+            </ToolbarItem>
             <ToolbarItem>
               <CellAlignTool/>
             </ToolbarItem>
