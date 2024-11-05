@@ -56,4 +56,13 @@ export class TimelineComponent extends Component<TimelineComponentState> {
   override getSlots(): Slot[] {
     return this.state.items.map(i => i.slot)
   }
+
+  override removeSlot(slot: Slot): boolean {
+    const index = this.state.items.findIndex(i => i.slot === slot)
+    if (index >= 0) {
+      this.state.items.splice(index, 1)
+      return true
+    }
+    return false
+  }
 }
