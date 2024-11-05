@@ -121,9 +121,13 @@ export const DropdownMenuPortal = withAnnotation({
     dropdownContextService.hide()
   }
 
+  function stopPropagation(ev: MouseEvent) {
+    ev.stopPropagation()
+  }
+
   return createPortal(withScopedCSS(css, () => {
     return (
-      <div onMouseenter={onEnter} onMouseleave={onLeave} ref={menuRef} style={{
+      <div onMouseenter={onEnter} onMousedown={stopPropagation} onMouseleave={onLeave} ref={menuRef} style={{
         width: props.width
       }} class="dropdown-menu">
         <div class="dropdown-menu-content" style={{
