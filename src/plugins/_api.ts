@@ -8,5 +8,5 @@ export * from './left-toolbar/left-toolbar.plugin'
 export * from './left-toolbar/left-toolbar'
 export * from './link-jump/link-jump'
 
-export * from './toolbar/toolbar.plugin'
-export * from './toolbar/toolbar'
+export * from './inline-toolbar/inline-toolbar.plugin'
+export * from './inline-toolbar/inline-toolbar'

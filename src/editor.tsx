@@ -47,7 +47,7 @@ import {
   videoComponentLoader,
   VideoView
 } from './textbus/components/_api'
-import { LeftToolbarPlugin, LinkJump, ToolbarPlugin } from './plugins/_api'
+import { LeftToolbarPlugin, LinkJump, InlineToolbarPlugin } from './plugins/_api'
 import {
   backgroundColorFormatLoader,
   backgroundColorFormatter,
@@ -284,7 +284,7 @@ export class Editor extends Textbus {
       ],
       plugins: [
         new LeftToolbarPlugin(),
-        new ToolbarPlugin(),
+        new InlineToolbarPlugin(),
       ],
       onAfterStartup(textbus: Textbus) {
         registerBoldShortcut(textbus)

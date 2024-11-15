@@ -4,7 +4,7 @@ import { debounceTime, delay, filter, fromEvent, map, merge, RootComponentRef, S
 import { DomAdapter, Rect, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { useProduce } from '@viewfly/hooks'
 
-import css from './toolbar.scoped.scss'
+import css from './inline-toolbar.scoped.scss'
 import { BoldTool } from '../_common/bold.tool'
 import { ItalicTool } from '../_common/italic.tool'
 import { StrikeThroughTool } from '../_common/strike-through.tool'
@@ -27,7 +27,7 @@ import { TableComponent } from '../../textbus/components/table/table.component'
 import { sum } from '../../textbus/components/table/_utils'
 import { CellBackgroundTool } from '../_common/table/cell-background.tool'
 
-export const Toolbar = withAnnotation({
+export const InlineToolbar = withAnnotation({
   providers: [RefreshService]
 }, function Toolbar() {
   const selection = inject(Selection)
