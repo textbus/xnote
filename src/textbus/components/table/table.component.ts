@@ -144,6 +144,18 @@ export class TableComponent extends Component<TableComponentState> {
     }
   }
 
+  splitCellBySlot(slot: Slot) {
+    const slots = this.getNormalizedData()
+    for (const item of slots) {
+      for (const cell of item.cells) {
+        if (cell.raw.slot === slot) {
+          Reflect.deleteProperty(this.state.mergeConfig, cell.raw.id)
+          return
+        }
+      }
+    }
+  }
+
   getMaxRectangle(startSlot: Slot, endSlot: Slot): Rectangle | null {
     let index1 = -1
     let index2 = -1

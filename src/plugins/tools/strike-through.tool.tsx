@@ -4,24 +4,24 @@ import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { boldFormatter, toggleBold } from '../../textbus/formatters/_api'
+import { strikeThroughFormatter, toggleStrikeThrough } from '../../textbus/formatters/_api'
+import { useCommonState } from './_common/common-state'
 
-export function BoldTool() {
+export function StrikeThroughTool() {
   const query = inject(Query)
-  const textbus = inject(Textbus)
   const refreshService = inject(RefreshService)
+  const textbus = inject(Textbus)
 
   const [viewModel, update] = useProduce({
     highlight: false,
-    disabled: false,
   })
 
   function toggle() {
-    toggleBold(textbus)
+    toggleStrikeThrough(textbus)
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    const state = query.queryFormat(boldFormatter)
+    const state = query.queryFormat(strikeThroughFormatter)
     update(draft => {
       draft.highlight = state.state === QueryStateType.Enabled
     })
@@ -31,8 +31,9 @@ export function BoldTool() {
     sub.unsubscribe()
   })
 
+  const commonState = useCommonState()
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-bold"></span></Button>
+    return <Button highlight={vm.highlight} disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}><span class="xnote-icon-strikethrough"></span></Button>
   }
 }

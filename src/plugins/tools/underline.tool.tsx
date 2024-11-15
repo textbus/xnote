@@ -5,6 +5,7 @@ import { Query, QueryStateType, Textbus } from '@textbus/core'
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { toggleUnderline, underlineFormatter } from '../../textbus/formatters/_api'
+import { useCommonState } from './_common/common-state'
 
 export function UnderlineTool() {
   const query = inject(Query)
@@ -13,7 +14,6 @@ export function UnderlineTool() {
 
   const [viewModel, update] = useProduce({
     highlight: false,
-    disabled: false,
   })
 
   function toggle() {
@@ -31,9 +31,10 @@ export function UnderlineTool() {
     sub.unsubscribe()
   })
 
+  const commonState = useCommonState()
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}>
+    return <Button highlight={vm.highlight} disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}>
       <span class="xnote-icon-underline"></span>
     </Button>
   }

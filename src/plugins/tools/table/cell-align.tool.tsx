@@ -7,6 +7,7 @@ import { MenuItem } from '../../../components/menu-item/menu-item'
 import { RefreshService } from '../../../services/refresh.service'
 import { cellAlignAttr } from '../../../textbus/attributes/cell-align.attr'
 import { TableComponent } from '../../../textbus/components/table/table.component'
+import { isInTable } from './help'
 
 export function CellAlignTool() {
   const currentValue = createSignal('')
@@ -25,6 +26,26 @@ export function CellAlignTool() {
           }
         })
       })
+    } else {
+      const is = isInTable(selection)
+      if (is) {
+        let parentSlot = selection.commonAncestorSlot
+
+        while (parentSlot) {
+          if (parentSlot.parent instanceof TableComponent) {
+            const slots = parentSlot.parent.getNormalizedData()
+            for (const item of slots) {
+              for (const cell of item.cells) {
+                if (cell.visible && cell.raw.slot === parentSlot) {
+                  cell.raw.slot.setAttribute(cellAlignAttr, v)
+                  return
+                }
+              }
+            }
+          }
+          parentSlot = parentSlot.parentSlot
+        }
+      }
     }
   }
 
@@ -34,6 +55,11 @@ export function CellAlignTool() {
   const highlight = createSignal(false)
 
   const subscription = refreshService.onRefresh.subscribe(() => {
+    if (!isInTable(selection)) {
+      highlight.set(false)
+      currentValue.set('middle')
+      return
+    }
     const result = query.queryAttribute(cellAlignAttr)
     const isHighlight = result.state === QueryStateType.Enabled
     highlight.set(isHighlight)

@@ -6,6 +6,7 @@ import { Button } from '../../components/button/button'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { RefreshService } from '../../services/refresh.service'
 import { fontSizeFormatter } from '../../textbus/formatters/font-size'
+import { useCommonState } from './_common/common-state'
 
 export function FontSizeTool() {
   const currentFontSize = createSignal('')
@@ -52,15 +53,18 @@ export function FontSizeTool() {
     subscription.unsubscribe()
   })
 
+  const commonState = useCommonState()
+
   return () => {
+    const b = commonState().inSourceCode || commonState().readonly
     return (
-      <Dropdown onCheck={check} menu={fontSizeOptions.map(i => {
+      <Dropdown disabled={b} onCheck={check} menu={fontSizeOptions.map(i => {
         return {
           label: <MenuItem checked={currentFontSize() === i}>{i || '默认'}</MenuItem>,
           value: i
         }
       })}>
-        <Button arrow={true} highlight={highlight()}>
+        <Button disabled={b} arrow={true} highlight={highlight()}>
           <span class="xnote-icon-font-size"></span>
           <span>{currentFontSize() || '默认'}</span>
         </Button>

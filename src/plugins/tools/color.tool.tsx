@@ -9,6 +9,7 @@ import { RefreshService } from '../../services/refresh.service'
 import { backgroundColorFormatter, colorFormatter } from '../../textbus/formatters/_api'
 import { Dropdown, DropdownProps } from '../../components/dropdown/dropdown'
 import css from './color-tool.scoped.scss'
+import { useCommonState } from './_common/common-state'
 
 export interface ColorToolProps extends Props {
   abreast?: DropdownProps['abreast']
@@ -29,7 +30,6 @@ export function ColorTool(props: ColorToolProps) {
 
   const [viewModel] = useProduce({
     highlight: false,
-    disabled: false,
   })
 
   function updateCheckState() {
@@ -89,10 +89,13 @@ export function ColorTool(props: ColorToolProps) {
     '#c596e0',
   ]
 
+  const commonState = useCommonState()
+
   return withScopedCSS(css, () => {
     const vm = viewModel()
     return (
-      <Dropdown style={props.style} width={'180px'} abreast={props.abreast} trigger={'hover'} menu={
+      <Dropdown disabled={commonState().readonly || commonState().inSourceCode}
+                style={props.style} width={'180px'} abreast={props.abreast} trigger={'hover'} menu={
         <div>
           <div class="color-type">文字颜色</div>
           <div class="text-colors">
@@ -138,7 +141,7 @@ export function ColorTool(props: ColorToolProps) {
         </div>
       }>
         {
-          props.children || <Button highlight={vm.highlight} arrow={true} disabled={vm.disabled}>
+          props.children || <Button highlight={vm.highlight} arrow={true} disabled={commonState().readonly || commonState().inSourceCode}>
           <span class="background">
             <span style={{
               backgroundColor: backgroundColor(),

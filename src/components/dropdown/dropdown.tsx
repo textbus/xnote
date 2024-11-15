@@ -33,6 +33,7 @@ export interface DropdownProps extends Props {
   abreast?: boolean
   padding?: string
   toLeft?: boolean
+  disabled?: boolean
 
   onCheck?(value: any): void
 
@@ -47,6 +48,9 @@ export const Dropdown = withAnnotation({
   const dropdownContextService = inject(DropdownContextService)
 
   const toggle = () => {
+    if (props.disabled) {
+      return
+    }
     if (dropdownContextService.isOpen) {
       dropdownContextService.hide(false)
     } else {
@@ -79,12 +83,18 @@ export const Dropdown = withAnnotation({
     let leaveSub: Subscription
     const bindLeave = function () {
       leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').subscribe(() => {
+        if (props.disabled) {
+          return
+        }
         dropdownContextService.hide()
       })
     }
     bindLeave()
     subscription.add(
       fromEvent(dropdownRef.current!, 'mouseenter').subscribe(() => {
+        if (props.disabled) {
+          return
+        }
         if (leaveSub) {
           leaveSub.unsubscribe()
         }

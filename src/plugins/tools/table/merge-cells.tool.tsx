@@ -5,8 +5,9 @@ import { Selection } from '@textbus/core'
 import { Button } from '../../../components/button/button'
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
+import { getTableSlotBySlot, isInTable } from './help'
 
-export function SplitCellsTool() {
+export function MergeCellsTool() {
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
@@ -15,27 +16,22 @@ export function SplitCellsTool() {
     disabled: false,
   })
 
-  function split() {
+  function merge() {
     const commonAncestorComponent = selection.commonAncestorComponent
     if (commonAncestorComponent instanceof TableComponent) {
-      commonAncestorComponent.splitCellsBySelection()
+      commonAncestorComponent.mergeCellBySelection()
     }
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    const commonAncestorComponent = selection.commonAncestorComponent
     update(draft => {
-      if (commonAncestorComponent instanceof TableComponent) {
-        const slots = commonAncestorComponent.getSelectedNormalizedSlots()
-        if (slots) {
-          for (const item of slots) {
-            for (const cell of item.cells) {
-              if (cell.visible && cell.colspan > 1 || cell.colspan > 1) {
-                draft.disabled = false
-                return
-              }
-            }
-          }
+      const is = isInTable(selection)
+      if(is) {
+        const p1 = getTableSlotBySlot(selection.startSlot)
+        const p2 = getTableSlotBySlot(selection.endSlot)
+        if (p1 && p2) {
+          draft.disabled = p1 === p2
+          return
         }
       }
       draft.disabled = true
@@ -48,6 +44,6 @@ export function SplitCellsTool() {
 
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={split}><span class="xnote-icon-split-cells"></span></Button>
+    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={merge}><span class="xnote-icon-merge-cells"></span></Button>
   }
 }

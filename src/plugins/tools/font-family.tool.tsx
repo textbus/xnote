@@ -6,6 +6,7 @@ import { Button } from '../../components/button/button'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { RefreshService } from '../../services/refresh.service'
 import { fontFamilyFormatter } from '../../textbus/formatters/font-family'
+import { useCommonState } from './_common/common-state'
 
 export const isSupportFont = (function () {
   const fullbackFontName = 'Arial'
@@ -109,9 +110,12 @@ export function FontFamilyTool() {
     subscription.unsubscribe()
   })
 
+  const commonState = useCommonState()
+
   return () => {
+    const b = commonState().inSourceCode || commonState().readonly
     return (
-      <Dropdown onCheck={check} menu={
+      <Dropdown disabled={b} onCheck={check} menu={
         fontFamilyOptions.map(i => {
           const disabled = i.value ? !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v) : false
           return {
@@ -125,7 +129,7 @@ export function FontFamilyTool() {
           }
         })
       }>
-        <Button arrow={true} highlight={highlight()}>{fontFamilyOptions.find(v => {
+        <Button disabled={b} arrow={true} highlight={highlight()}>{fontFamilyOptions.find(v => {
           return v.value === currentFontFamily()
         })?.label || '默认'}</Button>
       </Dropdown>

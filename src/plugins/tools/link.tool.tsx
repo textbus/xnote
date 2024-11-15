@@ -8,6 +8,7 @@ import { Popup } from '../../components/popup/popup'
 import { Button } from '../../components/button/button'
 import { linkFormatter } from '../../textbus/formatters/link'
 import { EditorService } from '../../services/editor.service'
+import { useCommonState } from './_common/common-state'
 
 export interface LinkToolProps {
   hideToolbar?(): void
@@ -46,6 +47,8 @@ export function LinkTool(props: LinkToolProps) {
     sub.unsubscribe()
   })
 
+  const commonState = useCommonState()
+
   return withScopedCSS(css, () => {
     const containerRect = container.getBoundingClientRect()
     const rect = isShow() ? selectionBridge.getRect({
@@ -54,7 +57,7 @@ export function LinkTool(props: LinkToolProps) {
     }) : {} as any
     return (
       <span>
-        <Button onClick={() => {
+        <Button disabled={commonState().inSourceCode || commonState().readonly} onClick={() => {
           isShow.set(true)
           isClickFromSelf = true
           props.hideToolbar?.()

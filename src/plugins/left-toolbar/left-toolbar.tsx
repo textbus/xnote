@@ -33,13 +33,14 @@ import { Dropdown } from '../../components/dropdown/dropdown'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
 import { Button } from '../../components/button/button'
-import { AttrTool } from '../_common/attr.tool'
-import { ColorTool } from '../_common/color.tool'
-import { InsertTool } from './insert-tool'
+import { AttrTool } from '../tools/attr.tool'
+import { ColorTool } from '../tools/color.tool'
+import { InsertMenu } from '../tools/insert-menu'
 import { EditorService } from '../../services/editor.service'
+import { ToolService } from '../tools/_common/tool.service'
 
 export const LeftToolbar = withAnnotation({
-  providers: [RefreshService]
+  providers: [RefreshService, ToolService]
 }, function LeftToolbar() {
   const adapter = inject(DomAdapter)
   const textbus = inject(Textbus)
@@ -279,7 +280,7 @@ export const LeftToolbar = withAnnotation({
             top: 0
           }} menu={
             isEmptyBlock() ?
-              <InsertTool replace={!needInsert} slot={activeSlot()}/>
+              <InsertMenu replace={!needInsert} slot={activeSlot()}/>
               :
               <>
                 <div class="btn-group">
@@ -334,7 +335,7 @@ export const LeftToolbar = withAnnotation({
                 <MenuItem onClick={remove} icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
                 <MenuItem onClick={cut} icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
                 <Divider/>
-                <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertTool hideTitle={true} slot={activeSlot()}/>}>
+                <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertMenu hideTitle={true} slot={activeSlot()}/>}>
                   <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
                 </Dropdown>
               </>

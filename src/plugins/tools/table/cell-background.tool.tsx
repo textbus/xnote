@@ -8,6 +8,7 @@ import { TableComponent } from '../../../textbus/components/table/table.componen
 import { Dropdown } from '../../../components/dropdown/dropdown'
 import { ColorPicker, Picker } from '../../../components/color-picker/color-picker'
 import { cellBackgroundAttr } from '../../../textbus/attributes/cell-background.attr'
+import { isInTable } from './help'
 
 export function CellBackgroundTool() {
   const refreshService = inject(RefreshService)
@@ -34,13 +35,27 @@ export function CellBackgroundTool() {
           }
         })
       }
+    } else {
+      let parentSlot = selection.commonAncestorSlot
+
+      while (parentSlot) {
+        if (parentSlot.parent instanceof TableComponent) {
+          const rgba = picker.rgba
+          if (rgba) {
+            parentSlot.setAttribute(cellBackgroundAttr, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
+          } else {
+            parentSlot.removeAttribute(cellBackgroundAttr)
+          }
+          return
+        }
+        parentSlot = parentSlot.parentSlot
+      }
     }
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    const commonAncestorComponent = selection.commonAncestorComponent
     update(draft => {
-      draft.disabled = !(commonAncestorComponent instanceof TableComponent)
+      draft.disabled = !isInTable(selection)
     })
   })
 

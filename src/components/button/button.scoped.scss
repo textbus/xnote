@@ -9,6 +9,7 @@
   display: inline-flex;
   align-items: center;
   height: 28px;
+  color: inherit;
   font-size: inherit;
   box-sizing: border-box;
 
@@ -38,5 +39,11 @@
   &.highlight {
     color: #296eff;
     background-color: #296eff10;
+  }
+
+  &:disabled {
+    color: inherit;
+    cursor: not-allowed;
+    opacity: 0.3;
   }
 }

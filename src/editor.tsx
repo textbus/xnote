@@ -47,7 +47,7 @@ import {
   videoComponentLoader,
   VideoView
 } from './textbus/components/_api'
-import { LeftToolbarPlugin, LinkJump, InlineToolbarPlugin } from './plugins/_api'
+import { LeftToolbarPlugin, LinkJump, InlineToolbarPlugin, StaticToolbarPlugin } from './plugins/_api'
 import {
   backgroundColorFormatLoader,
   backgroundColorFormatter,
@@ -71,7 +71,7 @@ import {
   registerStrikeThroughShortcut,
   registerUnderlineShortcut,
   strikeThroughFormatLoader,
-  strikeThroughFormatter,
+  strikeThroughFormatter, subscriptFormatLoader, subscriptFormatter, superscriptFormatLoader, superscriptFormatter,
   underlineFormatLoader,
   underlineFormatter
 } from './textbus/formatters/_api'
@@ -104,6 +104,7 @@ export interface EditorConfig extends TextbusConfig {
   content?: string,
   collaborateConfig?: XNoteCollaborateConfig,
   viewOptions?: Partial<ViewOptions>
+  toolbar?: 'inline' | 'static'
 }
 
 export class Editor extends Textbus {
@@ -175,7 +176,9 @@ export class Editor extends Textbus {
         italicFormatLoader,
         linkFormatLoader,
         strikeThroughFormatLoader,
-        underlineFormatLoader
+        underlineFormatLoader,
+        subscriptFormatLoader,
+        superscriptFormatLoader
       ],
       attributeLoaders: [
         cellBackgroundAttrLoader,
@@ -273,7 +276,9 @@ export class Editor extends Textbus {
         italicFormatter,
         linkFormatter,
         strikeThroughFormatter,
-        underlineFormatter
+        underlineFormatter,
+        subscriptFormatter,
+        superscriptFormatter
       ],
       attributes: [
         cellBackgroundAttr,
@@ -284,7 +289,7 @@ export class Editor extends Textbus {
       ],
       plugins: [
         new LeftToolbarPlugin(),
-        new InlineToolbarPlugin(),
+        editorConfig.toolbar === 'inline' ? new InlineToolbarPlugin() : new StaticToolbarPlugin()
       ],
       onAfterStartup(textbus: Textbus) {
         registerBoldShortcut(textbus)

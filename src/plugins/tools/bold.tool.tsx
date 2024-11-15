@@ -4,24 +4,26 @@ import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
-import { codeFormatter, toggleCode } from '../../textbus/formatters/_api'
+import { boldFormatter, toggleBold } from '../../textbus/formatters/_api'
+import { useCommonState } from './_common/common-state'
 
-export function CodeTool() {
+export function BoldTool() {
   const query = inject(Query)
-  const refreshService = inject(RefreshService)
   const textbus = inject(Textbus)
+  const refreshService = inject(RefreshService)
+
+  const commonState = useCommonState()
 
   const [viewModel, update] = useProduce({
     highlight: false,
-    disabled: false,
   })
 
   function toggle() {
-    toggleCode(textbus)
+    toggleBold(textbus)
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    const state = query.queryFormat(codeFormatter)
+    const state = query.queryFormat(boldFormatter)
     update(draft => {
       draft.highlight = state.state === QueryStateType.Enabled
     })
@@ -33,6 +35,9 @@ export function CodeTool() {
 
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-code"></span></Button>
+    return <Button highlight={vm.highlight}
+                   disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}>
+      <span class="xnote-icon-bold"></span>
+    </Button>
   }
 }

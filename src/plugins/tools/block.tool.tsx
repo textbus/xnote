@@ -8,11 +8,13 @@ import { Divider } from '../../components/divider/divider'
 import { useActiveBlock } from '../hooks/active-block'
 import { useBlockTransform } from '../hooks/block-transform'
 import { Keymap } from '../../components/keymap/keymap'
+import { useCommonState } from './_common/common-state'
 
 export function BlockTool() {
   const checkStates = useActiveBlock()
   const transform = useBlockTransform()
 
+  const commonState = useCommonState()
   return withScopedCSS(css, () => {
     const states = checkStates()
     const types: [boolean, string][] = [
@@ -39,9 +41,10 @@ export function BlockTool() {
         break
       }
     }
+    const b = commonState().inSourceCode || commonState().readonly
 
     return (
-      <Dropdown width={'auto'} onCheck={transform} trigger={'hover'} menu={[
+      <Dropdown disabled={b} width={'auto'} onCheck={transform} trigger={'hover'} menu={[
         {
           label: <MenuItem icon={<span class="xnote-icon-pilcrow"/>} desc={<Keymap keymap={{
             modKey: true,
@@ -110,7 +113,7 @@ export function BlockTool() {
           value: 'highlightBox'
         }
       ]}>
-        <Button arrow={true} highlight={false}><span class={currentType}/></Button>
+        <Button disabled={b} arrow={true} highlight={false}><span class={currentType}/></Button>
       </Dropdown>
     )
   })

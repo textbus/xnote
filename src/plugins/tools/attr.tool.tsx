@@ -13,6 +13,7 @@ import { RefreshService } from '../../services/refresh.service'
 import { textAlignAttr } from '../../textbus/attributes/text-align.attr'
 import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
 import { Keymap } from '../../components/keymap/keymap'
+import { useCommonState } from './_common/common-state'
 
 export interface AttrToolProps extends Props {
   abreast?: DropdownProps['abreast']
@@ -105,10 +106,12 @@ export function AttrTool(props: AttrToolProps) {
     }
   }
 
+  const commonState = useCommonState()
   return withScopedCSS(css, () => {
     const states = checkStates()
+    const b = commonState().inSourceCode || commonState().readonly
     return (
-      <Dropdown width={'auto'} style={props.style} abreast={props.abreast} onCheck={updateAttr} trigger={'hover'} menu={[
+      <Dropdown disabled={b} width={'auto'} style={props.style} abreast={props.abreast} onCheck={updateAttr} trigger={'hover'} menu={[
         {
           label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} desc={<Keymap keymap={{ key: 'L', modKey: true }}/>}
                            checked={states.textAlign === 'left'}>左对齐</MenuItem>,
@@ -138,7 +141,7 @@ export function AttrTool(props: AttrToolProps) {
         }
       ]}>
         {
-          props.children || <Button arrow={true} highlight={false}>
+          props.children || <Button disabled={b} arrow={true} highlight={false}>
             <span class={`xnote-icon-paragraph-${states.textAlign || 'left'} icon`}/>
           </Button>
         }

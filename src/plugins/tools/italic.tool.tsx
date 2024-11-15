@@ -5,6 +5,7 @@ import { Query, QueryStateType, Textbus } from '@textbus/core'
 import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { italicFormatter, toggleItalic } from '../../textbus/formatters/_api'
+import { useCommonState } from './_common/common-state'
 
 export function ItalicTool() {
   const query = inject(Query)
@@ -13,7 +14,6 @@ export function ItalicTool() {
 
   const [viewModel, update] = useProduce({
     highlight: false,
-    disabled: false,
   })
 
   function toggle() {
@@ -31,8 +31,9 @@ export function ItalicTool() {
     sub.unsubscribe()
   })
 
+  const commonState = useCommonState()
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={toggle}><span class="xnote-icon-italic"></span></Button>
+    return <Button highlight={vm.highlight} disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}><span class="xnote-icon-italic"></span></Button>
   }
 }

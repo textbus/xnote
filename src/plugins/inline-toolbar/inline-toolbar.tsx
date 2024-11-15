@@ -1,40 +1,58 @@
 import { createRef, Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { debounceTime, delay, filter, fromEvent, map, merge, RootComponentRef, Selection, Subscription, Textbus } from '@textbus/core'
+import {
+  debounceTime,
+  delay,
+  filter,
+  fromEvent,
+  map,
+  merge,
+  Query, QueryStateType,
+  RootComponentRef,
+  Selection,
+  Subscription,
+  Textbus
+} from '@textbus/core'
 import { DomAdapter, Rect, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { useProduce } from '@viewfly/hooks'
 
 import css from './inline-toolbar.scoped.scss'
-import { BoldTool } from '../_common/bold.tool'
-import { ItalicTool } from '../_common/italic.tool'
-import { StrikeThroughTool } from '../_common/strike-through.tool'
-import { UnderlineTool } from '../_common/underline.tool'
+import { BoldTool } from '../tools/bold.tool'
+import { ItalicTool } from '../tools/italic.tool'
+import { StrikeThroughTool } from '../tools/strike-through.tool'
+import { UnderlineTool } from '../tools/underline.tool'
 import { RefreshService } from '../../services/refresh.service'
-import { BlockTool } from '../_common/block.tool'
-import { CodeTool } from '../_common/code.tool'
-import { ColorTool } from '../_common/color.tool'
+import { BlockTool } from '../tools/block.tool'
+import { CodeTool } from '../tools/code.tool'
+import { ColorTool } from '../tools/color.tool'
 import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
-import { AttrTool } from '../_common/attr.tool'
-import { FontSizeTool } from '../_common/font-size.tool'
-import { FontFamilyTool } from '../_common/font-family.tool'
+import { AttrTool } from '../tools/attr.tool'
+import { FontSizeTool } from '../tools/font-size.tool'
+import { FontFamilyTool } from '../tools/font-family.tool'
 import { EditorService } from '../../services/editor.service'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
-import { LinkTool } from '../_common/link.tool'
-import { MergeCellsTool } from '../_common/table/merge-cells.tool'
-import { SplitCellsTool } from '../_common/table/split-cells.tool'
-import { CellAlignTool } from '../_common/table/cell-align.tool'
+import { LinkTool } from '../tools/link.tool'
+import { MergeCellsTool } from '../tools/table/merge-cells.tool'
+import { SplitCellsTool } from '../tools/table/split-cells.tool'
+import { CellAlignTool } from '../tools/table/cell-align.tool'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { sum } from '../../textbus/components/table/_utils'
-import { CellBackgroundTool } from '../_common/table/cell-background.tool'
+import { CellBackgroundTool } from '../tools/table/cell-background.tool'
+import { SplitLine } from '../tools/_common/split-line'
+import { SubscriptTool } from '../tools/subscript.tool'
+import { SuperscriptTool } from '../tools/superscript.tool'
+import { CleanFormatsTool } from '../tools/clean-formats.tool'
+import { ToolService } from '../tools/_common/tool.service'
 
 export const InlineToolbar = withAnnotation({
-  providers: [RefreshService]
+  providers: [RefreshService, ToolService]
 }, function Toolbar() {
   const selection = inject(Selection)
   const viewDocument = inject(VIEW_CONTAINER)
   const rootComponentRef = inject(RootComponentRef)
   const adapter = inject(DomAdapter)
   const bridge = inject(SelectionBridge)
+  const query = inject(Query)
   const textbus = inject(Textbus)
   const editorService = inject(EditorService)
   const refreshService = inject(RefreshService)
@@ -191,8 +209,55 @@ export const InlineToolbar = withAnnotation({
         display: editorService.hideInlineToolbar ? 'none' : '',
         transitionDuration: p.transitionDuration + 's'
       }}>
+        <ToolbarItem>
+          <BlockTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <AttrTool/>
+        </ToolbarItem>
+        <SplitLine/>
+        <ToolbarItem>
+          <BoldTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <ItalicTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <StrikeThroughTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <UnderlineTool/>
+        </ToolbarItem>
+        <SplitLine/>
+        <ToolbarItem>
+          <FontSizeTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <FontFamilyTool/>
+        </ToolbarItem>
+        <SplitLine/>
+        <ToolbarItem>
+          <LinkTool hideToolbar={hideToolbar}/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <CodeTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <ColorTool/>
+        </ToolbarItem>
+        <SplitLine/>
+        <ToolbarItem>
+          <SubscriptTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <SuperscriptTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <CleanFormatsTool/>
+        </ToolbarItem>
         {
-          selection.commonAncestorComponent instanceof TableComponent && <Fragment key="table">
+          query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
+            <SplitLine/>
             <ToolbarItem>
               <MergeCellsTool/>
             </ToolbarItem>
@@ -207,39 +272,6 @@ export const InlineToolbar = withAnnotation({
             </ToolbarItem>
           </Fragment>
         }
-        <ToolbarItem>
-          <BlockTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <AttrTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <BoldTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <ItalicTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <StrikeThroughTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <UnderlineTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <FontSizeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <FontFamilyTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <LinkTool hideToolbar={hideToolbar}/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CodeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <ColorTool/>
-        </ToolbarItem>
       </div>
     )
   })

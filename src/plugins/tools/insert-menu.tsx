@@ -6,7 +6,7 @@ import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph
 import { Button } from '../../components/button/button'
 import { Divider } from '../../components/divider/divider'
 import { MenuItem } from '../../components/menu-item/menu-item'
-import css from './insert-tool.scoped.scss'
+import css from './insert-menu.scoped.scss'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { ListComponent } from '../../textbus/components/list/list.component'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
@@ -28,7 +28,7 @@ export interface InsertToolProps {
   replace?: boolean
 }
 
-export function InsertTool(props: InsertToolProps) {
+export function InsertMenu(props: InsertToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const textbus = inject(Textbus)
