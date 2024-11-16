@@ -1,4 +1,4 @@
-import { createRef, inject, onUnmounted, onUpdated, Props, StaticRef, withAnnotation } from '@viewfly/core'
+import { createRef, inject, InjectionToken, onUnmounted, onUpdated, Props, StaticRef, withAnnotation } from '@viewfly/core'
 import { createPortal } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
@@ -16,13 +16,15 @@ export interface DropdownMenuProps extends Props {
   toLeft?: boolean
 }
 
+export const DropdownMenuContainer = new InjectionToken<HTMLElement>('DropdownMenuContainer')
+
 export const DropdownMenuPortal = withAnnotation({
   providers: [
     DropdownService
   ]
 }, function DropdownMenuPortal(props: DropdownMenuProps) {
   const dropdownContextService = inject(DropdownContextService)
-  const container = inject(VIEW_CONTAINER)
+  const container = inject(DropdownMenuContainer, inject(VIEW_CONTAINER))
 
   const menuRef = createRef<HTMLElement>()
 

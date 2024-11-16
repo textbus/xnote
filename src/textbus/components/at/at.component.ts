@@ -41,6 +41,10 @@ export interface AtComponentState {
 }
 
 export function registerAtShortcut(textbus: Textbus) {
+  const organization = textbus.get(Organization, null)
+  if (!organization) {
+    return
+  }
   const keyboard = textbus.get(Keyboard)
   const selection = textbus.get(Selection)
   const commander = textbus.get(Commander)

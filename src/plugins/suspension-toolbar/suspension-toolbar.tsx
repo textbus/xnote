@@ -1,8 +1,10 @@
 import { Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { debounceTime, merge, Query, QueryStateType, Selection, Textbus } from '@textbus/core'
+import { debounceTime, delay, fromEvent, merge, Query, QueryStateType, Selection, tap, Textbus } from '@textbus/core'
+import { VIEW_CONTAINER } from '@textbus/platform-browser'
+import { useProduce } from '@viewfly/hooks'
 
-import css from './static-toolbar.scoped.scss'
+import css from './suspension-toolbar.scoped.scss'
 import { BoldTool } from '../tools/bold.tool'
 import { ItalicTool } from '../tools/italic.tool'
 import { StrikeThroughTool } from '../tools/strike-through.tool'
@@ -30,17 +32,18 @@ import { SuperscriptTool } from '../tools/superscript.tool'
 import { CleanFormatsTool } from '../tools/clean-formats.tool'
 import { ToolService } from '../tools/_common/tool.service'
 
-export interface StaticToolbarProps {
+export interface SuspensionToolbarProps {
   theme?: 'dark' | 'light'
 }
 
-export const StaticToolbar = withAnnotation({
+export const SuspensionToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, function Toolbar(props: StaticToolbarProps) {
+}, function Toolbar(props: SuspensionToolbarProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const query = inject(Query)
   const refreshService = inject(RefreshService)
+  const viewDocument = inject(VIEW_CONTAINER)
   const instance = getCurrentInstance()
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
@@ -53,10 +56,46 @@ export const StaticToolbar = withAnnotation({
     subscription.unsubscribe()
   })
 
+  const [styles, updateStyles] = useProduce({
+    top: 0,
+    opacity: 1,
+  })
 
+  subscription.add(fromEvent(document, 'scroll').pipe(
+    tap(() => {
+      updateStyles(draft => {
+        draft.opacity = 0
+      })
+    }),
+    debounceTime(100),
+    tap(() => {
+      const rect = viewDocument.getBoundingClientRect()
+      if (rect.top < 10) {
+        updateStyles(draft => {
+          draft.top = Math.min(-rect.top + 10, rect.height - 100)
+        })
+      } else {
+        updateStyles(draft => {
+          draft.top = 0
+        })
+      }
+    }),
+    delay(100)
+  ).subscribe(() => {
+    updateStyles(draft => {
+      draft.opacity = 1
+    })
+  }))
   return withScopedCSS(css, () => {
+    const s = styles()
     return (
-      <div class={['toolbar', props.theme]}>
+      <div class={['toolbar', props.theme, {
+        suspension: s.top === 0 ? '' : 'suspension'
+      }]} style={{
+        top: s.top + 'px',
+        opacity: s.opacity,
+        pointerEvents: s.opacity === 0 ? 'none' : 'initial',
+      }}>
         <ToolbarItem>
           <UndoTool/>
         </ToolbarItem>

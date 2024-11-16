@@ -44,9 +44,13 @@ import { SuperscriptTool } from '../tools/superscript.tool'
 import { CleanFormatsTool } from '../tools/clean-formats.tool'
 import { ToolService } from '../tools/_common/tool.service'
 
+export interface InlineToolbarProps {
+  theme?: 'dark' | 'light'
+}
+
 export const InlineToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, function Toolbar() {
+}, function Toolbar(props: InlineToolbarProps) {
   const selection = inject(Selection)
   const viewDocument = inject(VIEW_CONTAINER)
   const rootComponentRef = inject(RootComponentRef)
@@ -201,7 +205,7 @@ export const InlineToolbar = withAnnotation({
   return withScopedCSS(css, () => {
     const p = viewPosition()
     return (
-      <div class="toolbar" ref={toolbarRef} style={{
+      <div class={['toolbar', props.theme]} ref={toolbarRef} style={{
         left: p.left + 'px',
         top: p.top + 'px',
         pointerEvents: p.isHide ? 'none' : 'initial',

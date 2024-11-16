@@ -13,3 +13,6 @@ export * from './inline-toolbar/inline-toolbar'
 
 export * from './static-toolbar/static-toolbar.plugin'
 export * from './static-toolbar/static-toolbar'
+
+export * from './suspension-toolbar/suspension-toolbar.plugin'
+export * from './suspension-toolbar/suspension-toolbar'

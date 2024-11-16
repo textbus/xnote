@@ -20,7 +20,12 @@
     "noImplicitOverride": true,
     "baseUrl": "./",
     "jsx": "react-jsx",
-    "jsxImportSource": "@viewfly/core"
+    "jsxImportSource": "@viewfly/core",
+    "paths": {
+      "@textbus/xnote": [
+        "./src/public-api.ts"
+      ]
+    }
   },
   "include": ["src", "./types.d.ts"]
 }

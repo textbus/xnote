@@ -8,10 +8,10 @@ import {
   Slot,
   Subject,
   Textbus,
-  Registry, onSlotSetAttribute, onSlotApplyFormat,
+  Registry, onSlotSetAttribute, onSlotApplyFormat, Selection,
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
-import { createDynamicRef, onUpdated } from '@viewfly/core'
+import { createDynamicRef, createRef } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -67,8 +67,11 @@ export class RootComponent extends Component<RootComponentState> {
       return
     }
 
+    const selection = this.textbus.get(Selection)
     content.retain(content.length)
-    content.insert(new ParagraphComponent(this.textbus))
+    const newParagraph = new ParagraphComponent(this.textbus)
+    content.insert(newParagraph)
+    selection.setPosition(newParagraph.state.slot, 0)
   }
 }
 
@@ -83,17 +86,32 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     }
   })
 
-  onUpdated(() => {
-    props.component.afterCheck()
-  })
+  const containerRef = createRef<HTMLElement>()
 
   const readonly = useReadonly()
   const output = useOutput()
+
+  function checkContent(ev: MouseEvent) {
+    if (ev.target === containerRef.current) {
+      const rect = containerRef.current!.getBoundingClientRect()
+      if (rect.bottom - ev.clientY < 40) {
+        props.component.afterCheck()
+      }
+    }
+  }
+
   return () => {
     const { rootRef } = props
 
     return (
-      <div class="xnote-root" dir="auto" ref={[rootRef, ref]} data-component={props.component.name}>
+      <div class="xnote-root"
+           onClick={checkContent}
+           style={!readonly() ? {
+             paddingBottom: '40px'
+           } : {}}
+           dir="auto"
+           ref={[rootRef, containerRef, ref]}
+           data-component={props.component.name}>
         <SlotRender
           slot={content}
           tag="div"

@@ -47,7 +47,7 @@ import {
   videoComponentLoader,
   VideoView
 } from './textbus/components/_api'
-import { LeftToolbarPlugin, LinkJump, InlineToolbarPlugin, StaticToolbarPlugin } from './plugins/_api'
+import { LeftToolbarPlugin, LinkJump, InlineToolbarPlugin } from './plugins/_api'
 import {
   backgroundColorFormatLoader,
   backgroundColorFormatter,
@@ -104,7 +104,6 @@ export interface EditorConfig extends TextbusConfig {
   content?: string,
   collaborateConfig?: XNoteCollaborateConfig,
   viewOptions?: Partial<ViewOptions>
-  toolbar?: 'inline' | 'static'
 }
 
 export class Editor extends Textbus {
@@ -289,7 +288,7 @@ export class Editor extends Textbus {
       ],
       plugins: [
         new LeftToolbarPlugin(),
-        editorConfig.toolbar === 'inline' ? new InlineToolbarPlugin() : new StaticToolbarPlugin()
+        new InlineToolbarPlugin()
       ],
       onAfterStartup(textbus: Textbus) {
         registerBoldShortcut(textbus)
@@ -305,6 +304,7 @@ export class Editor extends Textbus {
         registerAtShortcut(textbus)
         registerListShortcut(textbus)
         registerBlockquoteShortcut(textbus)
+
       },
       ...editorConfig
     })
