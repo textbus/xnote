@@ -89,7 +89,7 @@ import {
   StepComponentView
 } from './textbus/components/step/step-component.view'
 import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-align.attr'
-import { XNoteMessageBug } from './xnote-message-bus'
+import { XNoteMessageBus } from './xnote-message-bus'
 import { cellBackgroundAttr, cellBackgroundAttrLoader } from './textbus/attributes/cell-background.attr'
 
 export interface XNoteCollaborateConfig extends CollaborateConfig {
@@ -100,9 +100,15 @@ export interface XNoteCollaborateConfig extends CollaborateConfig {
   }
 }
 
+/**
+ * XNote 配置项
+ */
 export interface EditorConfig extends TextbusConfig {
+  /** 默认 HTML 内容*/
   content?: string,
+  /** 协作服务配置 */
   collaborateConfig?: XNoteCollaborateConfig,
+  /** 视图配置项 */
   viewOptions?: Partial<ViewOptions>
 }
 
@@ -197,9 +203,9 @@ export class Editor extends Textbus {
           provide: CollaborateSelectionAwarenessDelegate,
           useClass: TableSelectionAwarenessDelegate
         }, {
-          provide: XNoteMessageBug,
+          provide: XNoteMessageBus,
           useFactory: (selection: Selection, collaborateCursor: CollaborateCursor) => {
-            return new XNoteMessageBug(selection, collaborateCursor, editorConfig.collaborateConfig!.userinfo)
+            return new XNoteMessageBus(selection, collaborateCursor, editorConfig.collaborateConfig!.userinfo)
           },
           deps: [
             Selection,
@@ -207,7 +213,7 @@ export class Editor extends Textbus {
           ]
         }, {
           provide: MessageBus,
-          useExisting: XNoteMessageBug
+          useExisting: XNoteMessageBus
         }]
       })
     }

@@ -1,7 +1,7 @@
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
-import { Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
-import { createRef, inject, onUnmounted, onUpdated } from '@viewfly/core'
+import { Component, ContentType, Slot, Textbus } from '@textbus/core'
+import { createRef, onUnmounted, onUpdated } from '@viewfly/core'
 import { any2Hsl, ColorHSL, hsl2Rgb } from '@tanbo/color'
 
 import { AtComponent } from './at.component'
@@ -12,8 +12,6 @@ import { useOutput } from '../../hooks/use-output'
 import { SlotRender } from '../SlotRender'
 
 export function AtComponentView(props: ViewComponentProps<AtComponent>) {
-  const selection = inject(Selection)
-
   const dropdownRef = createRef<typeof Dropdown>()
 
   const subscription = props.component.focus.subscribe((b) => {
@@ -92,8 +90,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
 
                 return (
                   <div onClick={() => {
-                    props.component.state.userInfo = member
-                    selection.selectComponentEnd(props.component)
+                    props.component.atMember(member)
                   }} key={member.id} class={['xnote-at-member', { selected: index === selectedIndex }]}>
                     <div class="xnote-at-member-avatar">{
                       member.avatar ? <img src={member.avatar} alt={member.name}/> :

@@ -14,7 +14,7 @@ export interface XNoteMessage extends UserSelectionCursor {
   id: string
 }
 
-export class XNoteMessageBug extends MessageBus<XNoteMessage> {
+export class XNoteMessageBus extends MessageBus<XNoteMessage> {
   onMessageChange: Observable<Message<XNoteMessage>[]>
   protected messageChangeEvent = new Subject<Message<XNoteMessage>[]>()
 

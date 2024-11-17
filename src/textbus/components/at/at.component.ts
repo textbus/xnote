@@ -29,14 +29,19 @@ export interface Member {
   color?: string
 }
 
-export abstract class Organization {
-  abstract getMembers(name?: string): Promise<Member[]>
+/**
+ * 组件架构信息
+ */
+export abstract class Organization<T extends Member = Member> {
+  /** 根据当前输入获取成员列表 */
+  abstract getMembers(name?: string): Promise<T[]>
 
-  abstract getMemberById(id: string): Promise<Member | null>
+  /** 当 @ 某个成员时的回调 */
+  abstract atMember(member: T): void
 }
 
-export interface AtComponentState {
-  userInfo?: Member
+export interface AtComponentState<T extends Member = Member> {
+  userInfo?: T
   slot?: Slot
 }
 
@@ -87,6 +92,9 @@ export class AtComponent extends Component<AtComponentState> {
 
   members = createSignal<Member[]>([])
   selectedIndex = createSignal(0)
+
+  private selection = this.textbus.get(Selection)
+  private organization = this.textbus.get(Organization)
 
   constructor(textbus: Textbus, state: AtComponentState = {
     slot: new Slot([ContentType.Text])
@@ -155,12 +163,7 @@ export class AtComponent extends Component<AtComponentState> {
 
     onBreak((ev) => {
       const member = this.members()[this.selectedIndex()]
-      if (member) {
-        this.state.userInfo = {
-          ...member
-        }
-      }
-      selection.selectComponentEnd(this)
+      this.atMember(member)
       ev.preventDefault()
     })
 
@@ -198,5 +201,15 @@ export class AtComponent extends Component<AtComponentState> {
     onDestroy(() => {
       subs.unsubscribe()
     })
+  }
+
+  atMember(member?: Member) {
+    if (member) {
+      this.state.userInfo = {
+        ...member
+      }
+      this.organization.atMember(member)
+    }
+    this.selection.selectComponentEnd(this)
   }
 }

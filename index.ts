@@ -62,8 +62,8 @@ class Http extends Organization {
     }))
   }
 
-  getMemberById(id: string): Promise<Member | null> {
-    return Promise.resolve(null)
+  atMember(member: Member) {
+    //
   }
 }
 
