@@ -108,7 +108,7 @@ const editor = new Editor({
 export abstract class Organization {
   abstract getMembers(name?: string): Promise<Member[]>
 
-  abstract getMemberById(id: string): Promise<Member | null>
+  abstract atMember(member: Member): void
 }
 ```
 然后在编辑器初始化时传入你的实现
