@@ -37,8 +37,10 @@ export function SelectionMask(props: SelectionMaskProps) {
 
   function update() {
     const selection = props.component.tableSelection()
+    const selectedSlots = props.component.getSelectedNormalizedSlots()
+    const slotCount = selectedSlots ? selectedSlots.map(i => i.cells.filter(i => i.visible)).flat().length : 0
     const state = props.component.state
-    if (selection) {
+    if (selection && slotCount > 1) {
       let topCompensation = 0.5
       let heightCompensation = -1
       if (selection.startRow === 0) {

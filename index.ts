@@ -50,7 +50,7 @@ class Http extends Organization {
     await sleep(100)
     let len = Math.floor(20 / name.length + 1)
 
-    return Promise.resolve(Array.from<Member>({ length: len }).map(() => {
+    const arr = Array.from<Member>({ length: len }).map(() => {
       return {
         id: 'xxx',
         name: name + createUserName(),
@@ -59,7 +59,20 @@ class Http extends Organization {
         avatar: '',
         color: createColor()
       }
-    }))
+    })
+
+    if (name.length) {
+      arr.unshift({
+        id: 'xxx',
+        name: name,
+        groupName: '部门-' + createUserName(),
+        groupId: 'xxx',
+        avatar: '',
+        color: createColor()
+      })
+    }
+
+    return Promise.resolve(arr)
   }
 
   atMember(member: Member) {

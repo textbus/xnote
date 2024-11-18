@@ -215,7 +215,7 @@ export class TableComponent extends Component<TableComponentState> {
     }
     const start = getSelfSlot(this.selection.startSlot!)
     const end = getSelfSlot(this.selection.endSlot!)
-    if (start && end && start !== end) {
+    if (start && end) {
       return this.getMaxRectangle(start, end)
     }
     return null

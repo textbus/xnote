@@ -111,6 +111,9 @@ export const TableComponentView = withAnnotation({
         </div>
       )
     }
+
+    const selectedSlots = props.component.getSelectedNormalizedSlots()
+    const slotCount = selectedSlots ? selectedSlots.map(i => i.cells.filter(i => i.visible)).flat().length : 0
     return (
       <div class="xnote-table"
            data-component={props.component.name}
@@ -130,7 +133,7 @@ export const TableComponentView = withAnnotation({
               <table ref={tableRef} class={[
                 'xnote-table-content',
                 {
-                  'hide-selection': props.component.tableSelection()
+                  'hide-selection': props.component.tableSelection() && slotCount > 1
                 }
               ]}>
                 <colgroup>
