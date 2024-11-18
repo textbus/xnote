@@ -84,6 +84,7 @@ export const InlineToolbar = withAnnotation({
 
   function getTop() {
     const docRect = viewDocument.getBoundingClientRect()
+    // const toolbarRect = toolbarRef.current!.getBoundingClientRect()
     const toolbarHeight = 36
     // const documentHeight = document.documentElement.clientHeight
     let selectionFocusRect: Rect | null = null
@@ -106,6 +107,7 @@ export const InlineToolbar = withAnnotation({
         const width = sum(commonAncestorComponent.state.columnsConfig.slice(rect.x1, rect.x2))
         selectionFocusRect = {
           left: startRect.left + width / 2,
+          // left: Math.max(startRect.left + width / 2, toolbarRect.width / 2 + 10 - docRect.left),
           top: startRect.top,
           height: endEle.bottom - startRect.top,
           width
@@ -135,6 +137,7 @@ export const InlineToolbar = withAnnotation({
     updateViewPosition(draft => {
       draft.transitionDuration = .15
       draft.left = centerLeft - docRect.left
+      // draft.left = Math.max(centerLeft - docRect.left, toolbarRect.width / 2 + 10 - docRect.left)
       draft.top = top + 10
     })
     return top
