@@ -89,24 +89,32 @@ export const InlineToolbar = withAnnotation({
     let selectionFocusRect: Rect | null = null
     const commonAncestorComponent = selection.commonAncestorComponent
     if (commonAncestorComponent instanceof TableComponent) {
-      const slots = commonAncestorComponent.getSelectedNormalizedSlots()!.map(item => {
-        return item.cells.filter(i => {
-          return i.visible
-        }).map(cell => {
-          return cell.raw.slot
+      const normalizedSlots = commonAncestorComponent.getSelectedNormalizedSlots()
+      if (normalizedSlots) {
+        const slots = normalizedSlots.map(item => {
+          return item.cells.filter(i => {
+            return i.visible
+          }).map(cell => {
+            return cell.raw.slot
+          })
+        }).flat()
+        const startSlot = slots.at(0)!
+        const endSlot = slots.at(-1)!
+        const rect = commonAncestorComponent.getSelectedRect()!
+        const startRect = (adapter.getNativeNodeBySlot(startSlot) as HTMLElement).getBoundingClientRect()
+        const endEle = (adapter.getNativeNodeBySlot(endSlot) as HTMLElement).getBoundingClientRect()
+        const width = sum(commonAncestorComponent.state.columnsConfig.slice(rect.x1, rect.x2))
+        selectionFocusRect = {
+          left: startRect.left + width / 2,
+          top: startRect.top,
+          height: endEle.bottom - startRect.top,
+          width
+        }
+      } else {
+        selectionFocusRect = bridge.getRect({
+          slot: selection.focusSlot!,
+          offset: selection.focusOffset!
         })
-      }).flat()
-      const startSlot = slots.at(0)!
-      const endSlot = slots.at(-1)!
-      const rect = commonAncestorComponent.getSelectedRect()!
-      const startRect = (adapter.getNativeNodeBySlot(startSlot) as HTMLElement).getBoundingClientRect()
-      const endEle = (adapter.getNativeNodeBySlot(endSlot) as HTMLElement).getBoundingClientRect()
-      const width = sum(commonAncestorComponent.state.columnsConfig.slice(rect.x1, rect.x2))
-      selectionFocusRect = {
-        left: startRect.left + width / 2,
-        top: startRect.top,
-        height: endEle.bottom - startRect.top,
-        width
       }
     } else {
       selectionFocusRect = bridge.getRect({
