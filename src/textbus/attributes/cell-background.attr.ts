@@ -1,8 +1,14 @@
-import { Attribute, VElement } from '@textbus/core'
+import { Attribute, Slot, VElement } from '@textbus/core'
 import { AttributeLoader, AttributeLoaderReadResult } from '@textbus/platform-browser'
 import { ColorRGBA, hsl2Rgb, parseCss, rgb2Hsl } from '@tanbo/color'
 
+import { TableComponent } from '../components/table/table.component'
+
 export const cellBackgroundAttr = new Attribute<string>('cellBackground', {
+  onlySelf: true,
+  checkHost(host: Slot): boolean {
+    return host.parent instanceof TableComponent
+  },
   render(node: VElement, formatValue: string) {
     const rgba = parseCss(formatValue) as ColorRGBA
     if (rgba) {

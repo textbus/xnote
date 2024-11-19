@@ -29,7 +29,9 @@ export function CellBackgroundTool() {
         }).flat().forEach(slot => {
           const rgba = picker.rgba
           if (rgba) {
-            slot.setAttribute(cellBackgroundAttr, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
+            slot.setAttribute(cellBackgroundAttr, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`, s => {
+              return slot === s
+            })
           } else {
             slot.removeAttribute(cellBackgroundAttr)
           }
