@@ -10,7 +10,7 @@ import {
   Query, QueryStateType,
   RootComponentRef,
   Selection,
-  Subscription,
+  Subscription, tap,
   Textbus
 } from '@textbus/core'
 import { DomAdapter, Rect, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
@@ -63,9 +63,15 @@ export const InlineToolbar = withAnnotation({
   const refreshService = inject(RefreshService)
 
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
-    debounceTime(20)
+    debounceTime(20),
+    tap(() => {
+      refreshService.onRefresh.next()
+    }),
+    delay(200)
   ).subscribe(() => {
-    refreshService.onRefresh.next()
+    if (viewPosition().isHide) {
+      editorService.changeLeftToolbarVisible(true)
+    }
   })
 
   onUnmounted(() => {
@@ -147,12 +153,14 @@ export const InlineToolbar = withAnnotation({
   const sub = textbus.onChange.pipe(debounceTime(100)).subscribe(() => {
     if (!viewPosition().isHide) {
       const top = getTop()
-      if (top !== null) {
+      if (top !== null && !selection.isCollapsed) {
         updateViewPosition(draft => {
           draft.top = top
         })
+        return
       }
     }
+    editorService.changeLeftToolbarVisible(true)
   })
 
   onUnmounted(() => {
@@ -185,6 +193,9 @@ export const InlineToolbar = withAnnotation({
           draft.opacity = 1
           draft.top = top
         })
+        editorService.changeLeftToolbarVisible(false)
+      } else {
+        editorService.changeLeftToolbarVisible(true)
       }
     })
   }

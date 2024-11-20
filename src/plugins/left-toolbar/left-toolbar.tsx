@@ -17,7 +17,6 @@ import {
   Slot,
   Subscription,
   Textbus,
-  throttleTime
 } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
 
@@ -148,15 +147,7 @@ export const LeftToolbar = withAnnotation({
       return
     }
     refreshService.onRefresh.next()
-  }).add(
-    selection.onChange.pipe(throttleTime(30)).subscribe(() => {
-      if (!selection.isCollapsed) {
-        updatePosition(draft => {
-          draft.display = false
-        })
-      }
-    })
-  )
+  })
 
   onUnmounted(() => {
     subscription.unsubscribe()
@@ -273,7 +264,7 @@ export const LeftToolbar = withAnnotation({
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
           left: position.left + 'px',
           top: position.top + 'px',
-          display: position.display && selection.isCollapsed && editorService.canShowLeftToolbar ? 'block' : 'none'
+          display: position.display && editorService.canShowLeftToolbar ? 'block' : 'none'
         }}>
           <Dropdown toLeft={true} onExpendStateChange={changeIgnoreMove} abreast={true} style={{
             position: 'absolute',
