@@ -12,6 +12,26 @@
 
     &-inner {
       flex: 1;
+      &.has-arrow {
+        ::v-deep {
+          .btn {
+            //padding-right: 1px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+        }
+      }
+    }
+
+    &-arrow {
+      ::v-deep {
+        .btn {
+          padding-left: 1px;
+          padding-right: 1px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
     }
   }
 }

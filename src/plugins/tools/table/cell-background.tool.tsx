@@ -9,13 +9,13 @@ import { Dropdown } from '../../../components/dropdown/dropdown'
 import { ColorPicker, Picker } from '../../../components/color-picker/color-picker'
 import { cellBackgroundAttr } from '../../../textbus/attributes/cell-background.attr'
 import { isInTable } from './help'
+import { useCommonState } from '../_common/common-state'
 
 export function CellBackgroundTool() {
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
   const [viewModel, update] = useProduce({
-    highlight: false,
     disabled: false,
   })
 
@@ -65,13 +65,29 @@ export function CellBackgroundTool() {
     sub.unsubscribe()
   })
 
+  const commonState = useCommonState()
+  const defaultColors = [
+    '#ef7373',
+    '#ec9c6a',
+    '#dccc64',
+    '#96e3a3',
+    '#a1e2e3',
+    '#90a0e5',
+    '#c596e0',
+  ]
   return () => {
     const vm = viewModel()
+    const d = vm.disabled || commonState().readonly || commonState().inSourceCode
     return (
-      <Dropdown width={'177px'} menu={
-        <ColorPicker onSelected={setColor}/>
-      } trigger={'hover'}>
-        <Button highlight={vm.highlight} disabled={vm.disabled}><span class="xnote-icon-palette"></span></Button>
+      <Dropdown width={'177px'}
+                disabled={d}
+                menu={
+                  <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                }
+                trigger={'hover'}>
+        <Button disabled={d}>
+          <span class="xnote-icon-palette"></span>
+        </Button>
       </Dropdown>
     )
   }

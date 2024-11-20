@@ -15,6 +15,7 @@ import { HTMLAttributes } from '@viewfly/platform-browser'
 import css from './dropdown.scoped.scss'
 import { DropdownMenuPortal } from './dropdown-menu'
 import { DropdownContextService } from './dropdown-context.service'
+import { Button } from '../button/button'
 
 export type DropdownTriggerTypes = 'hover' | 'click' | 'none'
 
@@ -34,6 +35,7 @@ export interface DropdownProps extends Props {
   padding?: string
   toLeft?: boolean
   disabled?: boolean
+  arrow?: boolean
 
   onCheck?(value: any): void
 
@@ -60,7 +62,7 @@ export const Dropdown = withAnnotation({
 
   const triggerRef = createRef<HTMLElement>()
   const dropdownRef = createRef<HTMLElement>()
-
+  const arrowRef = createRef<HTMLElement>()
 
   onMounted(() => {
     const sub = dropdownContextService.onOpenStateChange.subscribe(b => {
@@ -80,9 +82,10 @@ export const Dropdown = withAnnotation({
       subscription.add(fromEvent(triggerRef.current!, 'click').subscribe(toggle))
       return
     }
+    const el = props.arrow ? arrowRef.current! : dropdownRef.current!
     let leaveSub: Subscription
     const bindLeave = function () {
-      leaveSub = fromEvent(dropdownRef.current!, 'mouseleave').subscribe(() => {
+      leaveSub = fromEvent(el, 'mouseleave').subscribe(() => {
         if (props.disabled) {
           return
         }
@@ -91,7 +94,7 @@ export const Dropdown = withAnnotation({
     }
     bindLeave()
     subscription.add(
-      fromEvent(dropdownRef.current!, 'mouseenter').subscribe(() => {
+      fromEvent(el, 'mouseenter').subscribe(() => {
         if (props.disabled) {
           return
         }
@@ -120,10 +123,14 @@ export const Dropdown = withAnnotation({
       return (
         <div class={['dropdown', props.class]} style={props.style} ref={dropdownRef}>
           <div class="dropdown-btn" ref={triggerRef}>
-            <div class="dropdown-btn-inner">
+            <div class={['dropdown-btn-inner', {
+              'has-arrow': props.arrow
+            }]}>
               {props.children}
             </div>
-            <div class="dropdown-btn-arrow"/>
+            {
+              props.arrow && <div ref={arrowRef} class="dropdown-btn-arrow"><Button arrow={true}></Button></div>
+            }
           </div>
           {
             isShow() &&

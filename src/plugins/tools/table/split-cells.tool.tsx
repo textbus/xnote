@@ -5,6 +5,7 @@ import { Selection } from '@textbus/core'
 import { Button } from '../../../components/button/button'
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
+import { useCommonState } from '../_common/common-state'
 
 export function SplitCellsTool() {
   const refreshService = inject(RefreshService)
@@ -77,8 +78,13 @@ export function SplitCellsTool() {
     sub.unsubscribe()
   })
 
+  const commonState = useCommonState()
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={vm.disabled} onClick={split}><span class="xnote-icon-split-cells"></span></Button>
+    return <Button highlight={vm.highlight}
+                   disabled={vm.disabled || commonState().readonly || commonState().inSourceCode}
+                   onClick={split}>
+      <span class="xnote-icon-split-cells"></span>
+    </Button>
   }
 }

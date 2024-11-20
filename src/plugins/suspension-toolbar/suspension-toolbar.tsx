@@ -12,7 +12,6 @@ import { UnderlineTool } from '../tools/underline.tool'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from '../tools/block.tool'
 import { CodeTool } from '../tools/code.tool'
-import { ColorTool } from '../tools/color.tool'
 import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
 import { AttrTool } from '../tools/attr.tool'
 import { FontSizeTool } from '../tools/font-size.tool'
@@ -31,6 +30,8 @@ import { SubscriptTool } from '../tools/subscript.tool'
 import { SuperscriptTool } from '../tools/superscript.tool'
 import { CleanFormatsTool } from '../tools/clean-formats.tool'
 import { ToolService } from '../tools/_common/tool.service'
+import { TextColorTool } from '../tools/text-color.tool'
+import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 
 export interface SuspensionToolbarProps {
   theme?: 'dark' | 'light'
@@ -141,7 +142,10 @@ export const SuspensionToolbar = withAnnotation({
           <CodeTool/>
         </ToolbarItem>
         <ToolbarItem>
-          <ColorTool/>
+          <TextColorTool/>
+        </ToolbarItem>
+        <ToolbarItem>
+          <TextBackgroundColorTool/>
         </ToolbarItem>
         <SplitLine/>
         <ToolbarItem>

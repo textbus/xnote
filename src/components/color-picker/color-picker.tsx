@@ -139,12 +139,12 @@ export class Picker {
 export interface ColorPickerProps {
   value?: string
 
+  recentColors?: string[]
+
   onChange?(picker: Picker): void
 
   onSelected(picker: Picker): void
 }
-
-const recentColors = createSignal<string[]>([])
 
 export function ColorPicker(props: ColorPickerProps) {
   const instance = getCurrentInstance()
@@ -164,6 +164,7 @@ export function ColorPicker(props: ColorPickerProps) {
     '#c60000', '#d86912', '#b88811', '#086508', '#144c93', '#1b2eaa', '#6117bf',
   ]
 
+  const recentColors = createSignal<string[]>(props.recentColors || [])
 
   function addRecentColor() {
     const color = picker.hex
@@ -385,7 +386,7 @@ export function ColorPicker(props: ColorPickerProps) {
               })
             }
           </div>
-          <div class="xnote-color-picker-recent-text">最近颜色</div>
+          <div class="xnote-color-picker-recent-text">常用颜色</div>
           <div class="xnote-color-picker-swatches" style="height: 25px;">
             {
               Array.from({ length: 7 }).map((_, index) => {

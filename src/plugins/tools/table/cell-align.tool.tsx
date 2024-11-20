@@ -8,6 +8,7 @@ import { RefreshService } from '../../../services/refresh.service'
 import { cellAlignAttr } from '../../../textbus/attributes/cell-align.attr'
 import { TableComponent } from '../../../textbus/components/table/table.component'
 import { isInTable } from './help'
+import { useCommonState } from '../_common/common-state'
 
 export function CellAlignTool() {
   const currentValue = createSignal('')
@@ -70,9 +71,11 @@ export function CellAlignTool() {
     subscription.unsubscribe()
   })
 
+
+  const commonState = useCommonState()
   return () => {
     return (
-      <Dropdown onCheck={check} menu={[
+      <Dropdown disabled={commonState().readonly || commonState().inSourceCode} onCheck={check} menu={[
         {
           label: <MenuItem checked={currentValue() === 'top'} icon={<span class="xnote-icon-align-top"></span>}>顶部对齐</MenuItem>,
           value: 'top'
@@ -86,7 +89,11 @@ export function CellAlignTool() {
           value: 'bottom'
         }
       ]}>
-        <Button arrow={true} highlight={highlight()}><span class={'xnote-icon-align-' + (currentValue() || 'middle')}></span></Button>
+        <Button arrow={true}
+                disabled={commonState().readonly || commonState().inSourceCode}
+                highlight={highlight()}>
+          <span class={'xnote-icon-align-' + (currentValue() || 'middle')}></span>
+        </Button>
       </Dropdown>
     )
   }

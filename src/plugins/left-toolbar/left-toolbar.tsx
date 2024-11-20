@@ -34,10 +34,11 @@ import { TableComponent } from '../../textbus/components/table/table.component'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
 import { Button } from '../../components/button/button'
 import { AttrTool } from '../tools/attr.tool'
-import { ColorTool } from '../tools/color.tool'
 import { InsertMenu } from '../tools/insert-menu'
 import { EditorService } from '../../services/editor.service'
 import { ToolService } from '../tools/_common/tool.service'
+import { TextColorTool } from '../tools/text-color.tool'
+import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
@@ -323,13 +324,18 @@ export const LeftToolbar = withAnnotation({
                   applyBefore={applyBefore}>
                   <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
                 </AttrTool>
-                <ColorTool
+                <TextColorTool
                   style={{ display: 'block' }}
                   abreast={true}
-                  applyBefore={applyBefore}
-                >
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>颜色</MenuItem>
-                </ColorTool>
+                  applyBefore={applyBefore}>
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>文本颜色</MenuItem>
+                </TextColorTool>
+                <TextBackgroundColorTool
+                  style={{ display: 'block' }}
+                  abreast={true}
+                  applyBefore={applyBefore}>
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-background-color"/>}>文本背景颜色</MenuItem>
+                </TextBackgroundColorTool>
                 <Divider/>
                 <MenuItem onClick={copy} icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
                 <MenuItem onClick={remove} icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
