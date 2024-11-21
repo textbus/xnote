@@ -85,7 +85,7 @@ export function CellBackgroundTool() {
                   <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
                 }
                 trigger={'hover'}>
-        <Button disabled={d}>
+        <Button disabled={d} arrow={true}>
           <span class="xnote-icon-palette"></span>
         </Button>
       </Dropdown>

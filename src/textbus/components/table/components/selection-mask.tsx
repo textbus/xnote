@@ -6,6 +6,7 @@ import { debounceTime } from '@textbus/core'
 import css from './selection-mask.scoped.scss'
 import { TableComponent } from '../table.component'
 import { sum } from '../_utils'
+import { isShowMask } from '../table.service'
 
 export interface TableSelection {
   startRow: number
@@ -36,11 +37,9 @@ export function SelectionMask(props: SelectionMaskProps) {
   watch(props.component.tableSelection, update)
 
   function update() {
-    const selection = props.component.tableSelection()
-    const selectedSlots = props.component.getSelectedNormalizedSlots()
-    const slotCount = selectedSlots ? selectedSlots.map(i => i.cells.filter(i => i.visible)).flat().length : 0
+    const selection = props.component.tableSelection()!
     const state = props.component.state
-    if (selection && slotCount > 1) {
+    if (isShowMask(props.component)) {
       let topCompensation = 0.5
       let heightCompensation = -1
       if (selection.startRow === 0) {

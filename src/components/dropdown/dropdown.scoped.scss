@@ -15,7 +15,8 @@
       &.has-arrow {
         ::v-deep {
           .btn {
-            //padding-right: 1px;
+            //padding-left: 1px;
+            padding-right: 1px;
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
           }

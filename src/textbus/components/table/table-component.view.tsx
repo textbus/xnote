@@ -10,7 +10,7 @@ import { ResizeColumn } from './components/resize-column'
 import { TopBar } from './components/top-bar'
 import { Scroll } from './components/scroll'
 import { LeftBar } from './components/left-bar'
-import { TableService } from './table.service'
+import { isShowMask, TableService } from './table.service'
 import { ResizeRow } from './components/resize-row'
 import { SelectionMask } from './components/selection-mask'
 import { deltaToBlock } from '../paragraph/paragraph.component'
@@ -112,8 +112,7 @@ export const TableComponentView = withAnnotation({
       )
     }
 
-    const selectedSlots = props.component.getSelectedNormalizedSlots()
-    const slotCount = selectedSlots ? selectedSlots.map(i => i.cells.filter(i => i.visible)).flat().length : 0
+    const showMask = isShowMask(props.component)
     return (
       <div class="xnote-table"
            data-component={props.component.name}
@@ -133,7 +132,7 @@ export const TableComponentView = withAnnotation({
               <table ref={tableRef} class={[
                 'xnote-table-content',
                 {
-                  'hide-selection': props.component.tableSelection() && slotCount > 1
+                  'hide-selection': showMask
                 }
               ]}>
                 <colgroup>
