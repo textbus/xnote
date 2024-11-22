@@ -44,6 +44,9 @@ import { CleanFormatsTool } from '../tools/clean-formats.tool'
 import { ToolService } from '../tools/_common/tool.service'
 import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
+import { useCommonState } from '../tools/_common/common-state'
+import { ImageComponent } from '../../textbus/components/image/image.component'
+import { VideoComponent } from '../../textbus/components/video/video.component'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -89,6 +92,8 @@ export const InlineToolbar = withAnnotation({
   let mouseupSubscription = new Subscription()
   const toolbarRef = createRef<HTMLElement>()
 
+  const commonState = useCommonState()
+
   function getTop() {
     const docRect = viewDocument.getBoundingClientRect()
     // const toolbarRect = toolbarRef.current!.getBoundingClientRect()
@@ -124,6 +129,20 @@ export const InlineToolbar = withAnnotation({
           slot: selection.focusSlot!,
           offset: selection.focusOffset!
         })
+      }
+    } else if (commonState().selectEmbed) {
+      const component = selection.startSlot?.getContentAtIndex(selection.startOffset!)
+      if (component instanceof ImageComponent || component instanceof VideoComponent) {
+        const nativeNode = adapter.getNativeNodeByComponent(component)
+        if (nativeNode) {
+          const rect = nativeNode.getBoundingClientRect()
+          selectionFocusRect = {
+            left: rect.left + rect.width / 2,
+            top: rect.top,
+            height: rect.height,
+            width: rect.width
+          }
+        }
       }
     } else {
       selectionFocusRect = bridge.getRect({
