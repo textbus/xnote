@@ -319,13 +319,13 @@ export const LeftToolbar = withAnnotation({
                   style={{ display: 'block' }}
                   abreast={true}
                   applyBefore={applyBefore}>
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>文本颜色</MenuItem>
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>文字颜色</MenuItem>
                 </TextColorTool>
                 <TextBackgroundColorTool
                   style={{ display: 'block' }}
                   abreast={true}
                   applyBefore={applyBefore}>
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-background-color"/>}>文本背景颜色</MenuItem>
+                  <MenuItem arrow={true} icon={<span class="xnote-icon-background-color"/>}>文字背景颜色</MenuItem>
                 </TextBackgroundColorTool>
                 <Divider/>
                 <MenuItem onClick={copy} icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>

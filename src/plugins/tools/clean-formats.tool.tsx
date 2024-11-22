@@ -17,7 +17,10 @@ export function CleanFormatsTool() {
 
   return () => {
     return (
-      <Button disabled={commonState().inSourceCode || commonState().readonly} onClick={clean}><span class="xnote-icon-clear-formatting"></span></Button>
+      <Button disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
+              onClick={clean}>
+        <span class="xnote-icon-clear-formatting"></span>
+      </Button>
     )
   }
 }

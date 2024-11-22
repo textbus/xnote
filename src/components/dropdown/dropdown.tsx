@@ -129,7 +129,9 @@ export const Dropdown = withAnnotation({
               {props.children}
             </div>
             {
-              props.arrow && <div ref={arrowRef} class="dropdown-btn-arrow"><Button arrow={true}></Button></div>
+              props.arrow && <div ref={arrowRef} class="dropdown-btn-arrow">
+                <Button disabled={props.disabled} arrow={true}></Button>
+              </div>
             }
           </div>
           {

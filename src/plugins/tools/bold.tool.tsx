@@ -36,7 +36,8 @@ export function BoldTool() {
   return () => {
     const vm = viewModel()
     return <Button highlight={vm.highlight}
-                   disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}>
+                   disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed }
+                   onClick={toggle}>
       <span class="xnote-icon-bold"></span>
     </Button>
   }

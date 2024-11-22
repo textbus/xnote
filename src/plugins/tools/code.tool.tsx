@@ -35,7 +35,9 @@ export function CodeTool() {
   return () => {
     const vm = viewModel()
     return <Button
-      highlight={vm.highlight} disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}>
+      highlight={vm.highlight}
+      disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
+      onClick={toggle}>
       <span class="xnote-icon-code"></span>
     </Button>
   }

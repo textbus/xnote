@@ -34,7 +34,9 @@ export function UnderlineTool() {
   const commonState = useCommonState()
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}>
+    return <Button highlight={vm.highlight}
+                   disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
+                   onClick={toggle}>
       <span class="xnote-icon-underline"></span>
     </Button>
   }

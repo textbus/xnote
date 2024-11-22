@@ -34,6 +34,9 @@ export function ItalicTool() {
   const commonState = useCommonState()
   return () => {
     const vm = viewModel()
-    return <Button highlight={vm.highlight} disabled={commonState().inSourceCode || commonState().readonly} onClick={toggle}><span class="xnote-icon-italic"></span></Button>
+    return <Button highlight={vm.highlight}
+                   disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
+                   onClick={toggle}><span
+      class="xnote-icon-italic"></span></Button>
   }
 }

@@ -44,7 +44,10 @@ export function SuperscriptTool() {
   const commonState = useCommonState()
   return () => {
     return (
-      <Button disabled={commonState().inSourceCode || commonState().readonly} highlight={state().highlight} onClick={apply}>
+      <Button
+        disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
+        highlight={state().highlight}
+        onClick={apply}>
         <span class="xnote-icon-superscript"></span>
       </Button>
     )

@@ -113,7 +113,7 @@ export function FontFamilyTool() {
   const commonState = useCommonState()
 
   return () => {
-    const b = commonState().inSourceCode || commonState().readonly
+    const b = commonState().inSourceCode || commonState().readonly || commonState().selectEmbed
     return (
       <Dropdown disabled={b} onCheck={check} menu={
         fontFamilyOptions.map(i => {

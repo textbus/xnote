@@ -4,7 +4,7 @@ import { Editor, Member, Organization } from './src/public-api'
 import { SyncConnector, YWebsocketConnector } from '@textbus/collaborate'
 import { FileUploader } from './src/interfaces'
 import { UserInfo } from './src/xnote-message-bus'
-import { StaticToolbarPlugin } from '@textbus/xnote'
+import { StaticToolbarPlugin, SuspensionToolbarPlugin } from '@textbus/xnote'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
 const firstNameText = '王、李、张、刘、陈、杨、黄、赵、周、吴、徐、孙、马、胡、朱、郭、何、罗、高、林'.replace(/、/g, '')
@@ -90,6 +90,9 @@ const editor = new Editor({
       // return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
     }
   },
+  // plugins: [
+  //   new SuspensionToolbarPlugin()
+  // ],
   providers: [
     {
       provide: Organization,

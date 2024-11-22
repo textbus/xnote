@@ -21,7 +21,7 @@ export function InsertTool() {
     const b = commonState().readonly
     return (
       <Dropdown disabled={b} menu={
-        <InsertMenu replace={false} hideTitle={true} slot={selection.focusSlot}/>
+        <InsertMenu replace={false} hideTitle={false} slot={selection.focusSlot}/>
       }>
         <Button disabled={b} arrow={true}>插入</Button>
       </Dropdown>
