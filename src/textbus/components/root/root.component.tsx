@@ -76,7 +76,6 @@ export class RootComponent extends Component<RootComponentState> {
 }
 
 export function RootView(props: ViewComponentProps<RootComponent>) {
-  const { content } = props.component.state
   const ref = createDynamicRef<HTMLDivElement>(node => {
     const sub = props.component.onCompositionStart.subscribe(() => {
       (node.children[0] as HTMLElement).dataset.placeholder = ''
@@ -102,6 +101,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
 
   return () => {
     const { rootRef } = props
+    const { content } = props.component.state
 
     return (
       <div class="xnote-root"

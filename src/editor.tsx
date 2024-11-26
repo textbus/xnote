@@ -9,7 +9,17 @@ import {
   isMobileBrowser, CollaborateCursor
 } from '@textbus/platform-browser'
 import { CollaborateConfig, CollaborateModule, MessageBus } from '@textbus/collaborate'
-import { Component, ContentType, Module, Selection, Slot, Textbus, TextbusConfig } from '@textbus/core'
+import {
+  Component,
+  ComponentStateLiteral,
+  ContentType,
+  Module,
+  RootComponentRef,
+  Selection,
+  Slot,
+  Textbus,
+  TextbusConfig
+} from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
 
 import './assets/icons/style.css'
@@ -32,7 +42,7 @@ import {
   paragraphComponentLoader,
   ParagraphView, registerAtShortcut, registerBlockquoteShortcut, registerListShortcut,
   RootComponent,
-  rootComponentLoader,
+  rootComponentLoader, RootComponentState,
   RootView,
   SourceCodeComponent,
   sourceCodeComponentLoader,
@@ -105,7 +115,7 @@ export interface XNoteCollaborateConfig extends CollaborateConfig {
  */
 export interface EditorConfig extends TextbusConfig {
   /** 默认 HTML 内容*/
-  content?: string,
+  content?: string | ComponentStateLiteral<RootComponentState>,
   /** 协作服务配置 */
   collaborateConfig?: XNoteCollaborateConfig,
   /** 视图配置项 */
@@ -323,23 +333,7 @@ export class Editor extends Textbus {
     let rootComp: Component
     const config = this.editorConfig
     if (config.content) {
-      const parser = this.get(Parser)
-      const doc = parser.parseDoc(config.content, rootComponentLoader)
-      if (doc instanceof Component) {
-        rootComp = doc
-      } else {
-        const content = new Slot([
-          ContentType.BlockComponent
-        ])
-        if (doc instanceof Slot) {
-          deltaToBlock(doc.toDelta(), this).forEach(i => {
-            content.insert(i)
-          })
-        }
-        rootComp = new RootComponent(this, {
-          content
-        })
-      }
+      rootComp = this.createModel(config.content)
     } else {
       rootComp = new RootComponent(this, {
         content: new Slot([ContentType.BlockComponent])
@@ -348,7 +342,44 @@ export class Editor extends Textbus {
     return this.render(rootComp)
   }
 
+  setContent(content: string | ComponentStateLiteral<RootComponentState>) {
+    this.guardReady()
+    const newModel = this.createModel(content)
+    const rootComponent = this.get(RootComponentRef).component
+    Object.assign(rootComponent.state, newModel.state)
+  }
+
   getHTML() {
     return this.translator.transform(this.vDomAdapter.host)
+  }
+
+  private createModel(content: string | ComponentStateLiteral<RootComponentState>) {
+    if (typeof content === 'string') {
+      return this.createModelFromHTML(content)
+    }
+    return this.createModelFromState(content)
+  }
+
+  private createModelFromState(state: ComponentStateLiteral<RootComponentState>) {
+    return RootComponent.fromJSON(this, state)
+  }
+
+  private createModelFromHTML(html: string) {
+    const parser = this.get(Parser)
+    const doc = parser.parseDoc(html, rootComponentLoader)
+    if (doc instanceof Component) {
+      return doc
+    }
+    const content = new Slot([
+      ContentType.BlockComponent
+    ])
+    if (doc instanceof Slot) {
+      deltaToBlock(doc.toDelta(), this).forEach(i => {
+        content.insert(i)
+      })
+    }
+    return new RootComponent(this, {
+      content
+    })
   }
 }

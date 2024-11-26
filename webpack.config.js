@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   devtool: process.env.NODE_ENV === 'production' ? undefined : 'cheap-module-source-map',
   entry: {
-    index: path.resolve(__dirname, './index.ts')
+    index: path.resolve(__dirname, './index.tsx')
   },
   output: {
     path: path.resolve(__dirname, './dist'),

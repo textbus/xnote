@@ -100,6 +100,12 @@ const editor = new Editor({
 })
 ```
 
+## 更新编辑器内容
+
+```ts
+editor.setContent('<p>你好！</p>')
+```
+
 ## @ 人
 
 在文档中 @ 人功能需实现以下接口，以对接用户信息
