@@ -30,11 +30,17 @@ export const isSupportFont = (function () {
     return Array.from(data).filter(n => n !== 0)
   }
 
+  const cache = new Map<string, boolean>()
   return function (fontName: string) {
     if (fontName.toLowerCase() === fullbackFontName.toLowerCase()) {
       return true
     }
-    return checker(fullbackFontName).join('') !== checker(fontName).join('')
+    if (cache.has(fontName)) {
+      return cache.get(fontName)
+    }
+    const b = checker(fullbackFontName).join('') !== checker(fontName).join('')
+    cache.set(fontName, b)
+    return b
   }
 })()
 
