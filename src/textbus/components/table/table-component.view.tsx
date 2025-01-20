@@ -191,6 +191,9 @@ export const tableComponentLoader: ComponentLoader = {
     let content: HTMLElement = element
     if (element.tagName === 'DIV') {
       content = element.querySelector('.xnote-table-content') as HTMLTableElement
+      if (!content) {
+        return
+      }
     }
     const { tHead, tBodies, tFoot } = content as HTMLTableElement
     const headers: TableCellConfig[][] = []
