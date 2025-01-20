@@ -1,10 +1,9 @@
 import { Slot, createVNode, merge } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
-import { DynamicRef, getCurrentInstance, inject, onUnmounted } from '@viewfly/core'
+import { DynamicRef, getCurrentInstance, inject, onPropsChanged, onUnmounted } from '@viewfly/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 
-
-interface Props extends HTMLAttributes<unknown> {
+export interface SlotRenderProps extends HTMLAttributes<unknown> {
   slot: Slot
   /** 默认值为 div */
   tag?: string
@@ -14,14 +13,26 @@ interface Props extends HTMLAttributes<unknown> {
   elKey?: number | string
 }
 
-export function SlotRender(props: Props) {
+export function SlotRender(props: SlotRenderProps) {
   const adapter = inject(DomAdapter)
 
   const instance = getCurrentInstance()
   const slot = props.slot
-  const sub = merge(slot.__changeMarker__.onChange, slot.__changeMarker__.onForceChange).subscribe(() => {
-    if (props.slot.__changeMarker__.dirty) {
-      instance.markAsDirtied()
+
+  function listen(slot: Slot) {
+    return merge(slot.__changeMarker__.onChange, slot.__changeMarker__.onForceChange).subscribe(() => {
+      if (props.slot.__changeMarker__.dirty) {
+        instance.markAsDirtied()
+      }
+    })
+  }
+
+  let sub = listen(slot)
+
+  onPropsChanged<SlotRenderProps>((currentProps, oldProps) => {
+    if (oldProps.slot !== currentProps.slot) {
+      sub.unsubscribe()
+      sub = listen(currentProps.slot)
     }
   })
 
