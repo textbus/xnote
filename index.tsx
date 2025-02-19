@@ -6,7 +6,7 @@ import { FileUploader } from './src/interfaces'
 import { UserInfo } from './src/xnote-message-bus'
 import { StaticToolbarPlugin, SuspensionToolbarPlugin } from '@textbus/xnote'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
-import { createRef, onMounted } from '@viewfly/core'
+import { createRef, createSignal, onMounted } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
 import { RootComponentRef } from '@textbus/core'
 
@@ -83,46 +83,50 @@ class Http extends Organization {
   }
 }
 
-const editor = new Editor({
-  readonly: false,
-  // content: document.getElementById('article')!.innerHTML,
-  collaborateConfig: {
-    userinfo: user,
-    createConnector(yDoc): SyncConnector {
-      return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
-      // return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
-    }
-  },
-  // plugins: [
-  //   new SuspensionToolbarPlugin()
-  // ],
-  providers: [
-    {
-      provide: Organization,
-      useValue: new Http()
-    },
-    {
-      provide: FileUploader,
-      useValue: {
-        uploadFile(type: string) {
-          console.log(type)
-        }
-      }
-    }
-  ]
-})
 
-function App() {
+function EditorContainer() {
   const editorRef = createRef<HTMLElement>()
   const htmlRef = createRef<HTMLTextAreaElement>()
 
+  const editor = new Editor({
+    readonly: false,
+    // content: document.getElementById('article')!.innerHTML,
+    collaborateConfig: {
+      userinfo: user,
+      createConnector(yDoc): SyncConnector {
+        return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
+        // return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
+      }
+    },
+    // plugins: [
+    //   new SuspensionToolbarPlugin()
+    // ],
+    providers: [
+      {
+        provide: Organization,
+        useValue: new Http()
+      },
+      {
+        provide: FileUploader,
+        useValue: {
+          uploadFile(type: string) {
+            console.log(type)
+          }
+        }
+      }
+    ]
+  })
   onMounted(() => {
     editor.mount(editorRef.current!).then(() => {
-      const root = editor.get(RootComponentRef).component
-      root.changeMarker.onChange.subscribe(op => {
-        console.log(op)
-      })
+      // const root = editor.get(RootComponentRef).component
+      // root.changeMarker.onChange.subscribe(op => {
+      //   console.log(op)
+      // })
     })
+
+    return () => {
+      editor.destroy()
+    }
   })
   return () => {
     return (
@@ -134,14 +138,35 @@ function App() {
           <button type="button" onClick={() => {
             const html = editor.getHTML()
             htmlRef.current!.value = html
-          }}>获取 HTML</button>
+          }}>获取 HTML
+          </button>
           <textarea name="" id="" ref={htmlRef} cols="30" rows="10"></textarea>
           <button type="button" onClick={() => {
             const html = htmlRef.current!.value
             editor.setContent(html)
-          }}>设置 HTML</button>
+          }}>设置 HTML
+          </button>
         </div>
         <div ref={editorRef}></div>
+      </div>
+    )
+  }
+}
+
+function App() {
+  const is = createSignal(true)
+  return () => {
+    return (
+      <div>
+        <div>
+          <button onClick={() => {
+            is.set(!is())
+          }}>switch
+          </button>
+        </div>
+        {
+          is() ? <EditorContainer/> : null
+        }
       </div>
     )
   }

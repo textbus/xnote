@@ -345,8 +345,10 @@ export class Editor extends Textbus {
   setContent(content: string | ComponentStateLiteral<RootComponentState>) {
     this.guardReady()
     const newModel = this.createModel(content)
-    const rootComponent = this.get(RootComponentRef).component
-    Object.assign(rootComponent.state, newModel.state)
+    const rootComponent = this.get(RootComponentRef).component as RootComponent
+    const slot = newModel.state.content
+    newModel.state.content = null
+    rootComponent.state.content = slot
   }
 
   getHTML() {
