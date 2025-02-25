@@ -68,7 +68,9 @@ export const TableComponentView = withAnnotation({
              data-layout-width={`[${state.columnsConfig.join(',')}]`}
         >
           <div class="xnote-table-inner" ref={props.rootRef}>
-            <div class="xnote-table-container">
+            <div class="xnote-table-container" style={{
+              overflow: 'auto'
+            }}>
               <table class={[
                 'xnote-table-content',
                 {

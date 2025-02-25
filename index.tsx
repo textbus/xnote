@@ -128,6 +128,7 @@ function EditorContainer() {
       editor.destroy()
     }
   })
+  const contentRef = createRef<HTMLDivElement>()
   return () => {
     return (
       <div>
@@ -138,6 +139,7 @@ function EditorContainer() {
           <button type="button" onClick={() => {
             const html = editor.getHTML()
             htmlRef.current!.value = html
+            contentRef.current!.innerHTML = html
           }}>获取 HTML
           </button>
           <textarea name="" id="" ref={htmlRef} cols="30" rows="10"></textarea>
@@ -148,6 +150,7 @@ function EditorContainer() {
           </button>
         </div>
         <div ref={editorRef}></div>
+        <div ref={contentRef}></div>
       </div>
     )
   }
