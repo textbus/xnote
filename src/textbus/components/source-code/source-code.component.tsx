@@ -602,7 +602,8 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                     }
                   }
                   return createVNode('div', {
-                    class: 'xnote-source-code-line' + (item.emphasize ? ' xnote-source-code-line-emphasize' : '')
+                    class: 'xnote-source-code-line' + (item.emphasize ? ' xnote-source-code-line-emphasize' : ''),
+                    key: item.slot.id
                   }, [
                     createVNode('span', { class: 'xnote-source-code-line-content' }, children)
                   ])
