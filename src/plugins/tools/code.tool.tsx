@@ -1,5 +1,4 @@
-import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
@@ -13,7 +12,7 @@ export function CodeTool() {
   const textbus = inject(Textbus)
   const commonState = useCommonState()
 
-  const [viewModel, update] = useProduce({
+  const viewModel = reactive({
     highlight: false,
   })
 
@@ -23,9 +22,7 @@ export function CodeTool() {
 
   const sub = refreshService.onRefresh.subscribe(() => {
     const state = query.queryFormat(codeFormatter)
-    update(draft => {
-      draft.highlight = state.state === QueryStateType.Enabled
-    })
+    viewModel.highlight = state.state === QueryStateType.Enabled
   })
 
   onUnmounted(() => {
@@ -33,9 +30,8 @@ export function CodeTool() {
   })
 
   return () => {
-    const vm = viewModel()
     return <Button
-      highlight={vm.highlight}
+      highlight={viewModel.highlight}
       disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
       onClick={toggle}>
       <span class="xnote-icon-code"></span>

@@ -1,6 +1,6 @@
 import { Slot, createVNode, merge } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
-import { DynamicRef, getCurrentInstance, inject, onPropsChanged, onUnmounted } from '@viewfly/core'
+import { DynamicRef, getCurrentInstance, inject, onUnmounted, watch } from '@viewfly/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 
 export interface SlotRenderProps extends HTMLAttributes<unknown> {
@@ -29,10 +29,12 @@ export function SlotRender(props: SlotRenderProps) {
 
   let sub = listen(slot)
 
-  onPropsChanged<SlotRenderProps>((currentProps, oldProps) => {
-    if (oldProps.slot !== currentProps.slot) {
+  watch(() => {
+    return props.slot
+  }, (currentSlot, oldSlot) => {
+    if (oldSlot !== currentSlot) {
       sub.unsubscribe()
-      sub = listen(currentProps.slot)
+      sub = listen(currentSlot)
     }
   })
 

@@ -55,17 +55,17 @@ export class BlockquoteComponent extends Component<BlockquoteComponentState> {
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<BlockquoteComponentState>) {
     const slot = textbus.get(Registry).createSlot(json.slot)
-    return new BlockquoteComponent(textbus, {
+    return new BlockquoteComponent({
       slot
     })
   }
 
-  constructor(textbus: Textbus, state: BlockquoteComponentState = {
+  constructor(state: BlockquoteComponentState = {
     slot: new Slot([
       ContentType.BlockComponent
     ])
   }) {
-    super(textbus, state)
+    super(state)
   }
 
   override getSlots(): Slot[] {
@@ -98,7 +98,7 @@ export function toBlockquote(textbus: Textbus) {
       parent.insert(i)
     })
   } else {
-    const block = new BlockquoteComponent(textbus)
+    const block = new BlockquoteComponent()
     const slot = block.state.slot
     if (selection.startSlot === selection.endSlot) {
       const parentComponent = selection.startSlot!.parent!
@@ -149,7 +149,7 @@ export const blockquoteComponentLoader: ComponentLoader = {
   match(element: HTMLElement, returnableContentTypes): boolean {
     return returnableContentTypes.includes(ContentType.BlockComponent) && element.tagName === 'BLOCKQUOTE'
   },
-  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component {
+  read(element: HTMLElement, _: Textbus, slotParser: SlotParser): Component {
     const delta = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,
@@ -160,10 +160,10 @@ export const blockquoteComponentLoader: ComponentLoader = {
       ContentType.BlockComponent,
     ])
 
-    deltaToBlock(delta, textbus).forEach(i => {
+    deltaToBlock(delta).forEach(i => {
       slot.insert(i)
     })
-    return new BlockquoteComponent(textbus, {
+    return new BlockquoteComponent({
       slot
     })
   },

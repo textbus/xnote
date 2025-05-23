@@ -1,5 +1,4 @@
-import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
@@ -12,7 +11,7 @@ export function UnderlineTool() {
   const refreshService = inject(RefreshService)
   const textbus = inject(Textbus)
 
-  const [viewModel, update] = useProduce({
+  const viewModel = reactive({
     highlight: false,
   })
 
@@ -22,9 +21,7 @@ export function UnderlineTool() {
 
   const sub = refreshService.onRefresh.subscribe(() => {
     const state = query.queryFormat(underlineFormatter)
-    update(draft => {
-      draft.highlight = state.state === QueryStateType.Enabled
-    })
+    viewModel.highlight = state.state === QueryStateType.Enabled
   })
 
   onUnmounted(() => {
@@ -33,8 +30,7 @@ export function UnderlineTool() {
 
   const commonState = useCommonState()
   return () => {
-    const vm = viewModel()
-    return <Button highlight={vm.highlight}
+    return <Button highlight={viewModel.highlight}
                    disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
                    onClick={toggle}>
       <span class="xnote-icon-underline"></span>

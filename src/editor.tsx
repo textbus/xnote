@@ -335,7 +335,7 @@ export class Editor extends Textbus {
     if (config.content) {
       rootComp = this.createModel(config.content)
     } else {
-      rootComp = new RootComponent(this, {
+      rootComp = new RootComponent({
         content: new Slot([ContentType.BlockComponent])
       })
     }
@@ -376,11 +376,11 @@ export class Editor extends Textbus {
       ContentType.BlockComponent
     ])
     if (doc instanceof Slot) {
-      deltaToBlock(doc.toDelta(), this).forEach(i => {
+      deltaToBlock(doc.toDelta()).forEach(i => {
         content.insert(i)
       })
     }
-    return new RootComponent(this, {
+    return new RootComponent({
       content
     })
   }

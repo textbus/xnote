@@ -220,7 +220,7 @@ export const tableComponentLoader: ComponentLoader = {
             ContentType.Text
           ]), cell).toDelta()
 
-          const results = deltaToBlock(delta, textbus)
+          const results = deltaToBlock(delta)
           delta.attributes.forEach((value, key) => {
             slot.setAttribute(key, value)
           })
@@ -253,7 +253,7 @@ export const tableComponentLoader: ComponentLoader = {
             ContentType.Text
           ]), cell).toDelta()
 
-          const results = deltaToBlock(delta, textbus)
+          const results = deltaToBlock(delta)
           delta.attributes.forEach((value, key) => {
             slot.setAttribute(key, value)
           })
@@ -287,7 +287,7 @@ export const tableComponentLoader: ComponentLoader = {
     layoutWidth.length = length
 
 
-    return new TableComponent(textbus, {
+    return new TableComponent({
       columnsConfig: layoutWidth,
       mergeConfig: cells.mergedConfig,
       rows: cells.table.map(i => {

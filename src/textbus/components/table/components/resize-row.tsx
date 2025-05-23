@@ -1,6 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, inject, onMounted, StaticRef } from '@viewfly/core'
-import { useProduce } from '@viewfly/hooks'
+import { createRef, inject, onMounted, reactive, StaticRef } from '@viewfly/core'
 
 import css from './resize-row.scoped.scss'
 import { TableService } from '../table.service'
@@ -15,35 +14,31 @@ export interface ResizeRowProps {
 export function ResizeRow(props: ResizeRowProps) {
   const dragLineRef = createRef<HTMLDivElement>()
   const tableService = inject(TableService)
-  const [styles, updateStyles] = useProduce({
+  const styles = reactive({
     visible: false,
     top: 0
   })
   onMounted(() => {
     const sub = tableService.onInsertRowBefore.subscribe(i => {
       if (i === null) {
-        updateStyles(draft => {
-          draft.visible = false
-        })
+        styles.visible = false
         return
       }
-      updateStyles(draft => {
-        draft.visible = true
-        if (i === -1) {
-          draft.top = 0
-          return
-        }
-        const row = props.tableRef.current!.rows.item(i)!
-        draft.top = row.offsetTop + row.offsetHeight
-      })
+      styles.visible = true
+      if (i === -1) {
+        styles.top = 0
+        return
+      }
+      const row = props.tableRef.current!.rows.item(i)!
+      styles.top = row.offsetTop + row.offsetHeight
     })
     return () => sub.unsubscribe()
   })
   return withScopedCSS(css, () => {
     return <div ref={dragLineRef}
                 style={{
-                  display: styles().visible ? 'block' : 'none',
-                  top: styles().top + 'px',
+                  display: styles.visible ? 'block' : 'none',
+                  top: styles.top + 'px',
                   width: sum(props.component.state.columnsConfig) + 'px'
                 }}
                 class={'drag-line'}/>

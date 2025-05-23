@@ -1,5 +1,4 @@
-import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Query, QueryStateType, Textbus } from '@textbus/core'
 
 import { Button } from '../../components/button/button'
@@ -14,7 +13,7 @@ export function BoldTool() {
 
   const commonState = useCommonState()
 
-  const [viewModel, update] = useProduce({
+  const viewModel = reactive({
     highlight: false,
   })
 
@@ -24,9 +23,7 @@ export function BoldTool() {
 
   const sub = refreshService.onRefresh.subscribe(() => {
     const state = query.queryFormat(boldFormatter)
-    update(draft => {
-      draft.highlight = state.state === QueryStateType.Enabled
-    })
+    viewModel.highlight = state.state === QueryStateType.Enabled
   })
 
   onUnmounted(() => {
@@ -34,9 +31,8 @@ export function BoldTool() {
   })
 
   return () => {
-    const vm = viewModel()
-    return <Button highlight={vm.highlight}
-                   disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed }
+    return <Button highlight={viewModel.highlight}
+                   disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
                    onClick={toggle}>
       <span class="xnote-icon-bold"></span>
     </Button>

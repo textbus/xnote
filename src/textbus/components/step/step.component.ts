@@ -13,17 +13,17 @@ export interface StepComponentState {
   items: StepComponentItem[]
 }
 
-export function createStepItem(textbus: Textbus): StepComponentItem {
+export function createStepItem(): StepComponentItem {
   const slot = new Slot([
     ContentType.BlockComponent
   ])
 
-  const title = new ParagraphComponent(textbus)
+  const title = new ParagraphComponent()
   title.state.slot.insert('标题', [
     [fontSizeFormatter, '18px'],
     [boldFormatter, true]
   ])
-  const content = new ParagraphComponent(textbus)
+  const content = new ParagraphComponent()
   content.state.slot.insert('描述信息...')
   slot.insert(title)
   slot.insert(content)
@@ -37,7 +37,7 @@ export class StepComponent extends Component<StepComponentState> {
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<StepComponentState>): StepComponent {
     const registry = textbus.get(Registry)
 
-    return new StepComponent(textbus, {
+    return new StepComponent({
       step: json.step,
       items: json.items.map(i => {
         return {

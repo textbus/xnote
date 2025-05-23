@@ -1,6 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { onMounted, onUnmounted, StaticRef, watch } from '@viewfly/core'
-import { useProduce } from '@viewfly/hooks'
+import { onMounted, onUnmounted, reactive, StaticRef, watch } from '@viewfly/core'
 import { debounceTime } from '@textbus/core'
 
 import css from './selection-mask.scoped.scss'
@@ -21,7 +20,7 @@ export interface SelectionMaskProps {
 }
 
 export function SelectionMask(props: SelectionMaskProps) {
-  const [styles, updateStyles] = useProduce({
+  const styles = reactive({
     visible: false,
     left: 0,
     top: 0,
@@ -53,21 +52,17 @@ export function SelectionMask(props: SelectionMaskProps) {
         heightCompensation += 0.5
       }
       const trs = Array.from(props.tableRef.current!.rows)
-      updateStyles(draft => {
 
-        const height = trs[selection.endRow - 1].offsetHeight ||
-          (trs[selection.endRow - 1].children[0] as HTMLElement)?.offsetHeight || 0
+      const height = trs[selection.endRow - 1].offsetHeight ||
+        (trs[selection.endRow - 1].children[0] as HTMLElement)?.offsetHeight || 0
 
-        draft.visible = true
-        draft.left = sum(state.columnsConfig.slice(0, selection.startColumn))
-        draft.top = trs[selection.startRow].offsetTop + topCompensation
-        draft.width = sum(state.columnsConfig.slice(selection.startColumn, selection.endColumn)) - 1 + 'px'
-        draft.height = trs[selection.endRow - 1].offsetTop + height + heightCompensation - draft.top + 'px'
-      })
+      styles.visible = true
+      styles.left = sum(state.columnsConfig.slice(0, selection.startColumn))
+      styles.top = trs[selection.startRow].offsetTop + topCompensation
+      styles.width = sum(state.columnsConfig.slice(selection.startColumn, selection.endColumn)) - 1 + 'px'
+      styles.height = trs[selection.endRow - 1].offsetTop + height + heightCompensation - styles.top + 'px'
     } else {
-      updateStyles(draft => {
-        draft.visible = false
-      })
+      styles.visible = false
     }
   }
 
@@ -79,16 +74,15 @@ export function SelectionMask(props: SelectionMaskProps) {
     s.unsubscribe()
   })
   return withScopedCSS(css, () => {
-    const style = styles()
     return (
       <div class="mask" style={{
-        display: style.visible ? 'block' : 'none',
-        left: style.left + 'px',
-        top: style.top + 'px',
-        right: style.right + 'px',
-        width: style.width,
-        height: style.height,
-        bottom: style.bottom + 'px'
+        display: styles.visible ? 'block' : 'none',
+        left: styles.left + 'px',
+        top: styles.top + 'px',
+        right: styles.right + 'px',
+        width: styles.width,
+        height: styles.height,
+        bottom: styles.bottom + 'px'
       }}/>
     )
   })

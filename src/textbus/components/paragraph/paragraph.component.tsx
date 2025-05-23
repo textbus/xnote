@@ -34,18 +34,18 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<ParagraphComponentState>) {
     const slot = textbus.get(Registry).createSlot(json.slot)
-    return new ParagraphComponent(textbus, {
+    return new ParagraphComponent({
       slot
     })
   }
 
-  constructor(textbus: Textbus, state: ParagraphComponentState = {
+  constructor(state: ParagraphComponentState = {
     slot: new Slot([
       ContentType.InlineComponent,
       ContentType.Text
     ])
   }) {
-    super(textbus, state)
+    super(state)
   }
 
   override getSlots(): Slot[] {
@@ -61,7 +61,7 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
       const isEmpty = this.state.slot.isEmpty
       const afterSlot = ev.target.cut(ev.data.index)
       afterSlot.removeAttribute(headingAttr)
-      const nextParagraph = new ParagraphComponent(injector, {
+      const nextParagraph = new ParagraphComponent({
         slot: afterSlot
       })
 
@@ -108,7 +108,7 @@ export const paragraphComponentLoader: ComponentLoader = {
     return returnableContentTypes.includes(ContentType.BlockComponent) &&
       (element.dataset.component === ParagraphComponent.componentName || /^P|H[1-6]$/.test(element.tagName))
   },
-  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
+  read(element: HTMLElement, _: Textbus, slotParser: SlotParser): Component | Slot {
     let content: HTMLElement
     if (/^P|H[1-6]$/.test(element.tagName)) {
       content = element
@@ -127,7 +127,7 @@ export const paragraphComponentLoader: ComponentLoader = {
       ContentType.BlockComponent
     ]), content).toDelta()
 
-    const results = deltaToBlock(delta, textbus)
+    const results = deltaToBlock(delta)
 
     if (results.length === 1) {
       return results[0]
@@ -144,7 +144,7 @@ export const paragraphComponentLoader: ComponentLoader = {
   }
 }
 
-export function deltaToBlock(delta: DeltaLite, textbus: Textbus) {
+export function deltaToBlock(delta: DeltaLite) {
   const results: Component[] = []
 
   let slot: Slot | null = null
@@ -158,7 +158,7 @@ export function deltaToBlock(delta: DeltaLite, textbus: Textbus) {
         delta.attributes.forEach((value, key) => {
           slot!.setAttribute(key, value)
         })
-        results.push(new ParagraphComponent(textbus, {
+        results.push(new ParagraphComponent({
           slot
         }))
       }

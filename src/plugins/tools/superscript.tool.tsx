@@ -1,6 +1,5 @@
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Selection } from '@textbus/core'
-import { useProduce } from '@viewfly/hooks'
 
 import { Button } from '../../components/button/button'
 import { superscriptFormatter } from '../../textbus/formatters/superscript'
@@ -12,14 +11,12 @@ export function SuperscriptTool() {
   const selection = inject(Selection)
   const commander = inject(Commander)
 
-  const [state, updateState] = useProduce({
+  const state = reactive({
     highlight: false
   })
 
   const sub = selection.onChange.subscribe(() => {
-    updateState(draft => {
-      draft.highlight = getState()
-    })
+    state.highlight = getState()
   })
 
   function getState() {
@@ -46,7 +43,7 @@ export function SuperscriptTool() {
     return (
       <Button
         disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
-        highlight={state().highlight}
+        highlight={state.highlight}
         onClick={apply}>
         <span class="xnote-icon-superscript"></span>
       </Button>

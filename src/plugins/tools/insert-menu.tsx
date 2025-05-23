@@ -66,7 +66,7 @@ export function InsertMenu(props: InsertToolProps) {
         if (/h[1-6]/.test(type)) {
           slot.setAttribute(headingAttr, type)
         }
-        const p = new ParagraphComponent(textbus, {
+        const p = new ParagraphComponent({
           slot
         })
         insertComponent(p)
@@ -79,7 +79,7 @@ export function InsertMenu(props: InsertToolProps) {
           ContentType.InlineComponent,
           ContentType.Text
         ])
-        const list = new ListComponent(textbus, {
+        const list = new ListComponent({
           slot,
           reorder: true,
           type: type === 'ol' ? 'OrderedList' : 'UnorderedList'
@@ -92,7 +92,7 @@ export function InsertMenu(props: InsertToolProps) {
         const slot = new Slot([
           ContentType.Text
         ])
-        const comp = new SourceCodeComponent(textbus, {
+        const comp = new SourceCodeComponent({
           lang: '',
           lineNumber: true,
           slots: [{
@@ -105,7 +105,7 @@ export function InsertMenu(props: InsertToolProps) {
       }
         break
       case 'table': {
-        const table = new TableComponent(textbus)
+        const table = new TableComponent()
         insertComponent(table)
         textbus.nextTick(() => {
           selection.selectFirstPosition(table, true, true)
@@ -117,7 +117,7 @@ export function InsertMenu(props: InsertToolProps) {
           ContentType.Text,
           ContentType.InlineComponent
         ])
-        const comp = new TodolistComponent(textbus, {
+        const comp = new TodolistComponent({
           slot,
           checked: false
         })
@@ -128,7 +128,7 @@ export function InsertMenu(props: InsertToolProps) {
       case 'image':
         if (fileUploader) {
           Promise.resolve().then(() => fileUploader.uploadFile('image')).then(url => {
-            const img = new ImageComponent(textbus, {
+            const img = new ImageComponent({
               src: url
             })
             commander.insert(img)
@@ -138,7 +138,7 @@ export function InsertMenu(props: InsertToolProps) {
       case 'video':
         if (fileUploader) {
           Promise.resolve().then(() => fileUploader.uploadFile('video')).then(url => {
-            const img = new VideoComponent(textbus, {
+            const img = new VideoComponent({
               src: url
             })
             commander.insert(img)
@@ -146,33 +146,33 @@ export function InsertMenu(props: InsertToolProps) {
         }
         break
       case 'highlightBox': {
-        const p = new ParagraphComponent(textbus)
-        const comp = new HighlightBoxComponent(textbus)
+        const p = new ParagraphComponent()
+        const comp = new HighlightBoxComponent()
         comp.state.slot.insert(p)
         insertComponent(comp)
         selection.setPosition(p.state.slot, 0)
       }
         break
       case 'katex': {
-        const p = new ParagraphComponent(textbus)
-        const comp = new KatexComponent(textbus)
+        const p = new ParagraphComponent()
+        const comp = new KatexComponent()
         p.state.slot.insert(comp)
         insertComponent(p)
         selection.selectComponent(comp)
       }
         break
       case 'step': {
-        const step = new StepComponent(textbus, {
+        const step = new StepComponent({
           step: 0,
-          items: [createStepItem(textbus)]
+          items: [createStepItem()]
         })
         insertComponent(step)
         selection.selectFirstPosition(step, false, true)
       }
         break
       case 'timeline': {
-        const timeline = new TimelineComponent(textbus, {
-          items: [createTimelineItem(textbus, '#296eff')]
+        const timeline = new TimelineComponent({
+          items: [createTimelineItem('#296eff')]
         })
         insertComponent(timeline)
         selection.selectFirstPosition(timeline, false, true)

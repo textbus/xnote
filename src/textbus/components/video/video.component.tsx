@@ -18,8 +18,8 @@ export class VideoComponent extends Component<VideoComponentState> {
   static type = ContentType.InlineComponent
   static componentName = 'VideoComponent'
 
-  static fromJSON(textbus: Textbus, json: ComponentStateLiteral<VideoComponentState>) {
-    return new VideoComponent(textbus, {
+  static fromJSON(_: Textbus, json: ComponentStateLiteral<VideoComponentState>) {
+    return new VideoComponent({
       ...json
     })
   }
@@ -62,9 +62,9 @@ export const videoComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'VIDEO' || element.dataset.component === VideoComponent.componentName
   },
-  read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
+  read(element: HTMLElement): Component | Slot | void {
     const video = element instanceof HTMLVideoElement ? element : (element.querySelector('video') || document.createElement('video'))
-    return new VideoComponent(textbus, {
+    return new VideoComponent({
       src: video.src,
       width: video.style.width || 'auto',
       height: video.style.height || 'auto'

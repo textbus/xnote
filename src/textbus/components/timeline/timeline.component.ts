@@ -14,12 +14,12 @@ export interface TimelineComponentState {
   items: TimelineComponentItem[]
 }
 
-export function createTimelineItem(textbus: Textbus, theme: string): TimelineComponentItem {
+export function createTimelineItem(theme: string): TimelineComponentItem {
   const slot = new Slot([
     ContentType.BlockComponent,
   ])
 
-  const title = new ParagraphComponent(textbus)
+  const title = new ParagraphComponent()
   title.state.slot.insert('时间主题', [
     [fontSizeFormatter, '18px'],
     [boldFormatter, true]
@@ -29,7 +29,7 @@ export function createTimelineItem(textbus: Textbus, theme: string): TimelineCom
     [colorFormatter, '#777']
   ])
 
-  const desc = new ParagraphComponent(textbus)
+  const desc = new ParagraphComponent()
   desc.state.slot.insert('描述信息...')
   slot.insert(title)
   slot.insert(desc)
@@ -43,7 +43,7 @@ export class TimelineComponent extends Component<TimelineComponentState> {
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<TimelineComponentState>): TimelineComponent {
     const registry = textbus.get(Registry)
 
-    return new TimelineComponent(textbus, {
+    return new TimelineComponent({
       items: json.items.map(i => {
         return {
           theme: i.theme,

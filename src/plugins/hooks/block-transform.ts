@@ -36,14 +36,14 @@ export function useBlockTransform() {
             ])
           },
           stateFactory(slots: Slot[]) {
-            return slots.map(slot => new ParagraphComponent(textbus, {
+            return slots.map(slot => new ParagraphComponent({
               slot
             }))
           }
         })
         break
       case 'table': {
-        const table = new TableComponent(textbus)
+        const table = new TableComponent()
         if (selection.commonAncestorSlot?.isEmpty && selection.commonAncestorComponent?.name === ParagraphComponent.componentName) {
           commander.replaceComponent(selection.commonAncestorComponent, table)
         } else {
@@ -63,7 +63,7 @@ export function useBlockTransform() {
           },
           stateFactory(slots: Slot[]) {
             return slots.map(slot => {
-              return new TodolistComponent(textbus, {
+              return new TodolistComponent({
                 checked: false,
                 slot
               })
@@ -91,7 +91,7 @@ export function useBlockTransform() {
             },
             stateFactory(slots: Slot[]) {
               return slots.map(slot => {
-                return new ParagraphComponent(textbus, {
+                return new ParagraphComponent({
                   slot
                 })
               })
@@ -106,7 +106,7 @@ export function useBlockTransform() {
               ])
             },
             stateFactory(slots: Slot[]) {
-              return [new SourceCodeComponent(textbus, {
+              return [new SourceCodeComponent({
                 lang: '',
                 lineNumber: true,
                 autoBreak: true,
@@ -140,7 +140,7 @@ export function useBlockTransform() {
             parent.insert(i)
           })
         } else {
-          const block = new HighlightBoxComponent(textbus)
+          const block = new HighlightBoxComponent()
           const slot = block.state.slot
           if (selection.startSlot === selection.endSlot) {
             const parentComponent = selection.startSlot!.parent!

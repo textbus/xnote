@@ -3,7 +3,7 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType, fromPromise,
-  Keyboard, onBlur, onBreak, onContentDeleted, onContentInserted, onDestroy, onFocus,
+  Keyboard, onBlur, onBreak, onContentDeleted, onContentInserted, onDetach, onFocus,
   Registry,
   Selection,
   Slot,
@@ -64,7 +64,7 @@ export function registerAtShortcut(textbus: Textbus) {
         return false
       }
 
-      const at = new AtComponent(textbus)
+      const at = new AtComponent()
       commander.insert(at)
       selection.setPosition(at.state.slot!, 0)
     }
@@ -79,11 +79,11 @@ export class AtComponent extends Component<AtComponentState> {
     const registry = textbus.get(Registry)
     if (slotState) {
       const slot = registry.createSlot(slotState)
-      return new AtComponent(textbus, {
+      return new AtComponent({
         slot
       })
     }
-    return new AtComponent(textbus, {
+    return new AtComponent({
       userInfo,
     })
   }
@@ -93,16 +93,16 @@ export class AtComponent extends Component<AtComponentState> {
   members = createSignal<Member[]>([])
   selectedIndex = createSignal(0)
 
-  private selection = this.textbus.get(Selection)
-  private organization = this.textbus.get(Organization)
+  private selection!: Selection
+  private organization!: Organization
 
-  constructor(textbus: Textbus, state: AtComponentState = {
+  constructor(state: AtComponentState = {
     slot: new Slot([ContentType.Text])
   }) {
     if (!state.userInfo && !state.slot) {
       state.slot = new Slot([ContentType.Text])
     }
-    super(textbus, state)
+    super(state)
   }
 
   override getSlots(): Slot[] {
@@ -116,6 +116,8 @@ export class AtComponent extends Component<AtComponentState> {
   }
 
   override setup() {
+    this.selection = useContext(Selection)
+    this.organization = useContext(Organization)
     let isFocus = false
     onFocus(() => {
       isFocus = true
@@ -198,7 +200,7 @@ export class AtComponent extends Component<AtComponentState> {
       }
     })
 
-    onDestroy(() => {
+    onDetach(() => {
       subs.unsubscribe()
     })
   }

@@ -3,7 +3,7 @@ import {
   Component,
   ComponentStateLiteral,
   ContentType,
-  onDestroy,
+  onDetach,
   onFocusIn,
   onFocusOut,
   onGetRanges,
@@ -49,7 +49,7 @@ export class TableComponent extends Component<TableComponentState> {
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<TableComponentState>) {
     const registry = textbus.get(Registry)
-    return new TableComponent(textbus, {
+    return new TableComponent({
       columnsConfig: json.columnsConfig || [],
       mergeConfig: json.mergeConfig || [],
       rows: json.rows.map<Row>(row => {
@@ -66,17 +66,17 @@ export class TableComponent extends Component<TableComponentState> {
     })
   }
 
-  private selection = this.textbus.get(Selection)
-  private commander = this.textbus.get(Commander)
+  private selection!: Selection
+  private commander!: Commander
 
-  constructor(textbus: Textbus, state: TableComponentState = {
+  constructor(state: TableComponentState = {
     columnsConfig: Array.from<number>({ length: 5 }).fill(defaultColumnWidth),
     mergeConfig: {},
     rows: Array.from({ length: 3 }).map(() => {
       return {
         height: defaultRowHeight,
         cells: Array.from({ length: 5 }).map(() => {
-          const p = new ParagraphComponent(textbus)
+          const p = new ParagraphComponent()
           const slot = new Slot([ContentType.BlockComponent])
           slot.insert(p)
           return {
@@ -87,7 +87,7 @@ export class TableComponent extends Component<TableComponentState> {
       }
     })
   }) {
-    super(textbus, state)
+    super(state)
   }
 
   focus = new Subject<boolean>()
@@ -285,7 +285,7 @@ export class TableComponent extends Component<TableComponentState> {
     if (slotRanges.length) {
       setTimeout(() => {
         this.selection.restore()
-        this.textbus.focus()
+        this.textbus!.focus()
       })
     }
   }
@@ -320,7 +320,7 @@ export class TableComponent extends Component<TableComponentState> {
     this.selection.setSelectedRanges(slotRanges)
     this.focus.next(true)
     this.selection.restore()
-    this.textbus.focus()
+    this.textbus!.focus()
     // if (slotRanges.length) {
     //   setTimeout(() => {
     //     this.selection.restore()
@@ -357,6 +357,8 @@ export class TableComponent extends Component<TableComponentState> {
 
   override setup() {
     const selection = useContext(Selection)
+    this.selection = selection
+    this.commander = useContext(Commander)
     onFocusIn(() => {
       this.focus.next(true)
     })
@@ -377,7 +379,7 @@ export class TableComponent extends Component<TableComponentState> {
       }
     })
 
-    onDestroy(() => {
+    onDetach(() => {
       sub.unsubscribe()
     })
 
@@ -494,7 +496,7 @@ export class TableComponent extends Component<TableComponentState> {
       const slot = new Slot([
         ContentType.BlockComponent,
       ])
-      slot.insert(new ParagraphComponent(this.textbus, {
+      slot.insert(new ParagraphComponent({
         slot: new Slot([
           ContentType.InlineComponent,
           ContentType.Text
@@ -505,7 +507,7 @@ export class TableComponent extends Component<TableComponentState> {
         slot
       })
     })
-    this.textbus.nextTick(() => {
+    this.textbus!.nextTick(() => {
       const slot = this.state.rows[0].cells[index].slot
       if (slot) {
         this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)
@@ -520,7 +522,7 @@ export class TableComponent extends Component<TableComponentState> {
         const slot = new Slot([
           ContentType.BlockComponent,
         ])
-        slot.insert(new ParagraphComponent(this.textbus, {
+        slot.insert(new ParagraphComponent({
           slot: new Slot([
             ContentType.InlineComponent,
             ContentType.Text
@@ -532,7 +534,7 @@ export class TableComponent extends Component<TableComponentState> {
         }
       })
     })
-    this.textbus.nextTick(() => {
+    this.textbus!.nextTick(() => {
       const slot = this.state.rows[index].cells[0].slot
       if (slot) {
         this.selection.selectFirstPosition(slot.getContentAtIndex(0) as Component<any>)

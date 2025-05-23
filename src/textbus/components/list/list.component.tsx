@@ -47,7 +47,7 @@ export function toList(textbus: Textbus, type: 'OrderedList' | 'UnorderedList') 
     },
     stateFactory(slots: Slot[]) {
       return slots.map((slot, index) => {
-        return new ListComponent(textbus, {
+        return new ListComponent({
           type,
           reorder: index === 0,
           slot
@@ -104,7 +104,7 @@ export class ListComponent extends Component<ListComponentState> {
   }
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<ListComponentState>) {
-    return new ListComponent(textbus, {
+    return new ListComponent({
       type: json.type,
       reorder: json.reorder,
       slot: textbus.get(Registry).createSlot(json.slot)
@@ -116,7 +116,6 @@ export class ListComponent extends Component<ListComponentState> {
   }
 
   override setup() {
-    const textbus = useContext()
     const commander = useContext(Commander)
     const selection = useContext(Selection)
     const updateAfterList = (ref: Component<any>) => {
@@ -148,7 +147,7 @@ export class ListComponent extends Component<ListComponentState> {
         const beforeIndex = this.parent!.indexOf(this)
         const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)
         if (beforeComponent instanceof ListComponent) {
-          const nextComponent = new ParagraphComponent(textbus, {
+          const nextComponent = new ParagraphComponent({
             slot: new Slot([
               ContentType.Text,
               ContentType.InlineComponent
@@ -163,7 +162,7 @@ export class ListComponent extends Component<ListComponentState> {
           return
         }
       }
-      const nextList = new ListComponent(textbus, {
+      const nextList = new ListComponent({
         slot,
         reorder: false,
         type: this.state.type
@@ -183,7 +182,7 @@ export class ListComponent extends Component<ListComponentState> {
           return false
         }
         const slot = selection.commonAncestorSlot!.cut()
-        const paragraph = new ParagraphComponent(textbus, {
+        const paragraph = new ParagraphComponent({
           slot
         })
         commander.replaceComponent(this, paragraph)
@@ -340,7 +339,7 @@ export const listComponentLoader: ComponentLoader = {
         ContentType.InlineComponent,
         ContentType.Text
       ]), element.querySelector('.xnote-list-content') || document.createElement('div'))
-      return new ListComponent(textbus, {
+      return new ListComponent({
         slot,
         reorder: element.dataset.reorder !== 'false',
         type
@@ -355,7 +354,7 @@ export const listComponentLoader: ComponentLoader = {
         ContentType.InlineComponent,
         ContentType.Text
       ]), i as HTMLElement)
-      const component = new ListComponent(textbus, {
+      const component = new ListComponent({
         slot,
         reorder: index === 0,
         type

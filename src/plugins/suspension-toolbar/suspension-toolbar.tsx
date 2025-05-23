@@ -1,8 +1,7 @@
-import { Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
+import { Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { debounceTime, delay, fromEvent, merge, Query, QueryStateType, Selection, tap, Textbus } from '@textbus/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
-import { useProduce } from '@viewfly/hooks'
 
 import css from './suspension-toolbar.scoped.scss'
 import { BoldTool } from '../tools/bold.tool'
@@ -57,45 +56,36 @@ export const SuspensionToolbar = withAnnotation({
     subscription.unsubscribe()
   })
 
-  const [styles, updateStyles] = useProduce({
+  const styles = reactive({
     top: 0,
     opacity: 1,
   })
 
   subscription.add(fromEvent(document, 'scroll').pipe(
     tap(() => {
-      updateStyles(draft => {
-        draft.opacity = 0
-      })
+      styles.opacity = 0
     }),
     debounceTime(100),
     tap(() => {
       const rect = viewDocument.getBoundingClientRect()
       if (rect.top < 10) {
-        updateStyles(draft => {
-          draft.top = Math.min(-rect.top + 10, rect.height - 100)
-        })
+        styles.top = Math.min(-rect.top + 10, rect.height - 100)
       } else {
-        updateStyles(draft => {
-          draft.top = 0
-        })
+        styles.top = 0
       }
     }),
     delay(100)
   ).subscribe(() => {
-    updateStyles(draft => {
-      draft.opacity = 1
-    })
+    styles.opacity = 1
   }))
   return withScopedCSS(css, () => {
-    const s = styles()
     return (
       <div class={['toolbar', props.theme, {
-        suspension: s.top === 0 ? '' : 'suspension'
+        suspension: styles.top === 0 ? '' : 'suspension'
       }]} style={{
-        top: s.top + 'px',
-        opacity: s.opacity,
-        pointerEvents: s.opacity === 0 ? 'none' : 'initial',
+        top: styles.top + 'px',
+        opacity: styles.opacity,
+        pointerEvents: styles.opacity === 0 ? 'none' : 'initial',
       }}>
         <ToolbarItem>
           <UndoTool/>

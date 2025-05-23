@@ -1,6 +1,5 @@
 import { Controller, merge, Selection, Subscription } from '@textbus/core'
-import { useProduce } from '@viewfly/hooks'
-import { Injectable, Signal } from '@viewfly/core'
+import { createSignal, Injectable, Signal } from '@viewfly/core'
 
 import { ImageComponent } from '../../../textbus/components/image/image.component'
 import { VideoComponent } from '../../../textbus/components/video/video.component'
@@ -17,14 +16,13 @@ export class ToolService {
   state: Signal<CommonState>
   private sub: Subscription
 
-  constructor(private selection: Selection,
-              private controller: Controller) {
-    const [state, updateState] = useProduce<CommonState>({
+  constructor(selection: Selection,
+              controller: Controller) {
+    this.state = createSignal({
       inSourceCode: false,
       readonly: controller.readonly,
       selectEmbed: false,
     })
-    this.state = state
     this.sub = merge(selection.onChange, controller.onReadonlyStateChange).subscribe(() => {
       const { startSlot, endSlot, startOffset, endOffset } = selection
       let is = false
@@ -34,10 +32,11 @@ export class ToolService {
           is = true
         }
       }
-      updateState(draft => {
-        draft.selectEmbed = is
-        draft.readonly = controller.readonly
-        draft.inSourceCode = selection.commonAncestorComponent instanceof SourceCodeComponent
+
+      this.state.set({
+        selectEmbed: is,
+        readonly: controller.readonly,
+        inSourceCode: selection.commonAncestorComponent instanceof SourceCodeComponent
       })
     })
   }

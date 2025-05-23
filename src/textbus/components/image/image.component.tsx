@@ -19,7 +19,7 @@ export class ImageComponent extends Component<ImageComponentState> {
   static componentName = 'ImageComponent'
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<ImageComponentState>) {
-    return new ImageComponent(textbus, {
+    return new ImageComponent({
       ...json
     })
   }
@@ -62,9 +62,9 @@ export const imageComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.tagName === 'IMG' || element.dataset.component === ImageComponent.componentName
   },
-  read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
+  read(element: HTMLElement): Component | Slot | void {
     const img = element instanceof HTMLImageElement ? element : (element.querySelector('img') || document.createElement('img'))
-    return new ImageComponent(textbus, {
+    return new ImageComponent({
       src: img.src,
       width: img.style.width || 'auto',
       height: img.style.height || 'auto'

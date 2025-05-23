@@ -1,8 +1,7 @@
-import { inject, onUnmounted, Props } from '@viewfly/core'
+import { inject, onUnmounted, Props, reactive } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { useProduce } from '@viewfly/hooks'
 
 import css from './block-tool.scoped.scss'
 import { MenuItem } from '../../components/menu-item/menu-item'
@@ -29,7 +28,7 @@ export function AttrTool(props: AttrToolProps) {
   const query = inject(Query)
   const refreshService = inject(RefreshService)
 
-  const [checkStates, setCheckStates] = useProduce({
+  const checkStates = reactive({
     textAlign: 'left',
     textIndent: 0
   })
@@ -38,24 +37,22 @@ export function AttrTool(props: AttrToolProps) {
     if (!props.slot && !selection.isSelected) {
       return
     }
-    setCheckStates(draft => {
-      const range: Range = props.slot ? {
-        startSlot: props.slot,
-        endSlot: props.slot,
-        startOffset: 0,
-        endOffset: props.slot.length
-      } : {
-        startSlot: selection.startSlot!,
-        startOffset: selection.startOffset!,
-        endSlot: selection.endSlot!,
-        endOffset: selection.endOffset!
-      }
-      const textAlignState = query.queryAttributeByRange(textAlignAttr, range)
-      const textIndentState = query.queryAttributeByRange(textIndentAttr, range)
+    const range: Range = props.slot ? {
+      startSlot: props.slot,
+      endSlot: props.slot,
+      startOffset: 0,
+      endOffset: props.slot.length
+    } : {
+      startSlot: selection.startSlot!,
+      startOffset: selection.startOffset!,
+      endSlot: selection.endSlot!,
+      endOffset: selection.endOffset!
+    }
+    const textAlignState = query.queryAttributeByRange(textAlignAttr, range)
+    const textIndentState = query.queryAttributeByRange(textIndentAttr, range)
 
-      draft.textAlign = textAlignState.state === QueryStateType.Enabled ? textAlignState.value! : 'left'
-      draft.textIndent = textIndentState.state === QueryStateType.Enabled ? textIndentState.value! : 0
-    })
+    checkStates.textAlign = textAlignState.state === QueryStateType.Enabled ? textAlignState.value! : 'left'
+    checkStates.textIndent = textIndentState.state === QueryStateType.Enabled ? textIndentState.value! : 0
   }
 
   updateCheckStates()
@@ -108,25 +105,24 @@ export function AttrTool(props: AttrToolProps) {
 
   const commonState = useCommonState()
   return withScopedCSS(css, () => {
-    const states = checkStates()
     const b = commonState().inSourceCode || commonState().readonly
     return (
       <Dropdown disabled={b} width={'auto'} style={props.style} abreast={props.abreast} onCheck={updateAttr} trigger={'hover'} menu={[
         {
           label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} desc={<Keymap keymap={{ key: 'L', modKey: true }}/>}
-                           checked={states.textAlign === 'left'}>左对齐</MenuItem>,
+                           checked={checkStates.textAlign === 'left'}>左对齐</MenuItem>,
           value: 't-l'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-paragraph-right"/>} desc={<Keymap keymap={{ key: 'R', modKey: true }}/>}
-                           checked={states.textAlign === 'right'}>右对齐</MenuItem>,
+                           checked={checkStates.textAlign === 'right'}>右对齐</MenuItem>,
           value: 't-r'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-paragraph-center"/>} desc={<Keymap keymap={{ key: 'E', modKey: true }}/>}
-                           checked={states.textAlign === 'center'}>居中对齐</MenuItem>,
+                           checked={checkStates.textAlign === 'center'}>居中对齐</MenuItem>,
           value: 't-c'
         }, {
           label: <MenuItem icon={<span class="xnote-icon-paragraph-justify"/>} desc={<Keymap keymap={{ key: 'J', modKey: true }}/>}
-                           checked={states.textAlign === 'justify'}>分散对齐</MenuItem>,
+                           checked={checkStates.textAlign === 'justify'}>分散对齐</MenuItem>,
           value: 't-j'
         }, {
           label: <Divider/>,
@@ -142,7 +138,7 @@ export function AttrTool(props: AttrToolProps) {
       ]}>
         {
           props.children || <Button disabled={b} arrow={true} highlight={false}>
-            <span class={`xnote-icon-paragraph-${states.textAlign || 'left'} icon`}/>
+            <span class={`xnote-icon-paragraph-${checkStates.textAlign || 'left'} icon`}/>
           </Button>
         }
       </Dropdown>

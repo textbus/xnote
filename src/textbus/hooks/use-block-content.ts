@@ -7,7 +7,7 @@ export function useBlockContent(slot: Slot | ((slot: Slot) => boolean)) {
   const selection = textbus.get(Selection)
   onBreak(ev => {
     if (typeof slot === 'function' ? slot(ev.target) : ev.target === slot) {
-      const p = new ParagraphComponent(textbus)
+      const p = new ParagraphComponent()
       ev.target.insert(p)
       selection.setPosition(p.state.slot, 0)
       ev.preventDefault()
@@ -17,7 +17,7 @@ export function useBlockContent(slot: Slot | ((slot: Slot) => boolean)) {
   onContentInsert(ev => {
     if ((typeof slot === 'function' ? slot(ev.target) : ev.target === slot) &&
       (typeof ev.data.content === 'string' || ev.data.content.type !== ContentType.BlockComponent)) {
-      const p = new ParagraphComponent(textbus)
+      const p = new ParagraphComponent()
       const childSlot = p.state.slot
       childSlot.insert(ev.data.content)
       ev.target.insert(p)

@@ -63,7 +63,7 @@ export class TodolistComponent extends Component<TodolistComponentState> {
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<TodolistComponentState>) {
     const slot = textbus.get(Registry).createSlot(json.slot)
-    return new TodolistComponent(textbus, {
+    return new TodolistComponent({
       slot,
       checked: json.checked
     })
@@ -74,7 +74,6 @@ export class TodolistComponent extends Component<TodolistComponentState> {
   }
 
   override setup() {
-    const textbus = useContext()
     const commander = useContext(Commander)
     const selection = useContext(Selection)
     onBreak(ev => {
@@ -84,7 +83,7 @@ export class TodolistComponent extends Component<TodolistComponentState> {
         const beforeIndex = this.parent!.indexOf(this)
         const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)
         if (beforeComponent instanceof TodolistComponent) {
-          const nextComponent = new ParagraphComponent(textbus, {
+          const nextComponent = new ParagraphComponent({
             slot: new Slot([
               ContentType.Text,
               ContentType.InlineComponent
@@ -98,7 +97,7 @@ export class TodolistComponent extends Component<TodolistComponentState> {
           return
         }
       }
-      const nextParagraph = new TodolistComponent(textbus, {
+      const nextParagraph = new TodolistComponent({
         checked: this.state.checked,
         slot
       })
@@ -116,7 +115,7 @@ export class TodolistComponent extends Component<TodolistComponentState> {
           return false
         }
         const slot = selection.commonAncestorSlot!.cut()
-        const paragraph = new ParagraphComponent(textbus, {
+        const paragraph = new ParagraphComponent({
           slot
         })
         commander.replaceComponent(this, paragraph)
@@ -173,12 +172,12 @@ export const todolistComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.component === TodolistComponent.componentName
   },
-  read(element: HTMLElement, injector: Textbus, slotParser: SlotParser): Component | Slot {
+  read(element: HTMLElement, _: Textbus, slotParser: SlotParser): Component | Slot {
     const slot = slotParser(new Slot([
       ContentType.Text,
       ContentType.InlineComponent
     ]), element.children[1] as HTMLElement)
-    return new TodolistComponent(injector, {
+    return new TodolistComponent({
       checked: element.children[0]!.hasAttribute('checked'),
       slot
     })

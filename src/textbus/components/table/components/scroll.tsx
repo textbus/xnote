@@ -1,6 +1,5 @@
-import { createRef, inject, onMounted, onUpdated, Props, Signal } from '@viewfly/core'
+import { createRef, inject, onMounted, onUpdated, Props, reactive, Signal } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
-import { useProduce } from '@viewfly/hooks'
 import { Input } from '@textbus/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 
@@ -16,7 +15,7 @@ export function Scroll(props: ScrollProps) {
   const input = inject(Input)
   const tableService = inject(TableService)
 
-  const [showShadow, updateShowShadow] = useProduce({
+  const showShadow = reactive({
     leftEnd: false,
     rightEnd: false
   })
@@ -27,10 +26,8 @@ export function Scroll(props: ScrollProps) {
       if (props.isFocus()) {
         input.caret.refresh()
       }
-      updateShowShadow(draft => {
-        draft.leftEnd = el.scrollLeft === 0
-        draft.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
-      })
+      showShadow.leftEnd = el.scrollLeft === 0
+      showShadow.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
     }
 
     update()
@@ -40,16 +37,14 @@ export function Scroll(props: ScrollProps) {
 
   onUpdated(() => {
     const el = scrollRef.current!
-    updateShowShadow(draft => {
-      draft.leftEnd = el.scrollLeft === 0
-      draft.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
-    })
+    showShadow.leftEnd = el.scrollLeft === 0
+    showShadow.rightEnd = el.scrollLeft === el.scrollWidth - el.offsetWidth
   })
 
   return withScopedCSS(css, () => {
     return <div ref={[scrollRef]} class={['scroll-container', {
-      'left-end': showShadow().leftEnd,
-      'right-end': showShadow().rightEnd,
+      'left-end': showShadow.leftEnd,
+      'right-end': showShadow.rightEnd,
       'active': props.isFocus(),
       // 'hide-selection': isSelectColumn()
     }]} onScroll={ev => {

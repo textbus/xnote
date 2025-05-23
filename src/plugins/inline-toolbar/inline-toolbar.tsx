@@ -1,4 +1,4 @@
-import { createRef, Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
+import { createRef, Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import {
   debounceTime,
@@ -14,7 +14,6 @@ import {
   Textbus
 } from '@textbus/core'
 import { DomAdapter, Rect, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
-import { useProduce } from '@viewfly/hooks'
 
 import css from './inline-toolbar.scoped.scss'
 import { BoldTool } from '../tools/bold.tool'
@@ -72,7 +71,7 @@ export const InlineToolbar = withAnnotation({
     }),
     delay(200)
   ).subscribe(() => {
-    if (viewPosition().isHide) {
+    if (viewPosition.isHide) {
       editorService.changeLeftToolbarVisible(true)
     }
   })
@@ -81,7 +80,7 @@ export const InlineToolbar = withAnnotation({
     subscription.unsubscribe()
   })
 
-  const [viewPosition, updateViewPosition] = useProduce({
+  const viewPosition = reactive({
     left: 0,
     top: 0,
     isHide: true,
@@ -160,22 +159,18 @@ export const InlineToolbar = withAnnotation({
       selectionFocusRect.top + selectionFocusRect.height - docRect.top + 10 :
       selectionFocusRect.top - docRect.top - toolbarHeight - 10
 
-    updateViewPosition(draft => {
-      draft.transitionDuration = .15
-      draft.left = centerLeft - docRect.left
-      // draft.left = Math.max(centerLeft - docRect.left, toolbarRect.width / 2 + 10 - docRect.left)
-      draft.top = top + 10
-    })
+    viewPosition.transitionDuration = .15
+    viewPosition.left = centerLeft - docRect.left
+    // draft.left = Math.max(centerLeft - docRect.left, toolbarRect.width / 2 + 10 - docRect.left)
+    viewPosition.top = top + 10
     return top
   }
 
   const sub = textbus.onChange.pipe(debounceTime(100)).subscribe(() => {
-    if (!viewPosition().isHide) {
+    if (!viewPosition.isHide) {
       const top = getTop()
       if (top !== null && !selection.isCollapsed) {
-        updateViewPosition(draft => {
-          draft.top = top
-        })
+        viewPosition.top = top
         return
       }
     }
@@ -207,11 +202,9 @@ export const InlineToolbar = withAnnotation({
       delay(200),
     ).subscribe((top) => {
       if (top !== null) {
-        updateViewPosition(draft => {
-          draft.isHide = false
-          draft.opacity = 1
-          draft.top = top
-        })
+        viewPosition.isHide = false
+        viewPosition.opacity = 1
+        viewPosition.top = top
         editorService.changeLeftToolbarVisible(false)
       } else {
         editorService.changeLeftToolbarVisible(true)
@@ -224,11 +217,9 @@ export const InlineToolbar = withAnnotation({
       return
     }
     mouseupSubscription.unsubscribe()
-    updateViewPosition(draft => {
-      draft.opacity = 0
-      draft.isHide = true
-      draft.transitionDuration = 0
-    })
+    viewPosition.opacity = 0
+    viewPosition.isHide = true
+    viewPosition.transitionDuration = 0
     bindMouseup()
   })
 
@@ -245,15 +236,14 @@ export const InlineToolbar = withAnnotation({
   })
 
   return withScopedCSS(css, () => {
-    const p = viewPosition()
     return (
       <div class={['toolbar', props.theme]} ref={toolbarRef} style={{
-        left: p.left + 'px',
-        top: p.top + 'px',
-        pointerEvents: p.isHide ? 'none' : 'initial',
-        opacity: p.opacity,
+        left: viewPosition.left + 'px',
+        top: viewPosition.top + 'px',
+        pointerEvents: viewPosition.isHide ? 'none' : 'initial',
+        opacity: viewPosition.opacity,
         display: editorService.hideInlineToolbar ? 'none' : '',
-        transitionDuration: p.transitionDuration + 's'
+        transitionDuration: viewPosition.transitionDuration + 's'
       }}>
         <ToolbarItem>
           <BlockTool/>

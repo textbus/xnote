@@ -164,7 +164,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<SourceCodeComponentState>) {
     const registry = textbus.get(Registry)
-    return new SourceCodeComponent(textbus, {
+    return new SourceCodeComponent({
       slots: json.slots.map(item => {
         return {
           slot: registry.createSlot(item.slot),
@@ -249,7 +249,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
             ContentType.InlineComponent,
             ContentType.Text
           ])
-          const paragraph = new ParagraphComponent(textbus, {
+          const paragraph = new ParagraphComponent({
             slot
           })
 
@@ -411,7 +411,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
   }
 
   cancelEmphasize = () => {
-    const selection = this.textbus.get(Selection)
+    const selection = this.textbus!.get(Selection)
     const slots = this.state.slots
     const { startSlot, endSlot } = selection
     let startIndex = slots.findIndex(i => i.slot === startSlot!)
@@ -422,7 +422,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
   }
 
   emphasize = () => {
-    const selection = this.textbus.get(Selection)
+    const selection = this.textbus!.get(Selection)
     const slots = this.state.slots
     const { startSlot, endSlot } = selection
     let startIndex = slots.findIndex(i => i.slot === startSlot!)
@@ -649,7 +649,7 @@ export const sourceCodeComponentLoader: ComponentLoader = {
       ((element.tagName === 'DIV' && element.dataset.component === SourceCodeComponent.componentName) ||
         element.tagName === 'PRE')
   },
-  read(el: HTMLElement, textbus: Textbus) {
+  read(el: HTMLElement) {
     let slots: CodeSlotState[] = []
     if (el.tagName === 'DIV') {
       const lines = el.querySelectorAll('.xnote-source-code-line')
@@ -672,7 +672,7 @@ export const sourceCodeComponentLoader: ComponentLoader = {
       })
     }
 
-    return new SourceCodeComponent(textbus, {
+    return new SourceCodeComponent({
       lang: el.dataset.lang || '',
       theme: el.dataset.theme || '',
       lineNumber: el.dataset.lineNumber === 'true',

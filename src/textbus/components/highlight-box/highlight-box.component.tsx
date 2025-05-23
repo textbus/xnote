@@ -22,19 +22,19 @@ export class HighlightBoxComponent extends Component<HighlightBoxComponentState>
   static type = ContentType.BlockComponent
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<HighlightBoxComponentState>) {
-    return new HighlightBoxComponent(textbus, {
+    return new HighlightBoxComponent({
       type: json.type,
       slot: textbus.get(Registry).createSlot(json.slot)
     })
   }
 
-  constructor(textbus: Textbus, state: HighlightBoxComponentState = {
+  constructor(state: HighlightBoxComponentState = {
     type: '',
     slot: new Slot([
       ContentType.BlockComponent,
     ])
   }) {
-    super(textbus, state)
+    super(state)
   }
 
   override getSlots(): Slot[] {
@@ -124,10 +124,10 @@ export const highlightBoxComponentLoader: ComponentLoader = {
       ContentType.BlockComponent,
     ])
 
-    deltaToBlock(delta, textbus).forEach(i => {
+    deltaToBlock(delta).forEach(i => {
       slot.insert(i)
     })
-    return new HighlightBoxComponent(textbus, {
+    return new HighlightBoxComponent({
       type: element.dataset.icon || '',
       slot
     })

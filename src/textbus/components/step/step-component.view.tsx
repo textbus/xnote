@@ -11,7 +11,6 @@ import { Button } from '../../../components/button/button'
 
 export function StepComponentView(props: ViewComponentProps<StepComponent>) {
   const adapter = inject(DomAdapter)
-  const textbus = inject(Textbus)
   const isOutput = useOutput()
   const isReadonly = useReadonly()
 
@@ -46,7 +45,7 @@ export function StepComponentView(props: ViewComponentProps<StepComponent>) {
                   !isOutput() && !isReadonly() && <div class="xnote-step-tools">
                     <Button class="xnote-step-add xnote-icon-plus" onClick={() => {
                       const index = component.state.items.indexOf(item) + 1
-                      component.state.items.splice(index, 0, createStepItem(textbus))
+                      component.state.items.splice(index, 0, createStepItem())
                     }}></Button>
                     <Button class="xnote-step-add xnote-icon-bin" onClick={() => {
                       const index = component.state.items.indexOf(item)
@@ -74,8 +73,8 @@ export const stepComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.component === StepComponent.componentName
   },
-  read(element: HTMLElement, context: Textbus, slotParser: SlotParser) {
-    return new StepComponent(context, {
+  read(element: HTMLElement, _: Textbus, slotParser: SlotParser) {
+    return new StepComponent({
       step: Number(element.dataset.step) || 0,
       items: Array.from(element.children).map(child => {
         const slot = new Slot([

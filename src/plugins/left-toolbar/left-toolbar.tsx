@@ -1,6 +1,5 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, withAnnotation, } from '@viewfly/core'
-import { useProduce } from '@viewfly/hooks'
+import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, reactive, withAnnotation, } from '@viewfly/core'
 import {
   Commander,
   ContentType,
@@ -64,7 +63,7 @@ export const LeftToolbar = withAnnotation({
     }
   }
 
-  const [positionSignal, updatePosition] = useProduce({
+  const positionSignal = reactive({
     left: 0,
     top: 0,
     display: false
@@ -72,9 +71,7 @@ export const LeftToolbar = withAnnotation({
 
 
   const sub = editorService.onLeftToolbarCanVisibleChange.subscribe(() => {
-    updatePosition(d => {
-      d.display = editorService.canShowLeftToolbar
-    })
+    positionSignal.display = editorService.canShowLeftToolbar
   })
 
   onUnmounted(() => {
@@ -123,17 +120,13 @@ export const LeftToolbar = withAnnotation({
           slot.parent instanceof TableComponent
         )
         const nativeNode = adapter.getNativeNodeByComponent(slot.parent!)!
-        updatePosition(draft => {
-          const containerRect = docContentContainer.getBoundingClientRect()
-          const currentRect = nativeNode.getBoundingClientRect()
-          draft.display = true
-          draft.left = currentRect.left - containerRect.left
-          draft.top = currentRect.top - containerRect.top + docContentContainer.offsetTop
-        })
+        const containerRect = docContentContainer.getBoundingClientRect()
+        const currentRect = nativeNode.getBoundingClientRect()
+        positionSignal.display = true
+        positionSignal.left = currentRect.left - containerRect.left
+        positionSignal.top = currentRect.top - containerRect.top + docContentContainer.offsetTop
       } else {
-        updatePosition(draft => {
-          draft.display = false
-        })
+        positionSignal.display = false
         isEmptyBlock.set(false)
       }
     })
@@ -227,7 +220,6 @@ export const LeftToolbar = withAnnotation({
   }
 
   return withScopedCSS(css, () => {
-    const position = positionSignal()
     const slot = activeSlot()
     let activeNode = <span class="xnote-icon-pilcrow"/>
     const states = checkStates(slot)
@@ -262,9 +254,9 @@ export const LeftToolbar = withAnnotation({
     return (
       <div class="left-toolbar" ref={toolbarRef}>
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
-          left: position.left + 'px',
-          top: position.top + 'px',
-          display: position.display && editorService.canShowLeftToolbar ? 'block' : 'none'
+          left: positionSignal.left + 'px',
+          top: positionSignal.top + 'px',
+          display: positionSignal.display && editorService.canShowLeftToolbar ? 'block' : 'none'
         }}>
           <Dropdown toLeft={true} onExpendStateChange={changeIgnoreMove} abreast={true} style={{
             position: 'absolute',

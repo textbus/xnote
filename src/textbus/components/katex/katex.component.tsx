@@ -26,17 +26,17 @@ export class KatexComponent extends Component<KatexComponentState> {
   static type = ContentType.InlineComponent
 
   static fromJSON(textbus: Textbus, state: ComponentStateLiteral<KatexComponentState>) {
-    return new KatexComponent(textbus, state)
+    return new KatexComponent(state)
   }
 
 
-  constructor(textbus: Textbus, state: KatexComponentState = {
+  constructor(state: KatexComponentState = {
     text: '% \\f is defined as #1f(#2) using the macro\n' +
       '\\f\\relax{x} = \\int_{-\\infty}^\\infty\n' +
       '\\f\\hat\\xi\\,e^{2 \\pi i \\xi x}\n' +
       '\\,d\\xi'
   }) {
-    super(textbus, state)
+    super(state)
   }
 
   override getSlots(): Slot[] {
@@ -134,9 +134,9 @@ export const katexComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.dataset.component === KatexComponent.componentName
   },
-  read(element: HTMLElement, textbus: Textbus): Component | Slot | void {
+  read(element: HTMLElement): Component | Slot | void {
     const value = element.dataset.katex || ''
-    return new KatexComponent(textbus, {
+    return new KatexComponent({
       text: decodeURIComponent(value)
     })
   }

@@ -11,7 +11,6 @@ import { Button } from '../../../components/button/button'
 
 export function TimelineComponentView(props: ViewComponentProps<TimelineComponent>) {
   const adapter = inject(DomAdapter)
-  const textbus = inject(Textbus)
   const isOutput = useOutput()
   const isReadonly = useReadonly()
 
@@ -34,7 +33,7 @@ export function TimelineComponentView(props: ViewComponentProps<TimelineComponen
                   !isOutput() && !isReadonly() && <div class="xnote-timeline-tools">
                     <Button class="xnote-timeline-add xnote-icon-plus" onClick={() => {
                       const index = component.state.items.indexOf(item) + 1
-                      component.state.items.splice(index, 0, createTimelineItem(textbus, item.theme))
+                      component.state.items.splice(index, 0, createTimelineItem(item.theme))
                     }}></Button>
                     <Button class="xnote-timeline-add xnote-icon-bin" onClick={() => {
                       const index = component.state.items.indexOf(item)
@@ -63,8 +62,8 @@ export const timelineComponentLoader: ComponentLoader = {
   match(element: HTMLElement): boolean {
     return element.className === 'xnote-timeline'
   },
-  read(element: HTMLElement, context: Textbus, slotParser: SlotParser) {
-    return new TimelineComponent(context, {
+  read(element: HTMLElement, _: Textbus, slotParser: SlotParser) {
+    return new TimelineComponent({
       items: Array.from(element.children).map(child => {
         const slot = new Slot([
           ContentType.BlockComponent

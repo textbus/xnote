@@ -1,5 +1,4 @@
-import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
 
 import { Button } from '../../../components/button/button'
@@ -11,7 +10,7 @@ export function SplitCellsTool() {
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
-  const [viewModel, update] = useProduce({
+  const viewModel = reactive({
     highlight: false,
     disabled: false,
   })
@@ -39,39 +38,37 @@ export function SplitCellsTool() {
 
   const sub = refreshService.onRefresh.subscribe(() => {
     const commonAncestorComponent = selection.commonAncestorComponent
-    update(draft => {
-      if (commonAncestorComponent instanceof TableComponent) {
-        const slots = commonAncestorComponent.getSelectedNormalizedSlots()
-        if (slots) {
+    if (commonAncestorComponent instanceof TableComponent) {
+      const slots = commonAncestorComponent.getSelectedNormalizedSlots()
+      if (slots) {
+        for (const item of slots) {
+          for (const cell of item.cells) {
+            if (cell.visible && cell.colspan > 1 || cell.colspan > 1) {
+              viewModel.disabled = false
+              return
+            }
+          }
+        }
+      }
+    } else {
+      let parentSlot = selection.commonAncestorSlot
+
+      while (parentSlot) {
+        if (parentSlot.parent instanceof TableComponent) {
+          const slots = parentSlot.parent.getNormalizedData()
           for (const item of slots) {
             for (const cell of item.cells) {
-              if (cell.visible && cell.colspan > 1 || cell.colspan > 1) {
-                draft.disabled = false
+              if (cell.raw.slot === parentSlot) {
+                viewModel.disabled = !(cell.colspan > 1 || cell.colspan > 1)
                 return
               }
             }
           }
         }
-      } else {
-        let parentSlot = selection.commonAncestorSlot
-
-        while (parentSlot) {
-          if (parentSlot.parent instanceof TableComponent) {
-            const slots = parentSlot.parent.getNormalizedData()
-            for (const item of slots) {
-              for (const cell of item.cells) {
-                if (cell.raw.slot === parentSlot) {
-                  draft.disabled = !(cell.colspan > 1 || cell.colspan > 1)
-                  return
-                }
-              }
-            }
-          }
-          parentSlot = parentSlot.parentSlot
-        }
+        parentSlot = parentSlot.parentSlot
       }
-      draft.disabled = true
-    })
+    }
+    viewModel.disabled = true
   })
 
   onUnmounted(() => {
@@ -80,9 +77,8 @@ export function SplitCellsTool() {
 
   const commonState = useCommonState()
   return () => {
-    const vm = viewModel()
-    return <Button highlight={vm.highlight}
-                   disabled={vm.disabled || commonState().readonly || commonState().inSourceCode}
+    return <Button highlight={viewModel.highlight}
+                   disabled={viewModel.disabled || commonState().readonly || commonState().inSourceCode}
                    onClick={split}>
       <span class="xnote-icon-split-cells"></span>
     </Button>

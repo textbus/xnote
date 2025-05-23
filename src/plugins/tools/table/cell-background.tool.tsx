@@ -1,5 +1,4 @@
-import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
 
 import { Button } from '../../../components/button/button'
@@ -15,7 +14,7 @@ export function CellBackgroundTool() {
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
-  const [viewModel, update] = useProduce({
+  const viewModel = reactive({
     disabled: false,
   })
 
@@ -56,9 +55,7 @@ export function CellBackgroundTool() {
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    update(draft => {
-      draft.disabled = !isInTable(selection)
-    })
+    viewModel.disabled = !isInTable(selection)
   })
 
   onUnmounted(() => {
@@ -76,8 +73,7 @@ export function CellBackgroundTool() {
     '#c596e0',
   ]
   return () => {
-    const vm = viewModel()
-    const d = vm.disabled || commonState().readonly || commonState().inSourceCode
+    const d = viewModel.disabled || commonState().readonly || commonState().inSourceCode
     return (
       <Dropdown width={'177px'}
                 disabled={d}

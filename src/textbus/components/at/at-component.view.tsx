@@ -121,7 +121,7 @@ export const atComponentLoader: ComponentLoader = {
   read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot | void {
     const data = element.dataset.info
     if (data) {
-      return new AtComponent(textbus, {
+      return new AtComponent({
         userInfo: JSON.parse(decodeURIComponent(data))
       })
     }
@@ -129,7 +129,7 @@ export const atComponentLoader: ComponentLoader = {
       new Slot([ContentType.Text]),
       element.querySelector('.xnote-at-input') || document.createElement('div')
     )
-    return new AtComponent(textbus, {
+    return new AtComponent({
       slot
     })
   }

@@ -1,6 +1,5 @@
-import { useProduce } from '@viewfly/hooks'
 import { Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { RefreshService } from '../../services/refresh.service'
@@ -15,7 +14,7 @@ export function useActiveBlock() {
   const query = inject(Query)
   const selection = inject(Selection)
   const refreshService = inject(RefreshService)
-  const [checkStates, setCheckStates] = useProduce({
+  const checkStates = reactive({
     paragraph: false,
     h1: false,
     h2: false,
@@ -33,22 +32,20 @@ export function useActiveBlock() {
   })
 
   function updateCheckStates(range: Range) {
-    setCheckStates(draft => {
-      const heading = query.queryAttributeByRange(headingAttr, range)
-      draft.paragraph = query.queryComponentByRange(ParagraphComponent, range).state === QueryStateType.Enabled
-      draft.h1 = draft.h2 = draft.h3 = draft.h4 = draft.h5 = draft.h6 = false
-      if (heading.state === QueryStateType.Enabled) {
-        draft[heading.value as any] = true
-        draft.paragraph = false
-      }
-      const queryList = query.queryComponentByRange(ListComponent, range)
-      draft.unorderedList = queryList.state === QueryStateType.Enabled && queryList.value!.state.type === 'UnorderedList'
-      draft.orderedList = queryList.state === QueryStateType.Enabled && queryList.value!.state.type === 'OrderedList'
-      draft.table = query.queryComponentByRange(TableComponent, range).state === QueryStateType.Enabled
-      draft.todolist = query.queryComponentByRange(TodolistComponent, range).state === QueryStateType.Enabled
-      draft.blockquote = query.queryComponentByRange(BlockquoteComponent, range).state === QueryStateType.Enabled
-      draft.sourceCode = query.queryComponentByRange(SourceCodeComponent, range).state === QueryStateType.Enabled
-    })
+    const heading = query.queryAttributeByRange(headingAttr, range)
+    checkStates.paragraph = query.queryComponentByRange(ParagraphComponent, range).state === QueryStateType.Enabled
+    checkStates.h1 = checkStates.h2 = checkStates.h3 = checkStates.h4 = checkStates.h5 = checkStates.h6 = false
+    if (heading.state === QueryStateType.Enabled) {
+      checkStates[heading.value as any] = true
+      checkStates.paragraph = false
+    }
+    const queryList = query.queryComponentByRange(ListComponent, range)
+    checkStates.unorderedList = queryList.state === QueryStateType.Enabled && queryList.value!.state.type === 'UnorderedList'
+    checkStates.orderedList = queryList.state === QueryStateType.Enabled && queryList.value!.state.type === 'OrderedList'
+    checkStates.table = query.queryComponentByRange(TableComponent, range).state === QueryStateType.Enabled
+    checkStates.todolist = query.queryComponentByRange(TodolistComponent, range).state === QueryStateType.Enabled
+    checkStates.blockquote = query.queryComponentByRange(BlockquoteComponent, range).state === QueryStateType.Enabled
+    checkStates.sourceCode = query.queryComponentByRange(SourceCodeComponent, range).state === QueryStateType.Enabled
   }
 
   const subscription = refreshService.onRefresh.subscribe(() => {
@@ -83,6 +80,6 @@ export function useActiveBlock() {
         endOffset: selection.endOffset!
       })
     }
-    return checkStates()
+    return checkStates
   }
 }

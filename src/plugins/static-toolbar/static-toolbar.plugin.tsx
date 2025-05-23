@@ -1,5 +1,5 @@
 import { Plugin } from '@textbus/core'
-import { Application, Context, Injector } from '@viewfly/core'
+import { Application, createContext, Injector } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
 
 import { StaticToolbar } from './static-toolbar'
@@ -21,10 +21,11 @@ export class StaticToolbarPlugin implements Plugin {
     const container = document.createElement('div')
     container.style.position = 'relative'
     container.style.borderRadius = 'inherit'
-    this.app = createApp(<Context providers={[{
+    const Context = createContext([{
       provide: DropdownMenuContainer,
       useValue: container
-    }]}>
+    }])
+    this.app = createApp(<Context>
       <StaticToolbar theme={this.options.theme} />
     </Context>, {
       context: injector

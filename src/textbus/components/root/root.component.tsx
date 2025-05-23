@@ -33,7 +33,7 @@ export class RootComponent extends Component<RootComponentState> {
 
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<RootComponentState>) {
     const content = textbus.get(Registry).createSlot(json.content)
-    return new RootComponent(textbus, {
+    return new RootComponent({
       content
     })
   }
@@ -67,9 +67,9 @@ export class RootComponent extends Component<RootComponentState> {
       return
     }
 
-    const selection = this.textbus.get(Selection)
+    const selection = this.textbus!.get(Selection)
     content.retain(content.length)
-    const newParagraph = new ParagraphComponent(this.textbus)
+    const newParagraph = new ParagraphComponent()
     content.insert(newParagraph)
     selection.setPosition(newParagraph.state.slot, 0)
   }
@@ -128,7 +128,7 @@ export const rootComponentLoader: ComponentLoader = {
   match(): boolean {
     return true
   },
-  read(element: HTMLElement, textbus: Textbus, slotParser: SlotParser): Component | Slot {
+  read(element: HTMLElement, _: Textbus, slotParser: SlotParser): Component | Slot {
     const delta = slotParser(new Slot([
       ContentType.BlockComponent,
       ContentType.InlineComponent,
@@ -138,7 +138,7 @@ export const rootComponentLoader: ComponentLoader = {
       ContentType.BlockComponent
     ])
 
-    deltaToBlock(delta, textbus).forEach(i => {
+    deltaToBlock(delta).forEach(i => {
       slot.insert(i)
     })
     return slot

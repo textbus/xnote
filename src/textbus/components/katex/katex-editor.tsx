@@ -45,7 +45,7 @@ export class KatexEditor extends Textbus {
   mount(host: HTMLElement, code: string) {
     this.host = host
 
-    const model = new SourceCodeComponent(this, {
+    const model = new SourceCodeComponent({
       lineNumber: true,
       autoBreak: true,
       lang: 'latex',

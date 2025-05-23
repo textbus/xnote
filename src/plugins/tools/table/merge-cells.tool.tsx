@@ -1,5 +1,4 @@
-import { useProduce } from '@viewfly/hooks'
-import { inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
 
 import { Button } from '../../../components/button/button'
@@ -12,7 +11,7 @@ export function MergeCellsTool() {
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
-  const [viewModel, update] = useProduce({
+  const viewModel = reactive({
     highlight: false,
     disabled: false,
   })
@@ -25,18 +24,16 @@ export function MergeCellsTool() {
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
-    update(draft => {
-      const is = isInTable(selection)
-      if (is) {
-        const p1 = getTableSlotBySlot(selection.startSlot)
-        const p2 = getTableSlotBySlot(selection.endSlot)
-        if (p1 && p2) {
-          draft.disabled = p1 === p2
-          return
-        }
+    const is = isInTable(selection)
+    if (is) {
+      const p1 = getTableSlotBySlot(selection.startSlot)
+      const p2 = getTableSlotBySlot(selection.endSlot)
+      if (p1 && p2) {
+        viewModel.disabled = p1 === p2
+        return
       }
-      draft.disabled = true
-    })
+    }
+    viewModel.disabled = true
   })
 
   onUnmounted(() => {
@@ -46,9 +43,8 @@ export function MergeCellsTool() {
   const commonState = useCommonState()
 
   return () => {
-    const vm = viewModel()
-    return <Button highlight={vm.highlight}
-                   disabled={vm.disabled || commonState().readonly || commonState().inSourceCode}
+    return <Button highlight={viewModel.highlight}
+                   disabled={viewModel.disabled || commonState().readonly || commonState().inSourceCode}
                    onClick={merge}>
       <span class="xnote-icon-merge-cells"></span>
     </Button>
