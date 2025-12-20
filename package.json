@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "A high-performance rich text editor that supports multiplayer online collaboration.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
@@ -27,13 +27,13 @@
   },
   "dependencies": {
     "@tanbo/color": "^0.1.1",
-    "@textbus/adapter-viewfly": "^5.0.0-alpha.2",
-    "@textbus/collaborate": "^5.0.0-alpha.2",
-    "@textbus/core": "^5.0.0-alpha.2",
-    "@textbus/platform-browser": "^5.0.0-alpha.2",
-    "@viewfly/core": "^2.0.0-alpha.5",
-    "@viewfly/platform-browser": "^2.0.0-alpha.5",
-    "@viewfly/scoped-css": "^2.0.0-alpha.5",
+    "@textbus/adapter-viewfly": "^5.0.0-alpha.14",
+    "@textbus/collaborate": "^5.0.0-alpha.14",
+    "@textbus/core": "^5.0.0-alpha.14",
+    "@textbus/platform-browser": "^5.0.0-alpha.14",
+    "@viewfly/core": "^2.0.0-alpha.6",
+    "@viewfly/platform-browser": "^2.0.0-alpha.6",
+    "@viewfly/scoped-css": "^2.0.0-alpha.6",
     "highlight.js": "^11.9.0",
     "katex": "^0.16.10",
     "uuid": "^10.0.0"
