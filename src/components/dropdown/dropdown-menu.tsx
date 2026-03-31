@@ -44,7 +44,7 @@ export const DropdownMenuPortal = withAnnotation({
       menuElement.style.height = maxHeight + 'px'
       const btnRect = btnEle.getBoundingClientRect()
 
-      let offsetTop = btnRect.top - maxHeight / 2
+      let offsetTop = Math.max(btnRect.top - maxHeight / 2, containerRect.top)
       if (offsetTop < 10) {
         offsetTop = 10
       } else if (offsetTop + maxHeight > screenHeight - 10) {

@@ -41,6 +41,11 @@
 
 .xnote-table-container {
   position: relative;
+
+  tr {
+    height: 44px;
+    min-height: 44px;
+  }
 }
 
 .xnote-table-delete-btn {
