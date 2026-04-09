@@ -11,11 +11,12 @@ import {
   Slot,
   Textbus,
   useContext,
-  useDynamicShortcut,
+  useDynamicShortcut, VTextNode,
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
+import { inject } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 
 import './list.component.scss'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
@@ -28,6 +29,9 @@ import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
 import { SlotRender } from '../SlotRender'
+import { colorFormatter } from '../../formatters/color'
+import { underlineFormatter } from '../../formatters/underline'
+import { strikeThroughFormatter } from '../../formatters/strike-through'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -235,6 +239,8 @@ function numberToLetter(num: number) {
 export function ListComponentView(props: ViewComponentProps<ListComponent>) {
   const component = props.component
 
+  const adapter = inject(DomAdapter)
+
   function reorder(is: boolean) {
     component.state.reorder = is
     const parentSlot = component.parent!
@@ -298,30 +304,46 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
         icon = numberToLetter(listStep) + '.'
       }
     }
+    const formatters = component.state.slot.extractFormatsByIndex(0).filter(i => {
+      const formatter = i[0]
+      return formatter !== colorFormatter &&
+        formatter !== underlineFormatter &&
+        formatter !== strikeThroughFormatter
+    })
+
+    const iconVEl = Slot.formatsToTree(formatters, [new VTextNode(icon)], readonly() || output())
+
+    const iconEl = iconVEl ? adapter.vElementToViewElement(iconVEl) : icon
+
+    const heading = component.state.slot.getAttribute(headingAttr)
+
     return (
       <ListType ref={props.rootRef} data-component={component.name} data-reorder={(listStep === 0) + ''} class="xnote-list" style={{
         marginLeft: indent * 24 + 'px'
       }}>
         <li style={{
           justifyContent: align[component.state.slot.getAttribute(textAlignAttr)!],
-          textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
+          textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0,
         }}>
-          <div class="xnote-list-type">{
-            (component.state.type === 'UnorderedList' || readonly() || output()) ?
-              <span class="xnote-order-btn">{icon}</span>
-              :
-              <Dropdown menu={<>
-                <MenuItem onClick={() => reorder(false)}>继续编号</MenuItem>
-                <MenuItem onClick={() => reorder(true)}>重新编号</MenuItem>
-              </>}>
-                <Button style={{ color: 'inherit' }}>{icon}</Button>
-              </Dropdown>
-          }</div>
-          <SlotRender
-            slot={component.state.slot}
-            class="xnote-list-content"
-            renderEnv={readonly() || output()}
-          />
+          <div class={['xnote-list-inner']}>
+            <div class={['xnote-list-type', heading ? `xnote-${heading}` : '']}>{
+              (component.state.type === 'UnorderedList' || readonly() || output()) ?
+                <span class="xnote-order-btn">{iconEl}</span>
+                :
+                <Dropdown menu={<>
+                  <MenuItem onClick={() => reorder(false)}>继续编号</MenuItem>
+                  <MenuItem onClick={() => reorder(true)}>重新编号</MenuItem>
+                </>}>
+                  <Button
+                    style={{ color: 'inherit', fontSize: 'inherit', height: 'auto', appearance: 'none', padding: '0' }}>{iconEl}</Button>
+                </Dropdown>
+            }</div>
+            <SlotRender
+              slot={component.state.slot}
+              class="xnote-list-content"
+              renderEnv={readonly() || output()}
+            />
+          </div>
         </li>
       </ListType>
     )

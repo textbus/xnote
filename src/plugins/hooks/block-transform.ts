@@ -9,6 +9,7 @@ import { toBlockquote } from '../../textbus/components/blockqoute/blockquote.com
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
 import { toList } from '../../textbus/components/list/list.component'
+import { fontSizeFormatter } from '../../textbus/formatters/font-size'
 
 export function useBlockTransform() {
   const commander = inject(Commander)
@@ -23,6 +24,11 @@ export function useBlockTransform() {
       case 'h4':
       case 'h5':
       case 'h6':
+        selection.getBlocks().forEach((block) => {
+          block.slot.cleanFormats(f => {
+            return f !== fontSizeFormatter
+          })
+        })
         commander.applyAttribute(headingAttr, value)
         break
       case 'paragraph':

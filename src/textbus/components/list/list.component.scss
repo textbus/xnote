@@ -4,10 +4,15 @@
 
   > li {
     display: flex;
+    list-style: none;
   }
 
   &-content {
     min-width: 2em;
+  }
+
+  &-inner {
+    display: table-row;
   }
 }
 
@@ -17,7 +22,7 @@ ul.xnote-list .xnote-list-type {
 }
 
 .xnote-list-type {
-  width: 24px;
+  min-width: 32px;
   text-indent: 0;
   text-align: left;
   color: #296eff;
@@ -25,16 +30,21 @@ ul.xnote-list .xnote-list-type {
   box-sizing: border-box;
   flex-shrink: 0;
   user-select: none;
+  display: table-cell;
 }
 
 .xnote-order-btn {
   padding-left: 5px;
 }
 
+.xnote-list-content {
+  display: table-cell;
+}
+
 .xnote-list-content[style*=text-indent] {
   text-indent: 0 !important;
 }
 
-.xnote-list-content[style*=text-align] {
-  text-align: left !important;
-}
+//.xnote-list-content[style*=text-align] {
+//  text-align: left !important;
+//}
