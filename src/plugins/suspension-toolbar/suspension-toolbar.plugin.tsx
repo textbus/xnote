@@ -20,6 +20,7 @@ export class SuspensionToolbarPlugin implements Plugin {
   setup(injector: Injector) {
     const host = injector.get(VIEW_CONTAINER)
     const container = document.createElement('div')
+    container.style.cssText = 'display:flex;justify-content:center;'
     this.app = createApp(<SuspensionToolbar theme={this.options.theme}/>, {
       context: injector
     })

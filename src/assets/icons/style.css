@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'textbus';
   src:
-    url('fonts/textbus.ttf?oyolf2') format('truetype'),
-    url('fonts/textbus.woff?oyolf2') format('woff'),
-    url('fonts/textbus.svg?oyolf2#textbus') format('svg');
+    url('fonts/textbus.ttf?l0xq8g') format('truetype'),
+    url('fonts/textbus.woff?l0xq8g') format('woff'),
+    url('fonts/textbus.svg?l0xq8g#textbus') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -24,134 +24,155 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.xnote-icon-timeline:before {
+.xnote-icon-translation:before {
   content: "\e900";
 }
-.xnote-icon-step:before {
+.xnote-icon-check:before {
   content: "\e901";
 }
-.xnote-icon-arrow-left:before {
+.xnote-icon-summary:before {
   content: "\e902";
 }
-.xnote-icon-arrow-right:before {
+.xnote-icon-simplify:before {
   content: "\e903";
 }
-.xnote-icon-arrow-top:before {
+.xnote-icon-magic-wand:before {
   content: "\e904";
 }
-.xnote-icon-arrow-bottom:before {
+.xnote-icon-ai:before {
   content: "\e905";
 }
-.xnote-icon-source-code:before {
+.xnote-icon-continuation:before {
   content: "\e906";
 }
-.xnote-icon-insert-paragraph-after:before {
+.xnote-icon-timeline:before {
   content: "\e907";
 }
-.xnote-icon-insert-paragraph-before:before {
+.xnote-icon-step:before {
   content: "\e908";
 }
-.xnote-icon-plus:before {
+.xnote-icon-arrow-left:before {
   content: "\e909";
 }
-.xnote-icon-table-border:before {
+.xnote-icon-arrow-right:before {
   content: "\e90a";
 }
-.xnote-icon-table-remove:before {
+.xnote-icon-arrow-top:before {
   content: "\e90b";
 }
-.xnote-icon-function:before {
+.xnote-icon-arrow-bottom:before {
   content: "\e90c";
 }
-.xnote-icon-paint-bucket:before {
+.xnote-icon-source-code:before {
   content: "\e90d";
 }
-.xnote-icon-background-color:before {
+.xnote-icon-insert-paragraph-after:before {
   content: "\e90e";
 }
-.xnote-icon-color:before {
+.xnote-icon-insert-paragraph-before:before {
   content: "\e90f";
 }
-.xnote-icon-hightlight-box:before {
+.xnote-icon-plus:before {
   content: "\e910";
 }
-.xnote-icon-table-edit:before {
+.xnote-icon-table-border:before {
   content: "\e911";
 }
-.xnote-icon-table-split-columns:before {
+.xnote-icon-table-remove:before {
   content: "\e912";
 }
-.xnote-icon-align-middle:before {
+.xnote-icon-function:before {
   content: "\e913";
 }
-.xnote-icon-align-bottom:before {
+.xnote-icon-paint-bucket:before {
   content: "\e914";
 }
-.xnote-icon-align-top:before {
+.xnote-icon-background-color:before {
   content: "\e915";
 }
-.xnote-icon-palette:before {
+.xnote-icon-color:before {
   content: "\e916";
 }
-.xnote-icon-split-cells:before {
+.xnote-icon-hightlight-box:before {
   content: "\e917";
 }
-.xnote-icon-merge-cells:before {
+.xnote-icon-table-edit:before {
   content: "\e918";
 }
-.xnote-icon-image:before {
+.xnote-icon-table-split-columns:before {
   content: "\e919";
 }
-.xnote-icon-music:before {
+.xnote-icon-align-middle:before {
+  content: "\e91a";
+}
+.xnote-icon-align-bottom:before {
   content: "\e91b";
 }
-.xnote-icon-video:before {
+.xnote-icon-align-top:before {
   content: "\e91c";
 }
-.xnote-icon-unlink:before {
+.xnote-icon-palette:before {
   content: "\e91d";
 }
-.xnote-icon-select:before {
+.xnote-icon-split-cells:before {
   content: "\e91e";
 }
-.xnote-icon-tree:before {
+.xnote-icon-merge-cells:before {
   content: "\e91f";
 }
-.xnote-icon-more:before {
+.xnote-icon-image:before {
+  content: "\e920";
+}
+.xnote-icon-music:before {
   content: "\e921";
 }
-.xnote-icon-checkmark:before {
+.xnote-icon-video:before {
   content: "\e922";
 }
-.xnote-icon-text-wrap:before {
+.xnote-icon-unlink:before {
+  content: "\e923";
+}
+.xnote-icon-select:before {
   content: "\e924";
 }
-.xnote-icon-heading-h1:before {
+.xnote-icon-tree:before {
   content: "\e925";
 }
-.xnote-icon-heading-h2:before {
+.xnote-icon-more:before {
   content: "\e926";
 }
-.xnote-icon-heading-h3:before {
+.xnote-icon-checkmark:before {
   content: "\e927";
 }
-.xnote-icon-heading-h4:before {
+.xnote-icon-text-wrap:before {
   content: "\e928";
 }
-.xnote-icon-heading-h5:before {
+.xnote-icon-heading-h1:before {
   content: "\e929";
 }
-.xnote-icon-heading-h6:before {
+.xnote-icon-heading-h2:before {
   content: "\e92a";
 }
-.xnote-icon-heading:before {
+.xnote-icon-heading-h3:before {
   content: "\e92b";
 }
-.xnote-icon-copy:before {
+.xnote-icon-heading-h4:before {
   content: "\e92c";
 }
-.xnote-icon-paste:before {
+.xnote-icon-heading-h5:before {
   content: "\e92d";
+}
+.xnote-icon-heading-h6:before {
+  content: "\e92e";
+}
+.xnote-icon-heading:before {
+  content: "\e92f";
+}
+.xnote-icon-copy:before {
+  content: "\e930";
+}
+.xnote-icon-paste:before {
+  content: "\e931";
 }
 .xnote-icon-history-back:before {
   content: "\e967";
@@ -222,6 +243,9 @@
 .xnote-icon-subscript:before {
   content: "\ea6a";
 }
+.xnote-icon-clear-formatting:before {
+  content: "\ea6f";
+}
 .xnote-icon-table:before {
   content: "\ea71";
 }
@@ -254,7 +278,4 @@
 }
 .xnote-icon-code:before {
   content: "\ea80";
-}
-.xnote-icon-clear-formatting:before {
-  content: "\ea6f";
 }

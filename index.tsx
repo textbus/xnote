@@ -98,9 +98,11 @@ function EditorContainer() {
         return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
       }
     },
-    // plugins: [
-    //   new SuspensionToolbarPlugin()
-    // ],
+    plugins: [
+      new SuspensionToolbarPlugin({
+        theme: 'dark'
+      })
+    ],
     providers: [
       {
         provide: Organization,

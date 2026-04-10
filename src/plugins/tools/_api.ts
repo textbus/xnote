@@ -1,3 +1,4 @@
+export * from './ai.tool'
 export * from './attr.tool'
 export * from './block.tool'
 export * from './bold.tool'

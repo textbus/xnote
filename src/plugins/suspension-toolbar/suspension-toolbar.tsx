@@ -31,6 +31,7 @@ import { CleanFormatsTool } from '../tools/clean-formats.tool'
 import { ToolService } from '../tools/_common/tool.service'
 import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
+import { AiTool } from '../tools/ai.tool'
 
 export interface SuspensionToolbarProps {
   theme?: 'dark' | 'light'
@@ -87,83 +88,88 @@ export const SuspensionToolbar = withAnnotation({
         opacity: styles.opacity,
         pointerEvents: styles.opacity === 0 ? 'none' : 'initial',
       }}>
-        <ToolbarItem>
-          <UndoTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <RedoTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <InsertTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <BlockTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <AttrTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <BoldTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <ItalicTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <StrikeThroughTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <UnderlineTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <FontSizeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <FontFamilyTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <LinkTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CodeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <TextColorTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <TextBackgroundColorTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <SubscriptTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <SuperscriptTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CleanFormatsTool/>
-        </ToolbarItem>
-        {
-          query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
-            <SplitLine/>
-            <ToolbarItem>
-              <MergeCellsTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <SplitCellsTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <CellBackgroundTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <CellAlignTool/>
-            </ToolbarItem>
-          </Fragment>
-        }
+        <div class="toolbar-tools">
+          <ToolbarItem>
+            <UndoTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <RedoTool/>
+          </ToolbarItem>
+          <SplitLine/>
+          <ToolbarItem>
+            <AiTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <InsertTool/>
+          </ToolbarItem>
+          <SplitLine/>
+          <ToolbarItem>
+            <BlockTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <AttrTool/>
+          </ToolbarItem>
+          <SplitLine/>
+          <ToolbarItem>
+            <BoldTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <ItalicTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <StrikeThroughTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <UnderlineTool/>
+          </ToolbarItem>
+          <SplitLine/>
+          <ToolbarItem>
+            <FontSizeTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <FontFamilyTool/>
+          </ToolbarItem>
+          <SplitLine/>
+          <ToolbarItem>
+            <LinkTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <CodeTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <TextColorTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <TextBackgroundColorTool/>
+          </ToolbarItem>
+          <SplitLine/>
+          <ToolbarItem>
+            <SubscriptTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <SuperscriptTool/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <CleanFormatsTool/>
+          </ToolbarItem>
+          {
+            query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
+              <SplitLine/>
+              <ToolbarItem>
+                <MergeCellsTool/>
+              </ToolbarItem>
+              <ToolbarItem>
+                <SplitCellsTool/>
+              </ToolbarItem>
+              <ToolbarItem>
+                <CellBackgroundTool/>
+              </ToolbarItem>
+              <ToolbarItem>
+                <CellAlignTool/>
+              </ToolbarItem>
+            </Fragment>
+          }
+        </div>
       </div>
     )
   })

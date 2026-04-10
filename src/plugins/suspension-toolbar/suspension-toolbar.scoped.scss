@@ -8,18 +8,24 @@
   box-sizing: border-box;
   border: 1px solid #dee0e3;
   color: #000;
-  display: flex;
+  display: table;
   font-size: 13px;
   text-align: left;
   transition-property: all;
   transition-duration: 0.15s;
   transition-timing-function: ease;
+  min-width: 100%;
+
+  &-tools {
+    display: flex;
+  }
 
   &.suspension {
     box-shadow: 0 4px 8px rgba(0, 0, 0, .08);
   }
 
   &.dark {
+    border: none;
     background-color: #222;
     color: #ccc;
 

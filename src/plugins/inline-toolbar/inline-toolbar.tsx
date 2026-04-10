@@ -46,6 +46,7 @@ import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 import { useCommonState } from '../tools/_common/common-state'
 import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
+import { AiTool } from '../tools/ai.tool'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -245,6 +246,9 @@ export const InlineToolbar = withAnnotation({
         display: editorService.hideInlineToolbar ? 'none' : '',
         transitionDuration: viewPosition.transitionDuration + 's'
       }}>
+        <ToolbarItem>
+          <AiTool/>
+        </ToolbarItem>
         <ToolbarItem>
           <BlockTool/>
         </ToolbarItem>
