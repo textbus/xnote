@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "0.3.9",
+  "version": "1.0.0",
   "description": "A high-performance rich text editor that supports multiplayer online collaboration.",
   "main": "./bundles/index.js",
   "module": "./bundles/index.esm.js",
