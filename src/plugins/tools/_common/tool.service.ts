@@ -33,11 +33,19 @@ export class ToolService {
         }
       }
 
-      this.state.set({
+      const rawState = this.state()
+
+      const newState = {
         selectEmbed: is,
         readonly: controller.readonly,
         inSourceCode: selection.commonAncestorComponent instanceof SourceCodeComponent
-      })
+      }
+
+      if (newState.selectEmbed !== rawState.selectEmbed ||
+        newState.readonly !== rawState.readonly ||
+        newState.inSourceCode !== rawState.inSourceCode) {
+        this.state.set(newState)
+      }
     })
   }
 

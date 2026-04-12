@@ -47,6 +47,7 @@ import { useCommonState } from '../tools/_common/common-state'
 import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
 import { AiTool } from '../tools/ai.tool'
+import { LLMService } from '../../services/llm.service'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -236,6 +237,7 @@ export const InlineToolbar = withAnnotation({
     mouseupSubscription.unsubscribe()
   })
 
+  const llmService = inject(LLMService, null)
   return withScopedCSS(css, () => {
     return (
       <div class={['toolbar', props.theme]} ref={toolbarRef} style={{
@@ -246,9 +248,11 @@ export const InlineToolbar = withAnnotation({
         display: editorService.hideInlineToolbar ? 'none' : '',
         transitionDuration: viewPosition.transitionDuration + 's'
       }}>
-        <ToolbarItem>
-          <AiTool/>
-        </ToolbarItem>
+        {
+          llmService && <ToolbarItem>
+            <AiTool hideToolbar={hideToolbar}/>
+          </ToolbarItem>
+        }
         <ToolbarItem>
           <BlockTool/>
         </ToolbarItem>

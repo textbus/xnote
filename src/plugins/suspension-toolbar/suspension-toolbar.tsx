@@ -32,6 +32,7 @@ import { ToolService } from '../tools/_common/tool.service'
 import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 import { AiTool } from '../tools/ai.tool'
+import { LLMService } from '../../services/llm.service'
 
 export interface SuspensionToolbarProps {
   theme?: 'dark' | 'light'
@@ -79,6 +80,7 @@ export const SuspensionToolbar = withAnnotation({
   ).subscribe(() => {
     styles.opacity = 1
   }))
+  const llmService = inject(LLMService, null)
   return withScopedCSS(css, () => {
     return (
       <div class={['toolbar', props.theme, {
@@ -96,9 +98,11 @@ export const SuspensionToolbar = withAnnotation({
             <RedoTool/>
           </ToolbarItem>
           <SplitLine/>
-          <ToolbarItem>
-            <AiTool/>
-          </ToolbarItem>
+          {
+            llmService && <ToolbarItem>
+              <AiTool/>
+            </ToolbarItem>
+          }
           <ToolbarItem>
             <InsertTool/>
           </ToolbarItem>

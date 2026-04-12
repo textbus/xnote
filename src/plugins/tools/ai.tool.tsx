@@ -1,40 +1,29 @@
-import { createSignal, inject, onUnmounted } from '@viewfly/core'
+import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { Commander, fromEvent, Selection } from '@textbus/core'
 
-import css from './link-tool.scoped.scss'
+import css from './ai-tool.scoped.scss'
 import { Popup } from '../../components/popup/popup'
 import { Button } from '../../components/button/button'
-import { linkFormatter } from '../../textbus/formatters/link'
 import { EditorService } from '../../services/editor.service'
 import { useCommonState } from './_common/common-state'
 import { Dropdown } from '../../components/dropdown/dropdown'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { Divider } from '../../components/divider/divider'
+import { LLMService } from '../../services/llm.service'
 
 export interface AiToolProps {
   hideToolbar?(): void
 }
 
 export function AiTool(props: AiToolProps) {
+  const llmService = inject(LLMService)
   const selectionBridge = inject(SelectionBridge)
   const selection = inject(Selection)
   const commander = inject(Commander)
   const editorService = inject(EditorService)
   const container = inject(VIEW_CONTAINER)
-
-  const isShow = createSignal(false)
-  const value = createSignal('')
-
-  function setLink(ev: Event) {
-    ev.preventDefault()
-    commander.applyFormat(linkFormatter, {
-      href: value(),
-      target: '_blanK'
-    } as any)
-    isShow.set(false)
-  }
 
   let isClickFromSelf = false
   const sub = fromEvent(document, 'click').subscribe(() => {
@@ -43,55 +32,94 @@ export function AiTool(props: AiToolProps) {
       return
     }
     editorService.hideInlineToolbar = false
-    isShow.set(false)
+    viewModel.showTranslation = false
   })
 
   onUnmounted(() => {
     sub.unsubscribe()
   })
 
+  const viewModel = reactive({
+    showTranslation: false,
+    content: ''
+  })
+
+  function translation() {
+    viewModel.showTranslation = true
+    viewModel.content = ''
+    props.hideToolbar?.()
+    llmService.translate({
+      text: document.getSelection()!.toString(),
+      targetLanguage: 'English'
+    }).subscribe(text => {
+      viewModel.content += text
+    })
+  }
+
+  function continueContent() {
+    viewModel.content = ''
+    llmService.continue({
+      text: document.getSelection()!.toString()
+    }).subscribe((text) => {
+      viewModel.content += text
+    })
+  }
+
+  function insert() {
+    if (viewModel.content) {
+      commander.insert(viewModel.content)
+    }
+    props.hideToolbar?.()
+  }
+
+  function replace() {
+    props.hideToolbar?.()
+  }
+
   const commonState = useCommonState()
 
   return withScopedCSS(css, () => {
     const containerRect = container.getBoundingClientRect()
-    const rect = isShow() ? selectionBridge.getRect({
+    const rect = viewModel.showTranslation ? selectionBridge.getRect({
       slot: selection.focusSlot!,
       offset: selection.focusOffset!
     }) : {} as any
+
+    console.log(rect)
     return (
-      <Dropdown width={'160px'} menu={
-        <>
-          <MenuItem icon={<span class="xnote-icon-continuation"></span>}>续写</MenuItem>
-          <MenuItem icon={<span class="xnote-icon-magic-wand"></span>}>润色</MenuItem>
-          <MenuItem icon={<span class="xnote-icon-simplify"></span>}>简化</MenuItem>
-          <MenuItem icon={<span class="xnote-icon-check"></span>}>检查拼写错误</MenuItem>
-          <Divider/>
-          <MenuItem icon={<span class="xnote-icon-translation"></span>}>翻译</MenuItem>
-          <MenuItem icon={<span class="xnote-icon-summary"></span>}>总结并插入</MenuItem>
-        </>
-      }>
-        <Button arrow={true} disabled={commonState().inSourceCode || commonState().readonly} onClick={() => {
-          isShow.set(true)
-          isClickFromSelf = true
-          props.hideToolbar?.()
-        }}><span class="xnote-icon-ai"></span></Button>
-      </Dropdown>
-      // <span>
-      //
-      //   {
-      //     isShow() &&
-      //     <Popup left={rect.left - containerRect.left} top={rect.top + rect.height - containerRect.top}>
-      //       <form onSubmit={setLink} onClick={() => {
-      //         isClickFromSelf = true
-      //       }} class="input-group">
-      //         <input onChange={ev => {
-      //           value.set((ev.target as any).value)
-      //         }} placeholder="请输入链接地址" type="text"/>
-      //         <Button type="submit">确定</Button>
-      //       </form>
-      //     </Popup>
-      //   }
-      // </span>
+      <>
+        <Dropdown width={'160px'} menu={
+          !viewModel.showTranslation ? <div onClick={() => isClickFromSelf = true}>
+            <MenuItem icon={<span class="xnote-icon-continuation"></span>} onClick={continueContent}>续写</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-magic-wand"></span>}>润色</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-simplify"></span>}>简化内容</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-check"></span>}>丰富内容</MenuItem>
+            <Divider/>
+            <MenuItem icon={<span class="xnote-icon-translation"></span>} onClick={translation}>翻译</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-summary"></span>}>总结并插入</MenuItem>
+          </div> : null
+        }>
+          <Button arrow={true} disabled={commonState().inSourceCode || commonState().readonly}>
+            <span class="xnote-icon-ai"></span>
+          </Button>
+        </Dropdown>
+        {
+          viewModel.showTranslation &&
+          <Popup left={rect.left - containerRect.left} top={rect.top + rect.height - containerRect.top}>
+            <div onClick={() => {
+              isClickFromSelf = true
+            }} class="input-group">
+              <div class="ai-content">
+                {viewModel.content}
+              </div>
+              <div class="btn-group">
+                <Button type="button" onClick={replace}>替换</Button>
+                <Button type="button" onClick={insert}>插入</Button>
+              </div>
+            </div>
+          </Popup>
+        }
+      </>
     )
   })
 }
