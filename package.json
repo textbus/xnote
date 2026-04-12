@@ -31,11 +31,13 @@
     "@textbus/collaborate": "^5.1.1",
     "@textbus/core": "^5.1.1",
     "@textbus/platform-browser": "^5.1.1",
+    "@types/markdown-it": "^14.1.2",
     "@viewfly/core": "^2.0.0",
     "@viewfly/platform-browser": "^2.0.0",
     "@viewfly/scoped-css": "^2.0.0",
     "highlight.js": "^11.9.0",
     "katex": "^0.16.10",
+    "markdown-it": "^14.1.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

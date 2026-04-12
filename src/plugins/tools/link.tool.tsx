@@ -1,7 +1,6 @@
 import { createSignal, inject, onUnmounted } from '@viewfly/core'
-import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { Commander, fromEvent, Selection } from '@textbus/core'
+import { Commander, fromEvent } from '@textbus/core'
 
 import css from './link-tool.scoped.scss'
 import { Popup } from '../../components/popup/popup'
@@ -9,17 +8,15 @@ import { Button } from '../../components/button/button'
 import { linkFormatter } from '../../textbus/formatters/link'
 import { EditorService } from '../../services/editor.service'
 import { useCommonState } from './_common/common-state'
+import { usePopupPosition } from '../hooks/popup-position'
 
 export interface LinkToolProps {
   hideToolbar?(): void
 }
 
 export function LinkTool(props: LinkToolProps) {
-  const selectionBridge = inject(SelectionBridge)
-  const selection = inject(Selection)
   const commander = inject(Commander)
   const editorService = inject(EditorService)
-  const container = inject(VIEW_CONTAINER)
 
   const isShow = createSignal(false)
   const value = createSignal('')
@@ -49,12 +46,9 @@ export function LinkTool(props: LinkToolProps) {
 
   const commonState = useCommonState()
 
+  const popupPosition = usePopupPosition()
   return withScopedCSS(css, () => {
-    const containerRect = container.getBoundingClientRect()
-    const rect = isShow() ? selectionBridge.getRect({
-      slot: selection.focusSlot!,
-      offset: selection.focusOffset!
-    }) : {} as any
+    const rect = popupPosition(224, 38)
     return (
       <span>
         <Button disabled={commonState().inSourceCode || commonState().readonly} onClick={() => {
@@ -64,7 +58,7 @@ export function LinkTool(props: LinkToolProps) {
         }}><span class="xnote-icon-link"></span></Button>
         {
           isShow() &&
-          <Popup left={rect.left - containerRect.left} top={rect.top + rect.height - containerRect.top}>
+          <Popup left={rect.left} top={rect.top}>
             <form onSubmit={setLink} onClick={() => {
               isClickFromSelf = true
             }} class="input-group">

@@ -1,7 +1,8 @@
-import { inject, onUnmounted, reactive } from '@viewfly/core'
-import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
+import { createRef, inject, onUnmounted, reactive } from '@viewfly/core'
+import { Parser } from '@textbus/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { Commander, fromEvent, Selection } from '@textbus/core'
+import { Commander, ContentType, fromEvent, Selection, Slot, Subscription } from '@textbus/core'
+import MarkdownIt from 'markdown-it'
 
 import css from './ai-tool.scoped.scss'
 import { Popup } from '../../components/popup/popup'
@@ -12,6 +13,7 @@ import { Dropdown } from '../../components/dropdown/dropdown'
 import { MenuItem } from '../../components/menu-item/menu-item'
 import { Divider } from '../../components/divider/divider'
 import { LLMService } from '../../services/llm.service'
+import { usePopupPosition } from '../hooks/popup-position'
 
 export interface AiToolProps {
   hideToolbar?(): void
@@ -19,11 +21,9 @@ export interface AiToolProps {
 
 export function AiTool(props: AiToolProps) {
   const llmService = inject(LLMService)
-  const selectionBridge = inject(SelectionBridge)
   const selection = inject(Selection)
   const commander = inject(Commander)
   const editorService = inject(EditorService)
-  const container = inject(VIEW_CONTAINER)
 
   let isClickFromSelf = false
   const sub = fromEvent(document, 'click').subscribe(() => {
@@ -32,7 +32,7 @@ export function AiTool(props: AiToolProps) {
       return
     }
     editorService.hideInlineToolbar = false
-    viewModel.showTranslation = false
+    viewModel.showModal = false
   })
 
   onUnmounted(() => {
@@ -40,77 +40,239 @@ export function AiTool(props: AiToolProps) {
   })
 
   const viewModel = reactive({
-    showTranslation: false,
-    content: ''
+    showModal: false,
+    content: '',
+    type: 'translate' as keyof LLMService
   })
 
-  function translation() {
-    viewModel.showTranslation = true
-    viewModel.content = ''
-    props.hideToolbar?.()
-    llmService.translate({
-      text: document.getSelection()!.toString(),
-      targetLanguage: 'English'
-    }).subscribe(text => {
-      viewModel.content += text
-    })
-  }
+  const dropdownRef = createRef<typeof Dropdown>()
+
+  let subscription = new Subscription()
 
   function continueContent() {
+    viewModel.type = 'continue'
     viewModel.content = ''
-    llmService.continue({
+    props.hideToolbar?.()
+    viewModel.showModal = true
+    dropdownRef.current!.isShow(false)
+    subscription.unsubscribe()
+    subscription = llmService.continue({
       text: document.getSelection()!.toString()
     }).subscribe((text) => {
       viewModel.content += text
     })
   }
 
+  function polish() {
+    viewModel.type = 'polish'
+    viewModel.content = ''
+    props.hideToolbar?.()
+    viewModel.showModal = true
+    dropdownRef.current!.isShow(false)
+    subscription.unsubscribe()
+    subscription = llmService.polish({
+      text: document.getSelection()!.toString()
+    }).subscribe((text) => {
+      viewModel.content += text
+    })
+  }
+
+
+  function simplify() {
+    viewModel.type = 'simplify'
+    viewModel.content = ''
+    props.hideToolbar?.()
+    viewModel.showModal = true
+    dropdownRef.current!.isShow(false)
+    subscription.unsubscribe()
+    subscription = llmService.simplify({
+      text: document.getSelection()!.toString()
+    }).subscribe((text) => {
+      viewModel.content += text
+    })
+  }
+
+  function enrich() {
+    viewModel.type = 'enrich'
+    viewModel.content = ''
+    props.hideToolbar?.()
+    viewModel.showModal = true
+    dropdownRef.current!.isShow(false)
+    subscription.unsubscribe()
+    subscription = llmService.enrich({
+      text: document.getSelection()!.toString()
+    }).subscribe((text) => {
+      viewModel.content += text
+    })
+  }
+
+  function translate(lang: string) {
+    viewModel.type = 'translate'
+    viewModel.content = ''
+    props.hideToolbar?.()
+    viewModel.showModal = true
+    dropdownRef.current!.isShow(false)
+    subscription.unsubscribe()
+    subscription = llmService.translate({
+      text: document.getSelection()!.toString(),
+      targetLanguage: lang
+    }).subscribe((text) => {
+      viewModel.content += text
+    })
+  }
+
+
+  function summarize() {
+    viewModel.type = 'summarize'
+    viewModel.content = ''
+    props.hideToolbar?.()
+    viewModel.showModal = true
+    dropdownRef.current!.isShow(false)
+    subscription.unsubscribe()
+    subscription = llmService.summarize({
+      text: document.getSelection()!.toString(),
+    }).subscribe((text) => {
+      viewModel.content += text
+    })
+  }
+
+  const aiContentRef = createRef<HTMLDivElement>()
+  const parser = inject(Parser)
+
   function insert() {
-    if (viewModel.content) {
-      commander.insert(viewModel.content)
-    }
+    selection.collapse()
+    aiContentRef.current!.childNodes.forEach(node => {
+      const slot = parser.parse(node instanceof HTMLElement ? node : node.textContent || '', new Slot([
+        ContentType.BlockComponent,
+        ContentType.InlineComponent,
+        ContentType.Text
+      ]))
+
+      commander.paste(slot, aiContentRef.current!.innerText)
+    })
+
     props.hideToolbar?.()
   }
 
   function replace() {
+    if (!selection.isCollapsed) {
+      commander.delete()
+    }
+    insert()
     props.hideToolbar?.()
+  }
+
+  const md = new MarkdownIt({
+    html: true,
+    breaks: true,
+    linkify: true
+  })
+
+  function renderMarkdown(markdown: string) {
+    const html = md.render(markdown)
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = html
+
+    function parseNode(node: Node): any {
+      if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent
+      }
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as HTMLElement
+        const TagName = element.tagName.toLowerCase()
+        const children = Array.from(element.childNodes).map(parseNode)
+        const props: any = {}
+
+        if (element.className) {
+          props.class = element.className
+        }
+
+        switch (TagName) {
+          case 'h1':
+          case 'h2':
+          case 'h3':
+          case 'h4':
+          case 'h5':
+          case 'h6':
+          case 'p':
+          case 'strong':
+          case 'em':
+          case 'code':
+          case 'pre':
+          case 'blockquote':
+          case 'ul':
+          case 'ol':
+          case 'li':
+          case 'span':
+          case 'div':
+            return <TagName {...props}>{children}</TagName>
+          case 'br':
+            return <br/>
+          case 'a':
+            props.href = element.getAttribute('href') || ''
+            return <a {...props}>{children}</a>
+          case 'img':
+            props.src = element.getAttribute('src') || ''
+            props.alt = element.getAttribute('alt') || ''
+            return <img {...props} />
+          case 'hr':
+            return <hr/>
+          default:
+            return <span {...props}>{children}</span>
+        }
+      }
+
+      return null
+    }
+
+    return Array.from(tempDiv.childNodes).map(parseNode)
   }
 
   const commonState = useCommonState()
 
-  return withScopedCSS(css, () => {
-    const containerRect = container.getBoundingClientRect()
-    const rect = viewModel.showTranslation ? selectionBridge.getRect({
-      slot: selection.focusSlot!,
-      offset: selection.focusOffset!
-    }) : {} as any
+  const popupPosition = usePopupPosition()
 
-    console.log(rect)
+  return withScopedCSS(css, () => {
+    const rect = popupPosition(400, 210)!
+
+    const b = commonState().inSourceCode || commonState().readonly && !selection.isCollapsed
     return (
       <>
-        <Dropdown width={'160px'} menu={
-          !viewModel.showTranslation ? <div onClick={() => isClickFromSelf = true}>
+        <Dropdown ref={dropdownRef} disabled={b} width={'160px'} menu={
+          !viewModel.showModal ? <div onClick={() => isClickFromSelf = true}>
             <MenuItem icon={<span class="xnote-icon-continuation"></span>} onClick={continueContent}>续写</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-magic-wand"></span>}>润色</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-simplify"></span>}>简化内容</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-check"></span>}>丰富内容</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-magic-wand"></span>} onClick={polish}>润色</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-simplify"></span>} onClick={simplify}>简化内容</MenuItem>
+            <MenuItem icon={<span class="xnote-icon-enrich"></span>} onClick={enrich}>丰富内容</MenuItem>
             <Divider/>
-            <MenuItem icon={<span class="xnote-icon-translation"></span>} onClick={translation}>翻译</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-summary"></span>}>总结并插入</MenuItem>
+            <Dropdown style={{
+              display: 'block'
+            }} abreast={true} menu={
+              <div onClick={() => isClickFromSelf = true}>
+                <MenuItem onClick={() => translate('中文')}>中文</MenuItem>
+                <MenuItem onClick={() => translate('英语')}>英语</MenuItem>
+                <MenuItem onClick={() => translate('西班牙语')}>西班牙语</MenuItem>
+                <MenuItem onClick={() => translate('日语')}>日语</MenuItem>
+              </div>
+            }>
+              <MenuItem arrow={true} icon={<span class="xnote-icon-translation"></span>}>翻译</MenuItem>
+            </Dropdown>
+            <MenuItem icon={<span class="xnote-icon-summary"></span>} onClick={summarize}>总结</MenuItem>
           </div> : null
         }>
-          <Button arrow={true} disabled={commonState().inSourceCode || commonState().readonly}>
+          <Button arrow={true} disabled={b}>
             <span class="xnote-icon-ai"></span>
           </Button>
         </Dropdown>
         {
-          viewModel.showTranslation &&
-          <Popup left={rect.left - containerRect.left} top={rect.top + rect.height - containerRect.top}>
+          viewModel.showModal &&
+          <Popup left={rect.left} top={rect.top}>
             <div onClick={() => {
               isClickFromSelf = true
             }} class="input-group">
-              <div class="ai-content">
-                {viewModel.content}
+              <div class="ai-content" ref={aiContentRef}>
+                {renderMarkdown(viewModel.content)}
               </div>
               <div class="btn-group">
                 <Button type="button" onClick={replace}>替换</Button>
