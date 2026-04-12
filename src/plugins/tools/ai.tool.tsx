@@ -151,6 +151,7 @@ export function AiTool(props: AiToolProps) {
       commander.paste(slot, aiContentRef.current!.innerText)
     })
 
+    viewModel.showModal = false
     props.hideToolbar?.()
   }
 
