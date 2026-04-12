@@ -1,7 +1,7 @@
-import { createRef, inject, onUnmounted, reactive } from '@viewfly/core'
+import { createRef, getCurrentInstance, inject, onUnmounted, reactive } from '@viewfly/core'
 import { Parser } from '@textbus/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { Commander, ContentType, fromEvent, Selection, Slot, Subscription } from '@textbus/core'
+import { Commander, ContentType, distinctUntilChanged, fromEvent, map, Selection, Slot, Subscription } from '@textbus/core'
 import MarkdownIt from 'markdown-it'
 
 import css from './ai-tool.scoped.scss'
@@ -14,6 +14,7 @@ import { MenuItem } from '../../components/menu-item/menu-item'
 import { Divider } from '../../components/divider/divider'
 import { LLMService } from '../../services/llm.service'
 import { usePopupPosition } from '../hooks/popup-position'
+import { RefreshService } from '../../services/refresh.service'
 
 export interface AiToolProps {
   hideToolbar?(): void
@@ -24,6 +25,7 @@ export function AiTool(props: AiToolProps) {
   const selection = inject(Selection)
   const commander = inject(Commander)
   const editorService = inject(EditorService)
+  const refreshService = inject(RefreshService)
 
   let isClickFromSelf = false
   const sub = fromEvent(document, 'click').subscribe(() => {
@@ -34,6 +36,17 @@ export function AiTool(props: AiToolProps) {
     editorService.hideInlineToolbar = false
     viewModel.showModal = false
   })
+
+  const instance = getCurrentInstance()
+
+  sub.add(refreshService.onRefresh.pipe(
+    map(() => {
+      return selection.isCollapsed
+    }),
+    distinctUntilChanged()
+  ).subscribe(() => {
+    instance.markAsDirtied()
+  }))
 
   onUnmounted(() => {
     sub.unsubscribe()
@@ -237,7 +250,7 @@ export function AiTool(props: AiToolProps) {
   return withScopedCSS(css, () => {
     const rect = popupPosition(400, 210)!
 
-    const b = commonState().inSourceCode || commonState().readonly && !selection.isCollapsed
+    const b = commonState().inSourceCode || commonState().readonly || selection.isCollapsed
     return (
       <>
         <Dropdown ref={dropdownRef} disabled={b} width={'160px'} menu={
