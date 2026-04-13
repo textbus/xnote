@@ -15,7 +15,7 @@
   border-radius: 5px;
   background: #fff;
   border: 1px solid #ddd;
-  cursor: pointer;
+  cursor: move;
   height: 26px;
 
   span {
@@ -32,5 +32,18 @@
   button {
     margin: 2px 5px
   }
+}
+
+.drag-line {
+  width: 0;
+  height: 2px;
+  background: #296eff;
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  //contain: layout size style;
+  //max-width: 100%;
 }
 

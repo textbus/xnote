@@ -1,7 +1,7 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, reactive, withAnnotation, } from '@viewfly/core'
 import {
-  Commander,
+  Commander, Component,
   ContentType,
   debounceTime,
   delay,
@@ -17,7 +17,7 @@ import {
   Subscription,
   Textbus,
 } from '@textbus/core'
-import { DomAdapter } from '@textbus/platform-browser'
+import { DomAdapter, VIEW_DOCUMENT } from '@textbus/platform-browser'
 
 import css from './left-toolbar.scoped.scss'
 import { RefreshService } from '../../services/refresh.service'
@@ -108,7 +108,7 @@ export const LeftToolbar = withAnnotation({
       }),
       sampleTime(250),
       filter(() => {
-        return !isShow()
+        return !isShow
       })
     ).subscribe(slot => {
       activeSlot.set(slot)
@@ -147,14 +147,13 @@ export const LeftToolbar = withAnnotation({
   })
 
   const toolbarRef = createRef<HTMLElement>()
-  const btnRef = createRef<HTMLElement>()
-  const isShow = createSignal(false)
+  let isShow = false
 
   onMounted(() => {
     let leaveSub: Subscription
     const bindLeave = function () {
       leaveSub = fromEvent(toolbarRef.current!, 'mouseleave').pipe(delay(200)).subscribe(() => {
-        isShow.set(false)
+        isShow = false
       })
     }
     bindLeave()
@@ -164,7 +163,7 @@ export const LeftToolbar = withAnnotation({
           leaveSub.unsubscribe()
         }
         bindLeave()
-        isShow.set(true)
+        isShow = true
       })
     )
   })
@@ -219,6 +218,114 @@ export const LeftToolbar = withAnnotation({
     isIgnoreMove = b
   }
 
+  const btnRef = createRef<HTMLElement>()
+  const dragLineRef = createRef<HTMLElement>()
+
+  function findBlockComponentView(el: HTMLElement) {
+    while (el) {
+      const comp = adapter.getComponentByNativeNode(el)
+      if (!comp || comp.type !== ContentType.BlockComponent) {
+        el = el.parentElement!
+        continue
+      }
+      if (comp instanceof RootComponent) {
+        break
+      }
+      return {
+        component: comp,
+        view: el
+      }
+    }
+    return null
+  }
+
+  const container = inject(VIEW_DOCUMENT)
+
+  onMounted(() => {
+    const sub = fromEvent<MouseEvent>(btnRef.current!, 'mousedown').subscribe((ev) => {
+      isShow = false
+      changeIgnoreMove(true)
+      const startX = ev.clientX
+      const startY = ev.clientY
+
+      let cloneNode: HTMLElement | null = null
+      const containerRect = container.getBoundingClientRect()
+      let originComponent: Component<any> | null = null
+      let originView: HTMLElement | null = null
+
+      let targetComponent: Component<any> | null = null
+      let isBefore = true
+      const move = fromEvent<MouseEvent>(document, 'mousemove').subscribe((ev) => {
+        editorService.changeLeftToolbarVisible(false)
+        if (!cloneNode) {
+          const slot = activeSlot()
+          if (!slot) {
+            return
+          }
+
+          originComponent = slot.parent
+          const el = adapter.getNativeNodeByComponent(originComponent!) as HTMLElement
+          originView = el
+          originView.style.opacity = '0.5'
+          originView.style.pointerEvents = 'none'
+          const rect = el.getBoundingClientRect()
+
+          cloneNode = el.cloneNode(true) as HTMLElement
+
+          cloneNode.style.cssText = `position: fixed; left: ${rect.left}px; top: ${rect.top}px; width: ${rect.width}px; height: ${rect.height}px; box-shadow: 1px 2px 3px rgba(0,0,0,.1);background:#fff;pointer-events: none;user-select:none`
+          document.body.appendChild(cloneNode)
+        }
+        cloneNode.style.transform = `translate(${ev.clientX - startX}px, ${ev.clientY - startY}px)`
+
+        const findResult = findBlockComponentView(ev.target as HTMLElement)
+        if (!findResult || findResult.component === originComponent) {
+          dragLineRef.current!.style.cssText = ''
+          targetComponent = null
+          return
+        }
+
+        const targetRect = findResult.view.getBoundingClientRect()
+        let top = targetRect.top - containerRect.top
+        const left = targetRect.left - containerRect.left
+        isBefore = true
+
+        if (ev.clientY > targetRect.top + targetRect.height / 2) {
+          top = top + targetRect.height
+          isBefore = false
+        }
+
+        targetComponent = findResult.component
+        dragLineRef.current!.style.cssText = `left: ${left + 10}px; top: ${top}px; width: ${targetRect.width}px`
+      })
+
+      const up = fromEvent(document, 'mouseup').subscribe(() => {
+        move.unsubscribe()
+        up.unsubscribe()
+        if (cloneNode) {
+          document.body.removeChild(cloneNode)
+        }
+        if (originView) {
+          originView.style.opacity = ''
+          originView.style.pointerEvents = ''
+        }
+        if (originComponent && targetComponent) {
+          if (isBefore) {
+            commander.insertBefore(originComponent, targetComponent)
+          } else {
+            commander.insertAfter(originComponent, targetComponent)
+          }
+        }
+        editorService.changeLeftToolbarVisible(true)
+        dragLineRef.current!.style.cssText = ''
+        selection.unSelect()
+      })
+    })
+
+    return () => {
+      sub.unsubscribe()
+    }
+  })
+
   return withScopedCSS(css, () => {
     const slot = activeSlot()
     let activeNode = <span class="xnote-icon-pilcrow"/>
@@ -253,6 +360,7 @@ export const LeftToolbar = withAnnotation({
     const needInsert = activeParentComponent instanceof TableComponent || activeParentComponent instanceof SourceCodeComponent
     return (
       <div class="left-toolbar" ref={toolbarRef}>
+        <div class="drag-line" ref={dragLineRef}></div>
         <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
           left: positionSignal.left + 'px',
           top: positionSignal.top + 'px',
