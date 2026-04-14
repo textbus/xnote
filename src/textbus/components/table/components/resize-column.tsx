@@ -1,6 +1,7 @@
 import { withScopedCSS } from '@viewfly/scoped-css'
 import { createRef, inject, onMounted, Signal, StaticRef } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
+import { DomAdapter } from '@textbus/platform-browser'
 
 import css from './resize-column.scoped.scss'
 import { TableComponent } from '../table.component'
@@ -20,6 +21,7 @@ export function ResizeColumn(props: ResizeColumnProps) {
   let activeCol: number | null = null
 
   const editorService = inject(EditorService)
+  const adapter = inject(DomAdapter)
 
   onMounted(() => {
     const { tableRef } = props
@@ -39,6 +41,34 @@ export function ResizeColumn(props: ResizeColumnProps) {
         if (isDrag || ignoreMove) {
           return
         }
+        let cellView: HTMLElement | null = ev.target as HTMLElement
+        if (cellView === dragLineRef.current) {
+          return
+        }
+        while (cellView) {
+          const slot = adapter.getSlotByNativeNode(cellView)
+          if (slot && slot.parent === props.component) {
+            break
+          }
+          if (cellView === tableRef.current) {
+            cellView = null
+            break
+          }
+          cellView = cellView.parentElement! as HTMLElement
+        }
+        if (!cellView) {
+          activeCol = null
+          dragLineRef.current!.style.display = 'none'
+          return
+        }
+
+        const cellRect = cellView.getBoundingClientRect()
+        if (Math.abs(cellRect.x - ev.clientX) > 5 && Math.abs(cellRect.x + cellRect.width - ev.clientX) > 5) {
+          activeCol = null
+          dragLineRef.current!.style.display = 'none'
+          return
+        }
+
         const tableRect = tableRef.current!.getBoundingClientRect()
         const leftDistance = ev.clientX - tableRect.x
         const state = props.component.state
