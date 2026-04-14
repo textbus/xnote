@@ -32,6 +32,7 @@ import { SlotRender } from '../SlotRender'
 import { colorFormatter } from '../../formatters/color'
 import { underlineFormatter } from '../../formatters/underline'
 import { strikeThroughFormatter } from '../../formatters/strike-through'
+import { linkFormatter } from '../../formatters/link'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -308,7 +309,8 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
       const formatter = i[0]
       return formatter !== colorFormatter &&
         formatter !== underlineFormatter &&
-        formatter !== strikeThroughFormatter
+        formatter !== strikeThroughFormatter &&
+        formatter !== linkFormatter
     })
 
     const iconVEl = Slot.formatsToTree(formatters, [new VTextNode(icon)], readonly() || output())
