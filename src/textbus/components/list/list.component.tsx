@@ -29,10 +29,11 @@ import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
 import { SlotRender } from '../SlotRender'
+import { boldFormatter } from '../../formatters/bold'
+import { italicFormatter } from '../../formatters/italic'
+import { fontSizeFormatter } from '../../formatters/font-size'
+import { fontFamilyFormatter } from '../../formatters/font-family'
 import { colorFormatter } from '../../formatters/color'
-import { underlineFormatter } from '../../formatters/underline'
-import { strikeThroughFormatter } from '../../formatters/strike-through'
-import { linkFormatter } from '../../formatters/link'
 
 export interface ListComponentState {
   type: 'OrderedList' | 'UnorderedList'
@@ -307,10 +308,19 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
     }
     const formatters = component.state.slot.extractFormatsByIndex(0).filter(i => {
       const formatter = i[0]
-      return formatter !== colorFormatter &&
-        formatter !== underlineFormatter &&
-        formatter !== strikeThroughFormatter &&
-        formatter !== linkFormatter
+      if (component.state.type === 'OrderedList') {
+        return [
+          boldFormatter,
+          italicFormatter,
+          fontSizeFormatter,
+          colorFormatter,
+          fontFamilyFormatter
+        ].includes(formatter)
+      }
+      return [
+        colorFormatter,
+        fontSizeFormatter,
+      ].includes(formatter)
     })
 
     const iconVEl = Slot.formatsToTree(formatters, [new VTextNode(icon)], readonly() || output())
