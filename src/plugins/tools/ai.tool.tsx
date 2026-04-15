@@ -20,6 +20,23 @@ export interface AiToolProps {
   hideToolbar?(): void
 }
 
+const translationLanguages = [
+  '中文',
+  'English',
+  'Español',
+  'Português',
+  'Français',
+  'Deutsch',
+  'Italiano',
+  'Русский',
+  'العربية',
+  'हिन्दी',
+  'বাংলা',
+  '日本語',
+  '한국어',
+  'Türkçe'
+] as const
+
 export function AiTool(props: AiToolProps) {
   const llmService = inject(LLMService)
   const selection = inject(Selection)
@@ -264,10 +281,9 @@ export function AiTool(props: AiToolProps) {
               display: 'block'
             }} abreast={true} menu={
               <div onClick={() => isClickFromSelf = true}>
-                <MenuItem onClick={() => translate('中文')}>中文</MenuItem>
-                <MenuItem onClick={() => translate('英语')}>英语</MenuItem>
-                <MenuItem onClick={() => translate('西班牙语')}>西班牙语</MenuItem>
-                <MenuItem onClick={() => translate('日语')}>日语</MenuItem>
+                {translationLanguages.map((lang) => {
+                  return <MenuItem key={lang} onClick={() => translate(lang)}>{lang}</MenuItem>
+                })}
               </div>
             }>
               <MenuItem arrow={true} icon={<span class="xnote-icon-translation"></span>}>翻译</MenuItem>
