@@ -22,6 +22,10 @@
     display: inline-flex;
     align-items: center;
   }
+
+  &:hover {
+    background: #eee;
+  }
 }
 
 .btn-group {
