@@ -14,10 +14,11 @@ export class DropdownContextService {
   private openStateChangeEvent = new Subject<boolean>()
 
   private timer: any = null
-  private parentDropdownContextService = this.injector.get(DropdownContextService, null, InjectFlags.SkipSelf)
+  private parentDropdownContextService: DropdownContextService | null
 
   constructor(private dropdownService: DropdownService,
               private injector: Injector) {
+    this.parentDropdownContextService = this.injector.get(DropdownContextService, null, InjectFlags.SkipSelf)
     this.onOpenStateChange = this.openStateChangeEvent.asObservable()
     dropdownService.onSiblingOpen.subscribe(id => {
       if (id === this.id) {
