@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "baseUrl": "./",
+    "paths": {
+      "@textbus/xnote": [
+        "./src/public-api.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "./types.d.ts",
+    "./vite.lib.config.ts"
+  ]
+}

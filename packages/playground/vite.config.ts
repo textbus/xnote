@@ -31,14 +31,11 @@ export default defineConfig({
     }),
     checker({
       typescript: true,
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}" "./index.tsx"',
-      },
     })
   ],
   resolve: {
     alias: {
-      '@textbus/xnote': path.resolve(__dirname, './src/public-api.ts'),
+      '@textbus/xnote': path.resolve(__dirname, '../xnote/src/public-api.ts'),
     }
   },
   server: {

@@ -1,14 +1,8 @@
 /* eslint-disable */
 import 'reflect-metadata'
-import { Editor, LLMService, Member, Organization } from './src/public-api'
-import { SyncConnector, YWebsocketConnector } from '@textbus/collaborate'
-import { FileUploader } from './src/interfaces'
-import { UserInfo } from './src/xnote-message-bus'
-import { StaticToolbarPlugin, SuspensionToolbarPlugin } from '@textbus/xnote'
-import { VIEW_CONTAINER } from '@textbus/platform-browser'
+import { Editor, LLMService, Member, Organization, FileUploader, UserInfo } from '@textbus/xnote'
 import { createRef, createSignal, onMounted } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
-import { Observable, RootComponentRef } from '@textbus/core'
 import { AiService } from './ai.service'
 
 const firstNameText = '王、李、张、刘、陈、杨、黄、赵、周、吴、徐、孙、马、胡、朱、郭、何、罗、高、林'.replace(/、/g, '')
@@ -17,7 +11,6 @@ const lastNameText = '本义既为女子所生子嗣则同一女子所生子嗣�
 function createUserName() {
   const firstName = firstNameText.substr(Math.floor(Math.random() * firstNameText.length), 1)
   const lastName = lastNameText.substr(Math.floor(Math.random() * lastNameText.length), 1 + Math.floor(Math.random() * 2))
-
   return firstName + lastName
 }
 
@@ -31,7 +24,6 @@ function createColor() {
     }
     return '0' + s
   }
-
   return `#${fn()}${fn()}${fn()}`
 }
 
@@ -52,7 +44,7 @@ function sleep(delay: number) {
 class Http extends Organization {
   async getMembers(name: string): Promise<Member[]> {
     await sleep(100)
-    let len = Math.floor(20 / name.length + 1)
+    const len = Math.floor(20 / name.length + 1)
 
     const arr = Array.from<Member>({ length: len }).map(() => {
       return {
@@ -90,19 +82,6 @@ function EditorContainer() {
 
   const editor = new Editor({
     readonly: false,
-    // content: document.getElementById('article')!.innerHTML,
-    // collaborateConfig: {
-    //   userinfo: user,
-    //   createConnector(yDoc): SyncConnector {
-    //     // return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
-    //     return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
-    //   }
-    // },
-    // plugins: [
-    //   new SuspensionToolbarPlugin({
-    //     theme: 'dark'
-    //   })
-    // ],
     providers: [
       {
         provide: Organization,
@@ -122,18 +101,17 @@ function EditorContainer() {
       }
     ]
   })
+
   onMounted(() => {
     editor.mount(editorRef.current!).then(() => {
-      // const root = editor.get(RootComponentRef).component
-      // root.changeMarker.onChange.subscribe(op => {
-      //   console.log(op)
-      // })
+      // mounted
     })
 
     return () => {
       editor.destroy()
     }
   })
+
   const contentRef = createRef<HTMLDivElement>()
   return () => {
     return (
@@ -173,13 +151,11 @@ function App() {
           }}>switch
           </button>
         </div>
-        {
-          is() ? <EditorContainer/> : null
-        }
+        {is() ? <EditorContainer/> : null}
       </div>
     )
   }
 }
 
+void user
 createApp(<App/>).mount(document.getElementById('app')!)
-

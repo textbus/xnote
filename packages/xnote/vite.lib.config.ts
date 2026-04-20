@@ -19,6 +19,8 @@ export default defineConfig({
     swc({
       swcOptions: {
         jsc: {
+          target: 'es2020',
+          externalHelpers: true,
           parser: {
             syntax: 'typescript',
             decorators: true,
@@ -38,7 +40,7 @@ export default defineConfig({
       }
     }),
     dts({
-      outDir: 'bundles',
+      outDir: 'dist',
       entryRoot: 'src',
       rollupTypes: true,
       insertTypesEntry: true,
@@ -46,7 +48,8 @@ export default defineConfig({
     })
   ],
   build: {
-    outDir: 'bundles',
+    target: 'es2020',
+    outDir: 'dist',
     emptyOutDir: false,
     cssCodeSplit: false,
     assetsInlineLimit: 0,

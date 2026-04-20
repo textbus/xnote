@@ -1,0 +1,25 @@
+{
+  "name": "@textbus/xnote-playground",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@textbus/core": "^5.1.6",
+    "@textbus/xnote": "workspace:*",
+    "@viewfly/core": "^2.1.0",
+    "@viewfly/platform-browser": "^2.1.0",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.15.30",
+    "@viewfly/devtools": "^2.0.0",
+    "ip": "^2.0.1",
+    "vite": "^7.1.7",
+    "vite-plugin-checker": "^0.10.3",
+    "vite-plugin-swc-transform": "^1.1.1"
+  }
+}

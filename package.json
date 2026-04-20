@@ -1,112 +1,14 @@
 {
-  "name": "@textbus/xnote",
-  "version": "1.2.0",
-  "description": "A high-performance rich text editor that supports multiplayer online collaboration.",
-  "main": "./bundles/index.js",
-  "module": "./bundles/index.esm.js",
-  "types": "./bundles/index.d.ts",
-  "style": "./bundles/index.css",
-  "exports": {
-    ".": {
-      "types": "./bundles/index.d.ts",
-      "import": "./bundles/index.esm.js",
-      "require": "./bundles/index.js",
-      "default": "./bundles/index.esm.js"
-    },
-    "./style.css": "./bundles/index.css",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "bundles",
-    "README.md"
-  ],
-  "sideEffects": [
-    "*.css",
-    "**/*.css"
-  ],
-  "keywords": [
-    "textbus",
-    "xnote",
-    "富文本编辑器",
-    "wysiwyg",
-    "wysiwyg editor",
-    "rich text editor",
-    "editor",
-    "html editor",
-    "web editor",
-    "collaborate"
-  ],
+  "name": "xnote-workspace",
+  "private": true,
   "scripts": {
-    "start": "vite",
-    "serve": "npx y-websocket HOST=localhost PORT=1234 ",
-    "build": "rimraf dist && vite build",
-    "build:lib": "rimraf bundles && vite build --config vite.lib.config.ts",
-    "publish:lib": "npm run build:lib && npm publish --access public",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "pnpm --filter @textbus/xnote-playground dev",
+    "dev:playground": "pnpm --filter @textbus/xnote-playground dev",
+    "serve": "pnpm --filter @textbus/xnote serve",
+    "build": "pnpm run build:lib && pnpm run build:playground",
+    "build:playground": "pnpm --filter @textbus/xnote-playground build",
+    "build:lib": "pnpm --filter @textbus/xnote build:lib",
+    "publish:lib": "pnpm --filter @textbus/xnote publish:lib"
   },
-  "dependencies": {
-    "@tanbo/color": "^0.1.1",
-    "highlight.js": "^11.9.0",
-    "katex": "^0.16.10",
-    "markdown-it": "^14.1.1",
-    "mermaid": "^11.14.0",
-    "uuid": "^10.0.0"
-  },
-  "peerDependencies": {
-    "@textbus/adapter-viewfly": "^5.1.6",
-    "@textbus/collaborate": "^5.1.6",
-    "@textbus/core": "^5.1.6",
-    "@textbus/platform-browser": "^5.1.6",
-    "@viewfly/core": "^2.1.0",
-    "@viewfly/platform-browser": "^2.1.0",
-    "@viewfly/scoped-css": "^2.1.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
-    "@swc/core": "^1.15.30",
-    "@textbus/adapter-viewfly": "^5.1.6",
-    "@textbus/collaborate": "^5.1.6",
-    "@textbus/core": "^5.1.6",
-    "@textbus/platform-browser": "^5.1.6",
-    "@types/jest": "^29.5.2",
-    "@types/markdown-it": "^14.1.2",
-    "@types/uuid": "^10.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.8.0",
-    "@typescript-eslint/parser": "^5.8.0",
-    "@viewfly/core": "^2.1.0",
-    "@viewfly/devtools": "^2.0.0",
-    "@viewfly/platform-browser": "^2.1.0",
-    "@viewfly/scoped-css": "^2.1.0",
-    "@y/websocket-server": "^0.1.5",
-    "autoprefixer": "^10.4.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "core-js": "^3.20.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.5.0",
-    "eslint-plugin-import": "^2.29.1",
-    "ip": "^2.0.1",
-    "less": "^4.1.3",
-    "postcss": "^8.4.38",
-    "postcss-preset-env": "^8.5.0",
-    "postcss-selector-parser": "^6.0.16",
-    "rimraf": "^5.0.1",
-    "sass": "^1.63.4",
-    "typescript": "^5.1.6",
-    "vite": "^7.1.7",
-    "vite-plugin-checker": "^0.10.3",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-swc-transform": "^1.1.1"
-  },
-  "author": {
-    "name": "Tanbo",
-    "email": "tanbohb@qq.com"
-  },
-  "bugs": {
-    "url": "https://github.com/textbus/xnote.git/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/textbus/xnote.git"
-  }
+  "packageManager": "pnpm@10.18.3"
 }

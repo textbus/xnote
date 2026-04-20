@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "declaration": true,
     "target": "es6",
     "module": "esnext",
     "strict": true,
@@ -19,14 +18,10 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "noImplicitOverride": true,
-    "baseUrl": "./",
+    "types": [
+      "node"
+    ],
     "jsx": "react-jsx",
-    "jsxImportSource": "@viewfly/core",
-    "paths": {
-      "@textbus/xnote": [
-        "./src/public-api.ts"
-      ]
-    }
-  },
-  "include": ["src", "./types.d.ts"]
+    "jsxImportSource": "@viewfly/core"
+  }
 }
