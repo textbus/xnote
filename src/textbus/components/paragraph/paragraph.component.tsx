@@ -112,13 +112,14 @@ export const paragraphComponentLoader: ComponentLoader = {
     let content: HTMLElement
     if (/^P|H[1-6]$/.test(element.tagName)) {
       content = element
-    } else {
+    } else if (element.childNodes.length === 1 && element.children[0].tagName === 'DIV') {
       content = element.children[0] as HTMLElement
-      if (!content) {
-        const p = document.createElement('p')
-        p.append(element.innerText)
-        content = p
-      }
+    } else if (element.childNodes.length > 0) {
+      content = element
+    } else {
+      const p = document.createElement('p')
+      p.append(element.innerText)
+      content = p
     }
 
     const delta = slotParser(new Slot([
