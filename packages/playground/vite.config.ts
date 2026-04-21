@@ -1,13 +1,14 @@
 import path from 'path'
 import ip from 'ip'
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
+
 import swc from 'vite-plugin-swc-transform'
 import checker from 'vite-plugin-checker'
 import viteScopedCssPlugin from '@viewfly/devtools/vite-scoped-css-plugin'
 
 export default defineConfig({
   plugins: [
-    viteScopedCssPlugin(true),
+    ...(viteScopedCssPlugin() as Plugin[]),
     swc({
       swcOptions: {
         jsc: {

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import swc from 'vite-plugin-swc-transform'
 import dts from 'vite-plugin-dts'
 import scopedCssPlugin from '@viewfly/devtools/vite-scoped-css-plugin'
@@ -15,7 +15,7 @@ const externalMatcher = new RegExp(`^(${escapedExternalPackages.join('|')})(\\/.
 
 export default defineConfig({
   plugins: [
-    scopedCssPlugin(true),
+    ...(scopedCssPlugin() as Plugin[]),
     swc({
       swcOptions: {
         jsc: {
