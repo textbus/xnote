@@ -1,6 +1,7 @@
 {
   "name": "xnote-workspace",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "pnpm --filter @textbus/xnote-playground dev",
     "dev:playground": "pnpm --filter @textbus/xnote-playground dev",
