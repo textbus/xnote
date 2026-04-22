@@ -1,3 +1,5 @@
+declare module 'virtual:uno.css' {}
+
 declare module "*.scss" {
   const mod: any
   export default mod

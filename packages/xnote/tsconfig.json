@@ -12,6 +12,7 @@
   "include": [
     "src",
     "./types.d.ts",
-    "./vite.lib.config.ts"
+    "./vite.lib.config.ts",
+    "../../uno.config.ts"
   ]
 }

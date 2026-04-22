@@ -1,4 +1,5 @@
 import { defineConfig, type Plugin } from 'vite'
+import UnoCSS from 'unocss/vite'
 import swc from 'vite-plugin-swc-transform'
 import dts from 'vite-plugin-dts'
 import scopedCssPlugin from '@viewfly/devtools/vite-scoped-css-plugin'
@@ -15,6 +16,7 @@ const externalMatcher = new RegExp(`^(${escapedExternalPackages.join('|')})(\\/.
 
 export default defineConfig({
   plugins: [
+    UnoCSS({ configFile: path.resolve(__dirname, '../../uno.config.ts') }),
     ...(scopedCssPlugin() as Plugin[]),
     swc({
       swcOptions: {

@@ -1,6 +1,7 @@
 import path from 'path'
 import ip from 'ip'
 import { defineConfig, type Plugin } from 'vite'
+import UnoCSS from 'unocss/vite'
 
 import swc from 'vite-plugin-swc-transform'
 import checker from 'vite-plugin-checker'
@@ -8,6 +9,7 @@ import viteScopedCssPlugin from '@viewfly/devtools/vite-scoped-css-plugin'
 
 export default defineConfig({
   plugins: [
+    UnoCSS({ configFile: path.resolve(__dirname, '../../uno.config.ts') }),
     ...(viteScopedCssPlugin() as Plugin[]),
     swc({
       swcOptions: {

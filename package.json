@@ -11,5 +11,8 @@
     "build:lib": "pnpm --filter @textbus/xnote build:lib",
     "publish:lib": "pnpm --filter @textbus/xnote publish:lib"
   },
-  "packageManager": "pnpm@10.18.3"
+  "packageManager": "pnpm@10.18.3",
+  "devDependencies": {
+    "unocss": "^66.6.8"
+  }
 }
