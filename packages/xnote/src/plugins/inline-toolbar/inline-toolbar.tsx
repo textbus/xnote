@@ -1,11 +1,9 @@
-import { createRef, Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
+import { createRef, withMark, Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
 import {
   debounceTime,
   delay,
   filter,
   fromEvent,
-  map,
   merge,
   Query, QueryStateType,
   RootComponentRef,
@@ -48,6 +46,7 @@ import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
 import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
+import { Popover } from '@viewfly/ui-components'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -55,7 +54,7 @@ export interface InlineToolbarProps {
 
 export const InlineToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, function Toolbar(props: InlineToolbarProps) {
+}, withMark(css, function Toolbar(props: InlineToolbarProps) {
   const selection = inject(Selection)
   const viewDocument = inject(VIEW_CONTAINER)
   const rootComponentRef = inject(RootComponentRef)
@@ -73,7 +72,7 @@ export const InlineToolbar = withAnnotation({
     }),
     delay(200)
   ).subscribe(() => {
-    if (viewPosition.isHide) {
+    if (viewPosition.open) {
       editorService.changeLeftToolbarVisible(true)
     }
   })
@@ -85,9 +84,9 @@ export const InlineToolbar = withAnnotation({
   const viewPosition = reactive({
     left: 0,
     top: 0,
-    isHide: true,
-    opacity: 0,
-    transitionDuration: 0
+    width: 0,
+    height: 0,
+    open: false,
   })
 
   let mouseupSubscription = new Subscription()
@@ -95,12 +94,10 @@ export const InlineToolbar = withAnnotation({
 
   const commonState = useCommonState()
 
-  function getTop() {
-    const docRect = viewDocument.getBoundingClientRect()
-    // const toolbarRect = toolbarRef.current!.getBoundingClientRect()
-    const toolbarHeight = 36
-    // const documentHeight = document.documentElement.clientHeight
-    let selectionFocusRect: Rect | null = null
+  function updateRect() {
+    if (!selection.isSelected) {
+      return
+    }
     const commonAncestorComponent = selection.commonAncestorComponent
     if (commonAncestorComponent instanceof TableComponent) {
       const normalizedSlots = commonAncestorComponent.getSelectedNormalizedSlots()
@@ -118,18 +115,19 @@ export const InlineToolbar = withAnnotation({
         const startRect = (adapter.getNativeNodeBySlot(startSlot) as HTMLElement).getBoundingClientRect()
         const endEle = (adapter.getNativeNodeBySlot(endSlot) as HTMLElement).getBoundingClientRect()
         const width = sum(commonAncestorComponent.state.columnsConfig.slice(rect.x1, rect.x2))
-        selectionFocusRect = {
-          left: startRect.left + width / 2,
-          // left: Math.max(startRect.left + width / 2, toolbarRect.width / 2 + 10 - docRect.left),
-          top: startRect.top,
-          height: endEle.bottom - startRect.top,
-          width
-        }
+        viewPosition.left = startRect.left
+        viewPosition.top = startRect.top
+        viewPosition.width = width
+        viewPosition.height = endEle.bottom - startRect.top
       } else {
-        selectionFocusRect = bridge.getRect({
+        const rect = bridge.getRect({
           slot: selection.focusSlot!,
           offset: selection.focusOffset!
-        })
+        })!
+        viewPosition.left = rect.left
+        viewPosition.top = rect.top
+        viewPosition.width = rect.width
+        viewPosition.height = rect.height
       }
     } else if (commonState().selectEmbed) {
       const component = selection.startSlot?.getContentAtIndex(selection.startOffset!)
@@ -137,45 +135,28 @@ export const InlineToolbar = withAnnotation({
         const nativeNode = adapter.getNativeNodeByComponent(component)
         if (nativeNode) {
           const rect = nativeNode.getBoundingClientRect()
-          selectionFocusRect = {
-            left: rect.left + rect.width / 2,
-            top: rect.top,
-            height: rect.height,
-            width: rect.width
-          }
+          Object.assign(viewPosition, rect)
         }
       }
     } else {
-      selectionFocusRect = bridge.getRect({
+      const rect = bridge.getRect({
         slot: selection.focusSlot!,
         offset: selection.focusOffset!
-      })
+      })!
+      viewPosition.left = rect.left
+      viewPosition.top = rect.top
+      viewPosition.width = rect.width
+      viewPosition.height = rect.height
     }
-    if (!selectionFocusRect) {
-      return null
-    }
-
-    const centerLeft = selectionFocusRect.left
-    const toBottom = selectionFocusRect.top < toolbarHeight + 10
-    const top = toBottom ?
-      selectionFocusRect.top + selectionFocusRect.height - docRect.top + 10 :
-      selectionFocusRect.top - docRect.top - toolbarHeight - 10
-
-    viewPosition.transitionDuration = .15
-    viewPosition.left = centerLeft - docRect.left
-    // draft.left = Math.max(centerLeft - docRect.left, toolbarRect.width / 2 + 10 - docRect.left)
-    viewPosition.top = top + 10
-    return top
   }
 
-  const sub = textbus.onChange.pipe(debounceTime(100)).subscribe(() => {
-    if (!viewPosition.isHide) {
-      const top = getTop()
-      if (top !== null && !selection.isCollapsed) {
-        viewPosition.top = top
-        return
-      }
-    }
+  const sub = merge(textbus.onChange).pipe(debounceTime(100)).subscribe(() => {
+    // if (selection.isSelected && !selection.isCollapsed) {
+    //   updateRect()
+    //   viewPosition.open = true
+    // } else {
+    //   viewPosition.open = false
+    // }
     editorService.changeLeftToolbarVisible(true)
   })
 
@@ -200,15 +181,14 @@ export const InlineToolbar = withAnnotation({
       filter(() => {
         return !selection.isCollapsed && !(selection.commonAncestorComponent instanceof SourceCodeComponent)
       }),
-      map(getTop),
       delay(200),
-    ).subscribe((top) => {
-      if (top !== null) {
-        viewPosition.isHide = false
-        viewPosition.opacity = 1
-        viewPosition.top = top
+    ).subscribe(() => {
+      if (selection.isSelected && !selection.isCollapsed) {
+        updateRect()
+        viewPosition.open = true
         editorService.changeLeftToolbarVisible(false)
       } else {
+        viewPosition.open = false
         editorService.changeLeftToolbarVisible(true)
       }
     })
@@ -219,9 +199,6 @@ export const InlineToolbar = withAnnotation({
       return
     }
     mouseupSubscription.unsubscribe()
-    viewPosition.opacity = 0
-    viewPosition.isHide = true
-    viewPosition.transitionDuration = 0
     bindMouseup()
   })
 
@@ -237,89 +214,98 @@ export const InlineToolbar = withAnnotation({
     mouseupSubscription.unsubscribe()
   })
 
+  function getContainer() {
+    return viewDocument
+  }
+
   const llmService = inject(LLMService, null)
-  return withScopedCSS(css, () => {
+  return () => {
     return (
-      <div class={['toolbar', props.theme]} ref={toolbarRef} style={{
-        left: viewPosition.left + 'px',
-        top: viewPosition.top + 'px',
-        pointerEvents: viewPosition.isHide ? 'none' : 'initial',
-        opacity: viewPosition.opacity,
-        display: editorService.hideInlineToolbar ? 'none' : '',
-        transitionDuration: viewPosition.transitionDuration + 's'
-      }}>
-        {
-          llmService && <ToolbarItem>
-            <AiTool hideToolbar={hideToolbar}/>
-          </ToolbarItem>
-        }
-        <ToolbarItem>
-          <BlockTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <AttrTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <BoldTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <ItalicTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <StrikeThroughTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <UnderlineTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <FontSizeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <FontFamilyTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <LinkTool hideToolbar={hideToolbar}/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CodeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <TextColorTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <TextBackgroundColorTool/>
-        </ToolbarItem>
-        <SplitLine/>
-        <ToolbarItem>
-          <SubscriptTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <SuperscriptTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CleanFormatsTool/>
-        </ToolbarItem>
-        {
-          query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
-            <SplitLine/>
-            <ToolbarItem>
-              <MergeCellsTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <SplitCellsTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <CellBackgroundTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <CellAlignTool/>
-            </ToolbarItem>
-          </Fragment>
-        }
-      </div>
+      <Popover showArrow={false}
+               noPadding
+               getContainer={getContainer}
+               getReferenceBox={() => {
+                 updateRect()
+                 return viewPosition
+               }}
+               onOpenChange={(v) => viewPosition.open = v}
+               open={viewPosition.open && !editorService.hideInlineToolbar}
+               content={
+                 <div class={['toolbar', props.theme]}>
+                   {
+                     llmService && <ToolbarItem>
+                       <AiTool hideToolbar={hideToolbar}/>
+                     </ToolbarItem>
+                   }
+                   <ToolbarItem>
+                     <BlockTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <AttrTool/>
+                   </ToolbarItem>
+                   <SplitLine/>
+                   <ToolbarItem>
+                     <BoldTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <ItalicTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <StrikeThroughTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <UnderlineTool/>
+                   </ToolbarItem>
+                   <SplitLine/>
+                   <ToolbarItem>
+                     <FontSizeTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <FontFamilyTool/>
+                   </ToolbarItem>
+                   <SplitLine/>
+                   <ToolbarItem>
+                     <LinkTool hideToolbar={hideToolbar}/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <CodeTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <TextColorTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <TextBackgroundColorTool/>
+                   </ToolbarItem>
+                   <SplitLine/>
+                   <ToolbarItem>
+                     <SubscriptTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <SuperscriptTool/>
+                   </ToolbarItem>
+                   <ToolbarItem>
+                     <CleanFormatsTool/>
+                   </ToolbarItem>
+                   {
+                     query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
+                       <SplitLine/>
+                       <ToolbarItem>
+                         <MergeCellsTool/>
+                       </ToolbarItem>
+                       <ToolbarItem>
+                         <SplitCellsTool/>
+                       </ToolbarItem>
+                       <ToolbarItem>
+                         <CellBackgroundTool/>
+                       </ToolbarItem>
+                       <ToolbarItem>
+                         <CellAlignTool/>
+                       </ToolbarItem>
+                     </Fragment>
+                   }
+                 </div>
+               }>
+      </Popover>
     )
-  })
-})
+  }
+}))

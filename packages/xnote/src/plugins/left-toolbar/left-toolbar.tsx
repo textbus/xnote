@@ -1,5 +1,4 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, reactive, withAnnotation, } from '@viewfly/core'
+import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, reactive, withAnnotation, withMark, } from '@viewfly/core'
 import {
   Commander, Component,
   ContentType,
@@ -40,7 +39,7 @@ import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, function LeftToolbar() {
+}, withMark(css, function LeftToolbar() {
   const adapter = inject(DomAdapter)
   const textbus = inject(Textbus)
   const selection = inject(Selection)
@@ -326,7 +325,7 @@ export const LeftToolbar = withAnnotation({
     }
   })
 
-  return withScopedCSS(css, () => {
+  return () => {
     const slot = activeSlot()
     let activeNode = <span class="xnote-icon-pilcrow"/>
     const states = checkStates(slot)
@@ -456,5 +455,5 @@ export const LeftToolbar = withAnnotation({
         </div>
       </div>
     )
-  })
-})
+  }
+}))

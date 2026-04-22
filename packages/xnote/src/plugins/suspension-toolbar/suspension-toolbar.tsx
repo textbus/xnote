@@ -1,5 +1,4 @@
-import { Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
+import { Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation, withMark } from '@viewfly/core'
 import { debounceTime, delay, fromEvent, merge, Query, QueryStateType, Selection, tap, Textbus } from '@textbus/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
@@ -40,7 +39,7 @@ export interface SuspensionToolbarProps {
 
 export const SuspensionToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, function Toolbar(props: SuspensionToolbarProps) {
+}, withMark(css, function Toolbar(props: SuspensionToolbarProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const query = inject(Query)
@@ -81,7 +80,7 @@ export const SuspensionToolbar = withAnnotation({
     styles.opacity = 1
   }))
   const llmService = inject(LLMService, null)
-  return withScopedCSS(css, () => {
+  return () => {
     return (
       <div class={['toolbar', props.theme, {
         suspension: styles.top === 0 ? '' : 'suspension'
@@ -176,5 +175,5 @@ export const SuspensionToolbar = withAnnotation({
         </div>
       </div>
     )
-  })
-})
+  }
+}))

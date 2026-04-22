@@ -1,6 +1,6 @@
 /* eslint-disable */
 import 'reflect-metadata'
-import { Editor, LLMService, Member, Organization, FileUploader, UserInfo } from '@textbus/xnote'
+import { Editor, LLMService, Member, Organization, FileUploader, UserInfo, SuspensionToolbarPlugin } from '@textbus/xnote'
 import { createRef, createSignal, onMounted } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
 import { AiService } from './ai.service'
@@ -99,6 +99,9 @@ function EditorContainer() {
           }
         }
       }
+    ],
+    plugins: [
+      new SuspensionToolbarPlugin()
     ]
   })
 

@@ -1,5 +1,4 @@
-import { Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
+import { Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation, withMark } from '@viewfly/core'
 import { debounceTime, merge, Query, QueryStateType, Selection, Textbus } from '@textbus/core'
 
 import css from './static-toolbar.scoped.scss'
@@ -39,7 +38,7 @@ export interface StaticToolbarProps {
 
 export const StaticToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, function Toolbar(props: StaticToolbarProps) {
+}, withMark(css, function Toolbar(props: StaticToolbarProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const query = inject(Query)
@@ -57,7 +56,7 @@ export const StaticToolbar = withAnnotation({
   })
 
   const llmService = inject(LLMService, null)
-  return withScopedCSS(css, () => {
+  return () => {
     return (
       <div class={['toolbar', props.theme]}>
         <ToolbarItem>
@@ -144,5 +143,5 @@ export const StaticToolbar = withAnnotation({
         }
       </div>
     )
-  })
-})
+  }
+}))

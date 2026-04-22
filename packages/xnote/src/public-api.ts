@@ -1,3 +1,4 @@
+import '@viewfly/ui-components/style.css'
 export * from './components/_api'
 export * from './plugins/_api'
 export * from './services/_api'
