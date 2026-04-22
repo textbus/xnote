@@ -1,17 +1,12 @@
 import { createRef, getCurrentInstance, inject, onUnmounted, reactive } from '@viewfly/core'
-import { Parser } from '@textbus/platform-browser'
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { Commander, ContentType, distinctUntilChanged, fromEvent, map, Selection, Slot, Subscription } from '@textbus/core'
+import { Parser, VIEW_DOCUMENT } from '@textbus/platform-browser'
+import { Commander, ContentType, distinctUntilChanged, map, Selection, Slot, Subscription } from '@textbus/core'
+import { IconGlyph } from '@viewfly/ui-icons'
 import MarkdownIt from 'markdown-it'
+import { Button, Divider, Dropdown, MenuItem, MenuList, Popover } from '@viewfly/ui-components'
 
-import css from './ai-tool.scoped.scss'
-import { Popup } from '../../components/popup/popup'
-import { Button } from '../../components/button/button'
 import { EditorService } from '../../services/editor.service'
 import { useCommonState } from './_common/common-state'
-import { Dropdown } from '../../components/dropdown/dropdown'
-import { MenuItem } from '../../components/menu-item/menu-item'
-import { Divider } from '../../components/divider/divider'
 import { LLMService } from '../../services/llm.service'
 import { usePopupPosition } from '../hooks/popup-position'
 import { RefreshService } from '../../services/refresh.service'
@@ -44,17 +39,9 @@ export function AiTool(props: AiToolProps) {
   const editorService = inject(EditorService)
   const refreshService = inject(RefreshService)
 
-  let isClickFromSelf = false
-  const sub = fromEvent(document, 'click').subscribe(() => {
-    if (isClickFromSelf) {
-      isClickFromSelf = false
-      return
-    }
-    editorService.hideInlineToolbar = false
-    viewModel.showModal = false
-  })
-
   const instance = getCurrentInstance()
+
+  const sub = new Subscription()
 
   sub.add(refreshService.onRefresh.pipe(
     map(() => {
@@ -71,11 +58,10 @@ export function AiTool(props: AiToolProps) {
 
   const viewModel = reactive({
     showModal: false,
+    dropdownOpen: false,
     content: '',
     type: 'translate' as keyof LLMService
   })
-
-  const dropdownRef = createRef<typeof Dropdown>()
 
   let subscription = new Subscription()
 
@@ -84,7 +70,7 @@ export function AiTool(props: AiToolProps) {
     viewModel.content = ''
     props.hideToolbar?.()
     viewModel.showModal = true
-    dropdownRef.current!.isShow(false)
+    viewModel.dropdownOpen = false
     subscription.unsubscribe()
     subscription = llmService.continue({
       text: document.getSelection()!.toString()
@@ -98,7 +84,7 @@ export function AiTool(props: AiToolProps) {
     viewModel.content = ''
     props.hideToolbar?.()
     viewModel.showModal = true
-    dropdownRef.current!.isShow(false)
+    viewModel.dropdownOpen = false
     subscription.unsubscribe()
     subscription = llmService.polish({
       text: document.getSelection()!.toString()
@@ -113,7 +99,7 @@ export function AiTool(props: AiToolProps) {
     viewModel.content = ''
     props.hideToolbar?.()
     viewModel.showModal = true
-    dropdownRef.current!.isShow(false)
+    viewModel.dropdownOpen = false
     subscription.unsubscribe()
     subscription = llmService.simplify({
       text: document.getSelection()!.toString()
@@ -127,7 +113,7 @@ export function AiTool(props: AiToolProps) {
     viewModel.content = ''
     props.hideToolbar?.()
     viewModel.showModal = true
-    dropdownRef.current!.isShow(false)
+    viewModel.dropdownOpen = false
     subscription.unsubscribe()
     subscription = llmService.enrich({
       text: document.getSelection()!.toString()
@@ -141,7 +127,7 @@ export function AiTool(props: AiToolProps) {
     viewModel.content = ''
     props.hideToolbar?.()
     viewModel.showModal = true
-    dropdownRef.current!.isShow(false)
+    viewModel.dropdownOpen = false
     subscription.unsubscribe()
     subscription = llmService.translate({
       text: document.getSelection()!.toString(),
@@ -157,7 +143,7 @@ export function AiTool(props: AiToolProps) {
     viewModel.content = ''
     props.hideToolbar?.()
     viewModel.showModal = true
-    dropdownRef.current!.isShow(false)
+    viewModel.dropdownOpen = false
     subscription.unsubscribe()
     subscription = llmService.summarize({
       text: document.getSelection()!.toString(),
@@ -264,54 +250,63 @@ export function AiTool(props: AiToolProps) {
 
   const popupPosition = usePopupPosition()
 
-  return withScopedCSS(css, () => {
-    const rect = popupPosition(400, 210)!
+  const viewDocument = inject(VIEW_DOCUMENT)
 
+  function getContainer() {
+    return viewDocument
+  }
+
+  return () => {
     const b = commonState().inSourceCode || commonState().readonly || selection.isCollapsed
     return (
       <>
-        <Dropdown ref={dropdownRef} disabled={b} width={'160px'} menu={
-          !viewModel.showModal ? <div onClick={() => isClickFromSelf = true}>
-            <MenuItem icon={<span class="xnote-icon-continuation"></span>} onClick={continueContent}>续写</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-magic-wand"></span>} onClick={polish}>润色</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-simplify"></span>} onClick={simplify}>简化内容</MenuItem>
-            <MenuItem icon={<span class="xnote-icon-enrich"></span>} onClick={enrich}>丰富内容</MenuItem>
-            <Divider/>
-            <Dropdown style={{
-              display: 'block'
-            }} abreast={true} menu={
-              <div onClick={() => isClickFromSelf = true}>
+        <Dropdown trigger={'hover'} menuColumnCompact={true} disabled={b} dropdown={
+          <MenuList class={'w-36'}>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>} onClick={continueContent}>续写</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>润色</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'simplify'}/>} onClick={simplify}>简化内容</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'enrich'}/>} onClick={enrich}>丰富内容</MenuItem>
+            <Divider spacing={'compact'}/>
+            <Dropdown trigger={'hover'} block orientation={'horizontal'} horizontalAlign={'right'} dropdown={
+              <MenuList>
                 {translationLanguages.map((lang) => {
-                  return <MenuItem key={lang} onClick={() => translate(lang)}>{lang}</MenuItem>
+                  return <MenuItem density={'compact'} key={lang} onClick={() => translate(lang)}>{lang}</MenuItem>
                 })}
-              </div>
+              </MenuList>
             }>
-              <MenuItem arrow={true} icon={<span class="xnote-icon-translation"></span>}>翻译</MenuItem>
+              <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'translation'}/>}>翻译</MenuItem>
             </Dropdown>
-            <MenuItem icon={<span class="xnote-icon-summary"></span>} onClick={summarize}>总结</MenuItem>
-          </div> : null
+            <MenuItem density={'compact'} icon={<IconGlyph name={'summary'}/>} onClick={summarize}>总结</MenuItem>
+          </MenuList>
         }>
-          <Button arrow={true} disabled={b}>
-            <span class="xnote-icon-ai"></span>
+          <Button size={'small'} inlineCompact={true} chevronGapless={true} variant={'text'} disabled={b}>
+            <IconGlyph name={'ai'}/>
           </Button>
         </Dropdown>
         {
-          viewModel.showModal &&
-          <Popup left={rect.left} top={rect.top}>
-            <div onClick={() => {
-              isClickFromSelf = true
-            }} class="input-group">
-              <div class="ai-content" ref={aiContentRef}>
+          <Popover getContainer={getContainer}
+                   open={viewModel.showModal}
+                   showArrow={false}
+                   noPadding={true}
+                   onOpenChange={(open) => {
+                     viewModel.showModal = open
+                   }}
+                   getReferenceBox={() => {
+                     return popupPosition()!
+                   }} content={
+            <div class="w-100 h-50 flex flex-col">
+              <div class="flex-1 overflow-y-auto p-2" ref={aiContentRef}>
                 {renderMarkdown(viewModel.content)}
               </div>
-              <div class="btn-group">
-                <Button type="button" onClick={replace}>替换</Button>
-                <Button type="button" onClick={insert}>插入</Button>
+              <Divider spacing={'none'}/>
+              <div class="flex justify-end gap-2 p-2">
+                <Button size={'small'} htmlType="button" onClick={replace}>替换</Button>
+                <Button size={'small'} htmlType="button" onClick={insert}>插入</Button>
               </div>
             </div>
-          </Popup>
+          }/>
         }
       </>
     )
-  })
+  }
 }

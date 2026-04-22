@@ -48,7 +48,7 @@ export function LinkTool(props: LinkToolProps) {
 
   const popupPosition = usePopupPosition()
   return withScopedCSS(css, () => {
-    const rect = popupPosition(224, 38)
+    const rect = popupPosition()
     return (
       <span>
         <Button disabled={commonState().inSourceCode || commonState().readonly} onClick={() => {

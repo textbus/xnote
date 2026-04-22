@@ -90,17 +90,11 @@ export const SuspensionToolbar = withAnnotation({
         pointerEvents: styles.opacity === 0 ? 'none' : 'initial',
       }}>
         <div class="toolbar-tools">
-          <ToolbarItem>
-            <UndoTool/>
-          </ToolbarItem>
-          <ToolbarItem>
-            <RedoTool/>
-          </ToolbarItem>
+          <UndoTool/>
+          <RedoTool/>
           <SplitLine/>
           {
-            llmService && <ToolbarItem>
-              <AiTool/>
-            </ToolbarItem>
+            llmService && <AiTool/>
           }
           <ToolbarItem>
             <InsertTool/>

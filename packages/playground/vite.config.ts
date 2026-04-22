@@ -47,10 +47,10 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api/llm': {
-        target: 'http://localhost:3000',
+        target: 'http://textbus.io',
         changeOrigin: true,
         secure: false,
-        rewrite: (p) => p.replace(/^\/api\/llm/, '/llm')
+        // rewrite: (p) => p.replace(/^\/api\/llm/, '/llm')
       }
     }
   }
