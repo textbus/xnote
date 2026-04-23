@@ -2,20 +2,17 @@ import { inject, onUnmounted, Props, reactive } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 import { withScopedCSS } from '@viewfly/scoped-css'
+import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 
 import css from './block-tool.scoped.scss'
-import { MenuItem } from '../../components/menu-item/menu-item'
-import { Button } from '../../components/button/button'
-import { Dropdown, DropdownProps } from '../../components/dropdown/dropdown'
-import { Divider } from '../../components/divider/divider'
 import { RefreshService } from '../../services/refresh.service'
 import { textAlignAttr } from '../../textbus/attributes/text-align.attr'
 import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
 import { Keymap } from '../../components/keymap/keymap'
 import { useCommonState } from './_common/common-state'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface AttrToolProps extends Props {
-  abreast?: DropdownProps['abreast']
   style?: HTMLAttributes<HTMLElement>['style']
   slot?: Slot | null
 
@@ -107,38 +104,66 @@ export function AttrTool(props: AttrToolProps) {
   return withScopedCSS(css, () => {
     const b = commonState().inSourceCode || commonState().readonly
     return (
-      <Dropdown disabled={b} width={'auto'} style={props.style} abreast={props.abreast} onCheck={updateAttr} trigger={'hover'} menu={[
+      <Dropdown disabled={b} trigger={'hover'} dropdown={
+        <MenuList columnCompact={true}>
+          <MenuItem density={'compact'} onClick={() => updateAttr('t-l')} icon={<IconGlyph name={'paragraph-left'}/>}>
+            <div class={'flex justify-between'}>
+              左对齐
+              <span class={'flex items-center'}>
+                <Keymap keymap={{ key: 'L', modKey: true }}/>
+                {checkStates.textAlign === 'left' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+            </div>
+          </MenuItem>
+          <MenuItem density={'compact'} onClick={() => updateAttr('t-r')} icon={<IconGlyph name={'paragraph-right'}/>}>
+            <div class={'flex justify-between'}>
+              右对齐
+              <span class={'flex items-center'}>
+                <Keymap keymap={{ key: 'R', modKey: true }}/>
+                {checkStates.textAlign === 'right' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+            </div>
+          </MenuItem>
+          <MenuItem density={'compact'} onClick={() => updateAttr('t-c')} icon={<IconGlyph name={'paragraph-center'}/>}>
+            <div class={'flex justify-between'}>
+              居中对齐
+              <span class={'flex items-center'}>
+                <Keymap keymap={{ key: 'E', modKey: true }}/>
+                {checkStates.textAlign === 'center' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+            </div>
+          </MenuItem>
+          <MenuItem density={'compact'} onClick={() => updateAttr('t-j')} icon={<IconGlyph name={'paragraph-justify'}/>}>
+            <div class={'flex justify-between'}>
+              分散对齐
+              <span class={'flex items-center'}>
+                <Keymap keymap={{ key: 'J', modKey: true }}/>
+                {checkStates.textAlign === 'justify' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+            </div>
+          </MenuItem>
+          <Divider spacing={'compact'}/>
+          <MenuItem density={'compact'} onClick={() => updateAttr('i+')} icon={<IconGlyph name={'indent-increase'}/>}>
+            <div class={'flex justify-between'}>
+              增加缩进
+              <span class={'flex items-center'}>
+                <Keymap keymap={{ key: 'Tab' }}/>
+              </span>
+            </div>
+          </MenuItem>
+          <MenuItem density={'compact'} onClick={() => updateAttr('i-')} icon={<IconGlyph name={'indent-decrease'}/>}>
+            <div class={'flex justify-between'}>
+              减少缩进
+              <span class={'flex items-center'}>
+                <Keymap keymap={{ key: 'Tab', shiftKey: true }}/>
+              </span>
+            </div>
+          </MenuItem>
+        </MenuList>
+      }>
         {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-left"/>} desc={<Keymap keymap={{ key: 'L', modKey: true }}/>}
-                           checked={checkStates.textAlign === 'left'}>左对齐</MenuItem>,
-          value: 't-l'
-        }, {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-right"/>} desc={<Keymap keymap={{ key: 'R', modKey: true }}/>}
-                           checked={checkStates.textAlign === 'right'}>右对齐</MenuItem>,
-          value: 't-r'
-        }, {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-center"/>} desc={<Keymap keymap={{ key: 'E', modKey: true }}/>}
-                           checked={checkStates.textAlign === 'center'}>居中对齐</MenuItem>,
-          value: 't-c'
-        }, {
-          label: <MenuItem icon={<span class="xnote-icon-paragraph-justify"/>} desc={<Keymap keymap={{ key: 'J', modKey: true }}/>}
-                           checked={checkStates.textAlign === 'justify'}>分散对齐</MenuItem>,
-          value: 't-j'
-        }, {
-          label: <Divider/>,
-          value: ''
-        }, {
-          label: <MenuItem desc={<Keymap keymap={{ key: 'Tab' }}/>} icon={<span class="xnote-icon-indent-increase"/>}>增加缩进</MenuItem>,
-          value: 'i+'
-        }, {
-          label: <MenuItem desc={<Keymap keymap={{ key: 'Tab', shiftKey: true }}/>}
-                           icon={<span class="xnote-icon-indent-decrease"/>}>减少缩进</MenuItem>,
-          value: 'i-'
-        }
-      ]}>
-        {
-          props.children || <Button disabled={b} arrow={true} highlight={false}>
-            <span class={`xnote-icon-paragraph-${checkStates.textAlign || 'left'} icon`}/>
+          props.children || <Button disabled={b} chevronGapless={true} inlineCompact={true} variant={'text'}>
+            <IconGlyph name={'paragraph-' + (checkStates.textAlign || 'left') as any}/>
           </Button>
         }
       </Dropdown>

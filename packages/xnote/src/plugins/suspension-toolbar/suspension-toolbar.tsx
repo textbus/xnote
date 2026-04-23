@@ -98,12 +98,8 @@ export const SuspensionToolbar = withAnnotation({
           }
           <InsertTool/>
           <SplitLine/>
-          <ToolbarItem>
-            <BlockTool/>
-          </ToolbarItem>
-          <ToolbarItem>
-            <AttrTool/>
-          </ToolbarItem>
+          <BlockTool/>
+          <AttrTool/>
           <SplitLine/>
           <ToolbarItem>
             <BoldTool/>
