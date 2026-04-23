@@ -1,9 +1,8 @@
 import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
+import { Button, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Dropdown } from '../../components/dropdown/dropdown'
-import { Button } from '../../components/button/button'
-import { MenuItem } from '../../components/menu-item/menu-item'
 import { RefreshService } from '../../services/refresh.service'
 import { fontSizeFormatter } from '../../textbus/formatters/font-size'
 import { useCommonState } from './_common/common-state'
@@ -58,14 +57,22 @@ export function FontSizeTool() {
   return () => {
     const b = commonState().inSourceCode || commonState().readonly || commonState().selectEmbed
     return (
-      <Dropdown disabled={b} onCheck={check} menu={fontSizeOptions.map(i => {
-        return {
-          label: <MenuItem checked={currentFontSize() === i}>{i || '默认'}</MenuItem>,
-          value: i
-        }
-      })}>
-        <Button disabled={b} arrow={true} highlight={highlight()}>
-          <span class="xnote-icon-font-size"></span>
+      <Dropdown disabled={b} dropdown={
+        <MenuList class={'w-40'}>
+          {
+            fontSizeOptions.map(i => {
+              return <MenuItem density={'compact'} onClick={() => check(i)}>
+                <div class={'flex justify-between flex-1'}>
+                  {i || '默认'}
+                  {currentFontSize() === i && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                </div>
+              </MenuItem>
+            })
+          }
+        </MenuList>
+      }>
+        <Button size={'small'} disabled={b} variant={'text'} chevronGapless={true} inlineCompact={true} highlighted={highlight()}>
+          <IconGlyph name={'font-size'}/>
           <span>{currentFontSize() || '默认'}</span>
         </Button>
       </Dropdown>
