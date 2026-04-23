@@ -162,7 +162,7 @@ export function AttrTool(props: AttrToolProps) {
         </MenuList>
       }>
         {
-          props.children || <Button disabled={b} chevronGapless={true} inlineCompact={true} variant={'text'}>
+          props.children || <Button disabled={b} chevronGapless={true} inlineCompact={true} variant={'text'} size={'small'}>
             <IconGlyph name={'paragraph-' + (checkStates.textAlign || 'left') as any}/>
           </Button>
         }

@@ -183,7 +183,7 @@ export function BlockTool() {
           </MenuItem>
         </MenuList>
       }>
-        <Button variant={'text'} chevronGapless={true} inlineCompact={true} disabled={b}>
+        <Button variant={'text'} chevronGapless={true} inlineCompact={true} disabled={b} size={'small'}>
           {currentType}
         </Button>
       </Dropdown>

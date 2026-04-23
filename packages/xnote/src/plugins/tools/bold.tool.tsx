@@ -1,7 +1,8 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Query, QueryStateType, Textbus } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { boldFormatter, toggleBold } from '../../textbus/formatters/_api'
 import { useCommonState } from './_common/common-state'
@@ -31,10 +32,11 @@ export function BoldTool() {
   })
 
   return () => {
-    return <Button highlight={viewModel.highlight}
+    return <Button inlineCompact={true} chevronGapless={true} variant={'text'} highlight={viewModel.highlight}
+                   size={'small'}
                    disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
                    onClick={toggle}>
-      <span class="xnote-icon-bold"></span>
+      <IconGlyph name={'bold'}/>
     </Button>
   }
 }
