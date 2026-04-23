@@ -96,9 +96,7 @@ export const SuspensionToolbar = withAnnotation({
           {
             llmService && <AiTool/>
           }
-          <ToolbarItem>
-            <InsertTool/>
-          </ToolbarItem>
+          <InsertTool/>
           <SplitLine/>
           <ToolbarItem>
             <BlockTool/>

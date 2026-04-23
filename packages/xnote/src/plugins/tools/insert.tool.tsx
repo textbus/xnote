@@ -26,7 +26,7 @@ export function InsertTool() {
                 variant={'text'}
                 inlineCompact={true}
                 chevronGapless={true}
-                disabled={b} arrow={true}>插入</Button>
+                disabled={b}>插入</Button>
       </Dropdown>
     )
   }

@@ -214,14 +214,14 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
       </div>
       <Divider spacing={'compact'}/>
       <MenuList columnCompact={true}>
-        <MenuItem onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>表格</MenuItem>
-        <MenuItem onClick={() => insert('todolist')} icon={<IconGlyph name={'checkbox-checked'}/>}>待办列表</MenuItem>
-        <MenuItem onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>图片</MenuItem>
-        <MenuItem onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>视频</MenuItem>
-        <MenuItem onClick={() => insert('highlightBox')} icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
-        <MenuItem onClick={() => insert('katex')} icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
-        <MenuItem onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
-        <MenuItem onClick={() => insert('timeline')} icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>表格</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('todolist')} icon={<IconGlyph name={'checkbox-checked'}/>}>待办列表</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>图片</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>视频</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('highlightBox')} icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('katex')} icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('timeline')} icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
       </MenuList>
     </div>
   }
