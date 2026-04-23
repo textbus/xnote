@@ -24,6 +24,7 @@ export function InsertTool() {
       }>
         <Button size={'small'}
                 variant={'text'}
+                class={'text-nowrap'}
                 inlineCompact={true}
                 chevronGapless={true}
                 disabled={b}>插入</Button>

@@ -1,12 +1,11 @@
 import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 
-import { Dropdown } from '../../components/dropdown/dropdown'
-import { Button } from '../../components/button/button'
-import { MenuItem } from '../../components/menu-item/menu-item'
 import { RefreshService } from '../../services/refresh.service'
 import { fontFamilyFormatter } from '../../textbus/formatters/font-family'
 import { useCommonState } from './_common/common-state'
+import { Button, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 export const isSupportFont = (function () {
   const fullbackFontName = 'Arial'
@@ -121,23 +120,27 @@ export function FontFamilyTool() {
   return () => {
     const b = commonState().inSourceCode || commonState().readonly || commonState().selectEmbed
     return (
-      <Dropdown disabled={b} onCheck={check} menu={
-        fontFamilyOptions.map(i => {
-          const disabled = i.value ? !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v) : false
-          return {
-            label: <MenuItem
-              disabled={disabled}
-              checked={currentFontFamily() === i.value}>
-              {i.label}
-            </MenuItem>,
-            disabled,
-            value: i.value,
+      <Dropdown disabled={b} trigger={'hover'} dropdown={
+        <MenuList class={'w-40'} columnCompact={true}>
+          {
+            fontFamilyOptions.map(i => {
+              const disabled = i.value ? !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v) : false
+              return <MenuItem disabled={disabled} onClick={() => check(i.value)} density={'compact'}>
+                <div class={'flex justify-between flex-1'}>
+                  {i.label || '默认'}
+                  {currentFontFamily() === i.value && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                </div>
+              </MenuItem>
+            })
           }
-        })
+        </MenuList>
       }>
-        <Button disabled={b} arrow={true} highlight={highlight()}>{fontFamilyOptions.find(v => {
-          return v.value === currentFontFamily()
-        })?.label || '默认'}</Button>
+        <Button disabled={b} variant={'text'} chevronGapless={true} inlineCompact={true} size={'small'}
+                highlighted={highlight()} class={'text-nowrap'}>{
+          fontFamilyOptions.find(v => {
+            return v.value === currentFontFamily()
+          })?.label || '默认'}
+        </Button>
       </Dropdown>
     )
   }

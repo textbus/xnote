@@ -57,8 +57,8 @@ export function FontSizeTool() {
   return () => {
     const b = commonState().inSourceCode || commonState().readonly || commonState().selectEmbed
     return (
-      <Dropdown disabled={b} dropdown={
-        <MenuList class={'w-40'}>
+      <Dropdown disabled={b} trigger={'hover'} dropdown={
+        <MenuList class={'w-40'} columnCompact={true}>
           {
             fontSizeOptions.map(i => {
               return <MenuItem density={'compact'} onClick={() => check(i)}>
@@ -71,7 +71,9 @@ export function FontSizeTool() {
           }
         </MenuList>
       }>
-        <Button size={'small'} disabled={b} variant={'text'} chevronGapless={true} inlineCompact={true} highlighted={highlight()}>
+        <Button size={'small'} disabled={b} variant={'text'}
+                class={'text-nowrap'}
+                chevronGapless={true} inlineCompact={true} highlighted={highlight()}>
           <IconGlyph name={'font-size'}/>
           <span>{currentFontSize() || '默认'}</span>
         </Button>
