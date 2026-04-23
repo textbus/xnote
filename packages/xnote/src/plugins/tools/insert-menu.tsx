@@ -1,11 +1,7 @@
-import { inject } from '@viewfly/core'
+import { inject, withMark } from '@viewfly/core'
 import { Commander, Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
 
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
-import { Button } from '../../components/button/button'
-import { Divider } from '../../components/divider/divider'
-import { MenuItem } from '../../components/menu-item/menu-item'
 import css from './insert-menu.scoped.scss'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { ListComponent } from '../../textbus/components/list/list.component'
@@ -18,9 +14,10 @@ import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
 import { MenuHeading } from '../../components/menu-heading/menu-heading'
 import { KatexComponent } from '../../textbus/components/katex/katex.component'
-import { DropdownContextService } from '../../components/dropdown/dropdown-context.service'
 import { createTimelineItem, TimelineComponent } from '../../textbus/components/timeline/timeline.component'
 import { createStepItem, StepComponent } from '../../textbus/components/step/step.component'
+import { Button, Divider, MenuItem, MenuList } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -28,12 +25,11 @@ export interface InsertToolProps {
   replace?: boolean
 }
 
-export function InsertMenu(props: InsertToolProps) {
+export const InsertMenu = withMark(css, function (props: InsertToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const fileUploader = inject(FileUploader, null)
-  const dropdownContextService = inject(DropdownContextService)
 
   function insert(type: string) {
     const component = props.slot?.parent
@@ -47,8 +43,6 @@ export function InsertMenu(props: InsertToolProps) {
       } else {
         commander.insertAfter(comp, component!)
       }
-      dropdownContextService.canHide = true
-      dropdownContextService.hide(false)
     }
 
     switch (type) {
@@ -181,52 +175,54 @@ export function InsertMenu(props: InsertToolProps) {
     }
   }
 
-  return withScopedCSS(css, () => {
-    return <>
+  return () => {
+    return <div class={'w-46'}>
       {
         props.hideTitle ? null : <MenuHeading>{props.replace ? '替换为' : '在下面添加'}</MenuHeading>
       }
-      <div class="btn-group">
-        <Button ordinary={true} onClick={() => insert('paragraph')}>
-          <span class="xnote-icon-pilcrow"/>
+      <div class="flex flex-wrap gap-1">
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('paragraph')}>
+          <IconGlyph name={'pilcrow'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('h1')}>
-          <span class="xnote-icon-heading-h1"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('h1')}>
+          <IconGlyph name={'heading-h1'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('h2')}>
-          <span class="xnote-icon-heading-h2"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('h2')}>
+          <IconGlyph name={'heading-h2'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('h3')}>
-          <span class="xnote-icon-heading-h3"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('h3')}>
+          <IconGlyph name={'heading-h3'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('h4')}>
-          <span class="xnote-icon-heading-h4"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('h4')}>
+          <IconGlyph name={'heading-h4'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('h5')}>
-          <span class="xnote-icon-heading-h5"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('h5')}>
+          <IconGlyph name={'heading-h5'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('h6')}>
-          <span class="xnote-icon-heading-h6"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('h6')}>
+          <IconGlyph name={'heading-h6'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('ol')}>
-          <span class="xnote-icon-list-numbered"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('ol')}>
+          <IconGlyph name={'list-numbered'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('ul')}>
-          <span class="xnote-icon-list"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('ul')}>
+          <IconGlyph name={'list'}/>
         </Button>
-        <Button ordinary={true} onClick={() => insert('sourceCode')}>
-          <span class="xnote-icon-source-code"/>
+        <Button variant={'text'} inlineCompact={true} onClick={() => insert('sourceCode')}>
+          <IconGlyph name={'source-code'}/>
         </Button>
       </div>
-      <Divider/>
-      <MenuItem onClick={() => insert('table')} icon={<span class="xnote-icon-table"/>}>表格</MenuItem>
-      <MenuItem onClick={() => insert('todolist')} icon={<span class="xnote-icon-checkbox-checked"/>}>待办列表</MenuItem>
-      <MenuItem onClick={() => insert('image')} icon={<span class="xnote-icon-image"/>}>图片</MenuItem>
-      <MenuItem onClick={() => insert('video')} icon={<span class="xnote-icon-video"/>}>视频</MenuItem>
-      <MenuItem onClick={() => insert('highlightBox')} icon={<span class="xnote-icon-hightlight-box"/>}>高亮块</MenuItem>
-      <MenuItem onClick={() => insert('katex')} icon={<span class="xnote-icon-function"/>}>数学公式</MenuItem>
-      <MenuItem onClick={() => insert('step')} icon={<span class="xnote-icon-step"/>}>步骤条</MenuItem>
-      <MenuItem onClick={() => insert('timeline')} icon={<span class="xnote-icon-timeline"/>}>时间轴</MenuItem>
-    </>
-  })
-}
+      <Divider spacing={'compact'}/>
+      <MenuList columnCompact={true}>
+        <MenuItem onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>表格</MenuItem>
+        <MenuItem onClick={() => insert('todolist')} icon={<IconGlyph name={'checkbox-checked'}/>}>待办列表</MenuItem>
+        <MenuItem onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>图片</MenuItem>
+        <MenuItem onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>视频</MenuItem>
+        <MenuItem onClick={() => insert('highlightBox')} icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
+        <MenuItem onClick={() => insert('katex')} icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
+        <MenuItem onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
+        <MenuItem onClick={() => insert('timeline')} icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
+      </MenuList>
+    </div>
+  }
+})

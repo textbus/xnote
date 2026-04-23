@@ -1,9 +1,8 @@
 import { getCurrentInstance, inject, onUnmounted } from '@viewfly/core'
 import { Selection } from '@textbus/core'
+import { Button, Dropdown } from '@viewfly/ui-components'
 
-import { Dropdown } from '../../components/dropdown/dropdown'
 import { InsertMenu } from './insert-menu'
-import { Button } from '../../components/button/button'
 import { useCommonState } from './_common/common-state'
 
 export function InsertTool() {
@@ -20,10 +19,14 @@ export function InsertTool() {
   return () => {
     const b = commonState().readonly
     return (
-      <Dropdown disabled={b} menu={
+      <Dropdown trigger={'hover'} disabled={b} dropdown={
         <InsertMenu replace={false} hideTitle={false} slot={selection.focusSlot}/>
       }>
-        <Button disabled={b} arrow={true}>插入</Button>
+        <Button size={'small'}
+                variant={'text'}
+                inlineCompact={true}
+                chevronGapless={true}
+                disabled={b} arrow={true}>插入</Button>
       </Dropdown>
     )
   }
