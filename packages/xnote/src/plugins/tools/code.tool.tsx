@@ -1,7 +1,8 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Query, QueryStateType, Textbus } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../components/button/button'
 import { RefreshService } from '../../services/refresh.service'
 import { codeFormatter, toggleCode } from '../../textbus/formatters/_api'
 import { useCommonState } from './_common/common-state'
@@ -30,11 +31,11 @@ export function CodeTool() {
   })
 
   return () => {
-    return <Button
+    return <Button variant={'text'} size={'small'} inlineCompact={true} chevronGapless={true}
       highlight={viewModel.highlight}
       disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
       onClick={toggle}>
-      <span class="xnote-icon-code"></span>
+      <IconGlyph name={'code'}/>
     </Button>
   }
 }

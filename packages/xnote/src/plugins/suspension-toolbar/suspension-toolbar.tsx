@@ -110,9 +110,7 @@ export const SuspensionToolbar = withAnnotation({
           <FontFamilyTool/>
           <SplitLine/>
           <LinkTool/>
-          <ToolbarItem>
-            <CodeTool/>
-          </ToolbarItem>
+          <CodeTool/>
           <ToolbarItem>
             <TextColorTool/>
           </ToolbarItem>
