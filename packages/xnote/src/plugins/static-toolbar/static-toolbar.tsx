@@ -9,7 +9,6 @@ import { UnderlineTool } from '../tools/underline.tool'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from '../tools/block.tool'
 import { CodeTool } from '../tools/code.tool'
-import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
 import { AttrTool } from '../tools/attr.tool'
 import { FontSizeTool } from '../tools/font-size.tool'
 import { FontFamilyTool } from '../tools/font-family.tool'
@@ -59,86 +58,41 @@ export const StaticToolbar = withAnnotation({
   return () => {
     return (
       <div class={['toolbar', props.theme]}>
-        <ToolbarItem>
-          <UndoTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <RedoTool/>
-        </ToolbarItem>
+        <UndoTool/>
+        <RedoTool/>
         <SplitLine/>
         {
-          llmService && <ToolbarItem>
-            <AiTool/>
-          </ToolbarItem>
+          llmService && <AiTool/>
         }
-        <ToolbarItem>
-          <InsertTool/>
-        </ToolbarItem>
+        <InsertTool/>
         <SplitLine/>
-        <ToolbarItem>
-          <BlockTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <AttrTool/>
-        </ToolbarItem>
+        <BlockTool/>
+        <AttrTool/>
         <SplitLine/>
-        <ToolbarItem>
-          <BoldTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <ItalicTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <StrikeThroughTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <UnderlineTool/>
-        </ToolbarItem>
+        <BoldTool/>
+        <ItalicTool/>
+        <StrikeThroughTool/>
+        <UnderlineTool/>
         <SplitLine/>
-        <ToolbarItem>
-          <FontSizeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <FontFamilyTool/>
-        </ToolbarItem>
+        <FontSizeTool/>
+        <FontFamilyTool/>
         <SplitLine/>
-        <ToolbarItem>
-          <LinkTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CodeTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <TextColorTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <TextBackgroundColorTool/>
-        </ToolbarItem>
+        <LinkTool/>
+        <CodeTool/>
+        <TextColorTool/>
+        <TextBackgroundColorTool/>
         <SplitLine/>
-        <ToolbarItem>
-          <SubscriptTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <SuperscriptTool/>
-        </ToolbarItem>
-        <ToolbarItem>
-          <CleanFormatsTool/>
-        </ToolbarItem>
+        <SubscriptTool/>
+        <SuperscriptTool/>
+        <CleanFormatsTool/>
         {
-          query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
+          query.queryComponent(TableComponent).state === QueryStateType.Enabled &&
+          <Fragment key="table">
             <SplitLine/>
-            <ToolbarItem>
-              <MergeCellsTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <SplitCellsTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <CellBackgroundTool/>
-            </ToolbarItem>
-            <ToolbarItem>
-              <CellAlignTool/>
-            </ToolbarItem>
+            <MergeCellsTool/>
+            <SplitCellsTool/>
+            <CellBackgroundTool/>
+            <CellAlignTool/>
           </Fragment>
         }
       </div>
