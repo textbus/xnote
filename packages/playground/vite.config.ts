@@ -38,7 +38,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@textbus/xnote': path.resolve(__dirname, '../xnote/src/public-api.ts'),
+      '@textbus/xnote': path.resolve(__dirname, '../editor/src/public-api.ts'),
     }
   },
   server: {

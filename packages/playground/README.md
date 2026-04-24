@@ -23,4 +23,4 @@ pnpm --filter @textbus/xnote-playground build
 ## 说明
 
 - 默认开发端口：`5636`
-- 通过 alias 直接引用 `../xnote/src/public-api.ts`，便于边改库边验证
+- 通过 alias 直接引用 `../editor/src/public-api.ts`，便于边改库边验证

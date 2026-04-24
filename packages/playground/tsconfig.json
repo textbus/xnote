@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "paths": {
       "@textbus/xnote": [
-        "../xnote/src/public-api.ts"
+        "../editor/src/public-api.ts"
       ]
     }
   },
