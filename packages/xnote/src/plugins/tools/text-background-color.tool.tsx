@@ -1,15 +1,13 @@
 import { createSignal, inject, Props } from '@viewfly/core'
 import { Commander, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
+import { Button, ColorPicker, Dropdown, Picker, Space } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../components/button/button'
-import { Dropdown, DropdownProps } from '../../components/dropdown/dropdown'
-import { ColorPicker, Picker } from '../../components/color-picker/color-picker'
 import { backgroundColorFormatter } from '../../textbus/formatters/background-color'
 import { useCommonState } from './_common/common-state'
 
 export interface TextBackgroundColorToolProps extends Props {
-  abreast?: DropdownProps['abreast']
   style?: HTMLAttributes<HTMLElement>['style']
   slot?: Slot | null
 
@@ -59,21 +57,35 @@ export function TextBackgroundColorTool(props: TextBackgroundColorToolProps) {
   return () => {
     const disabled = commonState().readonly || commonState().inSourceCode || commonState().selectEmbed
     return (
-      <Dropdown width={'177px'}
-                disabled={disabled}
-                arrow={!props.children}
-                abreast={props.abreast}
-                style={props.style}
-                menu={
-                  <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
-                }
-                trigger={'hover'}>
-        {props.children || <Button onClick={setCurrentColor} disabled={disabled}>
-          <span style={{
+      <Space.Compact>
+        <Button onClick={setCurrentColor}
+                size={'small'}
+                variant={'text'}
+                inlineCompact={true}
+                chevronGapless={true}
+                style={{
+                  paddingRight: '0px',
+                }}
+                disabled={disabled}>
+          <IconGlyph name={'background-color'} style={{
             color: disabled ? '' : color()
-          }} class="xnote-icon-background-color"></span>
-        </Button>}
-      </Dropdown>
+          }}/>
+        </Button>
+        <Dropdown disabled={disabled}
+                  verticalPanelAlign={'right'}
+                  dropdown={
+                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                  }
+                  trigger={'hover'}>
+          <Button chevronDown={true}
+                  inlineCompact={true}
+                  chevronGapless={true}
+                  style={{
+                    paddingLeft: '0px',
+                  }}
+                  variant={'text'} size={'small'}></Button>
+        </Dropdown>
+      </Space.Compact>
     )
   }
 }
