@@ -368,6 +368,7 @@ export const LeftToolbar = withAnnotation({
               verticalPanelAlign={'left'}
               onOpenChange={changeIgnoreMove}
               orientation={'horizontal'}
+              horizontalPanelAlign={'middle'}
               trigger={'hover'}
               dropdown={
                 isEmptyBlock() ?

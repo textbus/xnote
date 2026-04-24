@@ -29,6 +29,9 @@ importers:
       '@viewfly/platform-browser':
         specifier: ^2.2.1
         version: 2.2.1
+      '@viewfly/router':
+        specifier: ^2.2.0
+        version: 2.2.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1405,6 +1408,9 @@ packages:
 
   '@viewfly/platform-browser@2.2.1':
     resolution: {integrity: sha512-FM/FJs21422AGD+1DFkIQHRJzfSfoNMIwSaTaATLnDjoaddNloeQ8AcsdFiFHM6k3mBv5YOi7XYHnD81guWSjw==}
+
+  '@viewfly/router@2.2.0':
+    resolution: {integrity: sha512-uCuTDl6h8I+aK3ugtt7uYZXAXoyjYNaXWH94TndcVmkJOEIWjILy4xwOD0v1opgeZOP86YCNNy5SnKf3PNkKng==}
 
   '@viewfly/scoped-css@2.2.0':
     resolution: {integrity: sha512-AgqwRs/RH1/Zomh19luNowzLjwHYn/5xyBjo201ITkuSGn2EwyjDBHVNAWaD6Pi2PaO7mgEKbebKT3nD3se4Kg==}
@@ -3090,9 +3096,16 @@ packages:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
     engines: {node: '>=6'}
 
+  punycode@1.4.1:
+    resolution: {integrity: sha512-jmYNElW7yvO7TV33CjSmvSiE2yco3bV2czu/OzDKdMNVZQWfxCblURLhf+47syQRBntjfLdd/H0egrzIG+oaFQ==}
+
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
+
+  qs@6.15.1:
+    resolution: {integrity: sha512-6YHEFRL9mfgcAvql/XhwTvf5jKcOiiupt2FiJxHkiX1z4j7WL8J/jRHYLluORvc1XxB5rV20KoeK00gVJamspg==}
+    engines: {node: '>=0.6'}
 
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
@@ -3459,6 +3472,10 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
+
+  url@0.11.4:
+    resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
+    engines: {node: '>= 0.4'}
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -4835,6 +4852,12 @@ snapshots:
     dependencies:
       '@viewfly/core': 2.2.0
       csstype: 3.2.3
+
+  '@viewfly/router@2.2.0':
+    dependencies:
+      '@tanbo/stream': 1.2.7
+      '@viewfly/core': 2.2.0
+      url: 0.11.4
 
   '@viewfly/scoped-css@2.2.0':
     dependencies:
@@ -6604,7 +6627,13 @@ snapshots:
 
   punycode.js@2.3.1: {}
 
+  punycode@1.4.1: {}
+
   punycode@2.3.1: {}
+
+  qs@6.15.1:
+    dependencies:
+      side-channel: 1.1.0
 
   quansync@0.2.11: {}
 
@@ -7063,6 +7092,11 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  url@0.11.4:
+    dependencies:
+      punycode: 1.4.1
+      qs: 6.15.1
 
   util-deprecate@1.0.2: {}
 

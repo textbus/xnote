@@ -14,6 +14,7 @@
     "@textbus/xnote": "workspace:*",
     "@viewfly/core": "^2.2.0",
     "@viewfly/platform-browser": "^2.2.1",
+    "@viewfly/router": "^2.2.0",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
