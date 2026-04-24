@@ -8,6 +8,7 @@ import { backgroundColorFormatter } from '../../textbus/formatters/background-co
 import { useCommonState } from './_common/common-state'
 
 export interface TextBackgroundColorToolProps extends Props {
+  inLeftTool?: boolean
   style?: HTMLAttributes<HTMLElement>['style']
   slot?: Slot | null
 
@@ -56,21 +57,37 @@ export function TextBackgroundColorTool(props: TextBackgroundColorToolProps) {
   ]
   return () => {
     const disabled = commonState().readonly || commonState().inSourceCode || commonState().selectEmbed
+    if (props.inLeftTool) {
+      return (
+        <Dropdown disabled={disabled}
+                  block={true}
+                  orientation={props.inLeftTool ? 'horizontal' : 'vertical'}
+                  dropdown={
+                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                  }
+                  trigger={'hover'}>
+          {props.children}
+        </Dropdown>
+      )
+    }
     return (
       <Space.Compact>
-        <Button onClick={setCurrentColor}
-                size={'small'}
-                variant={'text'}
-                inlineCompact={true}
-                chevronGapless={true}
-                style={{
-                  paddingRight: '0px',
-                }}
-                disabled={disabled}>
-          <IconGlyph name={'background-color'} style={{
-            color: disabled ? '' : color()
-          }}/>
-        </Button>
+        {
+          props.children ||
+          <Button onClick={setCurrentColor}
+                  size={'small'}
+                  variant={'text'}
+                  inlineCompact={true}
+                  chevronGapless={true}
+                  style={{
+                    paddingRight: '0px',
+                  }}
+                  disabled={disabled}>
+            <IconGlyph name={'background-color'} style={{
+              color: disabled ? '' : color()
+            }}/>
+          </Button>
+        }
         <Dropdown disabled={disabled}
                   verticalPanelAlign={'right'}
                   dropdown={

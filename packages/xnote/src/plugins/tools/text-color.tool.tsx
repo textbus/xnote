@@ -8,6 +8,7 @@ import { colorFormatter } from '../../textbus/formatters/color'
 import { useCommonState } from './_common/common-state'
 
 export interface TextColorToolProps extends Props {
+  inLeftTool?: boolean
   style?: HTMLAttributes<HTMLElement>['style']
   slot?: Slot | null
 
@@ -56,6 +57,19 @@ export function TextColorTool(props: TextColorToolProps) {
   ]
   return () => {
     const disabled = commonState().readonly || commonState().inSourceCode || commonState().selectEmbed
+    if (props.inLeftTool) {
+      return (
+        <Dropdown disabled={disabled}
+                  block={true}
+                  orientation={props.inLeftTool ? 'horizontal' : 'vertical'}
+                  dropdown={
+                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                  }
+                  trigger={'hover'}>
+          {props.children}
+        </Dropdown>
+      )
+    }
     return (
       <Space.Compact>
         {

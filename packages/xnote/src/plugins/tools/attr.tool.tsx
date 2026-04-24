@@ -13,6 +13,7 @@ import { useCommonState } from './_common/common-state'
 import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface AttrToolProps extends Props {
+  inLeftTool?: boolean
   style?: HTMLAttributes<HTMLElement>['style']
   slot?: Slot | null
 
@@ -104,7 +105,10 @@ export function AttrTool(props: AttrToolProps) {
   return withScopedCSS(css, () => {
     const b = commonState().inSourceCode || commonState().readonly
     return (
-      <Dropdown disabled={b} trigger={'hover'} dropdown={
+      <Dropdown block={props.inLeftTool}
+                orientation={props.inLeftTool ? 'horizontal' : 'vertical'}
+                disabled={b}
+                trigger={'hover'} dropdown={
         <MenuList columnCompact={true}>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-l')} icon={<IconGlyph name={'paragraph-left'}/>}>
             <div class={'flex justify-between'}>

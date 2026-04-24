@@ -8,7 +8,7 @@ import {
   FileUploader,
   UserInfo,
   SuspensionToolbarPlugin,
-  LeftToolbarPlugin, InlineToolbarPlugin
+  LeftToolbarPlugin, InlineToolbarPlugin, StaticToolbarPlugin
 } from '@textbus/xnote'
 import { createRef, createSignal, onMounted } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
@@ -121,7 +121,11 @@ function EditorContainer() {
     plugins: [
       new SuspensionToolbarPlugin(),
       new InlineToolbarPlugin(),
-      new LeftToolbarPlugin()
+      new LeftToolbarPlugin(),
+      new StaticToolbarPlugin({
+        theme: 'dark',
+        host: document.getElementById('toolbar')!,
+      })
     ]
   })
 

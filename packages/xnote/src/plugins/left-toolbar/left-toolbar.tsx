@@ -17,19 +17,17 @@ import {
   Textbus,
 } from '@textbus/core'
 import { DomAdapter, VIEW_DOCUMENT } from '@textbus/platform-browser'
+import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import css from './left-toolbar.scoped.scss'
 import { RefreshService } from '../../services/refresh.service'
-import { MenuItem } from '../../components/menu-item/menu-item'
 import { useActiveBlock } from '../hooks/active-block'
-import { Divider } from '../../components/divider/divider'
 import { useBlockTransform } from '../hooks/block-transform'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { RootComponent } from '../../textbus/components/root/root.component'
-import { Dropdown } from '../../components/dropdown/dropdown'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
-import { Button } from '../../components/button/button'
 import { AttrTool } from '../tools/attr.tool'
 import { InsertMenu } from '../tools/insert-menu'
 import { EditorService } from '../../services/editor.service'
@@ -327,7 +325,7 @@ export const LeftToolbar = withAnnotation({
 
   return () => {
     const slot = activeSlot()
-    let activeNode = <span class="xnote-icon-pilcrow"/>
+    let activeNode = <IconGlyph name={'pilcrow'}/>
     const states = checkStates(slot)
 
     if (slot) {
@@ -365,93 +363,108 @@ export const LeftToolbar = withAnnotation({
           top: positionSignal.top + 'px',
           display: positionSignal.display && editorService.canShowLeftToolbar ? 'block' : 'none'
         }}>
-          <Dropdown toLeft={true} onExpendStateChange={changeIgnoreMove} abreast={true} style={{
-            position: 'absolute',
-            right: 0,
-            top: 0
-          }} menu={
-            isEmptyBlock() ?
-              <InsertMenu replace={!needInsert} slot={activeSlot()}/>
-              :
-              <>
-                <div class="btn-group">
-                  <Button ordinary={true} highlight={states.paragraph} onClick={() => transform('paragraph')}>
-                    <span class="xnote-icon-pilcrow"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.h1} onClick={() => transform('h1')}>
-                    <span class="xnote-icon-heading-h1"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.h2} onClick={() => transform('h2')}>
-                    <span class="xnote-icon-heading-h2"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.h3} onClick={() => transform('h3')}>
-                    <span class="xnote-icon-heading-h3"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.h4} onClick={() => transform('h4')}>
-                    <span class="xnote-icon-heading-h4"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.todolist} onClick={() => transform('todolist')}>
-                    <span class="xnote-icon-checkbox-checked"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.orderedList} onClick={() => transform('ol')}>
-                    <span class="xnote-icon-list-numbered"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.unorderedList} onClick={() => transform('ul')}>
-                    <span class="xnote-icon-list"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.blockquote} onClick={() => transform('blockquote')}>
-                    <span class="xnote-icon-quotes-right"/>
-                  </Button>
-                  <Button ordinary={true} highlight={states.sourceCode} onClick={() => transform('sourceCode')}>
-                    <span class="xnote-icon-source-code"/>
-                  </Button>
-                </div>
-                <Divider/>
-                <AttrTool
-                  style={{ display: 'block' }}
-                  abreast={true}
-                  slot={slot}
-                  applyBefore={applyBefore}>
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-indent-decrease"/>}>缩进和对齐</MenuItem>
-                </AttrTool>
-                <TextColorTool
-                  style={{ display: 'block' }}
-                  abreast={true}
-                  applyBefore={applyBefore}>
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-color"/>}>文字颜色</MenuItem>
-                </TextColorTool>
-                <TextBackgroundColorTool
-                  style={{ display: 'block' }}
-                  abreast={true}
-                  applyBefore={applyBefore}>
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-background-color"/>}>文字背景颜色</MenuItem>
-                </TextBackgroundColorTool>
-                <Divider/>
-                <MenuItem onClick={copy} icon={<span class="xnote-icon-copy"/>}>复制</MenuItem>
-                <MenuItem onClick={remove} icon={<span class="xnote-icon-bin"/>}>删除</MenuItem>
-                <MenuItem onClick={cut} icon={<span class="xnote-icon-cut"/>}>剪切</MenuItem>
-                <Divider/>
-                <Dropdown style={{ display: 'block' }} abreast={true} menu={<InsertMenu hideTitle={true} slot={activeSlot()}/>}>
-                  <MenuItem arrow={true} icon={<span class="xnote-icon-plus"/>}>在下面添加</MenuItem>
-                </Dropdown>
-              </>
-          }>
-            <button type="button" class="left-toolbar-btn">
-              {
+          <div class={'absolute right-0 top-0'}>
+            <Dropdown
+              verticalPanelAlign={'left'}
+              onOpenChange={changeIgnoreMove}
+              orientation={'horizontal'}
+              trigger={'hover'}
+              dropdown={
                 isEmptyBlock() ?
-                  <span>
-                    <i class="xnote-icon-plus"></i>
-                  </span>
+                  <InsertMenu replace={!needInsert} slot={activeSlot()}/>
                   :
-                  <span>
+                  <div class={'w-45'}>
+                    <div class="flex flex-wrap gap-1">
+                      <Button variant={'text'} highlighted={states.paragraph} inlineCompact={true}
+                              onClick={() => transform('paragraph')}>
+                        <IconGlyph name={'pilcrow'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.h1} inlineCompact={true} onClick={() => transform('h1')}>
+                        <IconGlyph name={'heading-h1'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.h2} inlineCompact={true} onClick={() => transform('h2')}>
+                        <IconGlyph name={'heading-h2'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.h3} inlineCompact={true} onClick={() => transform('h3')}>
+                        <IconGlyph name={'heading-h3'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.h4} inlineCompact={true} onClick={() => transform('h4')}>
+                        <IconGlyph name={'heading-h4'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.todolist} inlineCompact={true}
+                              onClick={() => transform('todolist')}>
+                        <IconGlyph name={'checkbox-checked'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.orderedList} inlineCompact={true} onClick={() => transform('ol')}>
+                        <IconGlyph name={'list-numbered'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.unorderedList} inlineCompact={true}
+                              onClick={() => transform('ul')}>
+                        <IconGlyph name={'list'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.blockquote} inlineCompact={true}
+                              onClick={() => transform('blockquote')}>
+                        <IconGlyph name={'quotes-right'}/>
+                      </Button>
+                      <Button variant={'text'} highlighted={states.sourceCode} inlineCompact={true}
+                              onClick={() => transform('sourceCode')}>
+                        <IconGlyph name={'source-code'}/>
+                      </Button>
+                    </div>
+                    <Divider spacing={'compact'}/>
+                    <MenuList columnCompact={true}>
+                      <AttrTool
+                        inLeftTool={true}
+                        slot={slot}
+                        applyBefore={applyBefore}>
+                        <MenuItem chevronRight={true} density={'compact'}
+                                  icon={<IconGlyph name={'indent-decrease'}/>}>缩进和对齐</MenuItem>
+                      </AttrTool>
+                      <TextColorTool
+                        inLeftTool={true}
+                        applyBefore={applyBefore}>
+                        <MenuItem chevronRight={true} density={'compact'} icon={<IconGlyph name={'color'}/>}>文字颜色</MenuItem>
+                      </TextColorTool>
+                      <TextBackgroundColorTool
+                        inLeftTool={true}
+                        applyBefore={applyBefore}>
+                        <MenuItem density={'compact'}
+                                  chevronRight={true}
+                                  icon={<IconGlyph name={'background-color'}/>}>文字背景颜色</MenuItem>
+                      </TextBackgroundColorTool>
+                    </MenuList>
+                    <Divider spacing={'compact'}/>
+                    <MenuList columnCompact={true}>
+                      <MenuItem density={'compact'} onClick={copy} icon={<IconGlyph name={'copy'}/>}>复制</MenuItem>
+                      <MenuItem density={'compact'} onClick={remove} icon={<IconGlyph name={'bin'}/>}>删除</MenuItem>
+                      <MenuItem density={'compact'} onClick={cut} icon={<IconGlyph name={'cut'}/>}>剪切</MenuItem>
+                    </MenuList>
+                    <Divider spacing={'compact'}/>
+                    <Dropdown block={true}
+                              orientation={'horizontal'}
+                              trigger={'hover'}
+                              dropdown={<InsertMenu hideTitle={true} slot={activeSlot()}/>}>
+                      <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'plus'}/>}>在下面添加</MenuItem>
+                    </Dropdown>
+                  </div>
+              }>
+              <Button size={'small'} inlineCompact={true} class={'min-w-8 h-7'} chevronDown={false}>
+                {
+                  isEmptyBlock() ?
+                    <span>
+                    <IconGlyph name={'plus'}/>
+                  </span>
+                    :
+                    <span class="inline-flex items-center">
                     {
                       activeNode
                     }
-                    <i style="font-size: 12px" class="xnote-icon-more"></i>
+                      <IconGlyph name={'more'}/>
                   </span>
-              }
-            </button>
-          </Dropdown>
+                }
+              </Button>
+            </Dropdown>
+          </div>
         </div>
       </div>
     )
