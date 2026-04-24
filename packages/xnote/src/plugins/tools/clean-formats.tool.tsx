@@ -1,7 +1,8 @@
 import { inject } from '@viewfly/core'
 import { Commander } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../components/button/button'
 import { linkFormatter } from '../../textbus/formatters/link'
 import { useCommonState } from './_common/common-state'
 
@@ -17,9 +18,13 @@ export function CleanFormatsTool() {
 
   return () => {
     return (
-      <Button disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
+      <Button variant={'text'}
+              size={'small'}
+              inlineCompact={true}
+              chevronGapless={true}
+              disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
               onClick={clean}>
-        <span class="xnote-icon-clear-formatting"></span>
+        <IconGlyph name={'clear-formatting'}/>
       </Button>
     )
   }

@@ -12,6 +12,7 @@ import {
 } from '@textbus/xnote'
 import { createRef, createSignal, onMounted } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
+import { SyncConnector, YWebsocketConnector } from '@textbus/collaborate'
 import { AiService } from './ai.service'
 
 const firstNameText = '王、李、张、刘、陈、杨、黄、赵、周、吴、徐、孙、马、胡、朱、郭、何、罗、高、林'.replace(/、/g, '')
@@ -91,6 +92,14 @@ function EditorContainer() {
 
   const editor = new Editor({
     readonly: false,
+    // content: document.getElementById('article')!.innerHTML,
+    collaborateConfig: {
+      userinfo: user,
+      createConnector(yDoc): SyncConnector {
+        // return new YWebsocketConnector('ws://localhost:1234', 'xnote', yDoc)
+        return new YWebsocketConnector('wss://textbus.io/api', 'xnote', yDoc)
+      }
+    },
     providers: [
       {
         provide: Organization,

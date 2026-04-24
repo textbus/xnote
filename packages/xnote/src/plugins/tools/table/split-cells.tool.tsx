@@ -1,7 +1,8 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../../components/button/button'
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
 import { useCommonState } from '../_common/common-state'
@@ -78,9 +79,13 @@ export function SplitCellsTool() {
   const commonState = useCommonState()
   return () => {
     return <Button highlight={viewModel.highlight}
+                   size={'small'}
+                   variant={'text'}
+                   inlineCompact={true}
+                   chevronGapless={true}
                    disabled={viewModel.disabled || commonState().readonly || commonState().inSourceCode}
                    onClick={split}>
-      <span class="xnote-icon-split-cells"></span>
+      <IconGlyph name={'split-cells'}/>
     </Button>
   }
 }

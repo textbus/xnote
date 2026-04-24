@@ -1,7 +1,8 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../../components/button/button'
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
 import { getTableSlotBySlot, isInTable } from './help'
@@ -44,9 +45,13 @@ export function MergeCellsTool() {
 
   return () => {
     return <Button highlight={viewModel.highlight}
+                   size={'small'}
+                   variant={'text'}
+                   inlineCompact={true}
+                   chevronGapless={true}
                    disabled={viewModel.disabled || commonState().readonly || commonState().inSourceCode}
                    onClick={merge}>
-      <span class="xnote-icon-merge-cells"></span>
+      <IconGlyph name={'merge-cells'}/>
     </Button>
   }
 }

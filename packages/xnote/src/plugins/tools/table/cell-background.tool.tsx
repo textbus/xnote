@@ -1,11 +1,10 @@
-import { inject, onUnmounted, reactive } from '@viewfly/core'
+import { createSignal, inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
+import { IconGlyph } from '@viewfly/ui-icons'
+import { Button, ColorPicker, Dropdown, Picker, Space } from '@viewfly/ui-components'
 
-import { Button } from '../../../components/button/button'
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
-import { Dropdown } from '../../../components/dropdown/dropdown'
-import { ColorPicker, Picker } from '../../../components/color-picker/color-picker'
 import { cellBackgroundAttr } from '../../../textbus/attributes/cell-background.attr'
 import { isInTable } from './help'
 import { useCommonState } from '../_common/common-state'
@@ -17,8 +16,10 @@ export function CellBackgroundTool() {
   const viewModel = reactive({
     disabled: false,
   })
+  const color = createSignal('')
 
-  function setColor(picker: Picker) {
+  function setCurrentColor() {
+    const c = color()
     const commonAncestorComponent = selection.commonAncestorComponent
     if (commonAncestorComponent instanceof TableComponent) {
       const slots = commonAncestorComponent.getSelectedNormalizedSlots()
@@ -26,9 +27,8 @@ export function CellBackgroundTool() {
         slots.map(i => {
           return i.cells.filter(t => t.visible).map(i => i.raw.slot)
         }).flat().forEach(slot => {
-          const rgba = picker.rgba
-          if (rgba) {
-            slot.setAttribute(cellBackgroundAttr, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`, s => {
+          if (c) {
+            slot.setAttribute(cellBackgroundAttr, c, s => {
               return slot === s
             })
           } else {
@@ -41,9 +41,8 @@ export function CellBackgroundTool() {
 
       while (parentSlot) {
         if (parentSlot.parent instanceof TableComponent) {
-          const rgba = picker.rgba
-          if (rgba) {
-            parentSlot.setAttribute(cellBackgroundAttr, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
+          if (c) {
+            parentSlot.setAttribute(cellBackgroundAttr, c)
           } else {
             parentSlot.removeAttribute(cellBackgroundAttr)
           }
@@ -52,6 +51,13 @@ export function CellBackgroundTool() {
         parentSlot = parentSlot.parentSlot
       }
     }
+  }
+
+  function setColor(picker: Picker) {
+    const rgba = picker.rgba
+    const c = rgba ? `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` : ''
+    color.set(c)
+    setCurrentColor()
   }
 
   const sub = refreshService.onRefresh.subscribe(() => {
@@ -72,19 +78,39 @@ export function CellBackgroundTool() {
     '#90a0e5',
     '#c596e0',
   ]
+
   return () => {
-    const d = viewModel.disabled || commonState().readonly || commonState().inSourceCode
+    const disabled = viewModel.disabled || commonState().readonly || commonState().inSourceCode
     return (
-      <Dropdown width={'177px'}
-                disabled={d}
-                menu={
-                  <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
-                }
-                trigger={'hover'}>
-        <Button disabled={d} arrow={true}>
-          <span class="xnote-icon-palette"></span>
+      <Space.Compact>
+        <Button onClick={setCurrentColor}
+                size={'small'}
+                variant={'text'}
+                inlineCompact={true}
+                chevronGapless={true}
+                style={{
+                  paddingRight: '0px',
+                }}
+                disabled={disabled}>
+          <IconGlyph name={'palette'} style={{
+            color: disabled ? '' : color()
+          }}/>
         </Button>
-      </Dropdown>
+        <Dropdown disabled={disabled}
+                  verticalPanelAlign={'right'}
+                  dropdown={
+                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                  }
+                  trigger={'hover'}>
+          <Button chevronDown={true}
+                  inlineCompact={true}
+                  chevronGapless={true}
+                  style={{
+                    paddingLeft: '0px',
+                  }}
+                  variant={'text'} size={'small'}></Button>
+        </Dropdown>
+      </Space.Compact>
     )
   }
 }

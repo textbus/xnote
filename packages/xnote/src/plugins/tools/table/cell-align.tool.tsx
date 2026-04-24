@@ -1,9 +1,8 @@
 import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Query, QueryStateType, Selection } from '@textbus/core'
+import { Button, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Dropdown } from '../../../components/dropdown/dropdown'
-import { Button } from '../../../components/button/button'
-import { MenuItem } from '../../../components/menu-item/menu-item'
 import { RefreshService } from '../../../services/refresh.service'
 import { cellAlignAttr } from '../../../textbus/attributes/cell-align.attr'
 import { TableComponent } from '../../../textbus/components/table/table.component'
@@ -74,25 +73,56 @@ export function CellAlignTool() {
 
   const commonState = useCommonState()
   return () => {
+    const v = [
+      {
+        label: <MenuItem checked={currentValue() === 'top'} icon={<span class="xnote-icon-align-top"></span>}>顶部对齐</MenuItem>,
+        value: 'top'
+      },
+      {
+        label: <MenuItem checked={currentValue() === 'middle'} icon={<span class="xnote-icon-align-middle"></span>}>垂直居中</MenuItem>,
+        value: 'middle'
+      },
+    ]
     return (
-      <Dropdown disabled={commonState().readonly || commonState().inSourceCode} onCheck={check} menu={[
-        {
-          label: <MenuItem checked={currentValue() === 'top'} icon={<span class="xnote-icon-align-top"></span>}>顶部对齐</MenuItem>,
-          value: 'top'
-        },
-        {
-          label: <MenuItem checked={currentValue() === 'middle'} icon={<span class="xnote-icon-align-middle"></span>}>垂直居中</MenuItem>,
-          value: 'middle'
-        },
-        {
-          label: <MenuItem checked={currentValue() === 'bottom'} icon={<span class="xnote-icon-align-bottom"></span>}>底部对齐</MenuItem>,
-          value: 'bottom'
-        }
-      ]}>
+      <Dropdown disabled={commonState().readonly || commonState().inSourceCode}
+                trigger={'hover'}
+                verticalPanelAlign={'right'}
+                dropdown={
+                  <MenuList columnCompact={true} class={'w-40'}>
+                    <MenuItem density={'compact'} onClick={() => check('top')} icon={<IconGlyph name={'align-top'}/>}>
+                      <div class={'flex justify-between'}>
+                        顶部对齐
+                        <span class={'flex items-center'}>
+                {currentValue() === 'top' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+                      </div>
+                    </MenuItem>
+                    <MenuItem density={'compact'} onClick={() => check('middle')} icon={<IconGlyph name={'align-middle'}/>}>
+                      <div class={'flex justify-between'}>
+                        垂直居中
+                        <span class={'flex items-center'}>
+                {currentValue() === 'middle' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+                      </div>
+                    </MenuItem>
+                    <MenuItem density={'compact'} onClick={() => check('highlightBox')} icon={<IconGlyph name={'align-bottom'}/>}>
+                      <div class={'flex justify-between'}>
+                        底部对齐
+                        <span class={'flex items-center'}>
+                {currentValue() === 'bottom' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+              </span>
+                      </div>
+                    </MenuItem>
+                  </MenuList>
+                }>
         <Button arrow={true}
+                size={'small'}
+                variant={'text'}
+                inlineCompact={true}
+                chevronGapless={true}
                 disabled={commonState().readonly || commonState().inSourceCode}
                 highlight={highlight()}>
-          <span class={'xnote-icon-align-' + (currentValue() || 'middle')}></span>
+          <IconGlyph name={'align-' + (currentValue() || 'middle') as any}/>
         </Button>
       </Dropdown>
     )

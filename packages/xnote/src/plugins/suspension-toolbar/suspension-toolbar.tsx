@@ -114,30 +114,16 @@ export const SuspensionToolbar = withAnnotation({
           <TextColorTool/>
           <TextBackgroundColorTool/>
           <SplitLine/>
-          <ToolbarItem>
-            <SubscriptTool/>
-          </ToolbarItem>
-          <ToolbarItem>
-            <SuperscriptTool/>
-          </ToolbarItem>
-          <ToolbarItem>
-            <CleanFormatsTool/>
-          </ToolbarItem>
+          <SubscriptTool/>
+          <SuperscriptTool/>
+          <CleanFormatsTool/>
           {
             query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
               <SplitLine/>
-              <ToolbarItem>
-                <MergeCellsTool/>
-              </ToolbarItem>
-              <ToolbarItem>
-                <SplitCellsTool/>
-              </ToolbarItem>
-              <ToolbarItem>
-                <CellBackgroundTool/>
-              </ToolbarItem>
-              <ToolbarItem>
-                <CellAlignTool/>
-              </ToolbarItem>
+              <MergeCellsTool/>
+              <SplitCellsTool/>
+              <CellBackgroundTool/>
+              <CellAlignTool/>
             </Fragment>
           }
         </div>

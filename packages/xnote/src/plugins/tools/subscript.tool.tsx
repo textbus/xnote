@@ -1,7 +1,8 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Selection } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
-import { Button } from '../../components/button/button'
 import { subscriptFormatter } from '../../textbus/formatters/subscript'
 import { superscriptFormatter } from '../../textbus/formatters/superscript'
 import { useCommonState } from './_common/common-state'
@@ -42,10 +43,14 @@ export function SubscriptTool() {
   return () => {
     return (
       <Button
+        size={'small'}
+        variant={'text'}
+        chevronGapless={true}
+        inlineCompact={true}
         disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
         highlight={state.highlight}
         onClick={apply}>
-        <span class="xnote-icon-subscript"></span>
+        <IconGlyph name={'subscript'}/>
       </Button>
     )
   }

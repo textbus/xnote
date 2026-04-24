@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@textbus/collaborate": "^5.1.6",
     "@textbus/core": "^5.1.6",
     "@textbus/xnote": "workspace:*",
     "@viewfly/core": "^2.2.0",

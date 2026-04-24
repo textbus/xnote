@@ -44,7 +44,7 @@ export function BlockTool() {
 
     return (
       <Dropdown disabled={b} trigger={'hover'} dropdown={
-        <MenuList class={'w-50'} columnCompact={true}>
+        <MenuList class={'w-44'} columnCompact={true}>
           <MenuItem density={'compact'} onClick={() => transform('paragraph')} icon={<IconGlyph name={'pilcrow'}/>}>
             <div class={'flex justify-between'}>
               正文
