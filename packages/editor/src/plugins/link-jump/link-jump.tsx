@@ -1,47 +1,56 @@
-import { createRef, createSignal, inject } from '@viewfly/core'
+import { createSignal, inject, reactive, withMark } from '@viewfly/core'
 import { delay, Query, QueryStateType, Selection } from '@textbus/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
 import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
-import { createPortal } from '@viewfly/platform-browser'
 
 import css from './link-jump.scoped.scss'
 import { linkFormatter } from '../../textbus/formatters/link'
+import { Button, Popover, Space } from '@viewfly/ui-components'
 
-export function LinkJump() {
+export const LinkJump = withMark(css, () => {
   const selection = inject(Selection)
   const query = inject(Query)
   const bridge = inject(SelectionBridge)
   const container = inject(VIEW_CONTAINER)
 
   const href = createSignal('')
-  const ref = createRef<HTMLElement>()
   const isShow = createSignal(false)
 
-  function onSelectionChange() {
+  const rect = reactive({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+  })
+
+  function updatePosition(setHref?: (href: string) => void) {
     if (selection.isCollapsed) {
       const queryState = query.queryFormat(linkFormatter)
       if (queryState.state === QueryStateType.Enabled) {
-        const rect = bridge.getRect({
-          slot: selection.startSlot!,
-          offset: selection.startOffset!
+        const refRect = bridge.getRect({
+          slot: selection.focusSlot!,
+          offset: selection.focusOffset!
         })
-        if (rect) {
-          const offsetRect = container.getBoundingClientRect()
-          Object.assign(ref.current!.style, {
-            left: rect.left - offsetRect.left + 'px',
-            top: rect.top - offsetRect.top + 'px'
-          })
+        if (refRect) {
+          rect.left = refRect.left
+          rect.top = refRect.top
+          rect.width = refRect.width
+          rect.height = refRect.height
           isShow.set(true)
-          let url = queryState.value!.href
-          if (url.indexOf('://') < 0) {
-            url = 'http://' + url
-          }
-          href.set(url)
+          setHref?.(queryState.value!.href)
           return
         }
       }
     }
     isShow.set(false)
+  }
+
+  function onSelectionChange() {
+    updatePosition(url => {
+      if (url.indexOf('://') < 0) {
+        url = 'http://' + url
+      }
+      href.set(url)
+    })
   }
 
   selection.onChange.pipe(delay()).subscribe(() => {
@@ -64,14 +73,28 @@ export function LinkJump() {
     })
   }
 
-  return createPortal(
-    withScopedCSS(css, () => {
-      return (
-        <div ref={ref} class="link-jump-plugin" style={{ display: isShow() ? '' : 'none' }}>
-          <span onClick={cleanLink}>清除</span>
-          <a target="_blank" href={href()}>跳转</a>
-        </div>
-      )
-    }), container
+  return () => (
+    <Popover
+      style={{
+        minWidth: 0,
+        padding: '3px'
+      }}
+      bordered={false}
+      open={isShow()}
+      getReferenceBox={() => {
+        updatePosition()
+        return rect
+      }}
+      onOpenChange={b => {
+        isShow.set(b)
+      }}
+      content={
+        <Space.Compact>
+          <Button onClick={cleanLink} variant={'text'} size={'small'}>清除</Button>
+          <Button target={'_blank'} href={href()} variant={'link'} size={'small'}>跳转</Button>
+        </Space.Compact>
+      }
+      getContainer={() => container}>
+    </Popover>
   )
-}
+})

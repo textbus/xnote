@@ -77,7 +77,7 @@ export function LinkTool(props: LinkToolProps) {
                  getReferenceBox={() => popupPosition()}
                  content={
                    <form onSubmit={setLink} class={'p-1'}>
-                     <Input block={true} size={'small'} placeholder={'请输入链接地址'} onChange={v => {
+                     <Input block={true} required size={'small'} placeholder={'请输入链接地址'} onChange={v => {
                        value.set(v)
                      }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">确定</Button>}/>
                    </form>
