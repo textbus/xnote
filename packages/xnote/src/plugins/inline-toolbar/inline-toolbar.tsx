@@ -11,7 +11,7 @@ import {
   Subscription, tap,
   Textbus
 } from '@textbus/core'
-import { DomAdapter, Rect, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
+import { DomAdapter, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 
 import css from './inline-toolbar.scoped.scss'
 import { BoldTool } from '../tools/bold.tool'
@@ -21,7 +21,6 @@ import { UnderlineTool } from '../tools/underline.tool'
 import { RefreshService } from '../../services/refresh.service'
 import { BlockTool } from '../tools/block.tool'
 import { CodeTool } from '../tools/code.tool'
-import { ToolbarItem } from '../../components/toolbar-item/toolbar-item'
 import { AttrTool } from '../tools/attr.tool'
 import { FontSizeTool } from '../tools/font-size.tool'
 import { FontFamilyTool } from '../tools/font-family.tool'
@@ -233,74 +232,34 @@ export const InlineToolbar = withAnnotation({
                content={
                  <div class={['toolbar', props.theme]}>
                    {
-                     llmService && <ToolbarItem>
-                       <AiTool hideToolbar={hideToolbar}/>
-                     </ToolbarItem>
+                     llmService && <AiTool hideToolbar={hideToolbar}/>
                    }
-                   <ToolbarItem>
-                     <BlockTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <AttrTool/>
-                   </ToolbarItem>
+                   <BlockTool/>
+                   <AttrTool/>
                    <SplitLine/>
-                   <ToolbarItem>
-                     <BoldTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <ItalicTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <StrikeThroughTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <UnderlineTool/>
-                   </ToolbarItem>
+                   <BoldTool/>
+                   <ItalicTool/>
+                   <StrikeThroughTool/>
+                   <UnderlineTool/>
                    <SplitLine/>
-                   <ToolbarItem>
-                     <FontSizeTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <FontFamilyTool/>
-                   </ToolbarItem>
+                   <FontSizeTool/>
+                   <FontFamilyTool/>
                    <SplitLine/>
-                   <ToolbarItem>
-                     <LinkTool hideToolbar={hideToolbar}/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <CodeTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <TextColorTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <TextBackgroundColorTool/>
-                   </ToolbarItem>
+                   <LinkTool hideToolbar={hideToolbar}/>
+                   <CodeTool/>
+                   <TextColorTool/>
+                   <TextBackgroundColorTool/>
                    <SplitLine/>
-                   <ToolbarItem>
-                     <SubscriptTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <SuperscriptTool/>
-                   </ToolbarItem>
-                   <ToolbarItem>
-                     <CleanFormatsTool/>
-                   </ToolbarItem>
+                   <SubscriptTool/>
+                   <SuperscriptTool/>
+                   <CleanFormatsTool/>
                    {
                      query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
                        <SplitLine/>
-                       <ToolbarItem>
-                         <MergeCellsTool/>
-                       </ToolbarItem>
-                       <ToolbarItem>
-                         <SplitCellsTool/>
-                       </ToolbarItem>
-                       <ToolbarItem>
-                         <CellBackgroundTool/>
-                       </ToolbarItem>
-                       <ToolbarItem>
-                         <CellAlignTool/>
-                       </ToolbarItem>
+                       <MergeCellsTool/>
+                       <SplitCellsTool/>
+                       <CellBackgroundTool/>
+                       <CellAlignTool/>
                      </Fragment>
                    }
                  </div>
