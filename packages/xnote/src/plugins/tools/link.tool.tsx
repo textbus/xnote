@@ -1,14 +1,16 @@
-import { createSignal, inject, onUnmounted } from '@viewfly/core'
+import { createEffect, createSignal, getCurrentInstance, inject, onUnmounted } from '@viewfly/core'
 import { withScopedCSS } from '@viewfly/scoped-css'
-import { Commander, fromEvent } from '@textbus/core'
+import { Commander, Selection } from '@textbus/core'
+import { Button, Input, Popover } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import css from './link-tool.scoped.scss'
-import { Popup } from '../../components/popup/popup'
-import { Button } from '../../components/button/button'
 import { linkFormatter } from '../../textbus/formatters/link'
-import { EditorService } from '../../services/editor.service'
 import { useCommonState } from './_common/common-state'
 import { usePopupPosition } from '../hooks/popup-position'
+import { VIEW_DOCUMENT } from '@textbus/platform-browser'
+import { RefreshService } from '../../services/refresh.service'
+import { EditorService } from '../../services/editor.service'
 
 export interface LinkToolProps {
   hideToolbar?(): void
@@ -16,6 +18,8 @@ export interface LinkToolProps {
 
 export function LinkTool(props: LinkToolProps) {
   const commander = inject(Commander)
+  const selection = inject(Selection)
+  const refreshService = inject(RefreshService)
   const editorService = inject(EditorService)
 
   const isShow = createSignal(false)
@@ -30,46 +34,60 @@ export function LinkTool(props: LinkToolProps) {
     isShow.set(false)
   }
 
-  let isClickFromSelf = false
-  const sub = fromEvent(document, 'click').subscribe(() => {
-    if (isClickFromSelf) {
-      isClickFromSelf = false
-      return
-    }
-    editorService.hideInlineToolbar = false
-    isShow.set(false)
-  })
-
-  onUnmounted(() => {
-    sub.unsubscribe()
+  createEffect(isShow, (b) => {
+    editorService.changeLeftToolbarVisible(!b)
   })
 
   const commonState = useCommonState()
 
   const popupPosition = usePopupPosition()
+  const viewDocument = inject(VIEW_DOCUMENT)
+
+  function getContainer() {
+    return viewDocument
+  }
+
+  const instance = getCurrentInstance()
+
+  const subscription = refreshService.onRefresh.subscribe(() => {
+    instance.markAsDirtied()
+  })
+
+  onUnmounted(() => {
+    subscription.unsubscribe()
+  })
+
   return withScopedCSS(css, () => {
-    const rect = popupPosition()
     return (
-      <span>
-        <Button disabled={commonState().inSourceCode || commonState().readonly} onClick={() => {
-          isShow.set(true)
-          isClickFromSelf = true
-          props.hideToolbar?.()
-        }}><span class="xnote-icon-link"></span></Button>
+      <>
+        <Button disabled={commonState().inSourceCode || commonState().readonly || selection.isCollapsed}
+                size={'small'}
+                chevronGapless={true}
+                variant={'text'}
+                inlineCompact={true}
+                onClick={() => {
+                  isShow.set(true)
+                  props.hideToolbar?.()
+                }}>
+          <IconGlyph name={'link'}/>
+        </Button>
         {
-          isShow() &&
-          <Popup left={rect.left} top={rect.top}>
-            <form onSubmit={setLink} onClick={() => {
-              isClickFromSelf = true
-            }} class="input-group">
-              <input onChange={ev => {
-                value.set((ev.target as any).value)
-              }} placeholder="请输入链接地址" type="text"/>
-              <Button type="submit">确定</Button>
-            </form>
-          </Popup>
+          <Popover open={isShow()}
+                   getContainer={getContainer}
+                   showArrow={false}
+                   noPadding={true}
+                   onOpenChange={open => isShow.set(open)}
+                   getReferenceBox={() => popupPosition()}
+                   content={
+                     <form onSubmit={setLink} class={'p-1'}>
+                       <Input block={true} size={'small'} placeholder={'请输入链接地址'} onChange={v => {
+                         value.set(v)
+                       }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">确定</Button>}/>
+                     </form>
+                   }
+          />
         }
-      </span>
+      </>
     )
   })
 }

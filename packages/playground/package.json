@@ -12,12 +12,12 @@
     "@textbus/core": "^5.1.6",
     "@textbus/xnote": "workspace:*",
     "@viewfly/core": "^2.2.0",
-    "@viewfly/platform-browser": "^2.2.0",
+    "@viewfly/platform-browser": "^2.2.1",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@swc/core": "^1.15.30",
-    "@viewfly/devtools": "^2.2.0",
+    "@viewfly/devtools": "^2.2.1",
     "ip": "^2.0.1",
     "unocss": "^66.6.8",
     "vite": "^8.0.9",

@@ -24,8 +24,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       '@viewfly/platform-browser':
-        specifier: ^2.2.0
-        version: 2.2.0
+        specifier: ^2.2.1
+        version: 2.2.1
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -34,8 +34,8 @@ importers:
         specifier: ^1.15.30
         version: 1.15.30(@swc/helpers@0.5.21)
       '@viewfly/devtools':
-        specifier: ^2.2.0
-        version: 2.2.0(lodash@4.18.1)
+        specifier: ^2.2.1
+        version: 2.2.1(lodash@4.18.1)(vite@8.0.9(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(less@4.6.4)(sass@1.99.0))
       ip:
         specifier: ^2.0.1
         version: 2.0.1
@@ -59,7 +59,7 @@ importers:
         version: 0.1.1
       '@viewfly/ui-components':
         specifier: ^0.0.5
-        version: 0.0.5(@viewfly/core@2.2.0)(@viewfly/platform-browser@2.2.0)(@viewfly/ui-icons@0.0.2(@viewfly/core@2.2.0))
+        version: 0.0.5(@viewfly/core@2.2.0)(@viewfly/platform-browser@2.2.1)(@viewfly/ui-icons@0.0.2(@viewfly/core@2.2.0))
       '@viewfly/ui-icons':
         specifier: ^0.0.2
         version: 0.0.2(@viewfly/core@2.2.0)
@@ -110,11 +110,11 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       '@viewfly/devtools':
-        specifier: ^2.2.0
-        version: 2.2.0(lodash@4.18.1)
+        specifier: ^2.2.1
+        version: 2.2.1(lodash@4.18.1)(vite@8.0.9(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(less@4.6.4)(sass@1.99.0))
       '@viewfly/platform-browser':
-        specifier: ^2.2.0
-        version: 2.2.0
+        specifier: ^2.2.1
+        version: 2.2.1
       '@viewfly/scoped-css':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1395,11 +1395,13 @@ packages:
   '@viewfly/core@2.2.0':
     resolution: {integrity: sha512-nXncbXsDdGru9UyxVUMHh+EIWrFk3648K53G1p/NG6f/zLS/233wzOC9rTatWoTvSM0PL+bGbjq0kB0XWiDBQA==}
 
-  '@viewfly/devtools@2.2.0':
-    resolution: {integrity: sha512-/a2/hpy3Tz8KZLoOUODncXNl/xbQU1HiCE8YwXAOj5DpUWCdF1gcvA/JANa8qfbm/i89qommcXaT0KVKz5IKOg==}
+  '@viewfly/devtools@2.2.1':
+    resolution: {integrity: sha512-fDyJVpkcIZlYjy2z1sAF3lxTDP3Pypwoc2xKnDwvp+5ZSfksKlhSQBVrRVSTyxUQVKJDFU5kvhH9+7aL3muZEg==}
+    peerDependencies:
+      vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@viewfly/platform-browser@2.2.0':
-    resolution: {integrity: sha512-K9Ina2lp2GyQlWZ9dGhgJGaXKrySnXIcvQHBjfW/xaJBEu2RwskNBMzj7TaqVnozpkp5cs9b6+VwggQTfDW4wA==}
+  '@viewfly/platform-browser@2.2.1':
+    resolution: {integrity: sha512-FM/FJs21422AGD+1DFkIQHRJzfSfoNMIwSaTaATLnDjoaddNloeQ8AcsdFiFHM6k3mBv5YOi7XYHnD81guWSjw==}
 
   '@viewfly/scoped-css@2.2.0':
     resolution: {integrity: sha512-AgqwRs/RH1/Zomh19luNowzLjwHYn/5xyBjo201ITkuSGn2EwyjDBHVNAWaD6Pi2PaO7mgEKbebKT3nD3se4Kg==}
@@ -4470,7 +4472,7 @@ snapshots:
       '@textbus/platform-browser': 5.1.6
       '@textbus/platform-node': 5.1.6
       '@viewfly/core': 2.2.0
-      '@viewfly/platform-browser': 2.2.0
+      '@viewfly/platform-browser': 2.2.1
 
   '@textbus/collaborate@5.1.6(y-protocols@1.0.7(yjs@13.6.30))':
     dependencies:
@@ -4501,7 +4503,7 @@ snapshots:
       '@tanbo/stream': 1.2.7
       '@textbus/core': 5.1.6
       '@viewfly/core': 2.2.0
-      '@viewfly/platform-browser': 2.2.0
+      '@viewfly/platform-browser': 2.2.1
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -4756,7 +4758,7 @@ snapshots:
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@viewfly/devtools@2.2.0(lodash@4.18.1)':
+  '@viewfly/devtools@2.2.1(lodash@4.18.1)(vite@8.0.9(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(less@4.6.4)(sass@1.99.0))':
     dependencies:
       '@vue/component-compiler-utils': 3.3.0(lodash@4.18.1)
       concat-with-sourcemaps: 1.1.0
@@ -4768,6 +4770,7 @@ snapshots:
       resolve: 1.22.12
       rollup-pluginutils: 2.8.2
       style-inject: 0.3.0
+      vite: 8.0.9(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(less@4.6.4)(sass@1.99.0)
     transitivePeerDependencies:
       - '@rspack/core'
       - arc-templates
@@ -4825,7 +4828,7 @@ snapshots:
       - webpack
       - whiskers
 
-  '@viewfly/platform-browser@2.2.0':
+  '@viewfly/platform-browser@2.2.1':
     dependencies:
       '@viewfly/core': 2.2.0
       csstype: 3.2.3
@@ -4834,11 +4837,11 @@ snapshots:
     dependencies:
       '@viewfly/core': 2.2.0
 
-  '@viewfly/ui-components@0.0.5(@viewfly/core@2.2.0)(@viewfly/platform-browser@2.2.0)(@viewfly/ui-icons@0.0.2(@viewfly/core@2.2.0))':
+  '@viewfly/ui-components@0.0.5(@viewfly/core@2.2.0)(@viewfly/platform-browser@2.2.1)(@viewfly/ui-icons@0.0.2(@viewfly/core@2.2.0))':
     dependencies:
       '@tanbo/color': 0.1.1
       '@viewfly/core': 2.2.0
-      '@viewfly/platform-browser': 2.2.0
+      '@viewfly/platform-browser': 2.2.1
       '@viewfly/ui-icons': 0.0.2(@viewfly/core@2.2.0)
 
   '@viewfly/ui-icons@0.0.2(@viewfly/core@2.2.0)':
