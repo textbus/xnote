@@ -10,7 +10,7 @@
   },
   "include": [
     "./src",
-    "../xnote/types.d.ts",
+    "../editor/types.d.ts",
     "./vite.config.ts",
     "../../uno.config.ts"
   ]

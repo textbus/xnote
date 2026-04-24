@@ -1,1 +1,1 @@
-export { default } from './packages/xnote/uno.config'
+export { default } from './packages/editor/uno.config'
