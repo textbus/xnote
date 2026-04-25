@@ -85,14 +85,14 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     }
   })
 
-  const containerRef = createRef<HTMLElement>()
+  const containerRef = createRef<HTMLDivElement>()
 
   const readonly = useReadonly()
   const output = useOutput()
 
   function checkContent(ev: MouseEvent) {
-    if (ev.target === containerRef.current) {
-      const rect = containerRef.current!.getBoundingClientRect()
+    if (ev.target === containerRef.value) {
+      const rect = containerRef.value!.getBoundingClientRect()
       if (rect.bottom - ev.clientY < 40) {
         props.component.afterCheck()
       }

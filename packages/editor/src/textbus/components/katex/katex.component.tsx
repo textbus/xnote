@@ -94,7 +94,7 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
     }).add(
       fromEvent(node, 'mousedown').subscribe(ev => ev.stopPropagation()),
       fromEvent(document, 'mousedown').subscribe(() => {
-        dropdownRef.current?.isShow(false)
+        dropdownRef.value?.isShow(false)
       })
     )
 
@@ -112,7 +112,7 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
     const text = props.component.state.text
     return (
       <span onClick={() => {
-        dropdownRef.current?.isShow(true)
+        dropdownRef.value?.isShow(true)
       }} ref={props.rootRef} data-component={KatexComponent.componentName} data-katex={encodeURIComponent(text)} class="xnote-katex">
        {
          (output() || readonly()) ?

@@ -1,13 +1,12 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
 import {
   createRef,
   createSignal,
   getCurrentInstance,
   inject, onMounted,
   onUnmounted,
-  onUpdated,
+  onUpdated, Ref,
   Signal,
-  StaticRef
+  withMark
 } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 
@@ -20,12 +19,12 @@ import { ComponentToolbar } from '../../../../components/component-toolbar/compo
 import { EditorService } from '../../../../services/editor.service'
 
 export interface TopBarProps {
-  tableRef: StaticRef<HTMLTableElement>
+  tableRef: Ref<HTMLTableElement | null>
   isFocus: Signal<boolean>
   component: TableComponent
 }
 
-export function LeftBar(props: TopBarProps) {
+export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const actionBarRef = createRef<HTMLTableElement>()
   const insertBarRef = createRef<HTMLTableElement>()
@@ -33,10 +32,10 @@ export function LeftBar(props: TopBarProps) {
   const tableService = inject(TableService)
   // 同步行高度
   onUpdated(() => {
-    const insertBarRows = insertBarRef.current!.rows
-    const actionBarRows = actionBarRef.current!.rows
+    const insertBarRows = insertBarRef.value!.rows
+    const actionBarRows = actionBarRef.value!.rows
     setTimeout(() => {
-      Array.from(props.tableRef.current!.rows).forEach((tr, i) => {
+      Array.from(props.tableRef.value!.rows).forEach((tr, i) => {
         const height = tr.getBoundingClientRect().height ||
           Math.min(...Array.from(tr.children).map<number>(i => (i as HTMLElement).getBoundingClientRect().height)) || 0
         insertBarRows.item(i)!.style.height = height + 'px'
@@ -92,7 +91,7 @@ export function LeftBar(props: TopBarProps) {
     props.component.selectRow(startIndex, endIndex + 1)
   }
 
-  return withScopedCSS(css, () => {
+  return () => {
     const position = props.component.tableSelection()
     const normalizedData = props.component.getNormalizedData()
     return (
@@ -203,5 +202,5 @@ export function LeftBar(props: TopBarProps) {
         </div>
       </div>
     )
-  })
-}
+  }
+})

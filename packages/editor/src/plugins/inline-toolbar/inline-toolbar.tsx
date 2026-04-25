@@ -174,7 +174,7 @@ export const InlineToolbar = withAnnotation({
           c.ignoreSelectionChanges = false
           return b
         }
-        return !ev.composedPath().includes(toolbarRef.current!)
+        return !ev.composedPath().includes(toolbarRef.value!)
       }),
       delay(100),
       filter(() => {
@@ -194,7 +194,7 @@ export const InlineToolbar = withAnnotation({
   }
 
   const mousedownSubscription = fromEvent<MouseEvent>(document, 'mousedown').subscribe((ev) => {
-    if (ev.composedPath().includes(toolbarRef.current!)) {
+    if (ev.composedPath().includes(toolbarRef.value!)) {
       return
     }
     mouseupSubscription.unsubscribe()

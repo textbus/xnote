@@ -1,7 +1,6 @@
-import { inject, onUnmounted, Props, reactive } from '@viewfly/core'
+import { inject, onUnmounted, Props, reactive, withMark } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
-import { withScopedCSS } from '@viewfly/scoped-css'
 import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 
 import css from './block-tool.scoped.scss'
@@ -20,7 +19,7 @@ export interface AttrToolProps extends Props {
   applyBefore?(): void
 }
 
-export function AttrTool(props: AttrToolProps) {
+export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const query = inject(Query)
@@ -102,7 +101,7 @@ export function AttrTool(props: AttrToolProps) {
   }
 
   const commonState = useCommonState()
-  return withScopedCSS(css, () => {
+  return () => {
     const b = commonState().inSourceCode || commonState().readonly
     return (
       <Dropdown block={props.inLeftTool}
@@ -172,5 +171,5 @@ export function AttrTool(props: AttrToolProps) {
         }
       </Dropdown>
     )
-  })
-}
+  }
+})

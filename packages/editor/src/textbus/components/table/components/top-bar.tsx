@@ -1,5 +1,4 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
+import { createSignal, inject, onMounted, onUnmounted, Signal, withMark } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 
 import css from './top-bar.scoped.scss'
@@ -17,7 +16,7 @@ export interface TopBarProps {
   layoutWidth: Signal<number[]>
 }
 
-export function TopBar(props: TopBarProps) {
+export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const tableService = inject(TableService)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
@@ -80,7 +79,7 @@ export function TopBar(props: TopBarProps) {
     s.unsubscribe()
   })
 
-  return withScopedCSS(css, () => {
+  return () => {
     const { state, tableSelection } = props.component
 
     const position = tableSelection()
@@ -184,5 +183,5 @@ export function TopBar(props: TopBarProps) {
         </div>
       </div>
     )
-  })
-}
+  }
+})

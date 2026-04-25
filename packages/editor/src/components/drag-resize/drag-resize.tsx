@@ -1,5 +1,4 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { createRef, createSignal, inject, onUnmounted, Props, StaticRef } from '@viewfly/core'
+import { createRef, createSignal, inject, onUnmounted, Props, Ref, withMark } from '@viewfly/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 import { fromEvent, Selection } from '@textbus/core'
 
@@ -9,16 +8,16 @@ import { VideoComponent } from '../../textbus/components/video/video.component'
 
 export interface DragResizeProps extends Props {
   component: ImageComponent | VideoComponent
-  source: StaticRef<HTMLImageElement | HTMLVideoElement>
+  source: Ref<HTMLImageElement | HTMLVideoElement | null>
 }
 
-export function DragResize(props: DragResizeProps) {
+export const DragResize = withMark(style, function DragResize(props: DragResizeProps) {
   const isShow = createSignal(false)
 
   const selection = inject(Selection)
   const docContainer = inject(VIEW_CONTAINER)
   const component = props.component
-  const ref = createRef<HTMLElement>()
+  const ref = createRef<HTMLDivElement>()
 
   const sub = selection.onChange.subscribe(() => {
     const index = component.parent?.indexOf(component)
@@ -30,8 +29,8 @@ export function DragResize(props: DragResizeProps) {
       return
     }
     isShow.set(true)
-    const width = ref.current!.offsetWidth
-    const height = ref.current!.offsetHeight
+    const width = ref.value!.offsetWidth
+    const height = ref.value!.offsetHeight
     sizeText.set(`${Math.round(width)}px * ${Math.round(height)}px`)
   })
 
@@ -43,12 +42,12 @@ export function DragResize(props: DragResizeProps) {
     sub.unsubscribe()
   })
 
-  const btnGroup = createRef<HTMLElement>()
-  const mask = createRef<HTMLElement>()
+  const btnGroup = createRef<HTMLDivElement>()
+  const mask = createRef<HTMLDivElement>()
 
   function drag(ev: MouseEvent) {
     docContainer.style.pointerEvents = 'none'
-    const ele = props.source.current!
+    const ele = props.source.value!
 
     const startRect = ele.getBoundingClientRect()
 
@@ -61,7 +60,7 @@ export function DragResize(props: DragResizeProps) {
 
     let endWidth = startWidth
     let endHeight = startHeight
-    const handlers = Array.from(btnGroup.current!.children)
+    const handlers = Array.from(btnGroup.value!.children)
     const index = handlers.indexOf(ev.target as HTMLButtonElement)
 
     const unMove = fromEvent<MouseEvent>(document, 'mousemove').subscribe(ev => {
@@ -136,7 +135,7 @@ export function DragResize(props: DragResizeProps) {
 
   const sizeText = createSignal(`${component.state.width}*${component.state.height}`)
 
-  return withScopedCSS(style, () => {
+  return () => {
     return (
       <div class="drag-resize" onClick={selectComponent}>
         <div class="container" ref={ref}>
@@ -159,5 +158,5 @@ export function DragResize(props: DragResizeProps) {
         </div>
       </div>
     )
-  })
-}
+  }
+})

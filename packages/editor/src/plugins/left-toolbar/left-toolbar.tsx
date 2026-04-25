@@ -143,19 +143,19 @@ export const LeftToolbar = withAnnotation({
     subscription.unsubscribe()
   })
 
-  const toolbarRef = createRef<HTMLElement>()
+  const toolbarRef = createRef<HTMLDivElement>()
   let isShow = false
 
   onMounted(() => {
     let leaveSub: Subscription
     const bindLeave = function () {
-      leaveSub = fromEvent(toolbarRef.current!, 'mouseleave').pipe(delay(200)).subscribe(() => {
+      leaveSub = fromEvent(toolbarRef.value!, 'mouseleave').pipe(delay(200)).subscribe(() => {
         isShow = false
       })
     }
     bindLeave()
     subscription.add(
-      fromEvent(toolbarRef.current!, 'mouseenter').subscribe(() => {
+      fromEvent(toolbarRef.value!, 'mouseenter').subscribe(() => {
         if (leaveSub) {
           leaveSub.unsubscribe()
         }
@@ -215,8 +215,8 @@ export const LeftToolbar = withAnnotation({
     isIgnoreMove = b
   }
 
-  const btnRef = createRef<HTMLElement>()
-  const dragLineRef = createRef<HTMLElement>()
+  const btnRef = createRef<HTMLDivElement>()
+  const dragLineRef = createRef<HTMLDivElement>()
 
   function findBlockComponentView(el: HTMLElement) {
     while (el) {
@@ -239,7 +239,7 @@ export const LeftToolbar = withAnnotation({
   const container = inject(VIEW_DOCUMENT)
 
   onMounted(() => {
-    const sub = fromEvent<MouseEvent>(btnRef.current!, 'mousedown').subscribe((ev) => {
+    const sub = fromEvent<MouseEvent>(btnRef.value!, 'mousedown').subscribe((ev) => {
       isShow = false
       changeIgnoreMove(true)
       const startX = ev.clientX
@@ -276,7 +276,7 @@ export const LeftToolbar = withAnnotation({
 
         const findResult = findBlockComponentView(ev.target as HTMLElement)
         if (!findResult || findResult.component === originComponent) {
-          dragLineRef.current!.style.cssText = ''
+          dragLineRef.value!.style.cssText = ''
           targetComponent = null
           return
         }
@@ -292,7 +292,7 @@ export const LeftToolbar = withAnnotation({
         }
 
         targetComponent = findResult.component
-        dragLineRef.current!.style.cssText = `left: ${left + 10}px; top: ${top}px; width: ${targetRect.width}px`
+        dragLineRef.value!.style.cssText = `left: ${left + 10}px; top: ${top}px; width: ${targetRect.width}px`
       })
 
       const up = fromEvent(document, 'mouseup').subscribe(() => {
@@ -313,7 +313,7 @@ export const LeftToolbar = withAnnotation({
           }
         }
         editorService.changeLeftToolbarVisible(true)
-        dragLineRef.current!.style.cssText = ''
+        dragLineRef.value!.style.cssText = ''
         selection.unSelect()
       })
     })

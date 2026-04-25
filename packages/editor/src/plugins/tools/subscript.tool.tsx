@@ -48,7 +48,7 @@ export function SubscriptTool() {
         chevronGapless={true}
         inlineCompact={true}
         disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
-        highlight={state.highlight}
+        highlighted={state.highlight}
         onClick={apply}>
         <IconGlyph name={'subscript'}/>
       </Button>

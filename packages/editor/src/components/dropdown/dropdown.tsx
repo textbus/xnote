@@ -6,9 +6,9 @@ import {
   onMounted,
   onUnmounted,
   Props,
+  withMark,
   withAnnotation,
 } from '@viewfly/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
 import { fromEvent, Subscription } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 
@@ -44,7 +44,7 @@ export interface DropdownProps extends Props {
 
 export const Dropdown = withAnnotation({
   providers: [DropdownContextService]
-}, function Dropdown(props: DropdownProps) {
+}, withMark(css, function Dropdown(props: DropdownProps) {
   const isShow = createSignal(false)
 
   const dropdownContextService = inject(DropdownContextService)
@@ -60,9 +60,9 @@ export const Dropdown = withAnnotation({
     }
   }
 
-  const triggerRef = createRef<HTMLElement>()
-  const dropdownRef = createRef<HTMLElement>()
-  const arrowRef = createRef<HTMLElement>()
+  const triggerRef = createRef<HTMLDivElement>()
+  const dropdownRef = createRef<HTMLDivElement>()
+  const arrowRef = createRef<HTMLDivElement>()
 
   onMounted(() => {
     const sub = dropdownContextService.onOpenStateChange.subscribe(b => {
@@ -79,10 +79,10 @@ export const Dropdown = withAnnotation({
       return
     }
     if (props.trigger === 'click') {
-      subscription.add(fromEvent(triggerRef.current!, 'click').subscribe(toggle))
+      subscription.add(fromEvent(triggerRef.value!, 'click').subscribe(toggle))
       return
     }
-    const el = props.arrow ? arrowRef.current! : dropdownRef.current!
+    const el = props.arrow ? arrowRef.value! : dropdownRef.value!
     let leaveSub: Subscription
     const bindLeave = function () {
       leaveSub = fromEvent(el, 'mouseleave').subscribe(() => {
@@ -119,7 +119,7 @@ export const Dropdown = withAnnotation({
         dropdownContextService.hide(false)
       }
     },
-    $render: withScopedCSS(css, () => {
+    $render: () => {
       return (
         <div class={['dropdown', props.class]} style={props.style} ref={dropdownRef}>
           <div class="dropdown-btn" ref={triggerRef}>
@@ -156,6 +156,6 @@ export const Dropdown = withAnnotation({
           }
         </div>
       )
-    })
+    }
   }
-})
+}))

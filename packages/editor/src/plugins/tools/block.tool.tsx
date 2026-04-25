@@ -1,4 +1,3 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
 import { Button, Dropdown, MenuItem, Divider, MenuList } from '@viewfly/ui-components'
 
 import css from './block-tool.scoped.scss'
@@ -7,14 +6,14 @@ import { useBlockTransform } from '../hooks/block-transform'
 import { Keymap } from '../../components/keymap/keymap'
 import { useCommonState } from './_common/common-state'
 import { IconGlyph } from '@viewfly/ui-icons'
-import { JSXNode } from '@viewfly/core'
+import { JSXNode, withMark } from '@viewfly/core'
 
-export function BlockTool() {
+export const BlockTool = withMark(css, function BlockTool() {
   const checkStates = useActiveBlock()
   const transform = useBlockTransform()
 
   const commonState = useCommonState()
-  return withScopedCSS(css, () => {
+  return () => {
     const states = checkStates()
     const types: [boolean, JSXNode][] = [
       [states.paragraph, <IconGlyph name={'pilcrow'}/>],
@@ -188,5 +187,5 @@ export function BlockTool() {
         </Button>
       </Dropdown>
     )
-  })
-}
+  }
+})

@@ -1,6 +1,13 @@
-import { createRef, inject, InjectionToken, onUnmounted, onUpdated, Props, StaticRef, withAnnotation } from '@viewfly/core'
-import { createPortal } from '@viewfly/platform-browser'
-import { withScopedCSS } from '@viewfly/scoped-css'
+import {
+  createRef,
+  inject,
+  InjectionToken,
+  onUnmounted,
+  onUpdated, Portal,
+  Props, Ref,
+  withAnnotation,
+  withMark
+} from '@viewfly/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
 import css from './dropdown-menu.scoped.scss'
@@ -9,7 +16,7 @@ import { DropdownService } from './dropdown.service'
 
 export interface DropdownMenuProps extends Props {
   abreast?: boolean
-  triggerRef: StaticRef<HTMLElement>
+  triggerRef: Ref<HTMLDivElement | null>
   width?: string
   noTrigger?: boolean
   padding?: string
@@ -22,21 +29,21 @@ export const DropdownMenuPortal = withAnnotation({
   providers: [
     DropdownService
   ]
-}, function DropdownMenuPortal(props: DropdownMenuProps) {
+}, withMark(css, function DropdownMenuPortal(props: DropdownMenuProps) {
   const dropdownContextService = inject(DropdownContextService)
   const container = inject(DropdownMenuContainer, inject(VIEW_CONTAINER))
 
-  const menuRef = createRef<HTMLElement>()
+  const menuRef = createRef<HTMLDivElement>()
 
   let timer: any = null
   const delay = 10
 
   function update() {
-    const menuElement = menuRef.current!
+    const menuElement = menuRef.value!
     menuElement.style.height = 'auto'
     const containerRect = container.getBoundingClientRect()
     if (props.abreast) {
-      const btnEle = props.triggerRef.current!
+      const btnEle = props.triggerRef.value!
       const screenHeight = document.documentElement.clientHeight
       const menuHeight = menuElement.scrollHeight
       const maxHeight = Math.min(screenHeight - 20, menuHeight)
@@ -52,7 +59,7 @@ export const DropdownMenuPortal = withAnnotation({
       }
       menuElement.style.top = offsetTop - containerRect.top + 'px'
 
-      const triggerRect = props.triggerRef.current!.getBoundingClientRect()
+      const triggerRect = props.triggerRef.value!.getBoundingClientRect()
       const leftDistance = triggerRect.left
       const isToLeft = leftDistance >= menuElement.offsetWidth + 20
       if (isToLeft && props.toLeft) {
@@ -70,7 +77,7 @@ export const DropdownMenuPortal = withAnnotation({
       }
 
     } else {
-      const triggerRect = props.triggerRef.current!.getBoundingClientRect()
+      const triggerRect = props.triggerRef.value!.getBoundingClientRect()
       const documentClientHeight = document.documentElement.clientHeight
 
       const bottomDistance = documentClientHeight - triggerRect.bottom
@@ -134,8 +141,8 @@ export const DropdownMenuPortal = withAnnotation({
     ev.stopPropagation()
   }
 
-  return createPortal(withScopedCSS(css, () => {
-    return (
+  return () => {
+    return <Portal host={container}>
       <div onMouseenter={onEnter} onMousedown={stopPropagation} onMouseleave={onLeave} ref={menuRef} style={{
         width: props.width
       }} class="dropdown-menu">
@@ -147,6 +154,6 @@ export const DropdownMenuPortal = withAnnotation({
           }
         </div>
       </div>
-    )
-  }), container)
-})
+    </Portal>
+  }
+}))

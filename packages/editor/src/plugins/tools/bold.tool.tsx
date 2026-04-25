@@ -32,7 +32,7 @@ export function BoldTool() {
   })
 
   return () => {
-    return <Button inlineCompact={true} chevronGapless={true} variant={'text'} highlight={viewModel.highlight}
+    return <Button inlineCompact={true} chevronGapless={true} variant={'text'} highlighted={viewModel.highlight}
                    size={'small'}
                    disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
                    onClick={toggle}>

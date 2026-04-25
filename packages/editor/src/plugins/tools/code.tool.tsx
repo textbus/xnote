@@ -32,7 +32,7 @@ export function CodeTool() {
 
   return () => {
     return <Button variant={'text'} size={'small'} inlineCompact={true} chevronGapless={true}
-      highlight={viewModel.highlight}
+      highlighted={viewModel.highlight}
       disabled={commonState().inSourceCode || commonState().readonly || commonState().selectEmbed}
       onClick={toggle}>
       <IconGlyph name={'code'}/>

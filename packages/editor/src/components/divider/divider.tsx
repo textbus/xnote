@@ -1,9 +1,9 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
+import { withMark } from '@viewfly/core'
 
 import css from './divider.scoped.scss'
 
-export function Divider() {
-  return withScopedCSS(css, () => {
+export const Divider = withMark(css, function Divider() {
+  return () => {
     return <div class="divider"/>
-  })
-}
+  }
+})

@@ -157,14 +157,14 @@ export function AiTool(props: AiToolProps) {
 
   function insert() {
     selection.collapse()
-    aiContentRef.current!.childNodes.forEach(node => {
+    aiContentRef.value!.childNodes.forEach(node => {
       const slot = parser.parse(node instanceof HTMLElement ? node : node.textContent || '', new Slot([
         ContentType.BlockComponent,
         ContentType.InlineComponent,
         ContentType.Text
       ]))
 
-      commander.paste(slot, aiContentRef.current!.innerText)
+      commander.paste(slot, aiContentRef.value!.innerText)
     })
 
     viewModel.showModal = false

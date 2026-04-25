@@ -16,8 +16,8 @@ export function HtmlFormPanel(props: { getEditor: () => Editor | null }) {
               return
             }
             const html = editor.getHTML()
-            htmlRef.current!.value = html
-            contentRef.current!.innerHTML = html
+            htmlRef.value!.value = html
+            contentRef.value!.innerHTML = html
           }}>获取 HTML
           </button>
           <button type="button" class="editor-btn editor-btn-primary" onClick={() => {
@@ -25,7 +25,7 @@ export function HtmlFormPanel(props: { getEditor: () => Editor | null }) {
             if (!editor) {
               return
             }
-            editor.setContent(htmlRef.current!.value)
+            editor.setContent(htmlRef.value!.value)
           }}>设置 HTML
           </button>
         </div>

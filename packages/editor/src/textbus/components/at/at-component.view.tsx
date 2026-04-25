@@ -1,22 +1,21 @@
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { Component, ContentType, Slot, Textbus } from '@textbus/core'
-import { createRef, onUnmounted, onUpdated } from '@viewfly/core'
+import { createRef, createSignal, onUnmounted, onUpdated } from '@viewfly/core'
 import { any2Hsl, ColorHSL, hsl2Rgb } from '@tanbo/color'
+import { Dropdown } from '@viewfly/ui-components'
 
 import { AtComponent } from './at.component'
 import './at.component.scss'
-import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { SlotRender } from '../SlotRender'
 
 export function AtComponentView(props: ViewComponentProps<AtComponent>) {
-  const dropdownRef = createRef<typeof Dropdown>()
-
+  const showDropdown = createSignal(false)
   const subscription = props.component.focus.subscribe((b) => {
-    if (dropdownRef.current && props.component.members().length) {
-      dropdownRef.current.isShow(b)
+    if (props.component.members().length) {
+     showDropdown.set(b)
     }
   })
 
@@ -27,12 +26,12 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
   const readonly = useReadonly()
   const output = useOutput()
 
-  const membersRef = createRef<HTMLElement>()
+  const membersRef = createRef<HTMLDivElement>()
   onUpdated(() => {
     if (output() || readonly()) {
       return
     }
-    const container = membersRef.current!
+    const container = membersRef.value!
     if (container) {
       const focusItem = container.children[props.component.selectedIndex()]
       if (focusItem) {
@@ -76,7 +75,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
       <div class="xnote-at"
            ref={props.rootRef}
            data-component={props.component.name}>
-        <Dropdown trigger={'none'} ref={dropdownRef} menu={
+        <Dropdown open={true} dropdown={
           <div class="xnote-at-menu" ref={membersRef}>
             {
               members.map((member, index) => {

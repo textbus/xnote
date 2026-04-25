@@ -1,15 +1,14 @@
-import { Keymap } from '@textbus/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { JSXNode } from '@viewfly/core'
+import { Keymap as TextbusKeymap } from '@textbus/core'
+import { JSXNode, withMark } from '@viewfly/core'
 import { isMac } from '@textbus/platform-browser'
 
 import css from './keymap.scoped.scss'
 
 export interface KeymapProps {
-  keymap: Keymap
+  keymap: TextbusKeymap
 }
 
-export function Keymap(props: KeymapProps) {
+export const Keymap = withMark(css, function Keymap(props: KeymapProps) {
   const arr: JSXNode[] = []
   const keymap = props.keymap
   if (keymap.modKey) {
@@ -39,7 +38,7 @@ export function Keymap(props: KeymapProps) {
       arr.push(<span>{keymap.key}</span>)
     }
   }
-  return withScopedCSS(css, () => {
+  return () => {
     return (
       <span class="keymap">
         {
@@ -47,5 +46,5 @@ export function Keymap(props: KeymapProps) {
         }
       </span>
     )
-  })
-}
+  }
+})

@@ -1,5 +1,4 @@
-import { createEffect, createSignal, getCurrentInstance, inject, onUnmounted } from '@viewfly/core'
-import { withScopedCSS } from '@viewfly/scoped-css'
+import { createSignal, getCurrentInstance, inject, onUnmounted, watch, withMark } from '@viewfly/core'
 import { Commander, Selection, Textbus } from '@textbus/core'
 import { Button, Input, Popover } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
@@ -17,7 +16,7 @@ export interface LinkToolProps {
   hideToolbar?(): void
 }
 
-export function LinkTool(props: LinkToolProps) {
+export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const refreshService = inject(RefreshService)
@@ -35,7 +34,7 @@ export function LinkTool(props: LinkToolProps) {
     isShow.set(false)
   }
 
-  createEffect(isShow, (b) => {
+  watch(isShow, (b) => {
     editorService.changeLeftToolbarVisible(!b)
   })
 
@@ -89,7 +88,7 @@ export function LinkTool(props: LinkToolProps) {
 
   const subApp = createApp(<SubApp/>).mount(viewDocument)
 
-  return withScopedCSS(css, () => {
+  return () => {
     return (
       <Button disabled={commonState().inSourceCode || commonState().readonly || selection.isCollapsed}
               size={'small'}
@@ -103,5 +102,5 @@ export function LinkTool(props: LinkToolProps) {
         <IconGlyph name={'link'}/>
       </Button>
     )
-  })
-}
+  }
+})

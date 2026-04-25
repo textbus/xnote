@@ -44,7 +44,7 @@ export function MergeCellsTool() {
   const commonState = useCommonState()
 
   return () => {
-    return <Button highlight={viewModel.highlight}
+    return <Button highlighted={viewModel.highlight}
                    size={'small'}
                    variant={'text'}
                    inlineCompact={true}

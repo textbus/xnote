@@ -1,5 +1,4 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { onMounted, onUnmounted, reactive, StaticRef, watch } from '@viewfly/core'
+import { onMounted, onUnmounted, reactive, Ref, watch, withMark } from '@viewfly/core'
 import { debounceTime } from '@textbus/core'
 
 import css from './selection-mask.scoped.scss'
@@ -16,10 +15,10 @@ export interface TableSelection {
 
 export interface SelectionMaskProps {
   component: TableComponent
-  tableRef: StaticRef<HTMLTableElement>
+  tableRef: Ref<HTMLTableElement | null>
 }
 
-export function SelectionMask(props: SelectionMaskProps) {
+export const SelectionMask = withMark(css, function SelectionMask(props: SelectionMaskProps) {
   const styles = reactive({
     visible: false,
     left: 0,
@@ -51,7 +50,7 @@ export function SelectionMask(props: SelectionMaskProps) {
       if (selection.endRow + 1 === state.rows.length) {
         heightCompensation += 0.5
       }
-      const trs = Array.from(props.tableRef.current!.rows)
+      const trs = Array.from(props.tableRef.value!.rows)
 
       const height = trs[selection.endRow - 1].offsetHeight ||
         (trs[selection.endRow - 1].children[0] as HTMLElement)?.offsetHeight || 0
@@ -73,7 +72,7 @@ export function SelectionMask(props: SelectionMaskProps) {
   onUnmounted(() => {
     s.unsubscribe()
   })
-  return withScopedCSS(css, () => {
+  return () => {
     return (
       <div class="mask" style={{
         display: styles.visible ? 'block' : 'none',
@@ -85,5 +84,5 @@ export function SelectionMask(props: SelectionMaskProps) {
         bottom: styles.bottom + 'px'
       }}/>
     )
-  })
-}
+  }
+})

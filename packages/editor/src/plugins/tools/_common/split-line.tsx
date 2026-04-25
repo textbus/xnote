@@ -1,9 +1,9 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
+import { withMark } from '@viewfly/core'
 
 import css from './split-line.scoped.scss'
 
-export function SplitLine() {
-  return withScopedCSS(css, () => {
+export const SplitLine = withMark(css, function SplitLine() {
+  return () => {
     return <div class="split-line"></div>
-  })
-}
+  }
+})

@@ -73,16 +73,6 @@ export function CellAlignTool() {
 
   const commonState = useCommonState()
   return () => {
-    const v = [
-      {
-        label: <MenuItem checked={currentValue() === 'top'} icon={<span class="xnote-icon-align-top"></span>}>顶部对齐</MenuItem>,
-        value: 'top'
-      },
-      {
-        label: <MenuItem checked={currentValue() === 'middle'} icon={<span class="xnote-icon-align-middle"></span>}>垂直居中</MenuItem>,
-        value: 'middle'
-      },
-    ]
     return (
       <Dropdown disabled={commonState().readonly || commonState().inSourceCode}
                 trigger={'hover'}
@@ -115,13 +105,12 @@ export function CellAlignTool() {
                     </MenuItem>
                   </MenuList>
                 }>
-        <Button arrow={true}
-                size={'small'}
+        <Button size={'small'}
                 variant={'text'}
                 inlineCompact={true}
                 chevronGapless={true}
                 disabled={commonState().readonly || commonState().inSourceCode}
-                highlight={highlight()}>
+                highlighted={highlight()}>
           <IconGlyph name={'align-' + (currentValue() || 'middle') as any}/>
         </Button>
       </Dropdown>

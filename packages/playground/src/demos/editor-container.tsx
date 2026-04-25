@@ -38,7 +38,7 @@ export function EditorContainer(props: {
   enableCollaboration?: boolean,
   onEditorReady?: (editor: Editor | null) => void
 }) {
-  const editorRef = createRef<HTMLElement>()
+  const editorRef = createRef<HTMLDivElement>()
   const staticToolbarRef = createRef<HTMLDivElement>()
   let editor: Editor | null = null
 
@@ -54,11 +54,11 @@ export function EditorContainer(props: {
         }
       } : {}),
       providers,
-      plugins: createPluginsByRoute(props.route, staticToolbarRef.current!)
+      plugins: createPluginsByRoute(props.route, staticToolbarRef.value!)
     })
     props.onEditorReady?.(editor)
 
-    editor.mount(editorRef.current!).then(() => {
+    editor.mount(editorRef.value!).then(() => {
       // mounted
     })
 

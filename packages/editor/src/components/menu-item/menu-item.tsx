@@ -1,5 +1,4 @@
-import { withScopedCSS } from '@viewfly/scoped-css'
-import { createSignal, inject, onUnmounted, Props, JSXNode } from '@viewfly/core'
+import { createSignal, inject, onUnmounted, Props, JSXNode, withMark } from '@viewfly/core'
 
 import css from './menu-item.scoped.scss'
 import { DropdownContextService } from '../dropdown/dropdown-context.service'
@@ -15,7 +14,7 @@ export interface MenuItemProps extends Props {
   onClick?(value: any): void
 }
 
-export function MenuItem(props: MenuItemProps) {
+export const MenuItem = withMark(css, function MenuItem(props: MenuItemProps) {
   const dropdownContextService = inject(DropdownContextService, null)
   const isActive = createSignal(dropdownContextService?.isOpen || false)
   if (dropdownContextService) {
@@ -35,7 +34,7 @@ export function MenuItem(props: MenuItemProps) {
     props.onClick?.(props.value)
   }
 
-  return withScopedCSS(css, () => {
+  return () => {
     return (
       <div class={['menu-item', { disabled: props.disabled, active: props.arrow && isActive() }]} onClick={click}>
         <div class="menu-item-content">
@@ -56,5 +55,5 @@ export function MenuItem(props: MenuItemProps) {
         }
       </div>
     )
-  })
-}
+  }
+})

@@ -56,7 +56,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
   const dropdownRef = createRef<typeof Dropdown>()
 
   function setType(type: string) {
-    dropdownRef.current?.isShow(false)
+    dropdownRef.value?.isShow(false)
     props.component.state.type = type
   }
 
