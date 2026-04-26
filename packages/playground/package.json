@@ -9,17 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@textbus/collaborate": "^5.2.2",
-    "@textbus/core": "^5.2.2",
+    "@textbus/collaborate": "^5.2.4",
+    "@textbus/core": "^5.2.4",
     "@textbus/xnote": "workspace:^1.2.0",
-    "@viewfly/core": "3.0.0-alpha.1",
-    "@viewfly/platform-browser": "3.0.0-alpha.1",
-    "@viewfly/router": "3.0.0-alpha.1",
+    "@viewfly/core": "3.0.0-alpha.3",
+    "@viewfly/platform-browser": "3.0.0-alpha.3",
+    "@viewfly/router": "3.0.0-alpha.3",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@swc/core": "^1.15.30",
-    "@viewfly/devtools": "3.0.0-alpha.1",
+    "@viewfly/devtools": "3.0.0-alpha.3",
     "ip": "^2.0.1",
     "unocss": "^66.6.8",
     "vite": "^8.0.9",

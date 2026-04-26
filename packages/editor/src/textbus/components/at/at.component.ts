@@ -190,7 +190,7 @@ export class AtComponent extends Component<AtComponentState> {
     })
 
     const subs = onChange.pipe(switchMap(() => {
-      const key = this.state.slot!.toString()
+      const key = this.state.slot?.isEmpty ? '' : this.state.slot!.toString()
       return fromPromise(organization.getMembers(key))
     })).subscribe((members) => {
       this.members.set(members)

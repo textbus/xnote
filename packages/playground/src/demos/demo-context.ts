@@ -40,7 +40,7 @@ function sleep(delay: number) {
 class Http extends Organization {
   async getMembers(name: string): Promise<Member[]> {
     await sleep(100)
-    const len = Math.floor(20 / name.length + 1)
+    const len = Math.floor(20 / (name.length || 1) + 1)
 
     const arr = Array.from<Member>({ length: len }).map(() => {
       return {

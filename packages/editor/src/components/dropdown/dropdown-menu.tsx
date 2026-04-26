@@ -142,7 +142,7 @@ export const DropdownMenuPortal = withAnnotation({
   }
 
   return () => {
-    return <Portal host={container}>
+    return <Portal container={container}>
       <div onMouseenter={onEnter} onMousedown={stopPropagation} onMouseleave={onLeave} ref={menuRef} style={{
         width: props.width
       }} class="dropdown-menu">

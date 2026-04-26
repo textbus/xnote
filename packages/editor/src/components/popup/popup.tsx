@@ -11,7 +11,7 @@ export interface PopupProps extends Props {
 export const Popup = withMark(css, function Popup(props: PopupProps) {
   const host = inject(VIEW_CONTAINER)
   return () => {
-    return <Portal host={host}>
+    return <Portal container={host}>
       <div class="popup" style={{
         left: props.left + 'px',
         top: props.top + 'px'

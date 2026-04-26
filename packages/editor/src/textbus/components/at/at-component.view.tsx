@@ -15,7 +15,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
   const showDropdown = createSignal(false)
   const subscription = props.component.focus.subscribe((b) => {
     if (props.component.members().length) {
-     showDropdown.set(b)
+      showDropdown.set(b)
     }
   })
 
@@ -75,7 +75,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
       <div class="xnote-at"
            ref={props.rootRef}
            data-component={props.component.name}>
-        <Dropdown open={true} dropdown={
+        <Dropdown open={showDropdown()} dropdown={
           <div class="xnote-at-menu" ref={membersRef}>
             {
               members.map((member, index) => {

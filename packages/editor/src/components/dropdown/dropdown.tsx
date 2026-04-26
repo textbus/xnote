@@ -119,7 +119,7 @@ export const Dropdown = withAnnotation({
         dropdownContextService.hide(false)
       }
     },
-    $render: () => {
+    render: () => {
       return (
         <div class={['dropdown', props.class]} style={props.style} ref={dropdownRef}>
           <div class="dropdown-btn" ref={triggerRef}>
