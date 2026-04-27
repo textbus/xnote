@@ -1,11 +1,10 @@
 import { Component, ComponentStateLiteral, ContentType, Registry, Slot, Textbus, } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { createRef } from '@viewfly/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
+import { Dropdown } from '@viewfly/ui-components'
 
 import { deltaToBlock } from '../paragraph/paragraph.component'
 import './highlight.component.scss'
-import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useBlockContent } from '../../hooks/use-block-content'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
@@ -53,10 +52,8 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
   for (let i = 0x1F600; i <= 0x1F64F; i++) {
     emoji.push(i)
   }
-  const dropdownRef = createRef<typeof Dropdown>()
 
   function setType(type: string) {
-    dropdownRef.value?.isShow(false)
     props.component.state.type = type
   }
 
@@ -77,7 +74,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
     return (
       <div data-component={name} ref={props.rootRef} data-icon={state.type} class="xnote-highlight-box">
         <div class="xnote-highlight-box-left">
-          <Dropdown trigger="click" ref={dropdownRef} width="282px" menu={
+          <Dropdown dropdown={
             <div class="xnote-highlight-box-icons">
               <div class="xnote-highlight-box-heading">常用</div>
               {

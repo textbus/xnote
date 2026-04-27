@@ -141,7 +141,11 @@ export const InlineToolbar = withAnnotation({
       const rect = bridge.getRect({
         slot: selection.focusSlot!,
         offset: selection.focusOffset!
-      })!
+      })
+      if (!rect) {
+        viewPosition.open = false
+        return
+      }
       viewPosition.left = rect.left
       viewPosition.top = rect.top
       viewPosition.width = rect.width
