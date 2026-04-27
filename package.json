@@ -3,7 +3,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "pnpm --filter @textbus/xnote-playground dev",
+    "dev": "pnpm --filter @textbus/xnote-playground dev",
     "dev:playground": "pnpm --filter @textbus/xnote-playground dev",
     "serve": "pnpm --filter @textbus/xnote serve",
     "build": "pnpm run build:lib && pnpm run build:playground",

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES2022",
     "module": "esnext",
     "strict": true,
     "moduleResolution": "bundler",
@@ -8,19 +8,13 @@
     "useDefineForClassFields": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "lib": ["ES2022", "DOM"],
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "noImplicitAny": false,
     "downlevelIteration": true,
     "esModuleInterop": true,
     "noImplicitOverride": true,
-    "types": [
-      "node"
-    ],
     "jsx": "react-jsx",
     "jsxImportSource": "@viewfly/core"
   }
