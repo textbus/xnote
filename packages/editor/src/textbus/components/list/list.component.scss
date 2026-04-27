@@ -23,7 +23,6 @@ ul.xnote-list .xnote-list-type {
 
 .xnote-list-type {
   min-width: 24px;
-  padding-right: 10px;
   text-indent: 0;
   text-align: left;
   color: #296eff;
@@ -36,6 +35,15 @@ ul.xnote-list .xnote-list-type {
 
 .xnote-order-btn {
   //padding-left: 5px;
+  display: block;
+  padding-right: 10px;
+
+  &:hover {
+    padding-left: 4px;
+    margin-left: -4px;
+    border-radius: 3px;
+    background: #eee;
+  }
 }
 
 .xnote-list-content {

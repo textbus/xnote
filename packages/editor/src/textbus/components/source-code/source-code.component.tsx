@@ -22,16 +22,14 @@ import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { createSignal, inject, onUnmounted } from '@viewfly/core'
+import { Button, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import './source-code.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
-import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
-import { ToolbarItem } from '../../../components/toolbar-item/toolbar-item'
-import { Button } from '../../../components/button/button'
-import { Dropdown } from '../../../components/dropdown/dropdown'
-import { MenuItem } from '../../../components/menu-item/menu-item'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
+import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
 
 export const languageList: Array<{ label: string, value: string }> = [{
   label: 'JavaScript',
@@ -526,47 +524,89 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
            data-line-number={state.lineNumber + ''}
       >
         {
-          (!readonly() && !output()) && <ComponentToolbar visible={isFocus()}>
-            <ToolbarItem>
-              <Dropdown onCheck={changeLang} trigger={'hover'} menu={languageList.map(item => {
-                return {
-                  label: <MenuItem checked={state.lang === item.value}>{item.label || 'Plain Text'}</MenuItem>,
-                  value: item.value
-                }
-              })}>
-                <Button arrow={true}>{lang || 'Plain Text'}</Button>
-              </Dropdown>
-            </ToolbarItem>
-            <ToolbarItem>
-              主题：<Dropdown trigger={'hover'} onCheck={changeTheme} menu={sourceCodeThemes.map(item => {
-              return {
-                label: <MenuItem checked={state.theme === item}>{item}</MenuItem>,
-                value: item
-              }
-            })}>
-              <Button arrow={true}>{state.theme || 'github'}</Button>
-            </Dropdown>
-            </ToolbarItem>
-            <ToolbarItem>
-              <Dropdown onCheck={setting} menu={[
-                {
-                  label: <MenuItem icon={<span class="xnote-icon-list-numbered"/>} checked={state.lineNumber}>行号</MenuItem>,
-                  value: 'lineNumber'
-                }, {
-                  label: <MenuItem icon={<span class="xnote-icon-text-wrap"/>} checked={state.autoBreak}>自动换行</MenuItem>,
-                  value: 'autoBreak'
-                }
-              ]}>
-                <Button arrow={true}>设置</Button>
-              </Dropdown>
-            </ToolbarItem>
-            <ToolbarItem>
-              <Button onClick={props.component.emphasize}>强调</Button>
-            </ToolbarItem>
-            <ToolbarItem>
-              <Button onClick={props.component.cancelEmphasize}>取消强调</Button>
-            </ToolbarItem>
-          </ComponentToolbar>
+          (!readonly() && !output()) &&
+          <div style={{
+            height: 0,
+            top: '-10px',
+            position: 'relative'
+          }}>
+            <ComponentToolbar visible={isFocus()}>
+              <div class={'flex items-center text-[13px]'}>
+                <Dropdown trigger={'hover'} dropdown={
+                  <MenuList columnCompact={true}>
+                    {
+                      languageList.map(item => {
+                        return (
+                          <MenuItem density={'compact'} onClick={() => changeLang(item.value)}>
+                            <div class={'flex justify-between'}>
+                              {item.label || 'Plain Text'}
+                              <span class={'flex items-center'}>
+                              {state.lang === item.value && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                            </span>
+                            </div>
+                          </MenuItem>
+                        )
+                      })
+                    }
+                  </MenuList>
+                }>
+                  <Button size={'small'} variant={'text'}>{lang || 'Plain Text'}</Button>
+                </Dropdown>
+
+                <span>主题：</span>
+                <Dropdown trigger={'hover'} dropdown={
+                  <MenuList columnCompact={true}>
+                    {
+                      sourceCodeThemes.map(item => {
+                        return (
+                          <MenuItem density={'compact'} onClick={() => changeTheme(item)}>
+                            <div class={'flex justify-between'}>
+                              {item}
+                              <span class={'flex items-center'}>
+                              {state.theme === item && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                            </span>
+                            </div>
+                          </MenuItem>
+                        )
+                      })
+                    }
+                  </MenuList>
+                }>
+                  <Button variant={'text'} size={'small'}>{state.theme || 'github'}</Button>
+                </Dropdown>
+                <Dropdown trigger={'hover'} dropdown={
+                  <MenuList style={{
+                    width: '130px'
+                  }} columnCompact={true}>
+                    <MenuItem density={'compact'} icon={<IconGlyph name={'list-numbered'}/>} onClick={() => {
+                      setting('lineNumber')
+                    }}>
+                      <div class={'flex justify-between'}>
+                        行号
+                        <span class={'flex items-center'}>
+                        {state.lineNumber && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                      </span>
+                      </div>
+                    </MenuItem>
+                    <MenuItem density={'compact'} icon={<IconGlyph name={'text-wrap'}/>} onClick={() => {
+                      setting('autoBreak')
+                    }}>
+                      <div class={'flex justify-between'}>
+                        自动换行
+                        <span class={'flex items-center'}>
+                        {state.autoBreak && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                      </span>
+                      </div>
+                    </MenuItem>
+                  </MenuList>
+                }>
+                  <Button size={'small'} variant={'text'}>设置</Button>
+                </Dropdown>
+                <Button size={'small'} variant={'text'} onClick={props.component.emphasize}>强调</Button>
+                <Button size={'small'} variant={'text'} onClick={props.component.cancelEmphasize}>取消强调</Button>
+              </div>
+            </ComponentToolbar>
+          </div>
         }
         <div class={[
           'xnote-source-code-container',

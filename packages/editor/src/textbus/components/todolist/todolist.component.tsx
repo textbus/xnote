@@ -14,6 +14,7 @@ import {
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import './todolist.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
@@ -159,7 +160,11 @@ export function TodolistView(props: ViewComponentProps<TodolistComponent>) {
         textAlign: component.state.slot.getAttribute(textAlignAttr) === 'justify' ? 'justify' : void 0
       }}>
         <div class="xnote-todolist-icon" onClick={toggle}>
-          <span data-checked={checked} class={[checked ? 'xnote-icon-checkbox-checked' : 'xnote-icon-checkbox-unchecked']}/>
+          {
+            checked ?
+              <IconGlyph name={'checkbox-checked'}/> :
+              <IconGlyph name={'checkbox-unchecked'}/>
+          }
         </div>
 
         <SlotRender slot={slot} tag="div" class="xnote-todolist-content" renderEnv={readonly() || output()}/>

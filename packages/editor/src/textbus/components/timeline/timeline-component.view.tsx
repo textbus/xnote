@@ -2,12 +2,13 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
 import { ContentType, createVNode, Slot, Textbus } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { IconGlyph } from '@viewfly/ui-icons'
+import { Button } from '@viewfly/ui-components'
 
 import { createTimelineItem, TimelineComponent } from './timeline.component'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 import './timeline.component.scss'
-import { Button } from '../../../components/button/button'
 
 export function TimelineComponentView(props: ViewComponentProps<TimelineComponent>) {
   const adapter = inject(DomAdapter)
@@ -31,14 +32,19 @@ export function TimelineComponentView(props: ViewComponentProps<TimelineComponen
                 }}/>
                 {
                   !isOutput() && !isReadonly() && <div class="xnote-timeline-tools">
-                    <Button class="xnote-timeline-add xnote-icon-plus" onClick={() => {
+                    <Button size={'small'} shape={'circle'} class="xnote-step-add" onClick={() => {
                       const index = component.state.items.indexOf(item) + 1
                       component.state.items.splice(index, 0, createTimelineItem(item.theme))
-                    }}></Button>
-                    <Button class="xnote-timeline-add xnote-icon-bin" onClick={() => {
+                    }}>
+                      <IconGlyph name={'plus'}/>
+                    </Button>
+                    {' '}
+                    <Button size={'small'} shape={'circle'} class="xnote-step-add" onClick={() => {
                       const index = component.state.items.indexOf(item)
                       component.state.items.splice(index, 1)
-                    }}></Button>
+                    }}>
+                      <IconGlyph name={'bin'}/>
+                    </Button>
                   </div>
                 }
                 {

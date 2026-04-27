@@ -1,12 +1,12 @@
 import { createSignal, inject, onMounted, onUnmounted, Signal, withMark } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import css from './top-bar.scoped.scss'
 import { EditorService } from '../../../../services/editor.service'
 import { TableComponent } from '../table.component'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
-import { ToolbarItem } from '../../../../components/toolbar-item/toolbar-item'
-import { Button } from '../../../../components/button/button'
 import { TableService } from '../table.service'
 import { sum } from '../_utils'
 
@@ -104,14 +104,15 @@ export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
                 display: selectedColumnRange() ? 'inline-block' : 'none',
               }}
               innerStyle={{
+                padding: 0,
                 transform: 'translateX(-50%)'
               }}
               visible={!!selectedColumnRange()}>
-              <ToolbarItem>
-                <Button onClick={() => {
+                <Button style={{
+                  padding: '0 8px',
+                }} variant={'text'} type={'primary'} size={'small'} onClick={() => {
                   props.component.deleteColumns()
-                }}><span class="xnote-icon-bin"></span></Button>
-              </ToolbarItem>
+                }}><IconGlyph name={'bin'}/></Button>
             </ComponentToolbar>
             <table style={{
               transform: `translateX(${-leftDistance()}px)`

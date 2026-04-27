@@ -2,12 +2,13 @@ import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject } from '@viewfly/core'
 import { ContentType, createVNode, Slot, Textbus } from '@textbus/core'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import { createStepItem, StepComponent } from './step.component'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 import './step.component.scss'
-import { Button } from '../../../components/button/button'
 
 export function StepComponentView(props: ViewComponentProps<StepComponent>) {
   const adapter = inject(DomAdapter)
@@ -43,14 +44,19 @@ export function StepComponentView(props: ViewComponentProps<StepComponent>) {
                 </div>
                 {
                   !isOutput() && !isReadonly() && <div class="xnote-step-tools">
-                    <Button class="xnote-step-add xnote-icon-plus" onClick={() => {
+                    <Button size={'small'} shape={'circle'} class="xnote-step-add" onClick={() => {
                       const index = component.state.items.indexOf(item) + 1
                       component.state.items.splice(index, 0, createStepItem())
-                    }}></Button>
-                    <Button class="xnote-step-add xnote-icon-bin" onClick={() => {
+                    }}>
+                      <IconGlyph name={'plus'}/>
+                    </Button>
+                    {' '}
+                    <Button size={'small'} shape={'circle'} class="xnote-step-add" onClick={() => {
                       const index = component.state.items.indexOf(item)
                       component.state.items.splice(index, 1)
-                    }}></Button>
+                    }}>
+                      <IconGlyph name={'bin'}/>
+                    </Button>
                   </div>
                 }
                 {

@@ -3,7 +3,6 @@ import { Application, createContext, Injector } from '@viewfly/core'
 import { createApp } from '@viewfly/platform-browser'
 
 import { StaticToolbar } from './static-toolbar'
-import { DropdownMenuContainer } from '../../components/dropdown/dropdown-menu'
 
 export interface StaticToolbarOptions {
   host: HTMLElement
@@ -21,13 +20,7 @@ export class StaticToolbarPlugin implements Plugin {
     const container = document.createElement('div')
     container.style.position = 'relative'
     container.style.borderRadius = 'inherit'
-    const Context = createContext([{
-      provide: DropdownMenuContainer,
-      useValue: container
-    }])
-    this.app = createApp(<Context>
-      <StaticToolbar theme={this.options.theme} />
-    </Context>, {
+    this.app = createApp(<StaticToolbar theme={this.options.theme} />, {
       context: injector
     })
     this.options.host.appendChild(container)

@@ -17,13 +17,11 @@ import {
 import { inject } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
+import { Dropdown, MenuItem } from '@viewfly/ui-components'
 
 import './list.component.scss'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
-import { Dropdown } from '../../../components/dropdown/dropdown'
-import { Button } from '../../../components/button/button'
-import { MenuItem } from '../../../components/menu-item/menu-item'
 import { textAlignAttr } from '../../attributes/text-align.attr'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
@@ -340,14 +338,17 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
           <div class={['xnote-list-inner']}>
             <div class={['xnote-list-type', heading ? `xnote-${heading}` : '']}>{
               (component.state.type === 'UnorderedList' || readonly() || output()) ?
-                <span class="xnote-order-btn">{iconEl}</span>
+                <span>{iconEl}</span>
                 :
-                <Dropdown menu={<>
-                  <MenuItem onClick={() => reorder(false)}>继续编号</MenuItem>
-                  <MenuItem onClick={() => reorder(true)}>重新编号</MenuItem>
-                </>}>
-                  <Button
-                    style={{ color: 'inherit', fontSize: 'inherit', height: 'auto', appearance: 'none', padding: '0' }}>{iconEl}</Button>
+                <Dropdown trigger={'hover'} orientation={'horizontal'} dropdown={
+                  <div style={{
+                    width: '120px'
+                  }}>
+                    <MenuItem onClick={() => reorder(false)}>继续编号</MenuItem>
+                    <MenuItem onClick={() => reorder(true)}>重新编号</MenuItem>
+                  </div>
+                }>
+                  <span class="xnote-order-btn">{iconEl}</span>
                 </Dropdown>
             }</div>
             <SlotRender

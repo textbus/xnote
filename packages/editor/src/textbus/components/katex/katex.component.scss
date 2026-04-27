@@ -11,9 +11,9 @@
 
 .xnote-katex-input {
   min-height: 300px;
-  position: absolute;
   inset: 0;
   width: 590px;
+  margin: -6px;
 
   .xnote-source-code {
     margin: 0;

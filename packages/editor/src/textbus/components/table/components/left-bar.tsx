@@ -9,12 +9,11 @@ import {
   withMark
 } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
+import { Button } from '@viewfly/ui-components'
 
 import css from './left-bar.scoped.scss'
 import { TableComponent } from '../table.component'
 import { TableService } from '../table.service'
-import { ToolbarItem } from '../../../../components/toolbar-item/toolbar-item'
-import { Button } from '../../../../components/button/button'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
 import { EditorService } from '../../../../services/editor.service'
 
@@ -150,15 +149,16 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
                           }}
                           innerStyle={{
                             top: 0,
+                            padding: 0,
                             transform: 'translateY(-50%)'
                           }}
                           visible={deleteIndex() === index}>
-                          <ToolbarItem>
-                            <Button onClick={() => {
-                              props.component.deleteRows()
-                              deleteIndex.set(null)
-                            }}><span class="xnote-icon-bin"></span></Button>
-                          </ToolbarItem>
+                          <Button size={'small'} style={{
+                            padding: '0 8px',
+                          }} variant={'text'} type={'primary'} onClick={() => {
+                            props.component.deleteRows()
+                            deleteIndex.set(null)
+                          }}><span class="xnote-icon-bin"></span></Button>
                         </ComponentToolbar>
                       </div>
                     </td>

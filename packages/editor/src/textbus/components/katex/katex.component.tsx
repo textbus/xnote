@@ -6,14 +6,14 @@ import {
   Textbus,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { createDynamicRef, createRef, inject, jsx, JSXNode } from '@viewfly/core'
+import { createDynamicRef, inject, jsx, JSXNode } from '@viewfly/core'
 import { ComponentLoader } from '@textbus/platform-browser'
 // @ts-ignore
 import Katex from 'katex'
+import { Dropdown } from '@viewfly/ui-components'
 
 import './katex.component.scss'
 import { KatexEditor } from './katex-editor'
-import { Dropdown } from '../../../components/dropdown/dropdown'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 
@@ -93,9 +93,9 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
       props.component.state.text = value
     }).add(
       fromEvent(node, 'mousedown').subscribe(ev => ev.stopPropagation()),
-      fromEvent(document, 'mousedown').subscribe(() => {
-        dropdownRef.value?.isShow(false)
-      })
+      // fromEvent(document, 'mousedown').subscribe(() => {
+      //   dropdownRef.value?.isShow(false)
+      // })
     )
 
     return () => {
@@ -104,21 +104,17 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
     }
   })
 
-  const dropdownRef = createRef<typeof Dropdown>()
-
   const output = useOutput()
   const readonly = useReadonly()
   return () => {
     const text = props.component.state.text
     return (
-      <span onClick={() => {
-        dropdownRef.value?.isShow(true)
-      }} ref={props.rootRef} data-component={KatexComponent.componentName} data-katex={encodeURIComponent(text)} class="xnote-katex">
+      <span ref={props.rootRef} data-component={KatexComponent.componentName} data-katex={encodeURIComponent(text)} class="xnote-katex">
        {
          (output() || readonly()) ?
            domToVDom(toDOM(text))
            :
-           <Dropdown padding={'0'} ref={dropdownRef} trigger={'none'} width={'600px'} menu={
+           <Dropdown dropdown={
              <div class="xnote-katex-input" ref={editorRef}>
              </div>
            }>
