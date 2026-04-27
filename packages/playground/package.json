@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@textbus/collaborate": "^5.2.4",
-    "@textbus/core": "^5.2.4",
+    "@textbus/collaborate": "^5.2.6",
+    "@textbus/core": "^5.2.6",
     "@textbus/xnote": "workspace:^1.2.0",
     "@viewfly/core": "3.0.0-alpha.7",
     "@viewfly/platform-browser": "3.0.0-alpha.7",
@@ -18,8 +18,8 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "@types/node": "^22.15.0",
     "@swc/core": "^1.15.30",
+    "@types/node": "^22.15.0",
     "@viewfly/devtools": "3.0.0-alpha.7",
     "ip": "^2.0.1",
     "unocss": "^66.6.8",
