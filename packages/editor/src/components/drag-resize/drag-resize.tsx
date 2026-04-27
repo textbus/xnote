@@ -46,6 +46,7 @@ export const DragResize = withMark(style, function DragResize(props: DragResizeP
   const mask = createRef<HTMLDivElement>()
 
   function drag(ev: MouseEvent) {
+    ev.preventDefault()
     docContainer.style.pointerEvents = 'none'
     const ele = props.source.value!
 
@@ -64,6 +65,7 @@ export const DragResize = withMark(style, function DragResize(props: DragResizeP
     const index = handlers.indexOf(ev.target as HTMLButtonElement)
 
     const unMove = fromEvent<MouseEvent>(document, 'mousemove').subscribe(ev => {
+      ev.preventDefault()
       const moveX = ev.clientX
       const moveY = ev.clientY
 
