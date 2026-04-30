@@ -9,10 +9,14 @@
     "build": "pnpm run build:lib && pnpm run build:playground",
     "build:playground": "pnpm --filter @textbus/xnote-playground build",
     "build:lib": "pnpm --filter @textbus/xnote build:lib",
-    "publish:lib": "pnpm --filter @textbus/xnote publish:lib"
+    "publish:lib": "pnpm --filter @textbus/xnote publish:lib",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish"
   },
   "packageManager": "pnpm@10.18.3",
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "unocss": "^66.6.8"
   }
 }

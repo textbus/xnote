@@ -1,4 +1,3 @@
-import '@viewfly/ui-components/style.css'
 import 'virtual:uno.css'
 export * from './components/_api'
 export * from './plugins/_api'

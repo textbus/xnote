@@ -51,6 +51,7 @@ export default defineConfig({
   ],
   build: {
     target: 'es2020',
+    minify: false,
     outDir: 'dist',
     emptyOutDir: false,
     cssCodeSplit: false,
