@@ -31,7 +31,7 @@ function App() {
             })}
           </aside>
           <div class="playground-content">
-            <RouterOutlet config={demoRoutes}>
+            <RouterOutlet>
               未匹配到演示页面
             </RouterOutlet>
           </div>
@@ -42,4 +42,4 @@ function App() {
 }
 
 void user
-createApp(<App/>).use(new RouterModule()).mount(document.getElementById('app')!)
+createApp(<App/>).use(new RouterModule({ routes: demoRoutes })).mount(document.getElementById('app')!)

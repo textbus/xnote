@@ -1,4 +1,4 @@
-@import "../../../../assets/scroll";
+@use "../../../../assets/scroll" as *;
 
 .scroll-container {
   overflow-x: auto;

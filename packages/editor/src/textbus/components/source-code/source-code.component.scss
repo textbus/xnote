@@ -1,15 +1,15 @@
-@import './theme/atom-one-dark.scss';
-@import './theme/foundation.scss';
-@import './theme/github.scss';
-@import './theme/idea.scss';
-@import './theme/intellij-light.scss';
-@import './theme/stackoverflow-light';
-@import './theme/vs2015';
-@import './theme/xcode';
-@import './theme/xnote-dark';
-@import './theme/xnote-dark-blue';
+@use './theme/atom-one-dark.scss';
+@use './theme/foundation.scss';
+@use './theme/github.scss';
+@use './theme/idea.scss';
+@use './theme/intellij-light.scss';
+@use './theme/stackoverflow-light';
+@use './theme/vs2015';
+@use './theme/xcode';
+@use './theme/xnote-dark';
+@use './theme/xnote-dark-blue';
 
-@import '../../../assets/scroll';
+@use '../../../assets/scroll' as *;
 
 .xnote-source-code code {
   padding: 0;

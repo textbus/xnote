@@ -1,4 +1,4 @@
-@import "katex/dist/katex.min.css";
+@use "katex/dist/katex.min.css";
 
 .xnote-katex, .katex-display, .katex, .katex-html {
   display: inline-block

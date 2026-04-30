@@ -18,11 +18,11 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@viewfly/ui-components':
-        specifier: ^0.0.9
-        version: 0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8)(@viewfly/ui-icons@0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8))
+        specifier: ^0.0.13
+        version: 0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0)(@viewfly/ui-icons@0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0))
       '@viewfly/ui-icons':
-        specifier: ^0.0.9
-        version: 0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8)
+        specifier: ^0.0.13
+        version: 0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0)
       highlight.js:
         specifier: ^11.9.0
         version: 11.11.1
@@ -70,14 +70,14 @@ importers:
         specifier: ^5.8.0
         version: 5.62.0(eslint@8.57.1)(typescript@5.9.3)
       '@viewfly/core':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8
+        specifier: 3.0.0
+        version: 3.0.0
       '@viewfly/devtools':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0))
+        specifier: 3.0.0
+        version: 3.0.0(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0))
       '@viewfly/platform-browser':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8
+        specifier: 3.0.0
+        version: 3.0.0
       autoprefixer:
         specifier: ^10.4.0
         version: 10.5.0(postcss@8.5.12)
@@ -127,14 +127,14 @@ importers:
         specifier: workspace:^1.2.0
         version: link:../editor
       '@viewfly/core':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8
+        specifier: 3.0.0
+        version: 3.0.0
       '@viewfly/platform-browser':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8
+        specifier: 3.0.0
+        version: 3.0.0
       '@viewfly/router':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8
+        specifier: 3.0.0
+        version: 3.0.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -146,8 +146,8 @@ importers:
         specifier: ^22.15.0
         version: 22.19.17
       '@viewfly/devtools':
-        specifier: 3.0.0-alpha.8
-        version: 3.0.0-alpha.8(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0))
+        specifier: 3.0.0
+        version: 3.0.0(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0))
       ip:
         specifier: ^2.0.1
         version: 2.0.1
@@ -1120,29 +1120,29 @@ packages:
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0 || ^8.0.0-0
 
-  '@viewfly/core@3.0.0-alpha.8':
-    resolution: {integrity: sha512-sZZ0B5gf5CCml+Nb7YxCDsTLJXcrTM/x6c1fYHLIKf1lhyYMcG5zi6InTgvKoVukDKCXodwA106/KHLYQCDoPw==}
+  '@viewfly/core@3.0.0':
+    resolution: {integrity: sha512-BErq2GEtxZUzFzYTm+r31uhWSTGdMdbGPMzk1xK0bu7ZdHxxpw6FSGab44WzrTvNFy5WZ3kHybuYHQ5q4EykFA==}
 
-  '@viewfly/devtools@3.0.0-alpha.8':
-    resolution: {integrity: sha512-AZNYzuuTEZV4isowKV+KBMiLXwPpEglLYVXI5zhakguvEVH0KaWxuwyigHnK8Tb+CMhGBwwWDRUoCJJkvHtWxw==}
+  '@viewfly/devtools@3.0.0':
+    resolution: {integrity: sha512-xePDu5969fEI1p2VA06cWXWBtAUzxjwvwB7t+wXVqAaoXx9iT7OR81yYqn7COQNOHPcQvlpXj30nuDe2MOh+bA==}
     peerDependencies:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@viewfly/platform-browser@3.0.0-alpha.8':
-    resolution: {integrity: sha512-9MhQMZvXuDhaIPlqIOccMH3z+n4Lzu4IjeoEnZhDe5kazdfnhf2n/BOiw7asTTaKY48KbAz5EesYKIIKYejsLQ==}
+  '@viewfly/platform-browser@3.0.0':
+    resolution: {integrity: sha512-ZOtRJs7YrCr+A83jHsSFl3MOfKoPth0POUK5tx2QPzKc1dbGEhwChXP3rWXm3jBMyoklqmxJcgD2HLV6WEkTug==}
 
-  '@viewfly/router@3.0.0-alpha.8':
-    resolution: {integrity: sha512-GuTGX7XzR/cSn2qPuRiU0V0vMd+gvLrKXNG+m1xqdhneqEDp3x9VD8CNEUS6xLUQxXnkOa5LO9oReC/0zPG+mA==}
+  '@viewfly/router@3.0.0':
+    resolution: {integrity: sha512-BJWcjVbFrn9Fd2wUoF/TK2SrWs9W0Idb2+6Q9qa8HpXf85wnffAr0xr6EnsH9yOgwpaQiUA1anBKhqgR2+RURw==}
 
-  '@viewfly/ui-components@0.0.9':
-    resolution: {integrity: sha512-lxOGCpMMR3RrsCGW4fgM2huahnY+qwiMTZyqOS96B+7sbDN8h+3gezY46+czlSr4/RXYkapTZQKMusgHqgfqkQ==}
+  '@viewfly/ui-components@0.0.13':
+    resolution: {integrity: sha512-GHCjSEcxT7LekitYgK7BeMYHs7d0zn1pqc0KOA0r3mzfHU+BHqiriMfn6fGd4Phg1cc5ai80KgD08iSFMUSAFQ==}
     peerDependencies:
       '@viewfly/core': ^3.0.0-alpha.8
       '@viewfly/platform-browser': ^3.0.0-alpha.8
-      '@viewfly/ui-icons': ^0.0.9
+      '@viewfly/ui-icons': ^0.0.13
 
-  '@viewfly/ui-icons@0.0.9':
-    resolution: {integrity: sha512-SjQWzwTvTVDd6da55HejToLG9tH9CPPBq8AdugRN09UVlvMRniHYotvNnf01YLy082buEb2l946gLV9FobjoQw==}
+  '@viewfly/ui-icons@0.0.13':
+    resolution: {integrity: sha512-uYQkWDC4cN69BFEAooCQ0Tw4VROFHd2MSAxnun9XQ+7REdKhHA4ClIu3PgN72aux59h7G6vklInBfeEY2uz2+w==}
     peerDependencies:
       '@viewfly/core': ^3.0.0-alpha.8
       '@viewfly/platform-browser': ^3.0.0-alpha.8
@@ -3981,15 +3981,15 @@ snapshots:
       '@textbus/core': 5.2.7
       '@textbus/platform-browser': 5.2.7
       '@textbus/platform-node': 5.2.7
-      '@viewfly/core': 3.0.0-alpha.8
-      '@viewfly/platform-browser': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
+      '@viewfly/platform-browser': 3.0.0
 
   '@textbus/collaborate@5.2.7(y-protocols@1.0.7(yjs@13.6.30))':
     dependencies:
       '@hocuspocus/provider': 3.4.4(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)
       '@tanbo/stream': 1.2.7
       '@textbus/core': 5.2.7
-      '@viewfly/core': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
       y-websocket: 3.0.0(yjs@13.6.30)
       yjs: 13.6.30
     transitivePeerDependencies:
@@ -4000,20 +4000,20 @@ snapshots:
   '@textbus/core@5.2.7':
     dependencies:
       '@tanbo/stream': 1.2.7
-      '@viewfly/core': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
 
   '@textbus/platform-browser@5.2.7':
     dependencies:
       '@tanbo/stream': 1.2.7
       '@textbus/core': 5.2.7
-      '@viewfly/core': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
 
   '@textbus/platform-node@5.2.7':
     dependencies:
       '@tanbo/stream': 1.2.7
       '@textbus/core': 5.2.7
-      '@viewfly/core': 3.0.0-alpha.8
-      '@viewfly/platform-browser': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
+      '@viewfly/platform-browser': 3.0.0
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -4263,11 +4263,11 @@ snapshots:
       unplugin-utils: 0.3.1
       vite: 8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0)
 
-  '@viewfly/core@3.0.0-alpha.8':
+  '@viewfly/core@3.0.0':
     dependencies:
       reflect-metadata: 0.2.2
 
-  '@viewfly/devtools@3.0.0-alpha.8(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0))':
+  '@viewfly/devtools@3.0.0(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1)(sass@1.99.0))':
     dependencies:
       '@vue/component-compiler-utils': 3.3.0
       concat-with-sourcemaps: 1.1.0
@@ -4337,29 +4337,29 @@ snapshots:
       - webpack
       - whiskers
 
-  '@viewfly/platform-browser@3.0.0-alpha.8':
+  '@viewfly/platform-browser@3.0.0':
     dependencies:
-      '@viewfly/core': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
       csstype: 3.2.3
 
-  '@viewfly/router@3.0.0-alpha.8':
+  '@viewfly/router@3.0.0':
     dependencies:
       '@tanbo/stream': 1.2.7
-      '@viewfly/core': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
       url: 0.11.4
 
-  '@viewfly/ui-components@0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8)(@viewfly/ui-icons@0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8))':
+  '@viewfly/ui-components@0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0)(@viewfly/ui-icons@0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0))':
     dependencies:
       '@tanbo/color': 0.1.1
       '@tanbo/stream': 1.2.7
-      '@viewfly/core': 3.0.0-alpha.8
-      '@viewfly/platform-browser': 3.0.0-alpha.8
-      '@viewfly/ui-icons': 0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8)
+      '@viewfly/core': 3.0.0
+      '@viewfly/platform-browser': 3.0.0
+      '@viewfly/ui-icons': 0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0)
 
-  '@viewfly/ui-icons@0.0.9(@viewfly/core@3.0.0-alpha.8)(@viewfly/platform-browser@3.0.0-alpha.8)':
+  '@viewfly/ui-icons@0.0.13(@viewfly/core@3.0.0)(@viewfly/platform-browser@3.0.0)':
     dependencies:
-      '@viewfly/core': 3.0.0-alpha.8
-      '@viewfly/platform-browser': 3.0.0-alpha.8
+      '@viewfly/core': 3.0.0
+      '@viewfly/platform-browser': 3.0.0
 
   '@volar/language-core@2.4.28':
     dependencies:
