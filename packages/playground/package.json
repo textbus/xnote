@@ -12,9 +12,9 @@
     "@textbus/collaborate": "^5.2.7",
     "@textbus/core": "^5.2.7",
     "@textbus/xnote": "workspace:^1.2.2",
-    "@viewfly/core": "3.0.0",
-    "@viewfly/platform-browser": "3.0.0",
-    "@viewfly/router": "3.0.0",
+    "@viewfly/core": "^3.0.1",
+    "@viewfly/platform-browser": "^3.0.1",
+    "@viewfly/router": "^3.0.1",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
