@@ -48,8 +48,8 @@
   },
   "dependencies": {
     "@tanbo/color": "^0.1.1",
-    "@viewfly/ui-components": "^0.0.13",
-    "@viewfly/ui-icons": "^0.0.13",
+    "@viewfly/ui-components": "^0.0.14",
+    "@viewfly/ui-icons": "^0.0.14",
     "highlight.js": "^11.9.0",
     "katex": "^0.16.10",
     "markdown-it": "^14.1.1",
