@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.0.2
+
+### Patch Changes
+
+- 升级 viewfly
+- Updated dependencies
+  - @textbus/xnote@1.2.2
+
 ## 0.0.1
 
 ### Patch Changes
