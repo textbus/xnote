@@ -16,6 +16,7 @@ import { TableComponent } from '../table.component'
 import { TableService } from '../table.service'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
 import { EditorService } from '../../../../services/editor.service'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface TopBarProps {
   tableRef: Ref<HTMLTableElement | null>
@@ -158,7 +159,7 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
                           }} variant={'text'} type={'primary'} onClick={() => {
                             props.component.deleteRows()
                             deleteIndex.set(null)
-                          }}><span class="xnote-icon-bin"></span></Button>
+                          }}><IconGlyph name={'bin'}/></Button>
                         </ComponentToolbar>
                       </div>
                     </td>

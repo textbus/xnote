@@ -3,6 +3,7 @@ import { JSXNode, withMark } from '@viewfly/core'
 import { isMac } from '@textbus/platform-browser'
 
 import css from './keymap.scoped.scss'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface KeymapProps {
   keymap: TextbusKeymap
@@ -12,19 +13,19 @@ export const Keymap = withMark(css, function Keymap(props: KeymapProps) {
   const arr: JSXNode[] = []
   const keymap = props.keymap
   if (keymap.modKey) {
-    arr.push(isMac() ? <span class="xnote-icon-command"></span> : <span>Ctrl</span>)
+    arr.push(isMac() ? <IconGlyph name={'command'}/> : <span>Ctrl</span>)
   }
   if (keymap.shiftKey) {
     if (arr.length) {
       arr.push('+')
     }
-    arr.push(isMac() ? <span class="xnote-icon-shift"></span> : <span>Shift</span>)
+    arr.push(isMac() ? <IconGlyph name={'shift'}/> : <span>Shift</span>)
   }
   if (keymap.altKey) {
     if (arr.length) {
       arr.push('+')
     }
-    arr.push(isMac() ? <span class="xnote-icon-opt"></span> : <span>Alt</span>)
+    arr.push(isMac() ? <IconGlyph name={'opt'}/> : <span>Alt</span>)
   }
   if (keymap.key) {
     if (arr.length) {

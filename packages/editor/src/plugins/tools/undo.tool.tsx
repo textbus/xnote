@@ -3,6 +3,7 @@ import { History } from '@textbus/core'
 
 import { useCommonState } from './_common/common-state'
 import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 export function UndoTool() {
   const history = inject(History)
@@ -23,7 +24,7 @@ export function UndoTool() {
   const commonState = useCommonState()
   return () => {
     return <Button size={'small'} inlineCompact={true} variant={'text'} disabled={!history.canBack || commonState().readonly} onClick={undo}>
-      <span class="xnote-icon-history-back"></span>
+      <IconGlyph name={'history-back'}/>
     </Button>
   }
 }

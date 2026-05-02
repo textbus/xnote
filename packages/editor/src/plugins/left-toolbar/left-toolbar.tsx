@@ -330,19 +330,19 @@ export const LeftToolbar = withAnnotation({
 
     if (slot) {
       const types: [boolean, JSX.Element][] = [
-        [states.paragraph, <span class="xnote-icon-pilcrow"/>],
-        [states.sourceCode, <span class="xnote-icon-source-code"/>],
-        [states.blockquote, <span class="xnote-icon-quotes-right"/>],
-        [states.todolist, <span class="xnote-icon-checkbox-checked"/>],
-        [states.unorderedList, <span class="xnote-icon-list"/>],
-        [states.orderedList, <span class="xnote-icon-list-numbered"/>],
-        [states.table, <span class="xnote-icon-table"/>],
-        [states.h1, <span class="xnote-icon-heading-h1"/>],
-        [states.h2, <span class="xnote-icon-heading-h2"/>],
-        [states.h3, <span class="xnote-icon-heading-h3"/>],
-        [states.h4, <span class="xnote-icon-heading-h4"/>],
-        [states.h5, <span class="xnote-icon-heading-h5"/>],
-        [states.h6, <span class="xnote-icon-heading-h6"/>],
+        [states.paragraph, <IconGlyph name={'pilcrow'}/>],
+        [states.sourceCode, <IconGlyph name={'source-code'}/>],
+        [states.blockquote, <IconGlyph name={'quotes-right'}/>],
+        [states.todolist, <IconGlyph name={'checkbox-checked'}/>],
+        [states.unorderedList, <IconGlyph name={'list'}/>],
+        [states.orderedList, <IconGlyph name={'list-numbered'}/>],
+        [states.table, <IconGlyph name={'table'}/>],
+        [states.h1, <IconGlyph name={'heading-h1'}/>],
+        [states.h2, <IconGlyph name={'heading-h2'}/>],
+        [states.h3, <IconGlyph name={'heading-h3'}/>],
+        [states.h4, <IconGlyph name={'heading-h4'}/>],
+        [states.h5, <IconGlyph name={'heading-h5'}/>],
+        [states.h6, <IconGlyph name={'heading-h6'}/>],
       ]
 
       for (const t of types) {

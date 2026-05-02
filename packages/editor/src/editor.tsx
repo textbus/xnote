@@ -22,8 +22,6 @@ import {
 } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
 
-import './assets/icons/style.css'
-
 import {
   AtComponent, atComponentLoader, AtComponentView,
   BlockquoteComponent,
