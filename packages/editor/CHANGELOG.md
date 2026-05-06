@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.2.4
+
+### Patch Changes
+
+- 修复超链接工具未销毁的 bug
+
 ## 1.2.3
 
 ### Patch Changes
