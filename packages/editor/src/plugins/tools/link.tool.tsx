@@ -1,5 +1,5 @@
-import { createSignal, getCurrentInstance, inject, onUnmounted, watch, withMark } from '@viewfly/core'
-import { Commander, Selection, Textbus } from '@textbus/core'
+import { Application, createSignal, getCurrentInstance, inject, onUnmounted, watch, withMark } from '@viewfly/core'
+import { Commander, Selection } from '@textbus/core'
 import { Button, Input, Popover } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
@@ -32,6 +32,8 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
       target: '_blanK'
     } as any)
     isShow.set(false)
+    editorService.hideInlineToolbar = false
+    subApp?.destroy()
   }
 
   watch(isShow, (b) => {
@@ -59,34 +61,36 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
     subscription.unsubscribe()
   })
 
-  function SubApp() {
+  const SubApp = withMark(css, function SubApp() {
     return () => {
       return (
-        <Popover open={isShow()}
-                 getContainer={getContainer}
-                 showArrow={false}
-                 noPadding={true}
-                 onOpenChange={open => {
-                   if (isDestroy) {
-                     editorService.hideInlineToolbar = false
-                     editorService.changeLeftToolbarVisible(!open)
-                     subApp.destroy()
+        <div class={'link-tool'}>
+          <Popover open={isShow()}
+                   getContainer={getContainer}
+                   showArrow={false}
+                   noPadding={true}
+                   onOpenChange={open => {
+                     if (isDestroy) {
+                       editorService.hideInlineToolbar = false
+                       editorService.changeLeftToolbarVisible(!open)
+                       subApp?.destroy()
+                     }
+                   }}
+                   getReferenceBox={() => popupPosition()}
+                   content={
+                     <form onSubmit={setLink} class={'p-1'}>
+                       <Input block={true} required size={'small'} placeholder={'请输入链接地址'} onChange={v => {
+                         value.set(v)
+                       }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">确定</Button>}/>
+                     </form>
                    }
-                 }}
-                 getReferenceBox={() => popupPosition()}
-                 content={
-                   <form onSubmit={setLink} class={'p-1'}>
-                     <Input block={true} required size={'small'} placeholder={'请输入链接地址'} onChange={v => {
-                       value.set(v)
-                     }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">确定</Button>}/>
-                   </form>
-                 }
-        />
+          />
+        </div>
       )
     }
-  }
+  })
 
-  const subApp = createApp(<SubApp/>).mount(viewDocument)
+  let subApp: Application | null = null
 
   return () => {
     return (
@@ -96,6 +100,8 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
               variant={'text'}
               inlineCompact={true}
               onClick={() => {
+                subApp = createApp(<SubApp/>)
+                subApp.mount(viewDocument)
                 isShow.set(true)
                 props.hideToolbar?.()
               }}>
