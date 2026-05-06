@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.0.3
+
+### Patch Changes
+
+- 修复行内工具条状态初始化不正确的 bug
+- Updated dependencies
+  - @textbus/xnote@1.2.5
+
 ## 0.0.2
 
 ### Patch Changes

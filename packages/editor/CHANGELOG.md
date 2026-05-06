@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.2.5
+
+### Patch Changes
+
+- 修复行内工具条状态初始化不正确的 bug
+
 ## 1.2.4
 
 ### Patch Changes
