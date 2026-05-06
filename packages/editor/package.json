@@ -48,8 +48,8 @@
   },
   "dependencies": {
     "@tanbo/color": "^0.1.1",
-    "@viewfly/ui-components": "^0.0.15",
-    "@viewfly/ui-icons": "^0.0.15",
+    "@viewfly/ui-components": "^0.0.16",
+    "@viewfly/ui-icons": "^0.0.16",
     "highlight.js": "^11.9.0",
     "katex": "^0.16.10",
     "markdown-it": "^14.1.1",
@@ -60,8 +60,8 @@
     "@textbus/collaborate": "^5.2.7",
     "@textbus/core": "^5.2.7",
     "@textbus/platform-browser": "^5.2.7",
-    "@viewfly/core": "^3.0.1",
-    "@viewfly/platform-browser": "^3.0.1"
+    "@viewfly/core": "^3.0.2",
+    "@viewfly/platform-browser": "^3.0.2"
   },
   "devDependencies": {
     "@swc/core": "^1.15.30",
@@ -75,9 +75,9 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
-    "@viewfly/core": "^3.0.1",
-    "@viewfly/devtools": "^3.0.0",
-    "@viewfly/platform-browser": "^3.0.1",
+    "@viewfly/core": "^3.0.2",
+    "@viewfly/devtools": "^3.0.1",
+    "@viewfly/platform-browser": "^3.0.2",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.5.0",
     "eslint-plugin-import": "^2.29.1",

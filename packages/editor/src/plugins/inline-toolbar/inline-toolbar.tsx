@@ -190,6 +190,9 @@ export const InlineToolbar = withAnnotation({
         updateRect()
         viewPosition.open = true
         editorService.changeLeftToolbarVisible(false)
+        setTimeout(() => {
+          refreshService.onRefresh.next()
+        })
       } else {
         viewPosition.open = false
         editorService.changeLeftToolbarVisible(true)
