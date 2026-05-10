@@ -237,7 +237,7 @@ export const InlineToolbar = withAnnotation({
                onOpenChange={(v) => viewPosition.open = v}
                open={viewPosition.open && !editorService.hideInlineToolbar}
                content={
-                 <div class={['toolbar', props.theme]}>
+                 <div class={['toolbar', props.theme === 'dark' ? 'vfui-dark dark' : 'light']}>
                    {
                      llmService && <AiTool hideToolbar={hideToolbar}/>
                    }

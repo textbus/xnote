@@ -15,13 +15,19 @@ export type ToolbarDemoRoute = 'inline-left' | 'suspension' | 'static'
 function createPluginsByRoute(route: ToolbarDemoRoute, staticToolbarHost?: HTMLElement) {
   if (route === 'inline-left') {
     return [
-      new InlineToolbarPlugin(),
-      new LeftToolbarPlugin()
+      new InlineToolbarPlugin({
+        theme: 'dark'
+      }),
+      new LeftToolbarPlugin({
+        theme: 'dark'
+      })
     ]
   }
 
   if (route === 'suspension') {
-    return [new SuspensionToolbarPlugin()]
+    return [new SuspensionToolbarPlugin({
+      theme: 'dark'
+    })]
   }
 
   return [

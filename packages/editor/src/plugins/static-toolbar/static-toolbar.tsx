@@ -57,7 +57,7 @@ export const StaticToolbar = withAnnotation({
   const llmService = inject(LLMService, null)
   return () => {
     return (
-      <div class={['toolbar', props.theme]}>
+      <div class={['toolbar', props.theme === 'dark' ? 'vfui-dark dark' : 'light', {}]}>
         <UndoTool/>
         <RedoTool/>
         <SplitLine/>

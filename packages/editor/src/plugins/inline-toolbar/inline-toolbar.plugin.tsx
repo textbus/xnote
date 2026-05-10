@@ -28,6 +28,11 @@ export class InlineToolbarPlugin implements Plugin {
     })
     const viewDocument = injector.get(VIEW_DOCUMENT)
     const host = document.createElement('div')
+    if (this.config.theme === 'dark') {
+      host.classList.add(
+        'vfui-dark'
+      )
+    }
     viewDocument.appendChild(host)
     this.app.mount(host)
   }

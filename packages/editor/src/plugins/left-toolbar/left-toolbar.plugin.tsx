@@ -6,8 +6,15 @@ import { DomRenderer } from '@viewfly/platform-browser'
 import { LeftToolbar } from './left-toolbar'
 import { useReadonly } from '../../textbus/hooks/use-readonly'
 
+export interface LeftToolbarOptions {
+  theme?: 'dark' | 'light'
+}
+
 export class LeftToolbarPlugin implements Plugin {
   private app: Application | null = null
+
+  constructor(private options: LeftToolbarOptions = {}) {
+  }
 
   setup(injector: Injector) {
     const App = function () {
@@ -24,6 +31,11 @@ export class LeftToolbarPlugin implements Plugin {
     })
     const viewDocument = injector.get(VIEW_CONTAINER)
     const host = document.createElement('div')
+    if (this.options.theme === 'dark') {
+      host.classList.add(
+        'vfui-dark'
+      )
+    }
     viewDocument.appendChild(host)
     this.app.mount(host)
   }
