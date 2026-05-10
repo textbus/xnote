@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.2.6
+
+### Patch Changes
+
+- 适配 Viewfly ui
+
 ## 1.2.5
 
 ### Patch Changes
