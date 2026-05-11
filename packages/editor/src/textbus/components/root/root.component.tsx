@@ -8,7 +8,7 @@ import {
   Slot,
   Subject,
   Textbus,
-  Registry, onSlotSetAttribute, onSlotApplyFormat, Selection,
+  Registry, onSlotSetAttribute, onSlotApplyFormat, Selection, useContext, Commander,
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { createDynamicRef, createRef } from '@viewfly/core'
@@ -45,6 +45,8 @@ export class RootComponent extends Component<RootComponentState> {
   }
 
   override setup() {
+    const commander = useContext(Commander)
+    const selection = useContext(Selection)
     useBlockContent((slot) => slot === this.state.content)
 
     onCompositionStart(ev => {
@@ -53,8 +55,15 @@ export class RootComponent extends Component<RootComponentState> {
     onSlotSetAttribute(ev => {
       ev.preventDefault()
     })
-    onSlotApplyFormat(ev => {
-      ev.preventDefault()
+
+    onSlotApplyFormat(event => {
+      if (event.target.isEmpty) {
+        const p = new ParagraphComponent()
+        commander.insert(p)
+        selection.setPosition(p.state.slot, 0)
+        commander.applyFormat(event.data.formatter, event.data.value)
+      }
+      event.preventDefault()
     })
   }
 
