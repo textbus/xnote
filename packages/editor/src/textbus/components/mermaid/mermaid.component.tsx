@@ -1,7 +1,7 @@
 import {
   Component,
   ComponentStateLiteral,
-  ContentType, fromEvent,
+  ContentType, debounceTime, fromEvent,
   Slot,
   Textbus,
 } from '@textbus/core'
@@ -15,6 +15,110 @@ import './mermaid.component.scss'
 import { MermaidEditor } from './mermaid-editor'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
+
+const SVG_NS = 'http://www.w3.org/2000/svg'
+const MATHML_NS = 'http://www.w3.org/1998/Math/MathML'
+
+/**
+ * `DOMParser` + `text/html` 解析出的 SVG/MathML 节点，`tagName` 常为全小写；
+ * Viewfly 的 `DomRenderer.getNameSpace` 对 `foreignObject` 等须精确匹配驼峰，否则子树命名空间错误。
+ * 未列出的标签：退回 `tagName`（多数单段小写名如 `path`、`g` 与 JSX 一致）。
+ */
+const DOM_TO_JSX_TAG: Record<string, string> = {
+  // —— SVG：HTML 解析器常见小写 → 规范标签名（camelCase）
+  altglyph: 'altGlyph',
+  altglyphdef: 'altGlyphDef',
+  altglyphitem: 'altGlyphItem',
+  animatecolor: 'animateColor',
+  animatemotion: 'animateMotion',
+  animatetransform: 'animateTransform',
+  clippath: 'clipPath',
+  colorprofile: 'colorProfile',
+  foreignobject: 'foreignObject',
+  glyphref: 'glyphRef',
+  lineargradient: 'linearGradient',
+  radialgradient: 'radialGradient',
+  textpath: 'textPath',
+  missingglyph: 'missingGlyph',
+  meshgradient: 'meshGradient',
+  meshpatch: 'meshPatch',
+  meshrow: 'meshRow',
+  // —— filter 系（fe*）
+  feblend: 'feBlend',
+  fecolormatrix: 'feColorMatrix',
+  fecomponenttransfer: 'feComponentTransfer',
+  fecomposite: 'feComposite',
+  feconvolvematrix: 'feConvolveMatrix',
+  fediffuselighting: 'feDiffuseLighting',
+  fedisplacementmap: 'feDisplacementMap',
+  fedistantlight: 'feDistantLight',
+  fedropshadow: 'feDropShadow',
+  feflood: 'feFlood',
+  fefunca: 'feFuncA',
+  fefuncb: 'feFuncB',
+  fefuncg: 'feFuncG',
+  fefuncr: 'feFuncR',
+  fegaussianblur: 'feGaussianBlur',
+  feimage: 'feImage',
+  femerge: 'feMerge',
+  femergenode: 'feMergeNode',
+  femorphology: 'feMorphology',
+  feoffset: 'feOffset',
+  fepointlight: 'fePointLight',
+  fespecularlighting: 'feSpecularLighting',
+  fespotlight: 'feSpotLight',
+  fetile: 'feTile',
+  feturbulence: 'feTurbulence',
+  // —— MathML（若在 Mermaid SVG 的 foreignObject 外嵌套时出现）
+  maction: 'maction',
+  maligngroup: 'maligngroup',
+  malignmark: 'malignmark',
+  math: 'math',
+  menclose: 'menclose',
+  merror: 'merror',
+  mfenced: 'mfenced',
+  mfrac: 'mfrac',
+  mglyph: 'mglyph',
+  mi: 'mi',
+  mlabeledtr: 'mlabeledtr',
+  mlongdiv: 'mlongdiv',
+  mmultiscripts: 'mmultiscripts',
+  mn: 'mn',
+  mo: 'mo',
+  mover: 'mover',
+  mpadded: 'mpadded',
+  mphantom: 'mphantom',
+  mroot: 'mroot',
+  mrow: 'mrow',
+  ms: 'ms',
+  mscarries: 'mscarries',
+  mscarry: 'mscarry',
+  msgroup: 'msgroup',
+  msline: 'msline',
+  mspace: 'mspace',
+  msqrt: 'msqrt',
+  mstyle: 'mstyle',
+  msub: 'msub',
+  msup: 'msup',
+  msubsup: 'msubsup',
+  mtable: 'mtable',
+  mtd: 'mtd',
+  mtext: 'mtext',
+  mtr: 'mtr',
+  munder: 'munder',
+  munderover: 'munderover',
+  semantics: 'semantics',
+}
+
+function domToJsxTagName(el: Element): string {
+  const uri = el.namespaceURI
+  if (uri === SVG_NS || uri === MATHML_NS) {
+    const key = el.tagName.toLowerCase()
+    /** 未映射时用小写 `key`：`el.tagName` 可能是 `SVG`，Viewfly 需要 `svg` */
+    return DOM_TO_JSX_TAG[key] ?? key
+  }
+  return el.tagName.toLowerCase()
+}
 
 export interface MermaidComponentState {
   text: string
@@ -42,48 +146,80 @@ export class MermaidComponent extends Component<MermaidComponentState> {
 
 export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>) {
 
-  const svgDom = createSignal<HTMLElement | null>(null)
+  /**
+   * 必须存 SVG 字符串，勿长期持有 parse 出来的 DOM 节点：
+   * Viewfly 挂载 domToVDom 生成的树时可能移动/掏空该节点，再次 domToVDom(同一引用) 会变成空。
+   */
+  const svgMarkup = createSignal<string | null>(null)
+  const renderError = createSignal<string | null>(null)
 
   props.component.changeMarker.onChange.subscribe(() => {
     render()
   })
 
+  /** 每次 `Mermaid.render` 必须用新 id：同一 id 多次渲染时 Mermaid 内部样式/缓存等与 `#id` 绑定，易导致 defs、子树重复或异常 */
+  function nextMermaidRenderId() {
+    return `xnote-m-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
+  }
+
+  function normDef(s: string) {
+    return s.replace(/\r\n/g, '\n').trimEnd()
+  }
+
   function render() {
-    Mermaid.render('test', props.component.state.text).then(result => {
-      const svg = result.svg
-      const dom = new DOMParser().parseFromString(svg, 'text/html').body.children[0] as HTMLElement
-      svgDom.set(dom)
-    }).catch(error => {
-      const html = document.createElement('div')
-      html.className = 'xnote-mermaid-error'
-      html.innerHTML = error.message
-      svgDom.set(html)
-    })
+    const definition = props.component.state.text
+    if (!definition?.trim()) {
+      svgMarkup.set(null)
+      renderError.set(null)
+      return
+    }
+    const requestedDef = normDef(definition)
+    renderError.set(null)
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    Mermaid.render(nextMermaidRenderId(), definition, container)
+      .then((result) => {
+        if (normDef(props.component.state.text) !== requestedDef) {
+          return
+        }
+        svgMarkup.set(result.svg)
+        renderError.set(null)
+      })
+      .catch((error: unknown) => {
+        if (normDef(props.component.state.text) !== requestedDef) {
+          return
+        }
+        renderError.set(error instanceof Error ? error.message : String(error))
+      })
+      .finally(() => {
+        container.remove()
+      })
   }
 
   if (props.component.state.text) {
     render()
   }
 
-  function domToVDom(el: HTMLElement | null): JSXNode {
+  function domToVDom(el: Element | null): JSXNode {
     if (!el) {
       return jsx('span', {
         class: 'xnote-mermaid-empty',
         children: [props.component.state.text ? '' : '空 Mermaid 图表']
       })
     }
-    const attrs: {[key: string]: any} = {}
+    const attrs: { [key: string]: any } = {}
     el.getAttributeNames().forEach(key => {
       attrs[key] = el.getAttribute(key)!
     })
     attrs.children = Array.from(el.childNodes).map(child => {
       if (child.nodeType === Node.ELEMENT_NODE) {
-        return domToVDom(child as HTMLElement)
+        return domToVDom(child as Element)
       }
       return child.textContent || ''
     })
 
-    return jsx(el.tagName.toLowerCase(), attrs)
+    const tagName = domToJsxTagName(el)
+    return jsx(tagName, attrs)
   }
 
   const selection = inject(Textbus)
@@ -95,13 +231,11 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
     })
     selection.blur()
 
-    const subscription = editor.onValueChange.subscribe((value) => {
+    const subscription = editor.onValueChange.pipe(debounceTime(300)).subscribe((value) => {
       props.component.state.text = value
+      render()
     }).add(
       fromEvent(node, 'mousedown').subscribe(ev => ev.stopPropagation()),
-      // fromEvent(document, 'mousedown').subscribe(() => {
-      //   dropdownRef.value?.isShow(false)
-      // })
     )
 
     return () => {
@@ -112,21 +246,69 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
 
   const output = useOutput()
   const readonly = useReadonly()
+
+  function mermaidPreview(): JSXNode {
+    const err = renderError()
+    const markup = svgMarkup()
+    const src = props.component.state.text ?? ''
+
+    if (!src.trim()) {
+      return domToVDom(null)
+    }
+    if (err && !markup) {
+      return jsx('div', {
+        class: 'xnote-mermaid-error',
+        children: [err],
+      })
+    }
+    if (!markup) {
+      return jsx('span', {
+        class: 'xnote-mermaid-empty',
+        children: [''],
+      })
+    }
+    try {
+      const doc = new DOMParser().parseFromString(markup, 'text/html')
+      const root = doc.body.children[0] as Element | undefined
+      if (!root) {
+        return domToVDom(null)
+      }
+      const chart = domToVDom(root as Element)
+      if (!err) {
+        return jsx('div', { class: 'xnote-mermaid-svg-host', children: [chart] })
+      }
+      return jsx('div', {
+        class: 'xnote-mermaid-preview-stack',
+        children: [
+          jsx('div', { class: 'xnote-mermaid-svg-host', children: [chart] }),
+          jsx('div', {
+            class: 'xnote-mermaid-error xnote-mermaid-error--inline',
+            children: [err],
+          }),
+        ],
+      })
+    } catch {
+      return domToVDom(null)
+    }
+  }
+
   return () => {
     const text = props.component.state.text
+    const preview = mermaidPreview()
+    console.log(preview)
     return (
       <div ref={props.rootRef} data-component={MermaidComponent.componentName} data-mermaid={encodeURIComponent(text)}
            class="xnote-mermaid">
         {
           (output() || readonly()) ?
-            domToVDom(svgDom())
+            preview
             :
             <Dropdown block dropdown={
               <div class="xnote-mermaid-input" ref={editorRef}>
               </div>
             }>
               <div class="xnote-mermaid-content">
-                {domToVDom(svgDom())}
+                {preview}
               </div>
             </Dropdown>
         }

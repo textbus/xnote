@@ -4,8 +4,19 @@
   border: 1px solid #eee;
   border-radius: 5px;
   cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: min-content;
   &:hover {
     border-color: #a6a6ff;
+  }
+
+  /* 只读 / 导出：预览块直接挂在根下 */
+  > .xnote-mermaid-svg-host,
+  > .xnote-mermaid-preview-stack {
+    width: 100%;
+    min-width: 0;
   }
 }
 
@@ -35,10 +46,50 @@
 }
 
 .xnote-mermaid-content {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  min-height: min-content;
   cursor: pointer;
+}
+
+.xnote-mermaid-svg-host {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: min-content;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* 子节点即 svg：在 flex 里占满横向参照，height:auto 才能按 viewBox 算出高度 */
+  > svg {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    flex-shrink: 0;
+  }
+}
+
+.xnote-mermaid-preview-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: min-content;
+  gap: 6px;
+
+  .xnote-mermaid-svg-host {
+    flex: 0 0 auto;
+  }
 }
 
 .xnote-mermaid-empty {
@@ -53,4 +104,10 @@
   padding: 1em;
   font-size: 12px;
   color: #c00;
+
+  &--inline {
+    padding: 6px 8px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
 }
