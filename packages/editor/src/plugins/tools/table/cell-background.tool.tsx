@@ -99,7 +99,7 @@ export function CellBackgroundTool() {
         <Dropdown disabled={disabled}
                   verticalPanelAlign={'right'}
                   dropdown={
-                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                    <ColorPicker recentColorsName={'tableCellBackgroundColor'} recentColors={defaultColors} onSelected={setColor}/>
                   }
                   trigger={'hover'}>
           <Button chevronDown={true}

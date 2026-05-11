@@ -91,7 +91,7 @@ export function TextColorTool(props: TextColorToolProps) {
         <Dropdown disabled={disabled}
                   verticalPanelAlign={'right'}
                   dropdown={
-                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                    <ColorPicker recentColorsName={'textColor'} recentColors={defaultColors} onSelected={setColor}/>
                   }
                   trigger={'hover'}>
           <Button chevronDown={true}

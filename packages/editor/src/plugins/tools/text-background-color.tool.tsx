@@ -91,7 +91,7 @@ export function TextBackgroundColorTool(props: TextBackgroundColorToolProps) {
         <Dropdown disabled={disabled}
                   verticalPanelAlign={'right'}
                   dropdown={
-                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                    <ColorPicker recentColorsName={'textBackgroundColor'} recentColors={defaultColors} onSelected={setColor}/>
                   }
                   trigger={'hover'}>
           <Button chevronDown={true}
