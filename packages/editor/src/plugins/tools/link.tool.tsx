@@ -94,7 +94,7 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
 
   return () => {
     return (
-      <Button disabled={commonState().inSourceCode || commonState().readonly || selection.isCollapsed}
+      <Button disabled={commonState().inSourceCode || commonState().readonly || selection.isCollapsed || !selection.isSelected}
               size={'small'}
               chevronGapless={true}
               variant={'text'}
