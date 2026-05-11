@@ -35,7 +35,7 @@ import {
   ImageView, KatexComponent, katexComponentLoader, KatexComponentView,
   ListComponent,
   listComponentLoader,
-  ListComponentView,
+  ListComponentView, MermaidComponent, mermaidComponentLoader, MermaidComponentView,
   ParagraphComponent,
   paragraphComponentLoader,
   ParagraphView, registerAtShortcut, registerBlockquoteShortcut, registerListShortcut,
@@ -141,6 +141,7 @@ export class Editor extends Textbus {
       [KatexComponent.componentName]: KatexComponentView,
       [StepComponent.componentName]: StepComponentView,
       [TimelineComponent.componentName]: TimelineComponentView,
+      [MermaidComponent.componentName]: MermaidComponentView,
     }, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -177,7 +178,8 @@ export class Editor extends Textbus {
         katexComponentLoader,
         paragraphComponentLoader,
         stepComponentLoader,
-        timelineComponentLoader
+        timelineComponentLoader,
+        mermaidComponentLoader,
       ],
       formatLoaders: [
         backgroundColorFormatLoader,
@@ -240,6 +242,7 @@ export class Editor extends Textbus {
       [KatexComponent.componentName]: KatexComponentView,
       [StepComponent.componentName]: StepComponentView,
       [TimelineComponent.componentName]: TimelineComponentView,
+      [MermaidComponent.componentName]: MermaidComponentView
     } as any, (host, root, injector) => {
       const appInjector = new ReflectiveInjector(injector, [{
         provide: OutputInjectionToken,
@@ -277,7 +280,8 @@ export class Editor extends Textbus {
         AtComponent,
         KatexComponent,
         StepComponent,
-        TimelineComponent
+        TimelineComponent,
+        MermaidComponent,
       ],
       formatters: [
         backgroundColorFormatter,

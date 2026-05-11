@@ -18,6 +18,7 @@ import { createTimelineItem, TimelineComponent } from '../../textbus/components/
 import { createStepItem, StepComponent } from '../../textbus/components/step/step.component'
 import { Button, Divider, MenuItem, MenuList } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
+import { MermaidComponent } from '../../textbus/components/mermaid/mermaid.component'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -172,6 +173,13 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
         selection.selectFirstPosition(timeline, false, true)
         break
       }
+      case 'mermaid': {
+        const comp = new MermaidComponent({
+          text: ''
+        })
+        insertComponent(comp)
+        selection.selectComponent(comp)
+      }
     }
   }
 
@@ -220,6 +228,7 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
         <MenuItem density={'compact'} onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>视频</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('highlightBox')} icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('katex')} icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'tree'}/>}>Mermaid 图表</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('timeline')} icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
       </MenuList>

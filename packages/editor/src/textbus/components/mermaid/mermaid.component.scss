@@ -1,0 +1,56 @@
+
+.xnote-mermaid {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    border-color: #a6a6ff;
+  }
+}
+
+.xnote-mermaid-input {
+  min-height: 300px;
+  inset: 0;
+  width: 590px;
+  margin: -6px;
+
+  .xnote-source-code {
+    margin: 0;
+    user-select: text;
+    overflow: hidden;
+
+    &-container {
+      height: 100%;
+      border: 0 !important;
+    }
+
+    &-content {
+      box-sizing: border-box;
+      overflow: hidden;
+      max-height: initial;
+      min-height: 300px;
+    }
+  }
+}
+
+.xnote-mermaid-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.xnote-mermaid-empty {
+  opacity: 0.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 160px;
+  height: 40px;
+}
+.xnote-mermaid-error {
+  padding: 1em;
+  font-size: 12px;
+  color: #c00;
+}

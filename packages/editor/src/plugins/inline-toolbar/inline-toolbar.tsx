@@ -46,6 +46,7 @@ import { VideoComponent } from '../../textbus/components/video/video.component'
 import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
 import { Popover } from '@viewfly/ui-components'
+import { InsertTool } from '../tools/insert.tool'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -241,6 +242,7 @@ export const InlineToolbar = withAnnotation({
                    {
                      llmService && <AiTool hideToolbar={hideToolbar}/>
                    }
+                   <InsertTool/>
                    <BlockTool/>
                    <AttrTool/>
                    <SplitLine/>
