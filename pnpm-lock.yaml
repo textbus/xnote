@@ -21,11 +21,11 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1
       '@viewfly/ui-components':
-        specifier: ^0.0.17
-        version: 0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)(@viewfly/ui-icons@0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2))
+        specifier: ^0.0.18
+        version: 0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)(@viewfly/ui-icons@0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2))
       '@viewfly/ui-icons':
-        specifier: ^0.0.17
-        version: 0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)
+        specifier: ^0.0.18
+        version: 0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)
       highlight.js:
         specifier: ^11.9.0
         version: 11.11.1
@@ -1396,18 +1396,18 @@ packages:
   '@viewfly/router@3.0.2':
     resolution: {integrity: sha512-RasT4iKOrcRui+nqeieLq66zTO0MPpxWizCqlBhn07FfrxA6tltDS/++CwWHhx85c/khRpgvJT99ikWU3TwS5g==}
 
-  '@viewfly/ui-components@0.0.17':
-    resolution: {integrity: sha512-9KS0fJ4n0SYGkM2i79yqjrJ1QYf6F1y7P8H4/LKWQA5Ox3Ih0ztcW0LdSroGb2lucZZS9b7LFePewRLptIkU+Q==}
+  '@viewfly/ui-components@0.0.18':
+    resolution: {integrity: sha512-B4s4PUx05SmPIiKH5Su65dDLbiRDIPZ2EsQPPtsWYe4MfXTBQyURduA6huDdCTwZXe4Bs4TzzAjRNnrPKpdDZw==}
     peerDependencies:
-      '@viewfly/core': ^3.0.0
-      '@viewfly/platform-browser': ^3.0.0
-      '@viewfly/ui-icons': ^0.0.17
+      '@viewfly/core': ^3.0.2
+      '@viewfly/platform-browser': ^3.0.2
+      '@viewfly/ui-icons': ^0.0.18
 
-  '@viewfly/ui-icons@0.0.17':
-    resolution: {integrity: sha512-4nKSKYQcWJ0DNiq0Qfw1FrG+uKU2SGNisXhlwmCmoIYB9dA+gyCJqs6mzp8R+klb1HgP2XgaLKiuN/l+Evp/4g==}
+  '@viewfly/ui-icons@0.0.18':
+    resolution: {integrity: sha512-EWv1J+CgHhinFcJp4vC2gDfwNJVnjsUcoOj0M0FjsLra7nrmVSyUkTKjHs9oT0CVJS4cAJr5hACpSOxE8aDhow==}
     peerDependencies:
-      '@viewfly/core': ^3.0.0
-      '@viewfly/platform-browser': ^3.0.0
+      '@viewfly/core': ^3.0.2
+      '@viewfly/platform-browser': ^3.0.2
 
   '@volar/language-core@2.4.28':
     resolution: {integrity: sha512-w4qhIJ8ZSitgLAkVay6AbcnC7gP3glYM3fYwKV3srj8m494E3xtrCv6E+bWviiK/8hs6e6t1ij1s2Endql7vzQ==}
@@ -5434,15 +5434,15 @@ snapshots:
       '@viewfly/core': 3.0.2
       url: 0.11.4
 
-  '@viewfly/ui-components@0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)(@viewfly/ui-icons@0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2))':
+  '@viewfly/ui-components@0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)(@viewfly/ui-icons@0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2))':
     dependencies:
       '@tanbo/color': 0.1.1
       '@tanbo/stream': 1.2.7
       '@viewfly/core': 3.0.2
       '@viewfly/platform-browser': 3.0.2
-      '@viewfly/ui-icons': 0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)
+      '@viewfly/ui-icons': 0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)
 
-  '@viewfly/ui-icons@0.0.17(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)':
+  '@viewfly/ui-icons@0.0.18(@viewfly/core@3.0.2)(@viewfly/platform-browser@3.0.2)':
     dependencies:
       '@viewfly/core': 3.0.2
       '@viewfly/platform-browser': 3.0.2

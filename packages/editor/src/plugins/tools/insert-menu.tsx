@@ -233,7 +233,7 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
                   icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('katex')}
                   icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'tree'}/>}>Mermaid
+        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'flow-chart'}/>}>Mermaid
           图表</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('timeline')}
