@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.1.1
+
+### Patch Changes
+
+- 修复 Mermaid 组件渲染异常
+- Updated dependencies
+  - @textbus/xnote@1.3.1
+
 ## 0.1.0
 
 ### Minor Changes

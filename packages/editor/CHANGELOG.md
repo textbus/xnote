@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.3.1
+
+### Patch Changes
+
+- 修复 Mermaid 组件渲染异常
+
 ## 1.3.0
 
 ### Minor Changes
