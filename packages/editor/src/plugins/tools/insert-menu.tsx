@@ -19,6 +19,7 @@ import { createStepItem, StepComponent } from '../../textbus/components/step/ste
 import { Button, Divider, MenuItem, MenuList } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 import { MermaidComponent } from '../../textbus/components/mermaid/mermaid.component'
+import { RootComponent } from '../../textbus/components/root/root.component'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -34,15 +35,16 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
 
   function insert(type: string) {
     const component = props.slot?.parent
-    if (!component) {
-      return
-    }
 
     function insertComponent(comp: Component<any>) {
       if (props.replace) {
-        commander.replaceComponent(component!, comp)
-      } else {
+        if (component) {
+          commander.replaceComponent(component!, comp)
+        }
+      } else if (component && !(component instanceof RootComponent)) {
         commander.insertAfter(comp, component!)
+      } else {
+        commander.insert(comp)
       }
     }
 
@@ -223,14 +225,19 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
       <Divider spacing={'compact'}/>
       <MenuList columnCompact={true}>
         <MenuItem density={'compact'} onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>表格</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('todolist')} icon={<IconGlyph name={'checkbox-checked'}/>}>待办列表</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('todolist')}
+                  icon={<IconGlyph name={'checkbox-checked'}/>}>待办列表</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>图片</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>视频</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('highlightBox')} icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('katex')} icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'tree'}/>}>Mermaid 图表</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('highlightBox')}
+                  icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('katex')}
+                  icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'tree'}/>}>Mermaid
+          图表</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('timeline')} icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('timeline')}
+                  icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
       </MenuList>
     </div>
   }
