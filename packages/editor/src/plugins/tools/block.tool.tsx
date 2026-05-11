@@ -6,11 +6,16 @@ import { useBlockTransform } from '../hooks/block-transform'
 import { Keymap } from '../../components/keymap/keymap'
 import { useCommonState } from './_common/common-state'
 import { IconGlyph } from '@viewfly/ui-icons'
-import { JSXNode, withMark } from '@viewfly/core'
+import { inject, JSXNode, withMark } from '@viewfly/core'
+import { RootComponentRef, Selection } from '@textbus/core'
+
+import { MenuHeading } from '../../components/menu-heading/menu-heading'
 
 export const BlockTool = withMark(css, function BlockTool() {
   const checkStates = useActiveBlock()
   const transform = useBlockTransform()
+  const selection = inject(Selection)
+  const rootComponentRef = inject(RootComponentRef)
 
   const commonState = useCommonState()
   return () => {
@@ -39,11 +44,15 @@ export const BlockTool = withMark(css, function BlockTool() {
         break
       }
     }
-    const b = commonState().inSourceCode || commonState().readonly
+    const b = commonState().inSourceCode ||
+      commonState().readonly ||
+      (selection.isCollapsed && selection.commonAncestorComponent === rootComponentRef.component) ||
+      !selection.isSelected
 
     return (
       <Dropdown disabled={b} trigger={'hover'} dropdown={
         <MenuList class={'w-52'} columnCompact={true}>
+          <MenuHeading>替换为</MenuHeading>
           <MenuItem density={'compact'} onClick={() => transform('paragraph')} icon={<IconGlyph name={'pilcrow'}/>}>
             <div class={'flex justify-between'}>
               正文
