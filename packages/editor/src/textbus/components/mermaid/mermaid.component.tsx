@@ -226,7 +226,7 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
 
   const selection = inject(Textbus)
   const editorRef = createDynamicRef<HTMLElement>(node => {
-    const editor = new MermaidEditor()
+    const editor = new MermaidEditor(i18n)
 
     editor.mount(node, props.component.state.text).then(() => {
       editor.focus()

@@ -88,7 +88,7 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
 
   const selection = inject(Textbus)
   const editorRef = createDynamicRef<HTMLElement>(node => {
-    const editor = new KatexEditor()
+    const editor = new KatexEditor(i18n)
 
     editor.mount(node, props.component.state.text).then(() => {
       editor.focus()

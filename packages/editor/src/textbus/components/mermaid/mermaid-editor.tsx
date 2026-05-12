@@ -4,6 +4,8 @@ import { ViewflyAdapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
 import { ReflectiveInjector } from '@viewfly/core'
 
+
+import { I18nService } from '../../../services/i18n.service'
 import { OutputInjectionToken } from '../../injection-tokens'
 import { SourceCodeComponent, SourceCodeView } from '../source-code/source-code.component'
 
@@ -12,7 +14,7 @@ export class MermaidEditor extends Textbus {
 
   onValueChange = new Subject<string>()
 
-  constructor() {
+  constructor(i18nService: I18nService) {
     const adapter = new ViewflyAdapter({
       [SourceCodeComponent.componentName]: SourceCodeView
     }, (host, root, injector) => {
@@ -38,7 +40,13 @@ export class MermaidEditor extends Textbus {
       components: [
         SourceCodeComponent
       ],
-      imports: [browserModule]
+      imports: [browserModule],
+      providers: [
+        {
+          provide: I18nService,
+          useValue: i18nService
+        }
+      ]
     })
   }
 

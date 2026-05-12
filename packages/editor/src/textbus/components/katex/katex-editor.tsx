@@ -6,13 +6,14 @@ import { ReflectiveInjector } from '@viewfly/core'
 
 import { OutputInjectionToken } from '../../injection-tokens'
 import { SourceCodeComponent, SourceCodeView } from '../source-code/source-code.component'
+import { I18nService } from '../../../services/i18n.service'
 
 export class KatexEditor extends Textbus {
   host!: HTMLElement
 
   onValueChange = new Subject<string>()
 
-  constructor() {
+  constructor(i18nService: I18nService) {
     const adapter = new ViewflyAdapter({
       [SourceCodeComponent.componentName]: SourceCodeView
     }, (host, root, injector) => {
@@ -38,7 +39,13 @@ export class KatexEditor extends Textbus {
       components: [
         SourceCodeComponent
       ],
-      imports: [browserModule]
+      imports: [browserModule],
+      providers: [
+        {
+          provide: I18nService,
+          useValue: i18nService
+        }
+      ]
     })
   }
 
