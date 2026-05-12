@@ -123,14 +123,14 @@ export function FontFamilyTool() {
     const b = commonState().inSourceCode || commonState().readonly || commonState().selectEmbed
     return (
       <Dropdown disabled={b} trigger={'hover'} dropdown={
-        <MenuList class={'w-40'} columnCompact={true}>
+        <MenuList class="xnote-w-menu-40" columnCompact={true}>
           {
             fontFamilyOptions.map(i => {
               const disabled = i.value ? !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v) : false
               return <MenuItem disabled={disabled} onClick={() => check(i.value)} density={'compact'}>
-                <div class={'flex justify-between flex-1'}>
+                <div class="xnote-flex-between-grow">
                   {i.label || i18n.t('fontFamily.default')}
-                  {currentFontFamily() === i.value && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                  {currentFontFamily() === i.value && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                 </div>
               </MenuItem>
             })
@@ -138,7 +138,7 @@ export function FontFamilyTool() {
         </MenuList>
       }>
         <Button disabled={b} variant={'text'} chevronGapless={true} inlineCompact={true} size={'small'}
-                highlighted={highlight()} class={'text-nowrap'}>{
+                highlighted={highlight()} class="xnote-text-nowrap">{
           fontFamilyOptions.find(v => {
             return v.value === currentFontFamily()
           })?.label || i18n.t('fontFamily.default')}

@@ -1,9 +1,9 @@
-import { inject, onUnmounted, Props, reactive, withMark } from '@viewfly/core'
+import { inject, onUnmounted, Props, reactive } from '@viewfly/core'
 import { Commander, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 
-import css from './block-tool.scoped.scss'
+import './block-tool.scss'
 import { RefreshService } from '../../services/refresh.service'
 import { textAlignAttr } from '../../textbus/attributes/text-align.attr'
 import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
@@ -20,7 +20,7 @@ export interface AttrToolProps extends Props {
   applyBefore?(): void
 }
 
-export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
+export function AttrTool(props: AttrToolProps) {
   const i18n = inject(I18nService)
   const commander = inject(Commander)
   const selection = inject(Selection)
@@ -110,56 +110,56 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
                 orientation={props.inLeftTool ? 'horizontal' : 'vertical'}
                 disabled={b}
                 trigger={'hover'} dropdown={
-        <MenuList columnCompact={true}>
+        <MenuList class="xnote-block-tool-root" columnCompact={true}>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-l')} icon={<IconGlyph name={'paragraph-left'}/>}>
-            <div class={'flex justify-between'}>
+            <div class="xnote-flex-between">
               {i18n.t('attr.alignLeft')}
-              <span class={'flex items-center'}>
+              <span class="xnote-flex-center">
                 <Keymap keymap={{ key: 'L', modKey: true }}/>
-                {checkStates.textAlign === 'left' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                {checkStates.textAlign === 'left' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
             </div>
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-r')} icon={<IconGlyph name={'paragraph-right'}/>}>
-            <div class={'flex justify-between'}>
+            <div class="xnote-flex-between">
               {i18n.t('attr.alignRight')}
-              <span class={'flex items-center'}>
+              <span class="xnote-flex-center">
                 <Keymap keymap={{ key: 'R', modKey: true }}/>
-                {checkStates.textAlign === 'right' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                {checkStates.textAlign === 'right' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
             </div>
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-c')} icon={<IconGlyph name={'paragraph-center'}/>}>
-            <div class={'flex justify-between'}>
+            <div class="xnote-flex-between">
               {i18n.t('attr.alignCenter')}
-              <span class={'flex items-center'}>
+              <span class="xnote-flex-center">
                 <Keymap keymap={{ key: 'E', modKey: true }}/>
-                {checkStates.textAlign === 'center' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                {checkStates.textAlign === 'center' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
             </div>
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-j')} icon={<IconGlyph name={'paragraph-justify'}/>}>
-            <div class={'flex justify-between'}>
+            <div class="xnote-flex-between">
               {i18n.t('attr.alignJustify')}
-              <span class={'flex items-center'}>
+              <span class="xnote-flex-center">
                 <Keymap keymap={{ key: 'J', modKey: true }}/>
-                {checkStates.textAlign === 'justify' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                {checkStates.textAlign === 'justify' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
             </div>
           </MenuItem>
           <Divider spacing={'compact'}/>
           <MenuItem density={'compact'} onClick={() => updateAttr('i+')} icon={<IconGlyph name={'indent-increase'}/>}>
-            <div class={'flex justify-between'}>
+            <div class="xnote-flex-between">
               {i18n.t('attr.indentIncrease')}
-              <span class={'flex items-center'}>
+              <span class="xnote-flex-center">
                 <Keymap keymap={{ key: 'Tab' }}/>
               </span>
             </div>
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('i-')} icon={<IconGlyph name={'indent-decrease'}/>}>
-            <div class={'flex justify-between'}>
+            <div class="xnote-flex-between">
               {i18n.t('attr.indentDecrease')}
-              <span class={'flex items-center'}>
+              <span class="xnote-flex-center">
                 <Keymap keymap={{ key: 'Tab', shiftKey: true }}/>
               </span>
             </div>
@@ -174,4 +174,4 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
       </Dropdown>
     )
   }
-})
+}

@@ -1,8 +1,8 @@
-import { createRef, inject, onMounted, Ref, Signal, withMark } from '@viewfly/core'
+import { createRef, inject, onMounted, Ref, Signal } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
 
-import css from './resize-column.scoped.scss'
+import './resize-column.scss'
 import { TableComponent } from '../table.component'
 import { TableService } from '../table.service'
 import { EditorService } from '../../../../services/editor.service'
@@ -15,7 +15,7 @@ export interface ResizeColumnProps {
   onActiveStateChange(isActive: boolean): void
 }
 
-export const ResizeColumn = withMark(css, function ResizeColumn(props: ResizeColumnProps) {
+export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
   const dragLineRef = createRef<HTMLDivElement>()
   let activeCol: number | null = null
 
@@ -143,6 +143,6 @@ export const ResizeColumn = withMark(css, function ResizeColumn(props: ResizeCol
   })
 
   return () => {
-    return <div ref={dragLineRef} class={['drag-line']}/>
+    return <div ref={dragLineRef} class={['xnote-table-column-resize-handle']}/>
   }
-})
+}

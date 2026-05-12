@@ -1,13 +1,13 @@
-import { createSignal, inject, reactive, withMark } from '@viewfly/core'
+import { createSignal, inject, reactive } from '@viewfly/core'
 import { delay, Query, QueryStateType, Selection } from '@textbus/core'
 import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 
-import css from './link-jump.scoped.scss'
+import './link-jump.scss'
 import { linkFormatter } from '../../textbus/formatters/link'
 import { Button, Popover, Space } from '@viewfly/ui-components'
 import { I18nService } from '../../services/i18n.service'
 
-export const LinkJump = withMark(css, () => {
+export const LinkJump = () => {
   const i18n = inject(I18nService)
   const selection = inject(Selection)
   const query = inject(Query)
@@ -99,4 +99,4 @@ export const LinkJump = withMark(css, () => {
       getContainer={() => container}>
     </Popover>
   )
-})
+}

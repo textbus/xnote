@@ -1,15 +1,14 @@
-.drag-resize {
+.xnote-drag-resize {
   position: relative;
   width: 100%;
 
-  .container {
+  .xnote-drag-resize-media-wrap {
     font-size: 0;
     text-indent: initial;
   }
 
-  .resize-tool {
+  .xnote-drag-resize-overlay {
     position: absolute;
-    //pointer-events: none;
     left: 0;
     top: 0;
     width: 100%;
@@ -19,12 +18,12 @@
     justify-content: center;
     display: none;
 
-    &.active {
+    &.xnote-drag-resize-overlay--active {
       display: flex;
     }
   }
 
-  .mask {
+  .xnote-drag-resize-label {
     user-select: none;
     pointer-events: none;
     white-space: nowrap;
@@ -39,7 +38,7 @@
     text-indent: 0;
   }
 
-  .btn-group {
+  .xnote-drag-resize-handles {
     position: absolute;
     left: 0;
     top: 0;
@@ -47,7 +46,7 @@
     height: 100%;
   }
 
-  button {
+  .xnote-drag-resize-handles button {
     position: absolute;
     width: 14px;
     height: 14px;

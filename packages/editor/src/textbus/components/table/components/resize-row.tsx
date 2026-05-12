@@ -1,6 +1,6 @@
-import { createRef, inject, onMounted, reactive, Ref, withMark } from '@viewfly/core'
+import { createRef, inject, onMounted, reactive, Ref } from '@viewfly/core'
 
-import css from './resize-row.scoped.scss'
+import './resize-row.scss'
 import { TableService } from '../table.service'
 import { TableComponent } from '../table.component'
 import { sum } from '../_utils'
@@ -10,7 +10,7 @@ export interface ResizeRowProps {
   component: TableComponent
 }
 
-export const ResizeRow = withMark(css, function ResizeRow(props: ResizeRowProps) {
+export const ResizeRow = function ResizeRow(props: ResizeRowProps) {
   const dragLineRef = createRef<HTMLDivElement>()
   const tableService = inject(TableService)
   const styles = reactive({
@@ -40,6 +40,6 @@ export const ResizeRow = withMark(css, function ResizeRow(props: ResizeRowProps)
                   top: styles.top + 'px',
                   width: sum(props.component.state.columnsConfig) + 'px'
                 }}
-                class={'drag-line'}/>
+                class={'xnote-table-row-resize-handle'}/>
   }
-})
+}

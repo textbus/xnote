@@ -1,4 +1,4 @@
-.toolbar {
+.xnote-static-toolbar {
   position: relative;
   top: 0;
   z-index: 3;
@@ -10,12 +10,12 @@
   text-align: left;
   border-radius: inherit;
 
-  &.dark {
+  &.xnote-static-toolbar--dark {
     background-color: #222;
     color: #ccc;
 
     ::v-deep {
-      .split-line {
+      .xnote-split-line {
         background: #666;
       }
 

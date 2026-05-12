@@ -1,4 +1,4 @@
-import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, reactive, withAnnotation, withMark, } from '@viewfly/core'
+import { createRef, createSignal, inject, JSX, onMounted, onUnmounted, reactive, withAnnotation, } from '@viewfly/core'
 import {
   Commander, Component,
   ContentType,
@@ -20,7 +20,7 @@ import { DomAdapter, VIEW_DOCUMENT } from '@textbus/platform-browser'
 import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
-import css from './left-toolbar.scoped.scss'
+import './left-toolbar.scss'
 import { RefreshService } from '../../services/refresh.service'
 import { useActiveBlock } from '../hooks/active-block'
 import { useBlockTransform } from '../hooks/block-transform'
@@ -38,7 +38,7 @@ import { I18nService } from '../../services/i18n.service'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, withMark(css, function LeftToolbar() {
+}, function LeftToolbar() {
   const adapter = inject(DomAdapter)
   const textbus = inject(Textbus)
   const selection = inject(Selection)
@@ -358,14 +358,14 @@ export const LeftToolbar = withAnnotation({
     const activeParentComponent = activeSlot()?.parent
     const needInsert = activeParentComponent instanceof TableComponent || activeParentComponent instanceof SourceCodeComponent
     return (
-      <div class="left-toolbar" ref={toolbarRef}>
-        <div class="drag-line" ref={dragLineRef}></div>
-        <div class="left-toolbar-btn-wrap" ref={btnRef} style={{
+      <div class="xnote-left-toolbar" ref={toolbarRef}>
+        <div class="xnote-left-toolbar-drag-line" ref={dragLineRef}></div>
+        <div class="xnote-left-toolbar-panel" ref={btnRef} style={{
           left: positionSignal.left + 'px',
           top: positionSignal.top + 'px',
           display: positionSignal.display && editorService.canShowLeftToolbar ? 'block' : 'none'
         }}>
-          <div class={'absolute right-0 top-0'}>
+          <div class="xnote-anchor-tr">
             <Dropdown
               verticalPanelAlign={'left'}
               onOpenChange={changeIgnoreMove}
@@ -376,8 +376,8 @@ export const LeftToolbar = withAnnotation({
                 isEmptyBlock() ?
                   <InsertMenu replace={!needInsert} slot={activeSlot()}/>
                   :
-                  <div class={'w-45'}>
-                    <div class="flex flex-wrap gap-1">
+                  <div class="xnote-w-menu-45">
+                    <div class="xnote-toolbar-tools-wrap">
                       <Button variant={'text'} highlighted={states.paragraph} inlineCompact={true}
                               onClick={() => transform('paragraph')}>
                         <IconGlyph name={'pilcrow'}/>
@@ -451,14 +451,14 @@ export const LeftToolbar = withAnnotation({
                     </Dropdown>
                   </div>
               }>
-              <Button size={'small'} inlineCompact={true} class={'min-w-8 h-7'} chevronDown={false}>
+              <Button size={'small'} inlineCompact={true} class="xnote-toolbar-compact-btn" chevronDown={false}>
                 {
                   isEmptyBlock() ?
                     <span>
                     <IconGlyph name={'plus'}/>
                   </span>
                     :
-                    <span class="inline-flex items-center">
+                    <span class="xnote-toolbar-label-inline">
                     {
                       activeNode
                     }
@@ -472,4 +472,4 @@ export const LeftToolbar = withAnnotation({
       </div>
     )
   }
-}))
+})

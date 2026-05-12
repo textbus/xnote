@@ -1,4 +1,4 @@
-.mask {
+.xnote-table-selection-mask {
   border: 1px solid #296eff;
   background: #296eff10;
   display: none;
@@ -6,7 +6,7 @@
   pointer-events: none;
   box-sizing: content-box;
 
-  &.active {
+  &.xnote-table-selection-mask--active {
     display: block;
   }
 }

@@ -1,7 +1,7 @@
-import { Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation, withMark } from '@viewfly/core'
+import { Fragment, getCurrentInstance, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { debounceTime, merge, Query, QueryStateType, Selection, Textbus } from '@textbus/core'
 
-import css from './static-toolbar.scoped.scss'
+import './static-toolbar.scss'
 import { BoldTool } from '../tools/bold.tool'
 import { ItalicTool } from '../tools/italic.tool'
 import { StrikeThroughTool } from '../tools/strike-through.tool'
@@ -37,7 +37,7 @@ export interface StaticToolbarProps {
 
 export const StaticToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, withMark(css, function Toolbar(props: StaticToolbarProps) {
+}, function Toolbar(props: StaticToolbarProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const query = inject(Query)
@@ -57,7 +57,7 @@ export const StaticToolbar = withAnnotation({
   const llmService = inject(LLMService, null)
   return () => {
     return (
-      <div class={['toolbar', props.theme === 'dark' ? 'vfui-dark dark' : 'light', {}]}>
+      <div class={['xnote-static-toolbar', props.theme === 'dark' && 'vfui-dark dark xnote-static-toolbar--dark']}>
         <UndoTool/>
         <RedoTool/>
         <SplitLine/>
@@ -98,4 +98,4 @@ export const StaticToolbar = withAnnotation({
       </div>
     )
   }
-}))
+})

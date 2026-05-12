@@ -1,9 +1,9 @@
-import { createSignal, inject, onMounted, onUnmounted, Signal, withMark } from '@viewfly/core'
+import { createSignal, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { Button } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
-import css from './top-bar.scoped.scss'
+import './top-bar.scss'
 import { EditorService } from '../../../../services/editor.service'
 import { TableComponent } from '../table.component'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
@@ -16,7 +16,7 @@ export interface TopBarProps {
   layoutWidth: Signal<number[]>
 }
 
-export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
+export const TopBar = function TopBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const tableService = inject(TableService)
   const selectedColumnRange = createSignal<null | { startIndex: number, endIndex: number }>(null)
@@ -93,11 +93,11 @@ export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
       ) / 2
     }
     return (
-      <div class={['top-bar', {
-        active: props.isFocus()
+      <div class={['xnote-table-top-bar', {
+        'xnote-table-top-bar--active': props.isFocus()
       }]}>
-        <div class="toolbar-wrapper">
-          <div class="insert-bar">
+        <div class="xnote-table-top-toolbar-wrap">
+          <div class="xnote-table-top-insert-bar">
             <ComponentToolbar
               style={{
                 left: left - leftDistance() + 'px',
@@ -123,30 +123,30 @@ export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
                   props.layoutWidth().map((i, index) => {
                     return (
                       <td style={{ width: i + 'px', minWidth: i + 'px' }}>
-                        <div class="tool-container">
+                        <div class="xnote-table-insert-tool">
                           {
                             index === 0 && (
                               <span onMouseenter={() => {
                                 tableService.onInsertColumnBefore.next(0)
                               }} onMouseleave={() => {
                                 tableService.onInsertColumnBefore.next(null)
-                              }} class="insert-btn-wrap" style={{
+                              }} class="xnote-table-insert-btn-wrap" style={{
                                 left: '-10px'
                               }} onClick={() => {
                                 props.component.insertColumn(0)
                               }}>
-                              <button class="insert-btn" type="button">+</button>
+                              <button class="xnote-table-insert-btn" type="button">+</button>
                             </span>
                             )
                           }
-                          <span class="insert-btn-wrap" onMouseenter={() => {
+                          <span class="xnote-table-insert-btn-wrap" onMouseenter={() => {
                             tableService.onInsertColumnBefore.next(index + 1)
                           }} onMouseleave={() => {
                             tableService.onInsertColumnBefore.next(null)
                           }} onClick={() => {
                             props.component.insertColumn(index + 1)
                           }}>
-                            <button class="insert-btn" type="button">+</button>
+                            <button class="xnote-table-insert-btn" type="button">+</button>
                           </span>
                         </div>
                       </td>
@@ -157,7 +157,7 @@ export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
               </tbody>
             </table>
           </div>
-          <div class={['action-bar', { active: props.isFocus() }]}>
+          <div class={['xnote-table-column-action-bar', { 'xnote-table-column-action-bar--active': props.isFocus() }]}>
             <table style={{
               transform: `translateX(${-leftDistance()}px)`
             }}>
@@ -169,7 +169,7 @@ export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
                       mouseDownFromToolbar = true
                       selectColumn(index, ev.shiftKey)
                     }} class={{
-                      active: !position ? false :
+                      'xnote-table-column-action-bar-cell--active': !position ? false :
                         (position.startRow === 0 &&
                           position.endRow === state.rows.length &&
                           index >= position.startColumn && index < position.endColumn
@@ -185,4 +185,4 @@ export const TopBar = withMark(css, function TopBar(props: TopBarProps) {
       </div>
     )
   }
-})
+}

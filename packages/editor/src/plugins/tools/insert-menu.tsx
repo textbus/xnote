@@ -1,8 +1,8 @@
-import { inject, withMark } from '@viewfly/core'
+import { inject } from '@viewfly/core'
 import { Commander, Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
 
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
-import css from './insert-menu.scoped.scss'
+import './insert-menu.scss'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { ListComponent } from '../../textbus/components/list/list.component'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
@@ -28,7 +28,7 @@ export interface InsertToolProps {
   replace?: boolean
 }
 
-export const InsertMenu = withMark(css, function (props: InsertToolProps) {
+export function InsertMenu(props: InsertToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const textbus = inject(Textbus)
@@ -188,11 +188,11 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
   }
 
   return () => {
-    return <div class={'w-46'}>
+    return <div class="xnote-insert-menu">
       {
         props.hideTitle ? null : <MenuHeading>{props.replace ? i18n.t('insert.replaceWith') : i18n.t('insert.addBelow')}</MenuHeading>
       }
-      <div class="flex flex-wrap gap-1">
+      <div class="xnote-insert-menu-grid">
         <Button variant={'text'} inlineCompact={true} onClick={() => insert('paragraph')}>
           <IconGlyph name={'pilcrow'}/>
         </Button>
@@ -242,4 +242,4 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
       </MenuList>
     </div>
   }
-})
+}

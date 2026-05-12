@@ -1,4 +1,4 @@
-.toolbar {
+.xnote-suspension-toolbar {
   position: relative;
   top: 0;
   z-index: 3;
@@ -16,21 +16,17 @@
   transition-timing-function: ease;
   min-width: 100%;
 
-  &-tools {
-    display: flex;
-  }
-
-  &.suspension {
+  &.xnote-suspension-toolbar--suspension {
     box-shadow: 0 4px 8px rgba(0, 0, 0, .08);
   }
 
-  &.dark {
+  &.xnote-suspension-toolbar--dark {
     border: none;
     background-color: #222;
     color: #ccc;
 
     ::v-deep {
-      .split-line {
+      .xnote-split-line {
         background: #666;
       }
 
@@ -41,4 +37,8 @@
       }
     }
   }
+}
+
+.xnote-suspension-toolbar-tools {
+  display: flex;
 }

@@ -80,28 +80,28 @@ export function CellAlignTool() {
                 trigger={'hover'}
                 verticalPanelAlign={'right'}
                 dropdown={
-                  <MenuList columnCompact={true} class={'w-40'}>
+                  <MenuList columnCompact={true} class="xnote-w-menu-40">
                     <MenuItem density={'compact'} onClick={() => check('top')} icon={<IconGlyph name={'align-top'}/>}>
-                      <div class={'flex justify-between'}>
+                      <div class="xnote-flex-between">
                         {i18n.t('cellAlign.top')}
-                        <span class={'flex items-center'}>
-                {currentValue() === 'top' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                        <span class="xnote-flex-center">
+                {currentValue() === 'top' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
                       </div>
                     </MenuItem>
                     <MenuItem density={'compact'} onClick={() => check('middle')} icon={<IconGlyph name={'align-middle'}/>}>
-                      <div class={'flex justify-between'}>
+                      <div class="xnote-flex-between">
                         {i18n.t('cellAlign.middle')}
-                        <span class={'flex items-center'}>
-                {currentValue() === 'middle' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                        <span class="xnote-flex-center">
+                {currentValue() === 'middle' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
                       </div>
                     </MenuItem>
                     <MenuItem density={'compact'} onClick={() => check('bottom')} icon={<IconGlyph name={'align-bottom'}/>}>
-                      <div class={'flex justify-between'}>
+                      <div class="xnote-flex-between">
                         {i18n.t('cellAlign.bottom')}
-                        <span class={'flex items-center'}>
-                {currentValue() === 'bottom' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                        <span class="xnote-flex-center">
+                {currentValue() === 'bottom' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
               </span>
                       </div>
                     </MenuItem>

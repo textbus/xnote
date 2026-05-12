@@ -1,4 +1,5 @@
 import 'virtual:uno.css'
+import './assets/xnote-scrollbar.css'
 export * from './components/_api'
 export * from './plugins/_api'
 export * from './services/_api'

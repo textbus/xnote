@@ -263,7 +263,7 @@ export function AiTool(props: AiToolProps) {
     return (
       <>
         <Dropdown trigger={'hover'} menuColumnCompact={true} disabled={b} dropdown={
-          <MenuList class={'w-36'}>
+          <MenuList class="xnote-w-menu-36">
             <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>} onClick={continueContent}>{i18n.t('ai.continue')}</MenuItem>
             <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>{i18n.t('ai.polish')}</MenuItem>
             <MenuItem density={'compact'} icon={<IconGlyph name={'simplify'}/>} onClick={simplify}>{i18n.t('ai.simplify')}</MenuItem>
@@ -296,12 +296,12 @@ export function AiTool(props: AiToolProps) {
                    getReferenceBox={() => {
                      return popupPosition()!
                    }} content={
-            <div class="w-100 h-50 flex flex-col">
-              <div class="flex-1 overflow-y-auto p-2" ref={aiContentRef}>
+            <div class="xnote-ai-popover">
+              <div class="xnote-ai-popover-body" ref={aiContentRef}>
                 {renderMarkdown(viewModel.content)}
               </div>
               <Divider spacing={'none'}/>
-              <div class="flex justify-end gap-2 p-2">
+              <div class="xnote-ai-popover-footer">
                 <Button size={'small'} htmlType="button" onClick={replace}>{i18n.t('ai.replace')}</Button>
                 <Button size={'small'} htmlType="button" onClick={insert}>{i18n.t('ai.insert')}</Button>
               </div>

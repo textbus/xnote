@@ -1,9 +1,9 @@
-.component-toolbar {
+.xnote-component-toolbar-host {
   position: relative;
   z-index: 3;
 }
 
-.toolbar {
+.xnote-component-toolbar-panel {
   position: absolute;
   background: #fff;
   border-radius: 5px;
@@ -20,7 +20,7 @@
   transform: translateY(10px);
   bottom: 10px;
 
-  &.active {
+  &.xnote-component-toolbar-panel--active {
     transition-property: all;
     transition-duration: 0.2s;
     transition-timing-function: ease;

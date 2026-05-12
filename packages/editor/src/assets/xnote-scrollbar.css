@@ -1,0 +1,24 @@
+/* 纯 CSS：WebKit 滚动条无法用 Uno shortcuts 表达，单独引入 */
+.xnote-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #80848f;
+}
+
+.xnote-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  height: 50px;
+  outline-offset: 0;
+  outline: 0;
+  border-radius: 4px;
+  border: 0;
+}
+
+.xnote-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #495060;
+  height: 50px;
+}
+
+.xnote-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+}

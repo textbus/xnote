@@ -1,7 +1,7 @@
-import { onMounted, onUnmounted, reactive, Ref, watch, withMark } from '@viewfly/core'
+import { onMounted, onUnmounted, reactive, Ref, watch } from '@viewfly/core'
 import { debounceTime } from '@textbus/core'
 
-import css from './selection-mask.scoped.scss'
+import './selection-mask.scss'
 import { TableComponent } from '../table.component'
 import { sum } from '../_utils'
 import { isShowMask } from '../table.service'
@@ -18,7 +18,7 @@ export interface SelectionMaskProps {
   tableRef: Ref<HTMLTableElement | null>
 }
 
-export const SelectionMask = withMark(css, function SelectionMask(props: SelectionMaskProps) {
+export const SelectionMask = function SelectionMask(props: SelectionMaskProps) {
   const styles = reactive({
     visible: false,
     left: 0,
@@ -74,8 +74,9 @@ export const SelectionMask = withMark(css, function SelectionMask(props: Selecti
   })
   return () => {
     return (
-      <div class="mask" style={{
-        display: styles.visible ? 'block' : 'none',
+      <div class={['xnote-table-selection-mask', {
+        'xnote-table-selection-mask--active': styles.visible
+      }]} style={{
         left: styles.left + 'px',
         top: styles.top + 'px',
         right: styles.right + 'px',
@@ -85,4 +86,4 @@ export const SelectionMask = withMark(css, function SelectionMask(props: Selecti
       }}/>
     )
   }
-})
+}

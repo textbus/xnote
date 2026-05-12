@@ -6,12 +6,11 @@ import {
   onUnmounted,
   onUpdated, Ref,
   Signal,
-  withMark
 } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { Button } from '@viewfly/ui-components'
 
-import css from './left-bar.scoped.scss'
+import './left-bar.scss'
 import { TableComponent } from '../table.component'
 import { TableService } from '../table.service'
 import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
@@ -24,7 +23,7 @@ export interface TopBarProps {
   component: TableComponent
 }
 
-export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
+export const LeftBar = function LeftBar(props: TopBarProps) {
   const editorService = inject(EditorService)
   const actionBarRef = createRef<HTMLTableElement>()
   const insertBarRef = createRef<HTMLTableElement>()
@@ -95,8 +94,8 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
     const position = props.component.tableSelection()
     const normalizedData = props.component.getNormalizedData()
     return (
-      <div class={['left-bar', { active: props.isFocus() }]}>
-        <div class="insert-bar">
+      <div class={['xnote-table-left-bar', { 'xnote-table-left-bar--active': props.isFocus() }]}>
+        <div class="xnote-table-left-insert-bar">
           <table ref={insertBarRef}>
             <tbody>
             {
@@ -113,19 +112,19 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
                     display: b ? '' : 'none'
                   }}>
                     <td>
-                      <div class="toolbar-item">
+                      <div class="xnote-table-left-toolbar-cell">
                         {
                           index === 0 && (
                             <span onMouseenter={() => {
                               tableService.onInsertRowBefore.next(-1)
                             }} onMouseleave={() => {
                               tableService.onInsertRowBefore.next(null)
-                            }} class="insert-btn-wrap" style={{
+                            }} class="xnote-table-left-insert-btn-wrap" style={{
                               top: '-14px'
                             }} onClick={() => {
                               props.component.insertRow(0)
                             }}>
-                              <button class="insert-btn" type="button">+</button>
+                              <button class="xnote-table-left-insert-btn" type="button">+</button>
                             </span>
                           )
                         }
@@ -133,7 +132,7 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
                           tableService.onInsertRowBefore.next(index)
                         }} onMouseleave={() => {
                           tableService.onInsertRowBefore.next(null)
-                        }} class="insert-btn-wrap" onClick={() => {
+                        }} class="xnote-table-left-insert-btn-wrap" onClick={() => {
                           const cells = row.cells.filter(i => i.visible)
                           if (cells.length < 2) {
                             props.component.insertRow(index + row.cells.at(0)!.rowspan)
@@ -141,7 +140,7 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
                           }
                           props.component.insertRow(index + 1)
                         }}>
-                          <button class="insert-btn" type="button">+</button>
+                          <button class="xnote-table-left-insert-btn" type="button">+</button>
                         </span>
                         <ComponentToolbar
                           style={{
@@ -170,7 +169,7 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
             </tbody>
           </table>
         </div>
-        <div class="action-bar">
+        <div class="xnote-table-row-action-bar">
           <table ref={actionBarRef}>
             <tbody>
             {
@@ -189,7 +188,7 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
                     mouseDownFromToolbar = true
                     selectRow(index, ev.shiftKey)
                   }} class={{
-                    active: !position ? false :
+                    'xnote-table-row-action-bar-cell--active': !position ? false :
                       (position.startColumn === 0 &&
                         position.endColumn === props.component.state.columnsConfig.length &&
                         index >= position.startRow && index < position.endRow
@@ -204,4 +203,4 @@ export const LeftBar = withMark(css, function LeftBar(props: TopBarProps) {
       </div>
     )
   }
-})
+}

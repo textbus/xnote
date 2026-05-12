@@ -1,8 +1,8 @@
-import { Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation, withMark } from '@viewfly/core'
+import { Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
 import { debounceTime, delay, fromEvent, merge, Query, QueryStateType, Selection, tap, Textbus } from '@textbus/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
-import css from './suspension-toolbar.scoped.scss'
+import './suspension-toolbar.scss'
 import { BoldTool } from '../tools/bold.tool'
 import { ItalicTool } from '../tools/italic.tool'
 import { StrikeThroughTool } from '../tools/strike-through.tool'
@@ -38,7 +38,7 @@ export interface SuspensionToolbarProps {
 
 export const SuspensionToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, withMark(css, function Toolbar(props: SuspensionToolbarProps) {
+}, function Toolbar(props: SuspensionToolbarProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const query = inject(Query)
@@ -81,14 +81,12 @@ export const SuspensionToolbar = withAnnotation({
   const llmService = inject(LLMService, null)
   return () => {
     return (
-      <div class={['toolbar', props.theme === 'dark' ? 'vfui-dark dark' : 'light', {
-        suspension: styles.top === 0 ? '' : 'suspension'
-      }]} style={{
+      <div class={['xnote-suspension-toolbar', props.theme === 'dark' && 'vfui-dark dark xnote-suspension-toolbar--dark', styles.top !== 0 && 'xnote-suspension-toolbar--suspension']} style={{
         top: styles.top + 'px',
         opacity: styles.opacity,
         pointerEvents: styles.opacity === 0 ? 'none' : 'initial',
       }}>
-        <div class="toolbar-tools">
+        <div class="xnote-suspension-toolbar-tools">
           <UndoTool/>
           <RedoTool/>
           <SplitLine/>
@@ -129,4 +127,4 @@ export const SuspensionToolbar = withAnnotation({
       </div>
     )
   }
-}))
+})

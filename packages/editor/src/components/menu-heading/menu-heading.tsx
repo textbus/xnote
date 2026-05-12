@@ -1,13 +1,13 @@
-import { Props, withMark } from '@viewfly/core'
+import { Props } from '@viewfly/core'
 
-import css from './menu-heading.scoped.scss'
+import './menu-heading.scss'
 
-export const MenuHeading = withMark(css, function (props: Props) {
+export function MenuHeading(props: Props) {
   return () => {
     return (
-      <div class="menu-heading">
+      <div class="xnote-menu-heading">
         {props.children}
       </div>
     )
   }
-})
+}

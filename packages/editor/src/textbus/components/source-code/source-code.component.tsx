@@ -517,7 +517,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
       <div ref={props.rootRef} class={{
         'xnote-source-code': true,
         'xnote-source-code-line-number': state.lineNumber,
-        [state.theme || 'github']: true
+        [`xnote-theme-${state.theme || 'github'}`]: true
       }}
            data-lang={state.lang}
            data-component={props.component.name}
@@ -533,17 +533,17 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
             position: 'relative'
           }}>
             <ComponentToolbar visible={isFocus()}>
-              <div class={'flex items-center text-[13px]'}>
+              <div class="xnote-source-code-toolbar-row">
                 <Dropdown trigger={'hover'} dropdown={
                   <MenuList columnCompact={true}>
                     {
                       languageList.map(item => {
                         return (
                           <MenuItem density={'compact'} onClick={() => changeLang(item.value)}>
-                            <div class={'flex justify-between'}>
+                            <div class="xnote-flex-between">
                               {item.label || 'Plain Text'}
-                              <span class={'flex items-center'}>
-                              {state.lang === item.value && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                              <span class="xnote-flex-center">
+                              {state.lang === item.value && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                             </span>
                             </div>
                           </MenuItem>
@@ -562,10 +562,10 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                       sourceCodeThemes.map(item => {
                         return (
                           <MenuItem density={'compact'} onClick={() => changeTheme(item)}>
-                            <div class={'flex justify-between'}>
+                            <div class="xnote-flex-between">
                               {item}
-                              <span class={'flex items-center'}>
-                              {state.theme === item && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                              <span class="xnote-flex-center">
+                              {state.theme === item && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                             </span>
                             </div>
                           </MenuItem>
@@ -583,20 +583,20 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                     <MenuItem density={'compact'} icon={<IconGlyph name={'list-numbered'}/>} onClick={() => {
                       setting('lineNumber')
                     }}>
-                      <div class={'flex justify-between'}>
+                      <div class="xnote-flex-between">
                         {i18n.t('sourceCode.lineNumber')}
-                        <span class={'flex items-center'}>
-                        {state.lineNumber && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                        <span class="xnote-flex-center">
+                        {state.lineNumber && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                       </span>
                       </div>
                     </MenuItem>
                     <MenuItem density={'compact'} icon={<IconGlyph name={'text-wrap'}/>} onClick={() => {
                       setting('autoBreak')
                     }}>
-                      <div class={'flex justify-between'}>
+                      <div class="xnote-flex-between">
                         {i18n.t('sourceCode.wordWrap')}
-                        <span class={'flex items-center'}>
-                        {state.autoBreak && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                        <span class="xnote-flex-center">
+                        {state.autoBreak && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                       </span>
                       </div>
                     </MenuItem>

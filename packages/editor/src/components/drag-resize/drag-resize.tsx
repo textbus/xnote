@@ -1,8 +1,8 @@
-import { createRef, createSignal, inject, onUnmounted, Props, Ref, withMark } from '@viewfly/core'
+import { createRef, createSignal, inject, onUnmounted, Props, Ref } from '@viewfly/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 import { fromEvent, Selection } from '@textbus/core'
 
-import style from './drag-resize.scoped.scss'
+import './drag-resize.scss'
 import { ImageComponent } from '../../textbus/components/image/image.component'
 import { VideoComponent } from '../../textbus/components/video/video.component'
 
@@ -11,7 +11,7 @@ export interface DragResizeProps extends Props {
   source: Ref<HTMLImageElement | HTMLVideoElement | null>
 }
 
-export const DragResize = withMark(style, function DragResize(props: DragResizeProps) {
+export function DragResize(props: DragResizeProps) {
   const isShow = createSignal(false)
 
   const selection = inject(Selection)
@@ -139,15 +139,15 @@ export const DragResize = withMark(style, function DragResize(props: DragResizeP
 
   return () => {
     return (
-      <div class="drag-resize" onClick={selectComponent}>
-        <div class="container" ref={ref}>
+      <div class="xnote-drag-resize" onClick={selectComponent}>
+        <div class="xnote-drag-resize-media-wrap" ref={ref}>
           {props.children}
         </div>
-        <div class={['resize-tool', {
-          active: isShow()
+        <div class={['xnote-drag-resize-overlay', {
+          'xnote-drag-resize-overlay--active': isShow()
         }]}>
-          <div class="mask" ref={mask}>{sizeText()}</div>
-          <div class="btn-group" ref={btnGroup} onMousedown={drag}>
+          <div class="xnote-drag-resize-label" ref={mask}>{sizeText()}</div>
+          <div class="xnote-drag-resize-handles" ref={btnGroup} onMousedown={drag}>
             <button type="button"></button>
             <button type="button"></button>
             <button type="button"></button>
@@ -161,4 +161,4 @@ export const DragResize = withMark(style, function DragResize(props: DragResizeP
       </div>
     )
   }
-})
+}

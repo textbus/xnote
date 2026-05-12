@@ -26,7 +26,7 @@ export function InsertTool() {
       }>
         <Button size={'small'}
                 variant={'text'}
-                class={'text-nowrap'}
+                class="xnote-text-nowrap"
                 inlineCompact={true}
                 chevronGapless={true}
                 disabled={b}>{i18n.t('insert.button')}</Button>

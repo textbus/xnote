@@ -1,9 +1,7 @@
-@use "../../../../assets/scroll" as *;
-
-.scroll-container {
+.xnote-table-scroll {
   overflow-x: auto;
   overflow-y: hidden;
-  @include scroll();
+  position: relative;
 
   &:before {
     pointer-events: none;
@@ -30,13 +28,13 @@
     background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, .1));
   }
 
-  &.left-end {
+  &.xnote-table-scroll--left-end {
     &:before {
       display: none;
     }
   }
 
-  &.right-end {
+  &.xnote-table-scroll--right-end {
     &:after {
       display: none;
     }

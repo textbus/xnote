@@ -1,6 +1,5 @@
 import {
   createRef,
-  withMark,
   Fragment,
   getCurrentInstance,
   inject,
@@ -22,7 +21,7 @@ import {
 } from '@textbus/core'
 import { DomAdapter, SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 
-import css from './inline-toolbar.scoped.scss'
+import './inline-toolbar.scss'
 import { BoldTool } from '../tools/bold.tool'
 import { ItalicTool } from '../tools/italic.tool'
 import { StrikeThroughTool } from '../tools/strike-through.tool'
@@ -63,7 +62,7 @@ export interface InlineToolbarProps {
 
 export const InlineToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
-}, withMark(css, function Toolbar(props: InlineToolbarProps) {
+}, function Toolbar(props: InlineToolbarProps) {
   const selection = inject(Selection)
   const viewDocument = inject(VIEW_CONTAINER)
   const rootComponentRef = inject(RootComponentRef)
@@ -252,7 +251,7 @@ export const InlineToolbar = withAnnotation({
                }}
                open={viewPosition.open && !editorService.hideInlineToolbar}
                content={
-                 <div class={['toolbar', props.theme === 'dark' ? 'vfui-dark dark' : 'light']}>
+                 <div class={['xnote-inline-toolbar', props.theme === 'dark' && 'vfui-dark dark xnote-inline-toolbar--dark']}>
                    {
                      llmService && <AiTool hideToolbar={hideToolbar}/>
                    }
@@ -290,4 +289,4 @@ export const InlineToolbar = withAnnotation({
       </Popover>
     )
   }
-}))
+})

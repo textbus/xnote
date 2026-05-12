@@ -1,0 +1,23 @@
+.xnote-left-toolbar {
+  position: absolute;
+  left: -10px;
+  top: 0;
+  z-index: 10;
+  font-size: 15px;
+}
+
+.xnote-left-toolbar-panel {
+  position: absolute;
+  transition: all .2s;
+}
+
+.xnote-left-toolbar-drag-line {
+  width: 0;
+  height: 2px;
+  background: #296eff;
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}

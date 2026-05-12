@@ -1,73 +1,46 @@
-.top-bar {
+.xnote-table-left-bar {
+  width: 30px;
   position: absolute;
-  top: 0;
   left: 0;
-  right: 0;
+  top: 0;
   display: none;
+  margin-left: -30px;
 
-  &.active {
-    display: block;
+  &.xnote-table-left-bar--active {
+    display: flex;
   }
 }
 
-.top-delete-toolbar {
-  position: relative;
-  height: 0;
-  top: -10px;
-}
-
-.toolbar-wrapper {
-  height: 60px;
+.xnote-table-left-toolbar-cell {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: -60px;
-  pointer-events: none;
+  inset: 0;
+  display: flex;
+  align-items: center;
 }
 
-
-.insert-bar {
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-left: -10px;
-  margin-right: -10px;
-  padding-top: 30px;
-  height: 30px;
-  overflow: hidden;
-  box-sizing: content-box;
+.xnote-table-left-insert-bar {
+  width: 18px;
 
   table {
     border-spacing: 0;
     border-collapse: collapse;
     table-layout: fixed;
-    position: relative;
-    z-index: 1;
 
     td {
-      box-sizing: border-box;
       border: 1px solid transparent;
       position: relative;
-      height: 18px;
     }
 
-    .tool-container {
-      height: 18px;
-
-      > span, > div {
-        pointer-events: auto;
-      }
-    }
-
-    .insert-btn-wrap {
+    .xnote-table-left-insert-btn-wrap {
       width: 21px;
       height: 21px;
-      right: -11px;
       position: absolute;
-      top: -2px;
+      left: 0;
+      bottom: -8px;
       z-index: 1;
       cursor: pointer;
 
-      .insert-btn {
+      .xnote-table-left-insert-btn {
         cursor: inherit;
         background: #ccc;
         border-radius: 50%;
@@ -91,14 +64,14 @@
           background: inherit;
           content: "";
           transform: rotateZ(45deg);
-          top: 12px;
-          left: 5.5px;
+          top: 5.5px;
+          left: 11px;
           z-index: -1;
         }
       }
 
       &:hover {
-        .insert-btn {
+        .xnote-table-left-insert-btn {
           background: #296eff;
           transform: scale(1);
         }
@@ -107,24 +80,16 @@
   }
 }
 
-
-.action-bar {
-  overflow: hidden;
-  position: relative;
-  z-index: 0;
-  margin-top: -12px;
-  pointer-events: auto;
-
-  &.active {
-    display: block;
-  }
+.xnote-table-row-action-bar {
+  width: 12px;
 
   table {
+    width: 13px;
     border-spacing: 0;
     border-collapse: collapse;
     table-layout: fixed;
+    border-radius: 4px 0 0 4px;
     overflow: hidden;
-    border-radius: 4px 4px 0 0;
 
     td {
       box-sizing: border-box;
@@ -134,19 +99,11 @@
       position: relative;
       height: 12px;
 
-      //&:first-child {
-      //  border-top-left-radius: 3px;
-      //}
-      //
-      //&:last-child {
-      //  border-top-right-radius: 3px;
-      //}
-
       &:hover {
         background: #dedede;
       }
 
-      &.active {
+      &.xnote-table-row-action-bar-cell--active {
         background: #296eff;
         border-color: #2358c9;
 
@@ -154,11 +111,11 @@
           content: "";
           position: absolute;
           top: -1px;
-          bottom: 0;
-          border-width: 0 0 0 1px;
+          border-width: 1px 0 0 0;
           border-style: solid;
           border-color: inherit;
           left: -1px;
+          right: -1px;
         }
       }
     }

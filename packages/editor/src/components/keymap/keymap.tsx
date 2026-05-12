@@ -1,15 +1,15 @@
 import { Keymap as TextbusKeymap } from '@textbus/core'
-import { JSXNode, withMark } from '@viewfly/core'
+import { JSXNode } from '@viewfly/core'
 import { isMac } from '@textbus/platform-browser'
 
-import css from './keymap.scoped.scss'
+import './keymap.scss'
 import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface KeymapProps {
   keymap: TextbusKeymap
 }
 
-export const Keymap = withMark(css, function Keymap(props: KeymapProps) {
+export function Keymap(props: KeymapProps) {
   const arr: JSXNode[] = []
   const keymap = props.keymap
   if (keymap.modKey) {
@@ -41,11 +41,11 @@ export const Keymap = withMark(css, function Keymap(props: KeymapProps) {
   }
   return () => {
     return (
-      <span class="keymap">
+      <span class="xnote-keymap">
         {
           arr
         }
       </span>
     )
   }
-})
+}

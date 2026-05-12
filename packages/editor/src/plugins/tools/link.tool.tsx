@@ -1,9 +1,9 @@
-import { Application, createSignal, getCurrentInstance, inject, onUnmounted, watch, withMark } from '@viewfly/core'
+import { Application, createSignal, getCurrentInstance, inject, onUnmounted, watch } from '@viewfly/core'
 import { Commander, Selection } from '@textbus/core'
 import { Button, Input, Popover } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
-import css from './link-tool.scoped.scss'
+import './link-tool.scss'
 import { linkFormatter } from '../../textbus/formatters/link'
 import { useCommonState } from './_common/common-state'
 import { usePopupPosition } from '../hooks/popup-position'
@@ -17,7 +17,7 @@ export interface LinkToolProps {
   hideToolbar?(): void
 }
 
-export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
+export function LinkTool(props: LinkToolProps) {
   const commander = inject(Commander)
   const selection = inject(Selection)
   const refreshService = inject(RefreshService)
@@ -62,10 +62,10 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
     subscription.unsubscribe()
   })
 
-  const SubApp = withMark(css, function SubApp() {
+  const SubApp = function SubApp() {
     return () => {
       return (
-        <div class={'link-tool'}>
+        <div class="xnote-link-tool-host">
           <Popover open={isShow()}
                    getContainer={getContainer}
                    showArrow={false}
@@ -79,7 +79,7 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
                    }}
                    getReferenceBox={() => popupPosition()}
                    content={
-                     <form onSubmit={setLink} class={'p-1'}>
+                     <form onSubmit={setLink} class="xnote-link-tool-form">
                        <Input block={true} required size={'small'} placeholder={i18n.t('link.urlPlaceholder')} onChange={v => {
                          value.set(v)
                        }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">{i18n.t('link.confirm')}</Button>}/>
@@ -89,7 +89,7 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
         </div>
       )
     }
-  })
+  }
 
   let subApp: Application | null = null
 
@@ -110,4 +110,4 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
       </Button>
     )
   }
-})
+}

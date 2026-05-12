@@ -90,7 +90,7 @@ export function AtComponentView(props: ViewComponentProps<AtComponent>) {
                 return (
                   <div onClick={() => {
                     props.component.atMember(member)
-                  }} key={member.id} class={['xnote-at-member', { selected: index === selectedIndex }]}>
+                  }} key={member.id} class={['xnote-at-member', { 'xnote-at-member--selected': index === selectedIndex }]}>
                     <div class="xnote-at-member-avatar">{
                       member.avatar ? <img src={member.avatar} alt={member.name}/> :
                         <span class="xnote-at-member-avatar-bg" style={{ background: member.color, color }}>{member.name}</span>

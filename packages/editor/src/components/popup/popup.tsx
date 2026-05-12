@@ -1,18 +1,18 @@
-import { inject, Portal, Props, withMark } from '@viewfly/core'
+import { inject, Portal, Props } from '@viewfly/core'
 import { VIEW_CONTAINER } from '@textbus/platform-browser'
 
-import css from './popup.scoped.scss'
+import './popup.scss'
 
 export interface PopupProps extends Props {
   left: number
   top: number
 }
 
-export const Popup = withMark(css, function Popup(props: PopupProps) {
+export function Popup(props: PopupProps) {
   const host = inject(VIEW_CONTAINER)
   return () => {
     return <Portal container={host}>
-      <div class="popup" style={{
+      <div class="xnote-popup" style={{
         left: props.left + 'px',
         top: props.top + 'px'
       }}>
@@ -20,4 +20,4 @@ export const Popup = withMark(css, function Popup(props: PopupProps) {
       </div>
     </Portal>
   }
-})
+}

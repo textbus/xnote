@@ -1,7 +1,7 @@
 import { StyleValue } from '@viewfly/platform-browser'
-import { Props, withMark } from '@viewfly/core'
+import { Props } from '@viewfly/core'
 
-import css from './component-toolbar.scoped.scss'
+import './component-toolbar.scss'
 
 export interface ComponentToolbarProps extends Props {
   visible?: boolean
@@ -9,14 +9,14 @@ export interface ComponentToolbarProps extends Props {
   innerStyle?: StyleValue
 }
 
-export const ComponentToolbar = withMark(css, function ComponentToolbar(props: ComponentToolbarProps) {
+export function ComponentToolbar(props: ComponentToolbarProps) {
   return () => {
     return (
-      <div class="component-toolbar" style={props.style}>
+      <div class="xnote-component-toolbar-host" style={props.style}>
         <div class={[
-          'toolbar',
+          'xnote-component-toolbar-panel',
           {
-            active: props.visible
+            'xnote-component-toolbar-panel--active': props.visible
           }
         ]} style={props.innerStyle}>
           {props.children}
@@ -24,4 +24,4 @@ export const ComponentToolbar = withMark(css, function ComponentToolbar(props: C
       </div>
     )
   }
-})
+}

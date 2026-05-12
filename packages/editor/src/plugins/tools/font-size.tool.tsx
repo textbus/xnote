@@ -60,13 +60,13 @@ export function FontSizeTool() {
     const b = commonState().inSourceCode || commonState().readonly || commonState().selectEmbed
     return (
       <Dropdown disabled={b} trigger={'hover'} dropdown={
-        <MenuList class={'w-40'} columnCompact={true}>
+        <MenuList class="xnote-w-menu-40" columnCompact={true}>
           {
             fontSizeOptions.map(i => {
               return <MenuItem density={'compact'} onClick={() => check(i)}>
-                <div class={'flex justify-between flex-1'}>
+                <div class="xnote-flex-between-grow">
                   {i || i18n.t('font.default')}
-                  {currentFontSize() === i && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
+                  {currentFontSize() === i && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                 </div>
               </MenuItem>
             })
@@ -74,7 +74,7 @@ export function FontSizeTool() {
         </MenuList>
       }>
         <Button size={'small'} disabled={b} variant={'text'}
-                class={'text-nowrap'}
+                class="xnote-text-nowrap"
                 chevronGapless={true} inlineCompact={true} highlighted={highlight()}>
           <IconGlyph name={'font-size'}/>
           <span>{currentFontSize() || i18n.t('font.default')}</span>

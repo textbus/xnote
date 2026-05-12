@@ -1,9 +1,7 @@
-import { withMark } from '@viewfly/core'
+import './split-line.scss'
 
-import css from './split-line.scoped.scss'
-
-export const SplitLine = withMark(css, function SplitLine() {
+export function SplitLine() {
   return () => {
-    return <div class="split-line"></div>
+    return <div class="xnote-split-line"></div>
   }
-})
+}

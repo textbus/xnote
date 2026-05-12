@@ -1,15 +1,15 @@
-import { createRef, inject, onMounted, onUpdated, Props, reactive, Signal, withMark } from '@viewfly/core'
+import { createRef, inject, onMounted, onUpdated, Props, reactive, Signal } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { Input } from '@textbus/platform-browser'
 
-import css from './scroll.scoped.scss'
+import './scroll.scss'
 import { TableService } from '../table.service'
 
 export interface ScrollProps extends Props {
   isFocus: Signal<boolean>
 }
 
-export const Scroll = withMark(css, function Scroll(props: ScrollProps) {
+export const Scroll = function Scroll(props: ScrollProps) {
   const scrollRef = createRef<HTMLDivElement>()
   const input = inject(Input)
   const tableService = inject(TableService)
@@ -41,15 +41,13 @@ export const Scroll = withMark(css, function Scroll(props: ScrollProps) {
   })
 
   return () => {
-    return <div ref={[scrollRef]} class={['scroll-container', {
-      'left-end': showShadow.leftEnd,
-      'right-end': showShadow.rightEnd,
-      'active': props.isFocus(),
-      // 'hide-selection': isSelectColumn()
+    return <div ref={[scrollRef]} class={['xnote-table-scroll', 'xnote-scrollbar', {
+      'xnote-table-scroll--left-end': showShadow.leftEnd,
+      'xnote-table-scroll--right-end': showShadow.rightEnd,
     }]} onScroll={ev => {
       setTimeout(() => {
         tableService.onScroll.next((ev.target as HTMLDivElement).scrollLeft)
       }, 30)
     }}>{props.children}</div>
   }
-})
+}
