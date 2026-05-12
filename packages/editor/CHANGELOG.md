@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.3
+
+### Patch Changes
+
+- 更新依赖，修复表格样式错误
+
 ## 1.4.2
 
 ### Patch Changes

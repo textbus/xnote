@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A high-performance rich text editor that supports multiplayer online collaboration.",
   "license": "MIT",
   "main": "./dist/index.js",
