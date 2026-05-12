@@ -27,6 +27,7 @@ import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { headingAttr } from '../../attributes/heading.attr'
 import { SlotRender } from '../SlotRender'
+import { I18nService } from '../../../services/i18n.service'
 import { boldFormatter } from '../../formatters/bold'
 import { italicFormatter } from '../../formatters/italic'
 import { fontSizeFormatter } from '../../formatters/font-size'
@@ -240,6 +241,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
   const component = props.component
 
   const adapter = inject(DomAdapter)
+  const i18n = inject(I18nService)
 
   function reorder(is: boolean) {
     component.state.reorder = is
@@ -344,8 +346,8 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
                   <div style={{
                     width: '120px'
                   }}>
-                    <MenuItem onClick={() => reorder(false)}>继续编号</MenuItem>
-                    <MenuItem onClick={() => reorder(true)}>重新编号</MenuItem>
+                    <MenuItem onClick={() => reorder(false)}>{i18n.t('list.continueNumbering')}</MenuItem>
+                    <MenuItem onClick={() => reorder(true)}>{i18n.t('list.restartNumbering')}</MenuItem>
                   </div>
                 }>
                   <span class="xnote-order-btn">{iconEl}</span>

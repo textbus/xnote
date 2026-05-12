@@ -14,23 +14,23 @@ export interface TimelineComponentState {
   items: TimelineComponentItem[]
 }
 
-export function createTimelineItem(theme: string): TimelineComponentItem {
+export function createTimelineItem(theme: string, i18n: { t: (key: string) => string }): TimelineComponentItem {
   const slot = new Slot([
     ContentType.BlockComponent,
   ])
 
   const title = new ParagraphComponent()
-  title.state.slot.insert('时间主题', [
+  title.state.slot.insert(i18n.t('timeline.defaultTheme'), [
     [fontSizeFormatter, '18px'],
     [boldFormatter, true]
   ])
-  title.state.slot.insert(' 2020-02-02', [
+  title.state.slot.insert(i18n.t('timeline.dateSample'), [
     [fontSizeFormatter, '15px'],
     [colorFormatter, '#777']
   ])
 
   const desc = new ParagraphComponent()
-  desc.state.slot.insert('描述信息...')
+  desc.state.slot.insert(i18n.t('timeline.defaultDesc'))
   slot.insert(title)
   slot.insert(desc)
   return { theme, slot }

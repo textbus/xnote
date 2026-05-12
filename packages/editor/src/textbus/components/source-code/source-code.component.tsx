@@ -30,6 +30,7 @@ import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
+import { I18nService } from '../../../services/i18n.service'
 
 export const languageList: Array<{ label: string, value: string }> = [{
   label: 'JavaScript',
@@ -433,6 +434,7 @@ export class SourceCodeComponent extends Component<SourceCodeComponentState> {
 
 export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
   const adapter = inject(DomAdapter)
+  const i18n = inject(I18nService)
   const isFocus = createSignal(false)
   const subscription = props.component.focus.subscribe(b => {
     isFocus.set(b)
@@ -553,7 +555,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                   <Button size={'small'} variant={'text'}>{lang || 'Plain Text'}</Button>
                 </Dropdown>
 
-                <span>主题：</span>
+                <span>{i18n.t('sourceCode.theme')}</span>
                 <Dropdown trigger={'hover'} dropdown={
                   <MenuList columnCompact={true}>
                     {
@@ -582,7 +584,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                       setting('lineNumber')
                     }}>
                       <div class={'flex justify-between'}>
-                        行号
+                        {i18n.t('sourceCode.lineNumber')}
                         <span class={'flex items-center'}>
                         {state.lineNumber && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
                       </span>
@@ -592,7 +594,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                       setting('autoBreak')
                     }}>
                       <div class={'flex justify-between'}>
-                        自动换行
+                        {i18n.t('sourceCode.wordWrap')}
                         <span class={'flex items-center'}>
                         {state.autoBreak && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
                       </span>
@@ -600,10 +602,10 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                     </MenuItem>
                   </MenuList>
                 }>
-                  <Button size={'small'} variant={'text'}>设置</Button>
+                  <Button size={'small'} variant={'text'}>{i18n.t('sourceCode.settings')}</Button>
                 </Dropdown>
-                <Button size={'small'} variant={'text'} onClick={props.component.emphasize}>强调</Button>
-                <Button size={'small'} variant={'text'} onClick={props.component.cancelEmphasize}>取消强调</Button>
+                <Button size={'small'} variant={'text'} onClick={props.component.emphasize}>{i18n.t('sourceCode.emphasize')}</Button>
+                <Button size={'small'} variant={'text'} onClick={props.component.cancelEmphasize}>{i18n.t('sourceCode.cancelEmphasize')}</Button>
               </div>
             </ComponentToolbar>
           </div>

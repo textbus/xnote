@@ -4,8 +4,10 @@ import { Button, Dropdown } from '@viewfly/ui-components'
 
 import { InsertMenu } from './insert-menu'
 import { useCommonState } from './_common/common-state'
+import { I18nService } from '../../services/i18n.service'
 
 export function InsertTool() {
+  const i18n = inject(I18nService)
   const selection = inject(Selection)
   const instance = getCurrentInstance()
   const sub = selection.onChange.subscribe(() => {
@@ -27,7 +29,7 @@ export function InsertTool() {
                 class={'text-nowrap'}
                 inlineCompact={true}
                 chevronGapless={true}
-                disabled={b}>插入</Button>
+                disabled={b}>{i18n.t('insert.button')}</Button>
       </Dropdown>
     )
   }

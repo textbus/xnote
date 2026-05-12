@@ -8,8 +8,10 @@ import { TableComponent } from '../../../textbus/components/table/table.componen
 import { cellBackgroundAttr } from '../../../textbus/attributes/cell-background.attr'
 import { isInTable } from './help'
 import { useCommonState } from '../_common/common-state'
+import { I18nService } from '../../../services/i18n.service'
 
 export function CellBackgroundTool() {
+  const i18n = inject(I18nService)
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
@@ -99,7 +101,10 @@ export function CellBackgroundTool() {
         <Dropdown disabled={disabled}
                   verticalPanelAlign={'right'}
                   dropdown={
-                    <ColorPicker recentColorsName={'tableCellBackgroundColor'} recentColors={defaultColors} onSelected={setColor}/>
+                    <ColorPicker recentColorsLabel={i18n.t('colorPicker.recentColorsLabel')}
+                                 paletteTriggerLabel={i18n.t('colorPicker.paletteTriggerLabel')}
+                                 confirmLabel={i18n.t('colorPicker.confirmLabel')}
+                                 recentColorsName={'tableCellBackgroundColor'} recentColors={defaultColors} onSelected={setColor}/>
                   }
                   trigger={'hover'}>
           <Button chevronDown={true}

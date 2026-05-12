@@ -11,6 +11,7 @@ import { VIEW_DOCUMENT } from '@textbus/platform-browser'
 import { RefreshService } from '../../services/refresh.service'
 import { EditorService } from '../../services/editor.service'
 import { createApp } from '@viewfly/platform-browser'
+import { I18nService } from '../../services/i18n.service'
 
 export interface LinkToolProps {
   hideToolbar?(): void
@@ -21,7 +22,7 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
   const selection = inject(Selection)
   const refreshService = inject(RefreshService)
   const editorService = inject(EditorService)
-
+  const i18n = inject(I18nService)
   const isShow = createSignal(false)
   const value = createSignal('')
 
@@ -79,9 +80,9 @@ export const LinkTool = withMark(css, function LinkTool(props: LinkToolProps) {
                    getReferenceBox={() => popupPosition()}
                    content={
                      <form onSubmit={setLink} class={'p-1'}>
-                       <Input block={true} required size={'small'} placeholder={'请输入链接地址'} onChange={v => {
+                       <Input block={true} required size={'small'} placeholder={i18n.t('link.urlPlaceholder')} onChange={v => {
                          value.set(v)
-                       }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">确定</Button>}/>
+                       }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">{i18n.t('link.confirm')}</Button>}/>
                      </form>
                    }
           />

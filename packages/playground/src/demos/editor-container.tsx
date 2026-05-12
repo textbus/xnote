@@ -50,6 +50,7 @@ export function EditorContainer(props: {
 
   onMounted(() => {
     editor = new Editor({
+      locale: 'en-US',
       readonly: false,
       ...(props.enableCollaboration ? {
         collaborateConfig: {

@@ -10,8 +10,10 @@ import { inject, JSXNode, withMark } from '@viewfly/core'
 import { RootComponentRef, Selection } from '@textbus/core'
 
 import { MenuHeading } from '../../components/menu-heading/menu-heading'
+import { I18nService } from '../../services/i18n.service'
 
 export const BlockTool = withMark(css, function BlockTool() {
+  const i18n = inject(I18nService)
   const checkStates = useActiveBlock()
   const transform = useBlockTransform()
   const selection = inject(Selection)
@@ -52,10 +54,10 @@ export const BlockTool = withMark(css, function BlockTool() {
     return (
       <Dropdown disabled={b} trigger={'hover'} dropdown={
         <MenuList class={'w-52'} columnCompact={true}>
-          <MenuHeading>替换为</MenuHeading>
+          <MenuHeading>{i18n.t('block.replaceWith')}</MenuHeading>
           <MenuItem density={'compact'} onClick={() => transform('paragraph')} icon={<IconGlyph name={'pilcrow'}/>}>
             <div class={'flex justify-between'}>
-              正文
+              {i18n.t('block.paragraph')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -67,7 +69,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('h1')} icon={<IconGlyph name={'heading-h1'}/>}>
             <div class={'flex justify-between'}>
-              一级标题
+              {i18n.t('block.heading1')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -79,7 +81,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('h2')} icon={<IconGlyph name={'heading-h2'}/>}>
             <div class={'flex justify-between'}>
-              二级标题
+              {i18n.t('block.heading2')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -91,7 +93,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('h3')} icon={<IconGlyph name={'heading-h3'}/>}>
             <div class={'flex justify-between'}>
-              三级标题
+              {i18n.t('block.heading3')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -103,7 +105,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('h4')} icon={<IconGlyph name={'heading-h4'}/>}>
             <div class={'flex justify-between'}>
-              四级标题
+              {i18n.t('block.heading4')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -115,7 +117,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('h5')} icon={<IconGlyph name={'heading-h5'}/>}>
             <div class={'flex justify-between'}>
-              五级标题
+              {i18n.t('block.heading5')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -127,7 +129,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('h6')} icon={<IconGlyph name={'heading-h6'}/>}>
             <div class={'flex justify-between'}>
-              六级标题
+              {i18n.t('block.heading6')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{
                   modKey: true,
@@ -140,7 +142,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           <Divider spacing={'compact'}/>
           <MenuItem density={'compact'} onClick={() => transform('todolist')} icon={<IconGlyph name={'checkbox-checked'}/>}>
             <div class={'flex justify-between'}>
-              待办事项
+              {i18n.t('block.task')}
               <span class={'flex items-center'}>
                 {states.todolist && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
               </span>
@@ -148,7 +150,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('ol')} icon={<IconGlyph name={'list-numbered'}/>}>
             <div class={'flex justify-between'}>
-              有序列表
+              {i18n.t('block.orderedList')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'O', shiftKey: true, modKey: true }}/>
                 {states.orderedList && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -157,7 +159,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('ul')} icon={<IconGlyph name={'list'}/>}>
             <div class={'flex justify-between'}>
-              无序列表
+              {i18n.t('block.unorderedList')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'U', shiftKey: true, modKey: true }}/>
                 {states.unorderedList && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -166,7 +168,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('blockquote')} icon={<IconGlyph name={'quotes-right'}/>}>
             <div class="flex justify-between">
-              引用
+              {i18n.t('block.blockquote')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: '\'', modKey: true }}/>
                 {states.blockquote && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -175,7 +177,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('sourceCode')} icon={<IconGlyph name={'source-code'}/>}>
             <div class="flex justify-between">
-              代码块
+              {i18n.t('block.sourceCode')}
               <span class={'flex items-center'}>
                 {states.sourceCode && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
               </span>
@@ -183,7 +185,7 @@ export const BlockTool = withMark(css, function BlockTool() {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => transform('highlightBox')} icon={<IconGlyph name={'hightlight-box'}/>}>
             <div class={'flex justify-between'}>
-              高亮块
+              {i18n.t('block.highlightBox')}
               <span class={'flex items-center'}>
                 {states.highlightBox && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
               </span>

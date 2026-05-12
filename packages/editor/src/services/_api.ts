@@ -1,3 +1,4 @@
+export * from './i18n.service'
 export * from './editor.service'
 export * from './llm.service'
 export * from './refresh.service'

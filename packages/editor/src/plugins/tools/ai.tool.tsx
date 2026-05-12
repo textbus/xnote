@@ -10,6 +10,7 @@ import { useCommonState } from './_common/common-state'
 import { LLMService } from '../../services/llm.service'
 import { usePopupPosition } from '../hooks/popup-position'
 import { RefreshService } from '../../services/refresh.service'
+import { I18nService } from '../../services/i18n.service'
 
 export interface AiToolProps {
   hideToolbar?(): void
@@ -38,6 +39,7 @@ export function AiTool(props: AiToolProps) {
   const commander = inject(Commander)
   const editorService = inject(EditorService)
   const refreshService = inject(RefreshService)
+  const i18n = inject(I18nService)
 
   const instance = getCurrentInstance()
 
@@ -262,10 +264,10 @@ export function AiTool(props: AiToolProps) {
       <>
         <Dropdown trigger={'hover'} menuColumnCompact={true} disabled={b} dropdown={
           <MenuList class={'w-36'}>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>} onClick={continueContent}>续写</MenuItem>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>润色</MenuItem>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'simplify'}/>} onClick={simplify}>简化内容</MenuItem>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'enrich'}/>} onClick={enrich}>丰富内容</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>} onClick={continueContent}>{i18n.t('ai.continue')}</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>{i18n.t('ai.polish')}</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'simplify'}/>} onClick={simplify}>{i18n.t('ai.simplify')}</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'enrich'}/>} onClick={enrich}>{i18n.t('ai.enrich')}</MenuItem>
             <Divider spacing={'compact'}/>
             <Dropdown trigger={'hover'} block orientation={'horizontal'} horizontalAlign={'right'} dropdown={
               <MenuList>
@@ -274,9 +276,9 @@ export function AiTool(props: AiToolProps) {
                 })}
               </MenuList>
             }>
-              <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'translation'}/>}>翻译</MenuItem>
+              <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'translation'}/>}>{i18n.t('ai.translate')}</MenuItem>
             </Dropdown>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'summary'}/>} onClick={summarize}>总结</MenuItem>
+            <MenuItem density={'compact'} icon={<IconGlyph name={'summary'}/>} onClick={summarize}>{i18n.t('ai.summarize')}</MenuItem>
           </MenuList>
         }>
           <Button size={'small'} inlineCompact={true} chevronGapless={true} variant={'text'} disabled={b}>
@@ -300,8 +302,8 @@ export function AiTool(props: AiToolProps) {
               </div>
               <Divider spacing={'none'}/>
               <div class="flex justify-end gap-2 p-2">
-                <Button size={'small'} htmlType="button" onClick={replace}>替换</Button>
-                <Button size={'small'} htmlType="button" onClick={insert}>插入</Button>
+                <Button size={'small'} htmlType="button" onClick={replace}>{i18n.t('ai.replace')}</Button>
+                <Button size={'small'} htmlType="button" onClick={insert}>{i18n.t('ai.insert')}</Button>
               </div>
             </div>
           }/>

@@ -10,6 +10,7 @@ import { textIndentAttr } from '../../textbus/attributes/text-indent.attr'
 import { Keymap } from '../../components/keymap/keymap'
 import { useCommonState } from './_common/common-state'
 import { IconGlyph } from '@viewfly/ui-icons'
+import { I18nService } from '../../services/i18n.service'
 
 export interface AttrToolProps extends Props {
   inLeftTool?: boolean
@@ -20,6 +21,7 @@ export interface AttrToolProps extends Props {
 }
 
 export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
+  const i18n = inject(I18nService)
   const commander = inject(Commander)
   const selection = inject(Selection)
   const query = inject(Query)
@@ -111,7 +113,7 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
         <MenuList columnCompact={true}>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-l')} icon={<IconGlyph name={'paragraph-left'}/>}>
             <div class={'flex justify-between'}>
-              左对齐
+              {i18n.t('attr.alignLeft')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'L', modKey: true }}/>
                 {checkStates.textAlign === 'left' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -120,7 +122,7 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-r')} icon={<IconGlyph name={'paragraph-right'}/>}>
             <div class={'flex justify-between'}>
-              右对齐
+              {i18n.t('attr.alignRight')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'R', modKey: true }}/>
                 {checkStates.textAlign === 'right' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -129,7 +131,7 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-c')} icon={<IconGlyph name={'paragraph-center'}/>}>
             <div class={'flex justify-between'}>
-              居中对齐
+              {i18n.t('attr.alignCenter')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'E', modKey: true }}/>
                 {checkStates.textAlign === 'center' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -138,7 +140,7 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('t-j')} icon={<IconGlyph name={'paragraph-justify'}/>}>
             <div class={'flex justify-between'}>
-              分散对齐
+              {i18n.t('attr.alignJustify')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'J', modKey: true }}/>
                 {checkStates.textAlign === 'justify' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
@@ -148,7 +150,7 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
           <Divider spacing={'compact'}/>
           <MenuItem density={'compact'} onClick={() => updateAttr('i+')} icon={<IconGlyph name={'indent-increase'}/>}>
             <div class={'flex justify-between'}>
-              增加缩进
+              {i18n.t('attr.indentIncrease')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'Tab' }}/>
               </span>
@@ -156,7 +158,7 @@ export const AttrTool = withMark(css, function AttrTool(props: AttrToolProps) {
           </MenuItem>
           <MenuItem density={'compact'} onClick={() => updateAttr('i-')} icon={<IconGlyph name={'indent-decrease'}/>}>
             <div class={'flex justify-between'}>
-              减少缩进
+              {i18n.t('attr.indentDecrease')}
               <span class={'flex items-center'}>
                 <Keymap keymap={{ key: 'Tab', shiftKey: true }}/>
               </span>

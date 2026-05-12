@@ -11,7 +11,7 @@ import {
   Registry, onSlotSetAttribute, onSlotApplyFormat, Selection, useContext, Commander,
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
-import { createDynamicRef, createRef } from '@viewfly/core'
+import { createDynamicRef, createRef, inject } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -22,6 +22,7 @@ import { useOutput } from '../../hooks/use-output'
 import { ListComponent } from '../list/list.component'
 import { TodolistComponent } from '../todolist/todolist.component'
 import { SlotRender } from '../SlotRender'
+import { I18nService } from '../../../services/i18n.service'
 
 export interface RootComponentState {
   content: Slot
@@ -85,6 +86,7 @@ export class RootComponent extends Component<RootComponentState> {
 }
 
 export function RootView(props: ViewComponentProps<RootComponent>) {
+  const i18n = inject(I18nService)
   const ref = createDynamicRef<HTMLDivElement>(node => {
     const sub = props.component.onCompositionStart.subscribe(() => {
       (node.children[0] as HTMLElement).dataset.placeholder = ''
@@ -125,7 +127,7 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
           slot={content}
           tag="div"
           class="xnote-content"
-          data-placeholder={content.isEmpty ? '请输入内容' : ''}
+          data-placeholder={content.isEmpty ? i18n.t('root.placeholder') : ''}
           renderEnv={readonly() || output()}
         />
       </div>

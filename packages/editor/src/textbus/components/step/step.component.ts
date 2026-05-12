@@ -13,18 +13,18 @@ export interface StepComponentState {
   items: StepComponentItem[]
 }
 
-export function createStepItem(): StepComponentItem {
+export function createStepItem(i18n: { t: (key: string) => string }): StepComponentItem {
   const slot = new Slot([
     ContentType.BlockComponent
   ])
 
   const title = new ParagraphComponent()
-  title.state.slot.insert('标题', [
+  title.state.slot.insert(i18n.t('step.defaultTitle'), [
     [fontSizeFormatter, '18px'],
     [boldFormatter, true]
   ])
   const content = new ParagraphComponent()
-  content.state.slot.insert('描述信息...')
+  content.state.slot.insert(i18n.t('step.defaultDesc'))
   slot.insert(title)
   slot.insert(content)
   return { slot }

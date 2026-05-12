@@ -99,6 +99,7 @@ import {
 import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-align.attr'
 import { XNoteMessageBus } from './xnote-message-bus'
 import { cellBackgroundAttr, cellBackgroundAttrLoader } from './textbus/attributes/cell-background.attr'
+import { I18nService } from './services/i18n.service'
 
 export interface XNoteCollaborateConfig extends CollaborateConfig {
   userinfo: {
@@ -117,7 +118,11 @@ export interface EditorConfig extends TextbusConfig {
   /** 协作服务配置 */
   collaborateConfig?: XNoteCollaborateConfig,
   /** 视图配置项 */
-  viewOptions?: Partial<ViewOptions>
+  viewOptions?: Partial<ViewOptions>,
+  /** 界面语言，默认 zh-CN；支持 en、en-US 等映射到 en-US */
+  locale?: string,
+  /** 覆写内置文案，key 见 XnoteMessageKey */
+  messages?: Record<string, string>
 }
 
 export class Editor extends Textbus {
@@ -126,6 +131,18 @@ export class Editor extends Textbus {
   private vDomAdapter: ViewflyVDomAdapter
 
   constructor(private editorConfig: EditorConfig = {}) {
+    const {
+      content: _omitContent,
+      collaborateConfig: _omitCollaborate,
+      viewOptions: _omitViewOptions,
+      locale = 'zh-CN',
+      messages,
+      providers: editorProviders = [],
+      ...textbusRest
+    } = editorConfig
+
+    const i18nService = new I18nService({ locale, messages })
+
     const adapter = new ViewflyAdapter({
       [ParagraphComponent.componentName]: ParagraphView,
       [RootComponent.componentName]: RootView,
@@ -324,7 +341,14 @@ export class Editor extends Textbus {
         registerBlockquoteShortcut(textbus)
 
       },
-      ...editorConfig
+      ...textbusRest,
+      providers: [
+        ...editorProviders,
+        {
+          provide: I18nService,
+          useValue: i18nService
+        }
+      ]
     })
 
     this.vDomAdapter = vDomAdapter

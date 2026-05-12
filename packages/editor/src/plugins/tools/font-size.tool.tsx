@@ -6,8 +6,10 @@ import { IconGlyph } from '@viewfly/ui-icons'
 import { RefreshService } from '../../services/refresh.service'
 import { fontSizeFormatter } from '../../textbus/formatters/font-size'
 import { useCommonState } from './_common/common-state'
+import { I18nService } from '../../services/i18n.service'
 
 export function FontSizeTool() {
+  const i18n = inject(I18nService)
   const currentFontSize = createSignal('')
   const fontSizeOptions = [
     '',
@@ -63,7 +65,7 @@ export function FontSizeTool() {
             fontSizeOptions.map(i => {
               return <MenuItem density={'compact'} onClick={() => check(i)}>
                 <div class={'flex justify-between flex-1'}>
-                  {i || '默认'}
+                  {i || i18n.t('font.default')}
                   {currentFontSize() === i && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
                 </div>
               </MenuItem>
@@ -75,7 +77,7 @@ export function FontSizeTool() {
                 class={'text-nowrap'}
                 chevronGapless={true} inlineCompact={true} highlighted={highlight()}>
           <IconGlyph name={'font-size'}/>
-          <span>{currentFontSize() || '默认'}</span>
+          <span>{currentFontSize() || i18n.t('font.default')}</span>
         </Button>
       </Dropdown>
     )

@@ -8,8 +8,10 @@ import { cellAlignAttr } from '../../../textbus/attributes/cell-align.attr'
 import { TableComponent } from '../../../textbus/components/table/table.component'
 import { isInTable } from './help'
 import { useCommonState } from '../_common/common-state'
+import { I18nService } from '../../../services/i18n.service'
 
 export function CellAlignTool() {
+  const i18n = inject(I18nService)
   const currentValue = createSignal('')
 
   const selection = inject(Selection)
@@ -81,7 +83,7 @@ export function CellAlignTool() {
                   <MenuList columnCompact={true} class={'w-40'}>
                     <MenuItem density={'compact'} onClick={() => check('top')} icon={<IconGlyph name={'align-top'}/>}>
                       <div class={'flex justify-between'}>
-                        顶部对齐
+                        {i18n.t('cellAlign.top')}
                         <span class={'flex items-center'}>
                 {currentValue() === 'top' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
               </span>
@@ -89,15 +91,15 @@ export function CellAlignTool() {
                     </MenuItem>
                     <MenuItem density={'compact'} onClick={() => check('middle')} icon={<IconGlyph name={'align-middle'}/>}>
                       <div class={'flex justify-between'}>
-                        垂直居中
+                        {i18n.t('cellAlign.middle')}
                         <span class={'flex items-center'}>
                 {currentValue() === 'middle' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
               </span>
                       </div>
                     </MenuItem>
-                    <MenuItem density={'compact'} onClick={() => check('highlightBox')} icon={<IconGlyph name={'align-bottom'}/>}>
+                    <MenuItem density={'compact'} onClick={() => check('bottom')} icon={<IconGlyph name={'align-bottom'}/>}>
                       <div class={'flex justify-between'}>
-                        底部对齐
+                        {i18n.t('cellAlign.bottom')}
                         <span class={'flex items-center'}>
                 {currentValue() === 'bottom' && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
               </span>

@@ -6,6 +6,7 @@ import { IconGlyph } from '@viewfly/ui-icons'
 
 import { colorFormatter } from '../../textbus/formatters/color'
 import { useCommonState } from './_common/common-state'
+import { I18nService } from '../../services/i18n.service'
 
 export interface TextColorToolProps extends Props {
   inLeftTool?: boolean
@@ -17,6 +18,7 @@ export interface TextColorToolProps extends Props {
 
 export function TextColorTool(props: TextColorToolProps) {
   const commander = inject(Commander)
+  const i18n = inject(I18nService)
 
   const color = createSignal('#ff0000')
 
@@ -63,7 +65,10 @@ export function TextColorTool(props: TextColorToolProps) {
                   block={true}
                   orientation={props.inLeftTool ? 'horizontal' : 'vertical'}
                   dropdown={
-                    <ColorPicker recentColors={defaultColors} onSelected={setColor}/>
+                    <ColorPicker recentColorsLabel={i18n.t('colorPicker.recentColorsLabel')}
+                                 paletteTriggerLabel={i18n.t('colorPicker.paletteTriggerLabel')}
+                                 confirmLabel={i18n.t('colorPicker.confirmLabel')}
+                                 recentColors={defaultColors} onSelected={setColor}/>
                   }
                   trigger={'hover'}>
           {props.children}
@@ -91,7 +96,10 @@ export function TextColorTool(props: TextColorToolProps) {
         <Dropdown disabled={disabled}
                   verticalPanelAlign={'right'}
                   dropdown={
-                    <ColorPicker recentColorsName={'textColor'} recentColors={defaultColors} onSelected={setColor}/>
+                    <ColorPicker recentColorsLabel={i18n.t('colorPicker.recentColorsLabel')}
+                                 paletteTriggerLabel={i18n.t('colorPicker.paletteTriggerLabel')}
+                                 confirmLabel={i18n.t('colorPicker.confirmLabel')}
+                                 recentColorsName={'textColor'} recentColors={defaultColors} onSelected={setColor}/>
                   }
                   trigger={'hover'}>
           <Button chevronDown={true}

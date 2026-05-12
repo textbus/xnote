@@ -2,6 +2,7 @@ import { inject, onUnmounted, createSignal } from '@viewfly/core'
 import { Commander, Query, QueryStateType } from '@textbus/core'
 
 import { RefreshService } from '../../services/refresh.service'
+import { I18nService } from '../../services/i18n.service'
 import { fontFamilyFormatter } from '../../textbus/formatters/font-family'
 import { useCommonState } from './_common/common-state'
 import { Button, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
@@ -44,33 +45,34 @@ export const isSupportFont = (function () {
 })()
 
 export function FontFamilyTool() {
+  const i18n = inject(I18nService)
   const currentFontFamily = createSignal('')
   const fontFamilyOptions = [{
-    label: '默认',
+    label: i18n.t('fontFamily.default'),
     value: ''
   }, {
-    label: '宋体',
+    label: i18n.t('fontFamily.simsun'),
     value: 'SimSun, STSong'
   }, {
-    label: '黑体',
+    label: i18n.t('fontFamily.simhei'),
     value: 'SimHei, STHeiti'
   }, {
-    label: '微软雅黑',
+    label: i18n.t('fontFamily.microsoftYahei'),
     value: 'Microsoft YaHei'
   }, {
-    label: '楷体',
+    label: i18n.t('fontFamily.kaiti'),
     value: 'KaiTi, STKaiti'
   }, {
-    label: '仿宋',
+    label: i18n.t('fontFamily.fangsong'),
     value: 'FangSong, STFangsong',
   }, {
-    label: '冬青黑简体中文',
+    label: i18n.t('fontFamily.hiragino'),
     value: '"Hiragino Sans GB", 冬青黑简体中文'
   }, {
-    label: '苹方',
+    label: i18n.t('fontFamily.pingfang'),
     value: '"PingFang SC", 苹方'
   }, {
-    label: '隶书',
+    label: i18n.t('fontFamily.simli'),
     value: 'SimLi'
   }, {
     label: 'Andale Mono',
@@ -127,7 +129,7 @@ export function FontFamilyTool() {
               const disabled = i.value ? !i.value.split(',').map(i => isSupportFont(i.trim())).some(v => v) : false
               return <MenuItem disabled={disabled} onClick={() => check(i.value)} density={'compact'}>
                 <div class={'flex justify-between flex-1'}>
-                  {i.label || '默认'}
+                  {i.label || i18n.t('fontFamily.default')}
                   {currentFontFamily() === i.value && <IconGlyph class={'ml-1 color-primary'} name={'checkmark'}/>}
                 </div>
               </MenuItem>
@@ -139,7 +141,7 @@ export function FontFamilyTool() {
                 highlighted={highlight()} class={'text-nowrap'}>{
           fontFamilyOptions.find(v => {
             return v.value === currentFontFamily()
-          })?.label || '默认'}
+          })?.label || i18n.t('fontFamily.default')}
         </Button>
       </Dropdown>
     )

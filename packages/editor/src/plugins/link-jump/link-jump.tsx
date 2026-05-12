@@ -5,8 +5,10 @@ import { SelectionBridge, VIEW_CONTAINER } from '@textbus/platform-browser'
 import css from './link-jump.scoped.scss'
 import { linkFormatter } from '../../textbus/formatters/link'
 import { Button, Popover, Space } from '@viewfly/ui-components'
+import { I18nService } from '../../services/i18n.service'
 
 export const LinkJump = withMark(css, () => {
+  const i18n = inject(I18nService)
   const selection = inject(Selection)
   const query = inject(Query)
   const bridge = inject(SelectionBridge)
@@ -90,8 +92,8 @@ export const LinkJump = withMark(css, () => {
       }}
       content={
         <Space.Compact>
-          <Button onClick={cleanLink} variant={'text'} size={'small'}>清除</Button>
-          <Button target={'_blank'} href={href()} variant={'link'} size={'small'}>跳转</Button>
+          <Button onClick={cleanLink} variant={'text'} size={'small'}>{i18n.t('linkJump.clear')}</Button>
+          <Button target={'_blank'} href={href()} variant={'link'} size={'small'}>{i18n.t('linkJump.open')}</Button>
         </Space.Compact>
       }
       getContainer={() => container}>

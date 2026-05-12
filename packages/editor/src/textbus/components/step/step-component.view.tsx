@@ -5,12 +5,14 @@ import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-brows
 import { Button } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
+import { I18nService } from '../../../services/i18n.service'
 import { createStepItem, StepComponent } from './step.component'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 import './step.component.scss'
 
 export function StepComponentView(props: ViewComponentProps<StepComponent>) {
+  const i18n = inject(I18nService)
   const adapter = inject(DomAdapter)
   const isOutput = useOutput()
   const isReadonly = useReadonly()
@@ -46,7 +48,7 @@ export function StepComponentView(props: ViewComponentProps<StepComponent>) {
                   !isOutput() && !isReadonly() && <div class="xnote-step-tools">
                     <Button size={'small'} shape={'circle'} class="xnote-step-add" onClick={() => {
                       const index = component.state.items.indexOf(item) + 1
-                      component.state.items.splice(index, 0, createStepItem())
+                      component.state.items.splice(index, 0, createStepItem(i18n))
                     }}>
                       <IconGlyph name={'plus'}/>
                     </Button>

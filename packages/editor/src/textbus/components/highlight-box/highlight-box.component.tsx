@@ -1,5 +1,6 @@
 import { Component, ComponentStateLiteral, ContentType, Registry, Slot, Textbus, } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
+import { inject } from '@viewfly/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
 import { Dropdown } from '@viewfly/ui-components'
 
@@ -9,6 +10,7 @@ import { useBlockContent } from '../../hooks/use-block-content'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { SlotRender } from '../SlotRender'
+import { I18nService } from '../../../services/i18n.service'
 
 export interface HighlightBoxComponentState {
   type: string
@@ -46,6 +48,7 @@ export class HighlightBoxComponent extends Component<HighlightBoxComponentState>
 }
 
 export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent>) {
+  const i18n = inject(I18nService)
   const readonly = useReadonly()
   const output = useOutput()
   const emoji: number[] = []
@@ -76,7 +79,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
         <div class="xnote-highlight-box-left">
           <Dropdown dropdown={
             <div class="xnote-highlight-box-icons">
-              <div class="xnote-highlight-box-heading">常用</div>
+              <div class="xnote-highlight-box-heading">{i18n.t('highlight.common')}</div>
               {
                 HighlightBoxComponent.defaultTypes.map(icon => {
                   return (
@@ -84,7 +87,7 @@ export function HighlightBoxView(props: ViewComponentProps<HighlightBoxComponent
                   )
                 })
               }
-              <div class="xnote-highlight-box-heading">更多</div>
+              <div class="xnote-highlight-box-heading">{i18n.t('highlight.more')}</div>
               {
                 emoji.map(i => {
                   const icon = String.fromCodePoint(i)

@@ -34,6 +34,7 @@ import { EditorService } from '../../services/editor.service'
 import { ToolService } from '../tools/_common/tool.service'
 import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
+import { I18nService } from '../../services/i18n.service'
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
@@ -44,6 +45,7 @@ export const LeftToolbar = withAnnotation({
   const rootComponentRef = inject(RootComponentRef)
   const refreshService = inject(RefreshService)
   const editorService = inject(EditorService)
+  const i18n = inject(I18nService)
 
   const checkStates = useActiveBlock()
   const toBlock = useBlockTransform()
@@ -419,33 +421,33 @@ export const LeftToolbar = withAnnotation({
                         slot={slot}
                         applyBefore={applyBefore}>
                         <MenuItem chevronRight={true} density={'compact'}
-                                  icon={<IconGlyph name={'indent-decrease'}/>}>缩进和对齐</MenuItem>
+                                  icon={<IconGlyph name={'indent-decrease'}/>}>{i18n.t('toolbar.indentAlign')}</MenuItem>
                       </AttrTool>
                       <TextColorTool
                         inLeftTool={true}
                         applyBefore={applyBefore}>
-                        <MenuItem chevronRight={true} density={'compact'} icon={<IconGlyph name={'color'}/>}>文字颜色</MenuItem>
+                        <MenuItem chevronRight={true} density={'compact'} icon={<IconGlyph name={'color'}/>}>{i18n.t('toolbar.textColor')}</MenuItem>
                       </TextColorTool>
                       <TextBackgroundColorTool
                         inLeftTool={true}
                         applyBefore={applyBefore}>
                         <MenuItem density={'compact'}
                                   chevronRight={true}
-                                  icon={<IconGlyph name={'background-color'}/>}>文字背景颜色</MenuItem>
+                                  icon={<IconGlyph name={'background-color'}/>}>{i18n.t('toolbar.textBackground')}</MenuItem>
                       </TextBackgroundColorTool>
                     </MenuList>
                     <Divider spacing={'compact'}/>
                     <MenuList columnCompact={true}>
-                      <MenuItem density={'compact'} onClick={copy} icon={<IconGlyph name={'copy'}/>}>复制</MenuItem>
-                      <MenuItem density={'compact'} onClick={remove} icon={<IconGlyph name={'bin'}/>}>删除</MenuItem>
-                      <MenuItem density={'compact'} onClick={cut} icon={<IconGlyph name={'cut'}/>}>剪切</MenuItem>
+                      <MenuItem density={'compact'} onClick={copy} icon={<IconGlyph name={'copy'}/>}>{i18n.t('toolbar.copy')}</MenuItem>
+                      <MenuItem density={'compact'} onClick={remove} icon={<IconGlyph name={'bin'}/>}>{i18n.t('toolbar.delete')}</MenuItem>
+                      <MenuItem density={'compact'} onClick={cut} icon={<IconGlyph name={'cut'}/>}>{i18n.t('toolbar.cut')}</MenuItem>
                     </MenuList>
                     <Divider spacing={'compact'}/>
                     <Dropdown block={true}
                               orientation={'horizontal'}
                               trigger={'hover'}
                               dropdown={<InsertMenu hideTitle={true} slot={activeSlot()}/>}>
-                      <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'plus'}/>}>在下面添加</MenuItem>
+                      <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'plus'}/>}>{i18n.t('toolbar.addBelow')}</MenuItem>
                     </Dropdown>
                   </div>
               }>

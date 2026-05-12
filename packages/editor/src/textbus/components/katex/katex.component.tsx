@@ -16,6 +16,7 @@ import './katex.component.scss'
 import { KatexEditor } from './katex-editor'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
+import { I18nService } from '../../../services/i18n.service'
 
 export interface KatexComponentState {
   text: string
@@ -59,7 +60,12 @@ function domToVDom(el: HTMLElement): JSXNode {
   return jsx(el.tagName.toLowerCase(), attrs)
 }
 
+function escapeHtml(s: string) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
+}
+
 export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
+  const i18n = inject(I18nService)
   function toDOM(value: string) {
     let htmlString: string
     try {
@@ -75,7 +81,7 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
         macros: { '\\f': '#1f(#2)' }
       })
     } catch (e) {
-      htmlString = '<span style="color: red">公式错误</span>'
+      htmlString = '<span style="color: red">' + escapeHtml(i18n.t('katex.formulaError')) + '</span>'
     }
     return new DOMParser().parseFromString(htmlString, 'text/html').body.children[0] as HTMLElement
   }

@@ -5,12 +5,14 @@ import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-brows
 import { IconGlyph } from '@viewfly/ui-icons'
 import { Button } from '@viewfly/ui-components'
 
+import { I18nService } from '../../../services/i18n.service'
 import { createTimelineItem, TimelineComponent } from './timeline.component'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 import './timeline.component.scss'
 
 export function TimelineComponentView(props: ViewComponentProps<TimelineComponent>) {
+  const i18n = inject(I18nService)
   const adapter = inject(DomAdapter)
   const isOutput = useOutput()
   const isReadonly = useReadonly()
@@ -34,7 +36,7 @@ export function TimelineComponentView(props: ViewComponentProps<TimelineComponen
                   !isOutput() && !isReadonly() && <div class="xnote-timeline-tools">
                     <Button size={'small'} shape={'circle'} class="xnote-step-add" onClick={() => {
                       const index = component.state.items.indexOf(item) + 1
-                      component.state.items.splice(index, 0, createTimelineItem(item.theme))
+                      component.state.items.splice(index, 0, createTimelineItem(item.theme, i18n))
                     }}>
                       <IconGlyph name={'plus'}/>
                     </Button>

@@ -15,6 +15,7 @@ import './mermaid.component.scss'
 import { MermaidEditor } from './mermaid-editor'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
+import { I18nService } from '../../../services/i18n.service'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const MATHML_NS = 'http://www.w3.org/1998/Math/MathML'
@@ -145,6 +146,7 @@ export class MermaidComponent extends Component<MermaidComponentState> {
 }
 
 export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>) {
+  const i18n = inject(I18nService)
 
   /**
    * 必须存 SVG 字符串，勿长期持有 parse 出来的 DOM 节点：
@@ -204,7 +206,7 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
     if (!el) {
       return jsx('span', {
         class: 'xnote-mermaid-empty',
-        children: [props.component.state.text ? '' : '空 Mermaid 图表']
+        children: [props.component.state.text ? '' : i18n.t('mermaid.empty')]
       })
     }
     const attrs: { [key: string]: any } = {}
@@ -295,7 +297,6 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
   return () => {
     const text = props.component.state.text
     const preview = mermaidPreview()
-    console.log(preview)
     return (
       <div ref={props.rootRef} data-component={MermaidComponent.componentName} data-mermaid={encodeURIComponent(text)}
            class="xnote-mermaid">

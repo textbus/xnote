@@ -20,6 +20,7 @@ import { Button, Divider, MenuItem, MenuList } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 import { MermaidComponent } from '../../textbus/components/mermaid/mermaid.component'
 import { RootComponent } from '../../textbus/components/root/root.component'
+import { I18nService } from '../../services/i18n.service'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -32,6 +33,7 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
   const selection = inject(Selection)
   const textbus = inject(Textbus)
   const fileUploader = inject(FileUploader, null)
+  const i18n = inject(I18nService)
 
   function insert(type: string) {
     const component = props.slot?.parent
@@ -161,7 +163,7 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
       case 'step': {
         const step = new StepComponent({
           step: 0,
-          items: [createStepItem()]
+          items: [createStepItem(i18n)]
         })
         insertComponent(step)
         selection.selectFirstPosition(step, false, true)
@@ -169,7 +171,7 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
         break
       case 'timeline': {
         const timeline = new TimelineComponent({
-          items: [createTimelineItem('#296eff')]
+          items: [createTimelineItem('#296eff', i18n)]
         })
         insertComponent(timeline)
         selection.selectFirstPosition(timeline, false, true)
@@ -188,7 +190,7 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
   return () => {
     return <div class={'w-46'}>
       {
-        props.hideTitle ? null : <MenuHeading>{props.replace ? '替换为' : '在下面添加'}</MenuHeading>
+        props.hideTitle ? null : <MenuHeading>{props.replace ? i18n.t('insert.replaceWith') : i18n.t('insert.addBelow')}</MenuHeading>
       }
       <div class="flex flex-wrap gap-1">
         <Button variant={'text'} inlineCompact={true} onClick={() => insert('paragraph')}>
@@ -224,20 +226,19 @@ export const InsertMenu = withMark(css, function (props: InsertToolProps) {
       </div>
       <Divider spacing={'compact'}/>
       <MenuList columnCompact={true}>
-        <MenuItem density={'compact'} onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>表格</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>{i18n.t('insert.table')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('todolist')}
-                  icon={<IconGlyph name={'checkbox-checked'}/>}>待办列表</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>图片</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>视频</MenuItem>
+                  icon={<IconGlyph name={'checkbox-checked'}/>}>{i18n.t('insert.todoList')}</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>{i18n.t('insert.image')}</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('video')} icon={<IconGlyph name={'video'}/>}>{i18n.t('insert.video')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('highlightBox')}
-                  icon={<IconGlyph name={'hightlight-box'}/>}>高亮块</MenuItem>
+                  icon={<IconGlyph name={'hightlight-box'}/>}>{i18n.t('insert.highlightBox')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('katex')}
-                  icon={<IconGlyph name={'function'}/>}>数学公式</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'flow-chart'}/>}>Mermaid
-          图表</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>步骤条</MenuItem>
+                  icon={<IconGlyph name={'function'}/>}>{i18n.t('insert.katex')}</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'flow-chart'}/>}>{i18n.t('insert.mermaid')}</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>{i18n.t('insert.step')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('timeline')}
-                  icon={<IconGlyph name={'timeline'}/>}>时间轴</MenuItem>
+                  icon={<IconGlyph name={'timeline'}/>}>{i18n.t('insert.timeline')}</MenuItem>
       </MenuList>
     </div>
   }
