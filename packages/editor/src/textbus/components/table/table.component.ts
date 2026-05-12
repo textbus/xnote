@@ -97,7 +97,14 @@ export class TableComponent extends Component<TableComponentState> {
 
   private normalizedData: RenderRow[] = []
 
+  private isAttached = false
+
   override getSlots(): Slot[] {
+    if (!this.isAttached) {
+      return this.state.rows.map(item => {
+        return item.cells.map(i => i.slot)
+      }).flat()
+    }
     return this.normalizedData.map(item => {
       return item.cells.filter(i => i.visible).map(i => i.raw.slot)
     }).flat()
@@ -248,6 +255,7 @@ export class TableComponent extends Component<TableComponentState> {
 
     const nonIntersectingRectangles = this.getMergedRectangles()
     this.normalizedData = applyRectangles(this.state.rows, nonIntersectingRectangles)
+    this.isAttached = true
     return this.normalizedData
   }
 
