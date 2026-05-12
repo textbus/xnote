@@ -88,7 +88,7 @@ export const TableComponentView = withAnnotation({
                 {
                   normalizedData.map((row) => {
                     return (
-                      <tr key={rowMapping.get(row.row)}>
+                      <tr class="xnote-table-row" key={rowMapping.get(row.row)}>
                         {
                           row.cells.filter(i => {
                             return i.visible
