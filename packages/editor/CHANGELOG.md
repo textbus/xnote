@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.1
+
+### Patch Changes
+
+- 修复数据公式和图表弹出编辑器没有 i18n 的 bug
+
 ## 1.4.0
 
 ### Minor Changes
