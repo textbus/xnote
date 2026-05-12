@@ -1,5 +1,16 @@
 # @textbus/xnote-playground
 
+## 0.2.0
+
+### Minor Changes
+
+- 支持多语言配置
+
+### Patch Changes
+
+- Updated dependencies
+  - @textbus/xnote@1.4.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.0
+
+### Minor Changes
+
+- 支持多语言配置
+
 ## 1.3.1
 
 ### Patch Changes
