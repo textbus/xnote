@@ -1,10 +1,11 @@
-import { onMounted, onUnmounted, reactive, Ref, watch } from '@viewfly/core'
+import { inject, onMounted, onUnmounted, reactive, Ref, watch } from '@viewfly/core'
 import { debounceTime } from '@textbus/core'
 
 import './selection-mask.scss'
 import { TableComponent } from '../table.component'
 import { sum } from '../_utils'
 import { isShowMask } from '../table.service'
+import { EditorService } from '@textbus/xnote'
 
 export interface TableSelection {
   startRow: number
@@ -32,12 +33,15 @@ export const SelectionMask = function SelectionMask(props: SelectionMaskProps) {
     update()
   })
 
+  const editorService = inject(EditorService)
+
   watch(props.component.tableSelection, update)
 
   function update() {
     const selection = props.component.tableSelection()!
     const state = props.component.state
     if (isShowMask(props.component)) {
+      editorService.changeLeftToolbarVisible(false)
       let topCompensation = 0.5
       let heightCompensation = -1
       if (selection.startRow === 0) {
@@ -61,6 +65,7 @@ export const SelectionMask = function SelectionMask(props: SelectionMaskProps) {
       styles.width = sum(state.columnsConfig.slice(selection.startColumn, selection.endColumn)) - 1 + 'px'
       styles.height = trs[selection.endRow - 1].offsetTop + height + heightCompensation - styles.top + 'px'
     } else {
+      editorService.canShowLeftToolbar = true
       styles.visible = false
     }
   }

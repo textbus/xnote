@@ -325,6 +325,21 @@ export const LeftToolbar = withAnnotation({
     }
   })
 
+  const btnAvailable = createSignal(true)
+
+  onMounted(() => {
+    const unbind = fromEvent(container, 'mousedown').subscribe(() => {
+      btnAvailable.set(false)
+    })
+    unbind.add(fromEvent(container, 'mouseup').subscribe(() => {
+      btnAvailable.set(true)
+    }))
+
+    return () => {
+      unbind.unsubscribe()
+    }
+  })
+
   return () => {
     const slot = activeSlot()
     let activeNode = <IconGlyph name={'pilcrow'}/>
@@ -358,7 +373,9 @@ export const LeftToolbar = withAnnotation({
     const activeParentComponent = activeSlot()?.parent
     const needInsert = activeParentComponent instanceof TableComponent || activeParentComponent instanceof SourceCodeComponent
     return (
-      <div class="xnote-left-toolbar" ref={toolbarRef}>
+      <div class={['xnote-left-toolbar', {
+        'xnote-left-toolbar--no-respond': !btnAvailable()
+      }]} ref={toolbarRef}>
         <div class="xnote-left-toolbar-drag-line" ref={dragLineRef}></div>
         <div class="xnote-left-toolbar-panel" ref={btnRef} style={{
           left: positionSignal.left + 'px',
@@ -426,7 +443,8 @@ export const LeftToolbar = withAnnotation({
                       <TextColorTool
                         inLeftTool={true}
                         applyBefore={applyBefore}>
-                        <MenuItem chevronRight={true} density={'compact'} icon={<IconGlyph name={'color'}/>}>{i18n.t('toolbar.textColor')}</MenuItem>
+                        <MenuItem chevronRight={true} density={'compact'}
+                                  icon={<IconGlyph name={'color'}/>}>{i18n.t('toolbar.textColor')}</MenuItem>
                       </TextColorTool>
                       <TextBackgroundColorTool
                         inLeftTool={true}
@@ -447,7 +465,8 @@ export const LeftToolbar = withAnnotation({
                               orientation={'horizontal'}
                               trigger={'hover'}
                               dropdown={<InsertMenu hideTitle={true} slot={activeSlot()}/>}>
-                      <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'plus'}/>}>{i18n.t('toolbar.addBelow')}</MenuItem>
+                      <MenuItem density={'compact'} chevronRight={true}
+                                icon={<IconGlyph name={'plus'}/>}>{i18n.t('toolbar.addBelow')}</MenuItem>
                     </Dropdown>
                   </div>
               }>
