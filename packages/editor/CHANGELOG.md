@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.4
+
+### Patch Changes
+
+- 优化左侧工具交互
+
 ## 1.4.3
 
 ### Patch Changes
