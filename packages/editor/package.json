@@ -62,8 +62,8 @@
     "@textbus/collaborate": "^5.2.7",
     "@textbus/core": "^5.2.7",
     "@textbus/platform-browser": "^5.2.7",
-    "@viewfly/core": "^3.0.2",
-    "@viewfly/platform-browser": "^3.0.2"
+    "@viewfly/core": "^3.0.4",
+    "@viewfly/platform-browser": "^3.0.4"
   },
   "devDependencies": {
     "@swc/core": "^1.15.30",
@@ -77,9 +77,9 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
-    "@viewfly/core": "^3.0.3",
-    "@viewfly/devtools": "^3.0.3",
-    "@viewfly/platform-browser": "^3.0.3",
+    "@viewfly/core": "^3.0.4",
+    "@viewfly/devtools": "^3.0.4",
+    "@viewfly/platform-browser": "^3.0.4",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.5.0",
     "eslint-plugin-import": "^2.29.1",
