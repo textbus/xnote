@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.2.1
+
+### Patch Changes
+
+- 修复嵌套表格初始化时，无法获取到子插槽，导致无法调用子组件的 setup 的 bug
+- Updated dependencies
+  - @textbus/xnote@1.4.2
+
 ## 0.2.0
 
 ### Minor Changes

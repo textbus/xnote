@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.2
+
+### Patch Changes
+
+- 修复嵌套表格初始化时，无法获取到子插槽，导致无法调用子组件的 setup 的 bug
+
 ## 1.4.1
 
 ### Patch Changes
