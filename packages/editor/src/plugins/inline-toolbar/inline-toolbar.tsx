@@ -1,4 +1,13 @@
-import { createRef, withMark, Fragment, getCurrentInstance, inject, onUnmounted, reactive, withAnnotation } from '@viewfly/core'
+import {
+  createRef,
+  withMark,
+  Fragment,
+  getCurrentInstance,
+  inject,
+  onUnmounted,
+  reactive,
+  withAnnotation
+} from '@viewfly/core'
 import {
   debounceTime,
   delay,
@@ -235,7 +244,12 @@ export const InlineToolbar = withAnnotation({
                  updateRect()
                  return viewPosition
                }}
-               onOpenChange={(v) => viewPosition.open = v}
+               onOpenChange={(v) => {
+                 viewPosition.open = v
+                 if (!v) {
+                   editorService.canShowLeftToolbar = true
+                 }
+               }}
                open={viewPosition.open && !editorService.hideInlineToolbar}
                content={
                  <div class={['toolbar', props.theme === 'dark' ? 'vfui-dark dark' : 'light']}>
@@ -264,12 +278,12 @@ export const InlineToolbar = withAnnotation({
                    <CleanFormatsTool/>
                    {
                      query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
-                       <SplitLine/>
-                       <MergeCellsTool/>
-                       <SplitCellsTool/>
-                       <CellBackgroundTool/>
-                       <CellAlignTool/>
-                     </Fragment>
+                           <SplitLine/>
+                           <MergeCellsTool/>
+                           <SplitCellsTool/>
+                           <CellBackgroundTool/>
+                           <CellAlignTool/>
+                       </Fragment>
                    }
                  </div>
                }>
