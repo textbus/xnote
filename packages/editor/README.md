@@ -1,147 +1,36 @@
-XNote
-====================
-Xnote 是一个无头、高性能、与框架无关的富文本编辑器，支持多人在线协作。提供了丰富的现代文档编辑功能。
+# @textbus/xnote
 
-Xnote 底层依赖于开源富文本框架 [Textbus](https://textbus.io) 和前端视图 [Viewfly](https://viewfly.org)。因此，你可以在此基础上继续扩展自己的功能。
+**[English](README.md)** | **[简体中文](README.zh-CN.md)**
 
-## 在线演示
+This directory is the **npm package** for XNote: a headless, collaborative rich-text editor built on the open-source [Textbus](https://textbus.io) rich-text stack and the front-end framework [Viewfly](https://viewfly.org).
 
-[在线演示](https://textbus.io/playground/)
+Full documentation—installation, i18n, file upload, collaboration, and the rest—lives at the **repository root** so it stays in one place:
 
-## 安装
+| | In this repo | On GitHub |
+|---|----------------|-----------|
+| **English** | [README.md](../../README.md) | [Open](https://github.com/textbus/xnote/blob/main/README.md) |
+| **简体中文** | [README.zh-CN.md](../../README.zh-CN.md) | [Open](https://github.com/textbus/xnote/blob/main/README.zh-CN.md) |
 
-```
+## Quick start
+
+```bash
 npm install @textbus/xnote katex
 ```
-
-## 使用
 
 ```ts
 import 'katex/dist/katex.min.css'
 import { Editor } from '@textbus/xnote'
 
 const editor = new Editor()
-editor.mount(document.getElementById('editor')).then(() => {
-  console.log('编辑器准备完成。')
-})
+await editor.mount(document.getElementById('editor')!)
 ```
 
-## 文件上传
+## Internationalization (i18n)
 
-要实现文件上传需实现 FileUploader 接口
+UI string keys are defined in [`src/i18n/messages.ts`](./src/i18n/messages.ts). Pass **`locale`** and optional **`messages`** on **`Editor`** (see the root readme for examples).
 
-```ts
-import { FileUploader } from '@textbus/xnote'
+## Useful links
 
-class YourUploader extends FileUploader {
-  uploadFile(type: string): string | Promise<string> {
-    if (type === 'image') {
-      return 'imageUrl'
-    }
-    if (type === 'video') {
-      return 'videoUrl'
-    }
-  }
-}
-
-const editor = new Editor({
-  providers: [{
-    provide: FileUploader,
-    useFactory() {
-      return new YourFileUplader()
-    }
-  }]
-})
-```
-
-## 粘贴图片 Base64 转 URL
-
-```ts
-import { Commander } from '@textbus/core'
-import { Injectable } from '@viewfly/core'
-import { ImageComponent } from '@textbus/xnote'
-
-@Injectable()
-class YourCommander extends Commander {
-  paste(slot: Slot, text: string) {
-    slot.sliceContent().forEach(content => {
-      if (content instanceof ImageComponent) {
-        const base64 = content.state.url
-        // base64 转 url，请自行实现
-        content.state.url = 'https://xxx.com/xxx.jpg'
-      }
-    })
-    
-    // 待图片转换完成后，可调用超类的 paste 方法
-    super.paste(slot, text)
-    return true
-  }
-}
-
-const editor = new Editor({
-  providers: [{
-    provide: Commander,
-    useClass: YourCommander
-  }]
-})
-```
-
-## 获取 HTML
-
-```ts
-const html = editor.getHTML()
-```
-
-## 设置初始 HTML
-
-```ts
-const editor = new Editor({
-  content: '<div>HTML 内容</div>'
-})
-```
-
-## 更新编辑器内容
-
-```ts
-editor.setContent('<p>你好！</p>')
-```
-
-## @ 人
-
-在文档中 @ 人功能需实现以下接口，以对接用户信息
-
-```ts
-export abstract class Organization {
-  abstract getMembers(name?: string): Promise<Member[]>
-
-  abstract atMember(member: Member): void
-}
-```
-然后在编辑器初始化时传入你的实现
-```ts
-const editor = new Editor({
-  providers: [{
-    provide: Organization,
-    useValue: new YourOrganization()
-  }]
-})
-```
-
-## 协作支持
-
-Textbus 天然支持协作，只需要在编辑器配置项中添加协作配置信息即可，具体配置你可以参考 [https://textbus.io/guide/collab/](https://textbus.io/guide/collab/)
-
-```ts
-const editor = new Editor({
-  collaborateConfig: {
-    userinfo: user, // 用户信息
-    createConnector(yDoc): SyncConnector {
-      // 返回连接器
-      return new YWebsocketConnector('wss://example.com', 'docName', yDoc)
-    }
-  }
-})
-```
-
-
-
+- [Playground](https://textbus.io/playground.html) — try the editor in the browser  
+- [Collaboration guide](https://textbus.io/guide/collaborate.html) — Textbus collaboration  
+- [Issues](https://github.com/textbus/xnote/issues) — this repository  

@@ -1,34 +1,73 @@
-XNote
-====================
-Xnote 是一个无头、高性能、与框架无关的富文本编辑器，支持多人在线协作。提供了丰富的现代文档编辑功能。
+# XNote
 
-Xnote 底层依赖于开源富文本框架 [Textbus](https://textbus.io) 和前端视图 [Viewfly](https://viewfly.org)。因此，你可以在此基础上继续扩展自己的功能。
+**English** | **[简体中文](README.zh-CN.md)**
 
-## 在线演示
+XNote is a headless, high-performance, framework-agnostic rich-text editor with multi-user online collaboration. It offers a rich set of modern document-editing features.
 
-[在线演示](https://textbus.io/playground/)
+XNote builds on the open-source rich-text framework [Textbus](https://textbus.io) and the front-end framework [Viewfly](https://viewfly.org), so you can keep extending it with your own features on top.
 
-## 安装
+## Table of contents
 
-```
+- [Live demo](#live-demo)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Internationalization (i18n)](#internationalization-i18n)
+- [File upload](#file-upload)
+- [Paste images: Base64 to URL](#paste-images-base64-to-url)
+- [Get HTML](#get-html)
+- [Set initial HTML](#set-initial-html)
+- [Update editor content](#update-editor-content)
+- [At mentions](#at-mentions)
+- [Collaboration](#collaboration)
+- [About this repository](#about-this-repository)
+- [See also](#see-also)
+
+## Live demo
+
+Try the collaborative demo online: [https://textbus.io/playground.html](https://textbus.io/playground.html)
+
+## Installation
+
+Math typesetting relies on KaTeX styles, so install both packages:
+
+```bash
 npm install @textbus/xnote katex
 ```
 
-## 使用
+## Usage
+
+Import KaTeX CSS once, create an **`Editor`**, then **`mount`** it on the element that should host the editor. When the promise resolves, the instance is ready to use.
 
 ```ts
 import 'katex/dist/katex.min.css'
 import { Editor } from '@textbus/xnote'
 
 const editor = new Editor()
-editor.mount(document.getElementById('editor')).then(() => {
-  console.log('编辑器准备完成。')
+editor.mount(document.getElementById('editor')!).then(() => {
+  console.log('Editor is ready.')
 })
 ```
 
-## 文件上传
+## Internationalization (i18n)
 
-要实现文件上传需实现 FileUploader 接口
+Toolbar labels and other UI strings go through **`I18nService`**, one per editor. Set **`locale`** (for example `en-US` or `zh-CN`) when you construct **`Editor`**, and pass **`messages`** if you only want to tweak a few keys. The key names line up with the exported **`XnoteMessageKey`** type.
+
+```ts
+import { Editor } from '@textbus/xnote'
+
+const editor = new Editor({
+  locale: 'en-US',
+  messages: {
+    'toolbar.copy': 'Copy',
+  },
+})
+```
+
+The default catalog lives in [`packages/editor/src/i18n/messages.ts`](packages/editor/src/i18n/messages.ts). You can layer changes through **`EditorConfig.messages`** instead of maintaining a fork.
+
+## File upload
+
+When users pick an image or video from the toolbar, the editor asks your app for a URL. Implement **`FileUploader`** and return either a string or a promise that resolves to one.
 
 ```ts
 import { FileUploader } from '@textbus/xnote'
@@ -41,6 +80,7 @@ class YourUploader extends FileUploader {
     if (type === 'video') {
       return 'videoUrl'
     }
+    return ''
   }
 }
 
@@ -48,16 +88,18 @@ const editor = new Editor({
   providers: [{
     provide: FileUploader,
     useFactory() {
-      return new YourFileUplader()
+      return new YourUploader()
     }
   }]
 })
 ```
 
-## 粘贴图片 Base64 转 URL
+## Paste images: Base64 to URL
+
+Pasted images often land as huge **base64** strings. If you would rather store a normal URL, subclass **`Commander`**, intercept **`paste`**, rewrite **`ImageComponent`** URLs after your upload finishes, then forward to **`super.paste`**.
 
 ```ts
-import { Commander } from '@textbus/core'
+import { Commander, Slot } from '@textbus/core'
 import { Injectable } from '@viewfly/core'
 import { ImageComponent } from '@textbus/xnote'
 
@@ -67,12 +109,11 @@ class YourCommander extends Commander {
     slot.sliceContent().forEach(content => {
       if (content instanceof ImageComponent) {
         const base64 = content.state.url
-        // base64 转 url，请自行实现
+        // Replace with your own upload / URL resolution
         content.state.url = 'https://xxx.com/xxx.jpg'
       }
     })
-    
-    // 待图片转换完成后，可调用超类的 paste 方法
+
     super.paste(slot, text)
     return true
   }
@@ -86,29 +127,35 @@ const editor = new Editor({
 })
 ```
 
-## 获取 HTML
+## Get HTML
+
+The editor can serialize the current document to HTML for saving or preview:
 
 ```ts
 const html = editor.getHTML()
 ```
 
-## 设置初始 HTML
+## Set initial HTML
+
+Pass **`content`** when you construct **`Editor`** if you already have HTML to show on first paint:
 
 ```ts
 const editor = new Editor({
-  content: '<div>HTML 内容</div>'
+  content: '<div>Your HTML</div>'
 })
 ```
 
-## 更新编辑器内容
+## Update editor content
+
+Later, replace the whole document from a string with **`setContent`**:
 
 ```ts
-editor.setContent('<p>你好！</p>')
+editor.setContent('<p>Hello!</p>')
 ```
 
-## @ 人
+## At mentions
 
-在文档中 @ 人功能需实现以下接口，以对接用户信息
+**@** completion is wired through **`Organization`**: you fetch a member list for the query string, then commit the user’s choice. Declare the contract, implement it for your backend, and register the instance through **`providers`**.
 
 ```ts
 export abstract class Organization {
@@ -117,7 +164,7 @@ export abstract class Organization {
   abstract atMember(member: Member): void
 }
 ```
-然后在编辑器初始化时传入你的实现
+
 ```ts
 const editor = new Editor({
   providers: [{
@@ -127,21 +174,38 @@ const editor = new Editor({
 })
 ```
 
-## 协作支持
+## Collaboration
 
-Textbus 天然支持协作，只需要在编辑器配置项中添加协作配置信息即可，具体配置你可以参考 [https://textbus.io/guide/collab/](https://textbus.io/guide/collab/)
+Turn on collaboration by supplying **`collaborateConfig`** on **`Editor`**. Your **`createConnector`** factory receives the shared **`Y.Doc`** and should return a **`SyncConnector`** (for example **`YWebsocketConnector`**) that matches your server. The official guide walks through **Yjs**, **`MessageBus`**, and the rest: [**Collaborative editing**](https://textbus.io/guide/collaborate.html).
 
 ```ts
 const editor = new Editor({
   collaborateConfig: {
-    userinfo: user, // 用户信息
+    userinfo: user,
     createConnector(yDoc): SyncConnector {
-      // 返回连接器
       return new YWebsocketConnector('wss://example.com', 'docName', yDoc)
     }
   }
 })
 ```
 
+## About this repository
 
+XNote lives in a small **monorepo**:
 
+| Path | What you will find there |
+|------|---------------------------|
+| [`packages/editor`](packages/editor) | Library source and build artifacts for **`@textbus/xnote`** |
+| [`packages/playground`](packages/playground) | A Vite app for hacking on the editor locally; see its README for scripts |
+
+The editor does not assume React, Vue, or any other host framework—you bring a DOM host and plug in. Extension points match what you already know from **Textbus** and **Viewfly**.
+
+[`packages/editor/README.md`](packages/editor/README.md) is the readme that ships on npm; it points at the `src/` tree for people browsing the package tarball.
+
+## See also
+
+- [**Textbus**](https://textbus.io) — the editing core  
+- [**Viewfly**](https://viewfly.org) — the front-end framework used here  
+- [**Collaborative editing**](https://textbus.io/guide/collaborate.html) — collaboration in depth  
+- [**Playground**](https://textbus.io/playground.html) — try the editor online  
+- [**Issues**](https://github.com/textbus/xnote/issues) — report bugs or suggest features  
