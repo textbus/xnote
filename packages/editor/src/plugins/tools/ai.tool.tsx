@@ -1,10 +1,12 @@
-import { createRef, getCurrentInstance, inject, onUnmounted, reactive } from '@viewfly/core'
+import { Application, createRef, getCurrentInstance, inject, onUnmounted, reactive } from '@viewfly/core'
 import { Parser, VIEW_DOCUMENT } from '@textbus/platform-browser'
 import { Commander, ContentType, distinctUntilChanged, map, Selection, Slot, Subscription } from '@textbus/core'
 import { IconGlyph } from '@viewfly/ui-icons'
 import MarkdownIt from 'markdown-it'
 import { Button, Divider, Dropdown, MenuItem, MenuList, Popover } from '@viewfly/ui-components'
+import { createApp } from '@viewfly/platform-browser'
 
+import './ai-tool.scss'
 import { EditorService } from '../../services/editor.service'
 import { useCommonState } from './_common/common-state'
 import { LLMService } from '../../services/llm.service'
@@ -66,14 +68,67 @@ export function AiTool(props: AiToolProps) {
   })
 
   let subscription = new Subscription()
+  const popupPosition = usePopupPosition()
 
-  function continueContent() {
-    viewModel.type = 'continue'
+  const viewDocument = inject(VIEW_DOCUMENT)
+
+  function getContainer() {
+    return viewDocument
+  }
+
+  let isDestroy = false
+  onUnmounted(() => {
+    isDestroy = true
+  })
+  let subApp: Application | null = null
+  const SubApp = function SubApp() {
+    return () => {
+      return (
+        <div class="xnote-ai-tool-host">
+          <Popover getContainer={getContainer}
+                   open={viewModel.showModal}
+                   showArrow={false}
+                   noPadding={true}
+                   onOpenChange={(open) => {
+                     viewModel.showModal = open
+                     if (isDestroy) {
+                       editorService.hideInlineToolbar = false
+                       editorService.changeLeftToolbarVisible(!open)
+                       subApp?.destroy()
+                     }
+                   }}
+                   getReferenceBox={() => {
+                     return popupPosition()!
+                   }} content={
+            <div class="xnote-ai-popover">
+              <div class="xnote-ai-popover-body" ref={aiContentRef}>
+                {renderMarkdown(viewModel.content)}
+              </div>
+              <Divider spacing={'none'}/>
+              <div class="xnote-ai-popover-footer">
+                <Button size={'small'} htmlType="button" onClick={replace}>{i18n.t('ai.replace')}</Button>
+                <Button size={'small'} htmlType="button" onClick={insert}>{i18n.t('ai.insert')}</Button>
+              </div>
+            </div>
+          }/>
+        </div>
+      )
+    }
+  }
+
+  function updateView() {
     viewModel.content = ''
+    subApp = createApp(<SubApp/>)
+    subApp.mount(viewDocument)
     props.hideToolbar?.()
     viewModel.showModal = true
     viewModel.dropdownOpen = false
     subscription.unsubscribe()
+  }
+
+  function continueContent() {
+    viewModel.type = 'continue'
+    updateView()
     subscription = llmService.continue({
       text: document.getSelection()!.toString()
     }).subscribe((text) => {
@@ -83,11 +138,7 @@ export function AiTool(props: AiToolProps) {
 
   function polish() {
     viewModel.type = 'polish'
-    viewModel.content = ''
-    props.hideToolbar?.()
-    viewModel.showModal = true
-    viewModel.dropdownOpen = false
-    subscription.unsubscribe()
+    updateView()
     subscription = llmService.polish({
       text: document.getSelection()!.toString()
     }).subscribe((text) => {
@@ -98,11 +149,7 @@ export function AiTool(props: AiToolProps) {
 
   function simplify() {
     viewModel.type = 'simplify'
-    viewModel.content = ''
-    props.hideToolbar?.()
-    viewModel.showModal = true
-    viewModel.dropdownOpen = false
-    subscription.unsubscribe()
+    updateView()
     subscription = llmService.simplify({
       text: document.getSelection()!.toString()
     }).subscribe((text) => {
@@ -112,11 +159,7 @@ export function AiTool(props: AiToolProps) {
 
   function enrich() {
     viewModel.type = 'enrich'
-    viewModel.content = ''
-    props.hideToolbar?.()
-    viewModel.showModal = true
-    viewModel.dropdownOpen = false
-    subscription.unsubscribe()
+    updateView()
     subscription = llmService.enrich({
       text: document.getSelection()!.toString()
     }).subscribe((text) => {
@@ -126,11 +169,7 @@ export function AiTool(props: AiToolProps) {
 
   function translate(lang: string) {
     viewModel.type = 'translate'
-    viewModel.content = ''
-    props.hideToolbar?.()
-    viewModel.showModal = true
-    viewModel.dropdownOpen = false
-    subscription.unsubscribe()
+    updateView()
     subscription = llmService.translate({
       text: document.getSelection()!.toString(),
       targetLanguage: lang
@@ -142,11 +181,7 @@ export function AiTool(props: AiToolProps) {
 
   function summarize() {
     viewModel.type = 'summarize'
-    viewModel.content = ''
-    props.hideToolbar?.()
-    viewModel.showModal = true
-    viewModel.dropdownOpen = false
-    subscription.unsubscribe()
+    updateView()
     subscription = llmService.summarize({
       text: document.getSelection()!.toString(),
     }).subscribe((text) => {
@@ -250,65 +285,35 @@ export function AiTool(props: AiToolProps) {
 
   const commonState = useCommonState()
 
-  const popupPosition = usePopupPosition()
-
-  const viewDocument = inject(VIEW_DOCUMENT)
-
-  function getContainer() {
-    return viewDocument
-  }
-
   return () => {
     const b = commonState().inSourceCode || commonState().readonly || selection.isCollapsed
     return (
-      <>
-        <Dropdown trigger={'hover'} menuColumnCompact={true} disabled={b} dropdown={
-          <MenuList class="xnote-w-menu-36">
-            <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>} onClick={continueContent}>{i18n.t('ai.continue')}</MenuItem>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>{i18n.t('ai.polish')}</MenuItem>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'simplify'}/>} onClick={simplify}>{i18n.t('ai.simplify')}</MenuItem>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'enrich'}/>} onClick={enrich}>{i18n.t('ai.enrich')}</MenuItem>
-            <Divider spacing={'compact'}/>
-            <Dropdown trigger={'hover'} block orientation={'horizontal'} horizontalAlign={'right'} dropdown={
+      <Dropdown trigger={'hover'} menuColumnCompact={true} disabled={b} dropdown={
+        <MenuList class="xnote-w-menu-36">
+          <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>}
+                    onClick={continueContent}>{i18n.t('ai.continue')}</MenuItem>
+          <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>{i18n.t('ai.polish')}</MenuItem>
+          <MenuItem density={'compact'} icon={<IconGlyph name={'simplify'}/>} onClick={simplify}>{i18n.t('ai.simplify')}</MenuItem>
+          <MenuItem density={'compact'} icon={<IconGlyph name={'enrich'}/>} onClick={enrich}>{i18n.t('ai.enrich')}</MenuItem>
+          <Divider spacing={'compact'}/>
+          <Dropdown trigger={'hover'} block orientation={'horizontal'} horizontalAlign={'right'} dropdown={
+            <div onMouseDown={ev => ev.stopPropagation()}>
               <MenuList>
                 {translationLanguages.map((lang) => {
-                  return <MenuItem density={'compact'} key={lang} onClick={() => translate(lang)}>{lang}</MenuItem>
+                  return <MenuItem density={'compact'} onClick={() => translate(lang)} key={lang}>{lang}</MenuItem>
                 })}
               </MenuList>
-            }>
-              <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'translation'}/>}>{i18n.t('ai.translate')}</MenuItem>
-            </Dropdown>
-            <MenuItem density={'compact'} icon={<IconGlyph name={'summary'}/>} onClick={summarize}>{i18n.t('ai.summarize')}</MenuItem>
-          </MenuList>
-        }>
-          <Button size={'small'} inlineCompact={true} chevronGapless={true} variant={'text'} disabled={b}>
-            <IconGlyph name={'ai'}/>
-          </Button>
-        </Dropdown>
-        {
-          <Popover getContainer={getContainer}
-                   open={viewModel.showModal}
-                   showArrow={false}
-                   noPadding={true}
-                   onOpenChange={(open) => {
-                     viewModel.showModal = open
-                   }}
-                   getReferenceBox={() => {
-                     return popupPosition()!
-                   }} content={
-            <div class="xnote-ai-popover">
-              <div class="xnote-ai-popover-body" ref={aiContentRef}>
-                {renderMarkdown(viewModel.content)}
-              </div>
-              <Divider spacing={'none'}/>
-              <div class="xnote-ai-popover-footer">
-                <Button size={'small'} htmlType="button" onClick={replace}>{i18n.t('ai.replace')}</Button>
-                <Button size={'small'} htmlType="button" onClick={insert}>{i18n.t('ai.insert')}</Button>
-              </div>
             </div>
-          }/>
-        }
-      </>
+          }>
+            <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'translation'}/>}>{i18n.t('ai.translate')}</MenuItem>
+          </Dropdown>
+          <MenuItem density={'compact'} icon={<IconGlyph name={'summary'}/>} onClick={summarize}>{i18n.t('ai.summarize')}</MenuItem>
+        </MenuList>
+      }>
+        <Button size={'small'} inlineCompact={true} chevronGapless={true} variant={'text'} disabled={b}>
+          <IconGlyph name={'ai'}/>
+        </Button>
+      </Dropdown>
     )
   }
 }
