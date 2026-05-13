@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.2.4
+
+### Patch Changes
+
+- 修复 AI 工具不可用的 bug
+- Updated dependencies
+  - @textbus/xnote@1.4.5
+
 ## 0.2.3
 
 ### Patch Changes

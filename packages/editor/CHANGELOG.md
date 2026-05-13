@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.5
+
+### Patch Changes
+
+- 修复 AI 工具不可用的 bug
+
 ## 1.4.4
 
 ### Patch Changes
