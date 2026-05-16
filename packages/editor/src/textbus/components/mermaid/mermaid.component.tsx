@@ -19,6 +19,8 @@ import { I18nService } from '../../../services/i18n.service'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const MATHML_NS = 'http://www.w3.org/1998/Math/MathML'
+/** @see https://mermaid.js.org/intro/ */
+const MERMAID_DOC_URL = 'https://mermaid.js.org/intro/'
 
 /**
  * `DOMParser` + `text/html` 解析出的 SVG/MathML 节点，`tagName` 常为全小写；
@@ -168,6 +170,27 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
     return s.replace(/\r\n/g, '\n').trimEnd()
   }
 
+  function mermaidErrorNode(detail: string, inline = false): JSXNode {
+    return jsx('div', {
+      class: inline ? 'xnote-mermaid-error xnote-mermaid-error--inline' : 'xnote-mermaid-error',
+      children: [
+        jsx('div', { class: 'xnote-mermaid-error-message', children: [detail] }),
+        jsx('div', {
+          class: 'xnote-mermaid-error-doc',
+          children: [
+            `${i18n.t('mermaid.renderErrorDoc')}: `,
+            jsx('a', {
+              href: MERMAID_DOC_URL,
+              target: '_blank',
+              rel: 'noreferrer',
+              children: [MERMAID_DOC_URL],
+            }),
+          ],
+        }),
+      ],
+    })
+  }
+
   function render() {
     const definition = props.component.state.text
     if (!definition?.trim()) {
@@ -258,10 +281,7 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
       return domToVDom(null)
     }
     if (err && !markup) {
-      return jsx('div', {
-        class: 'xnote-mermaid-error',
-        children: [err],
-      })
+      return mermaidErrorNode(err)
     }
     if (!markup) {
       return jsx('span', {
@@ -283,10 +303,7 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
         class: 'xnote-mermaid-preview-stack',
         children: [
           jsx('div', { class: 'xnote-mermaid-svg-host', children: [chart] }),
-          jsx('div', {
-            class: 'xnote-mermaid-error xnote-mermaid-error--inline',
-            children: [err],
-          }),
+          mermaidErrorNode(err, true),
         ],
       })
     } catch {
