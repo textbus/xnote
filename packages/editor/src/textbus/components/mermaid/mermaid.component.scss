@@ -20,31 +20,6 @@
   }
 }
 
-.xnote-mermaid-input {
-  min-height: 300px;
-  inset: 0;
-  width: 590px;
-  margin: -6px;
-
-  .xnote-source-code {
-    margin: 0;
-    user-select: text;
-    overflow: hidden;
-
-    &-container {
-      height: 100%;
-      border: 0 !important;
-    }
-
-    &-content {
-      box-sizing: border-box;
-      overflow: hidden;
-      max-height: initial;
-      min-height: 300px;
-    }
-  }
-}
-
 .xnote-mermaid-content {
   flex: 1 1 auto;
   display: flex;

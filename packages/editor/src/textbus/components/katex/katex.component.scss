@@ -8,28 +8,3 @@
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
-
-.xnote-katex-input {
-  min-height: 300px;
-  inset: 0;
-  width: 590px;
-  margin: -6px;
-
-  .xnote-source-code {
-    margin: 0;
-    user-select: text;
-    overflow: hidden;
-
-    &-container {
-      height: 100%;
-      border: 0 !important;
-    }
-
-    &-content {
-      box-sizing: border-box;
-      overflow: hidden;
-      max-height: initial;
-      min-height: 300px;
-    }
-  }
-}

@@ -1,5 +1,9 @@
 .xnote-split-line {
-  width: 1px;
-  background: #ddd;
+  border-left: 1px solid #cdcdcd;
   margin: 8px 5px;
+  height: 1em;
+}
+
+.vfui-dark .xnote-split-line {
+  border-left-color: #666;
 }

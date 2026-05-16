@@ -2,4 +2,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+
+  &:first-child {
+    @apply pt-1;
+  }
 }

@@ -1,20 +1,20 @@
-import { ContentType, Slot, Subject, Textbus } from '@textbus/core'
+import { ContentType, fromEvent, Slot, Subject, Textbus } from '@textbus/core'
 import { BrowserModule } from '@textbus/platform-browser'
 import { ViewflyAdapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
-import { ReflectiveInjector } from '@viewfly/core'
+import { createDynamicRef, ReflectiveInjector } from '@viewfly/core'
 
-
-import { I18nService } from '../../../services/i18n.service'
 import { OutputInjectionToken } from '../../injection-tokens'
 import { SourceCodeComponent, SourceCodeView } from '../source-code/source-code.component'
+import { I18nService } from '../../../services/i18n.service'
+import './source-code-editor.scss'
 
-export class MermaidEditor extends Textbus {
+class Editor extends Textbus {
   host!: HTMLElement
 
   onValueChange = new Subject<string>()
 
-  constructor(i18nService: I18nService) {
+  constructor(i18nService: I18nService, private lang: string) {
     const adapter = new ViewflyAdapter({
       [SourceCodeComponent.componentName]: SourceCodeView
     }, (host, root, injector) => {
@@ -56,7 +56,7 @@ export class MermaidEditor extends Textbus {
     const model = new SourceCodeComponent({
       lineNumber: true,
       autoBreak: true,
-      lang: '',
+      lang: this.lang,
       theme: 'github',
       slots: code.split('\n').map(i => {
         const slot = new Slot([ContentType.Text])
@@ -79,3 +79,49 @@ export class MermaidEditor extends Textbus {
     return this.render(model)
   }
 }
+
+export interface SourceEditorProps {
+  i18n: I18nService
+  sourceCode: string
+  language: string
+  onChange: (sourceCode: string) => void
+  helpLink?: string
+  onReady: () => void
+}
+
+export function SourceCodeEditor(props: SourceEditorProps) {
+  const editorRef = createDynamicRef<HTMLElement>(node => {
+    const editor = new Editor(props.i18n, props.language)
+
+    editor.mount(node, props.sourceCode).then(() => {
+      props.onReady()
+      editor.focus()
+    })
+
+    const subscription = editor.onValueChange.subscribe((value) => {
+      props.onChange(value)
+    }).add(
+      fromEvent(node, 'mousedown').subscribe(ev => ev.stopPropagation()),
+    )
+
+    return () => {
+      subscription.unsubscribe()
+      editor.destroy()
+    }
+  })
+  return () => {
+    return (
+      <>
+        <div class="xnote-source-code-editor" ref={editorRef}>
+        </div>
+        {
+          props.helpLink && <div class="xnote-source-code-editor-help">
+            <a href={props.helpLink} target={'_blank'}>{props.i18n.t('sourceCode.viewHelp')}</a>
+          </div>
+        }
+      </>
+    )
+  }
+}
+
+

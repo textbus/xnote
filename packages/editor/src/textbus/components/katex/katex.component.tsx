@@ -1,22 +1,22 @@
 import {
   Component,
   ComponentStateLiteral,
-  ContentType, fromEvent,
+  ContentType,
   Slot,
   Textbus,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { createDynamicRef, inject, jsx, JSXNode } from '@viewfly/core'
+import { inject, jsx, JSXNode } from '@viewfly/core'
 import { ComponentLoader } from '@textbus/platform-browser'
 // @ts-ignore
 import Katex from 'katex'
 import { Dropdown } from '@viewfly/ui-components'
 
 import './katex.component.scss'
-import { KatexEditor } from './katex-editor'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 import { I18nService } from '../../../services/i18n.service'
+import { SourceCodeEditor } from '../_common/source-code-editor'
 
 export interface KatexComponentState {
   text: string
@@ -66,6 +66,7 @@ function escapeHtml(s: string) {
 
 export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
   const i18n = inject(I18nService)
+
   function toDOM(value: string) {
     let htmlString: string
     try {
@@ -86,29 +87,15 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
     return new DOMParser().parseFromString(htmlString, 'text/html').body.children[0] as HTMLElement
   }
 
-  const selection = inject(Textbus)
-  const editorRef = createDynamicRef<HTMLElement>(node => {
-    const editor = new KatexEditor(i18n)
+  const textbus = inject(Textbus)
 
-    editor.mount(node, props.component.state.text).then(() => {
-      editor.focus()
-    })
-    selection.blur()
+  function onChange(text: string) {
+    props.component.state.text = text
+  }
 
-    const subscription = editor.onValueChange.subscribe((value) => {
-      props.component.state.text = value
-    }).add(
-      fromEvent(node, 'mousedown').subscribe(ev => ev.stopPropagation()),
-      // fromEvent(document, 'mousedown').subscribe(() => {
-      //   dropdownRef.value?.isShow(false)
-      // })
-    )
-
-    return () => {
-      subscription.unsubscribe()
-      editor.destroy()
-    }
-  })
+  function onReady() {
+    textbus.blur()
+  }
 
   const output = useOutput()
   const readonly = useReadonly()
@@ -121,8 +108,12 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
            domToVDom(toDOM(text))
            :
            <Dropdown dropdown={
-             <div class="xnote-katex-input" ref={editorRef}>
-             </div>
+             <SourceCodeEditor i18n={i18n}
+                               sourceCode={text}
+                               language={'latex'}
+                               onReady={onReady}
+                               helpLink={'https://katex.org/docs/supported'}
+                               onChange={onChange}/>
            }>
              {domToVDom(toDOM(text))}
            </Dropdown>

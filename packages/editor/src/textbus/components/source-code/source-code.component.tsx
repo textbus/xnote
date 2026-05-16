@@ -527,88 +527,83 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
       >
         {
           (!readonly() && !output()) &&
-          <div style={{
-            height: 0,
-            top: '-10px',
-            position: 'relative'
-          }}>
-            <ComponentToolbar visible={isFocus()}>
-              <div class="xnote-source-code-toolbar-row">
-                <Dropdown trigger={'hover'} dropdown={
-                  <MenuList columnCompact={true}>
-                    {
-                      languageList.map(item => {
-                        return (
-                          <MenuItem density={'compact'} onClick={() => changeLang(item.value)}>
-                            <div class="xnote-flex-between">
-                              {item.label || 'Plain Text'}
-                              <span class="xnote-flex-center">
+          <ComponentToolbar visible={isFocus()}>
+            <div class="xnote-source-code-toolbar-row">
+              <Dropdown trigger={'hover'} dropdown={
+                <MenuList style={{width: '140px'}} columnCompact={true}>
+                  {
+                    languageList.map(item => {
+                      return (
+                        <MenuItem density={'compact'} onClick={() => changeLang(item.value)}>
+                          <div class="xnote-flex-between">
+                            {item.label || 'Plain Text'}
+                            <span class="xnote-flex-center">
                               {state.lang === item.value && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                             </span>
-                            </div>
-                          </MenuItem>
-                        )
-                      })
-                    }
-                  </MenuList>
-                }>
-                  <Button size={'small'} variant={'text'}>{lang || 'Plain Text'}</Button>
-                </Dropdown>
+                          </div>
+                        </MenuItem>
+                      )
+                    })
+                  }
+                </MenuList>
+              }>
+                <Button size={'small'} variant={'text'}>{lang || 'Plain Text'}</Button>
+              </Dropdown>
 
-                <span>{i18n.t('sourceCode.theme')}</span>
-                <Dropdown trigger={'hover'} dropdown={
-                  <MenuList columnCompact={true}>
-                    {
-                      sourceCodeThemes.map(item => {
-                        return (
-                          <MenuItem density={'compact'} onClick={() => changeTheme(item)}>
-                            <div class="xnote-flex-between">
-                              {item}
-                              <span class="xnote-flex-center">
+              <span>{i18n.t('sourceCode.theme')}</span>
+              <Dropdown trigger={'hover'} dropdown={
+                <MenuList style={{width: '160px'}} columnCompact={true}>
+                  {
+                    sourceCodeThemes.map(item => {
+                      return (
+                        <MenuItem density={'compact'} onClick={() => changeTheme(item)}>
+                          <div class="xnote-flex-between">
+                            {item}
+                            <span class="xnote-flex-center">
                               {state.theme === item && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                             </span>
-                            </div>
-                          </MenuItem>
-                        )
-                      })
-                    }
-                  </MenuList>
-                }>
-                  <Button variant={'text'} size={'small'}>{state.theme || 'github'}</Button>
-                </Dropdown>
-                <Dropdown trigger={'hover'} dropdown={
-                  <MenuList style={{
-                    width: '130px'
-                  }} columnCompact={true}>
-                    <MenuItem density={'compact'} icon={<IconGlyph name={'list-numbered'}/>} onClick={() => {
-                      setting('lineNumber')
-                    }}>
-                      <div class="xnote-flex-between">
-                        {i18n.t('sourceCode.lineNumber')}
-                        <span class="xnote-flex-center">
+                          </div>
+                        </MenuItem>
+                      )
+                    })
+                  }
+                </MenuList>
+              }>
+                <Button variant={'text'} size={'small'}>{state.theme || 'github'}</Button>
+              </Dropdown>
+              <Dropdown trigger={'hover'} dropdown={
+                <MenuList style={{
+                  width: '150px'
+                }} columnCompact={true}>
+                  <MenuItem density={'compact'} icon={<IconGlyph name={'list-numbered'}/>} onClick={() => {
+                    setting('lineNumber')
+                  }}>
+                    <div class="xnote-flex-between">
+                      {i18n.t('sourceCode.lineNumber')}
+                      <span class="xnote-flex-center">
                         {state.lineNumber && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                       </span>
-                      </div>
-                    </MenuItem>
-                    <MenuItem density={'compact'} icon={<IconGlyph name={'text-wrap'}/>} onClick={() => {
-                      setting('autoBreak')
-                    }}>
-                      <div class="xnote-flex-between">
-                        {i18n.t('sourceCode.wordWrap')}
-                        <span class="xnote-flex-center">
+                    </div>
+                  </MenuItem>
+                  <MenuItem density={'compact'} icon={<IconGlyph name={'text-wrap'}/>} onClick={() => {
+                    setting('autoBreak')
+                  }}>
+                    <div class="xnote-flex-between">
+                      {i18n.t('sourceCode.wordWrap')}
+                      <span class="xnote-flex-center">
                         {state.autoBreak && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
                       </span>
-                      </div>
-                    </MenuItem>
-                  </MenuList>
-                }>
-                  <Button size={'small'} variant={'text'}>{i18n.t('sourceCode.settings')}</Button>
-                </Dropdown>
-                <Button size={'small'} variant={'text'} onClick={props.component.emphasize}>{i18n.t('sourceCode.emphasize')}</Button>
-                <Button size={'small'} variant={'text'} onClick={props.component.cancelEmphasize}>{i18n.t('sourceCode.cancelEmphasize')}</Button>
-              </div>
-            </ComponentToolbar>
-          </div>
+                    </div>
+                  </MenuItem>
+                </MenuList>
+              }>
+                <Button size={'small'} variant={'text'}>{i18n.t('sourceCode.settings')}</Button>
+              </Dropdown>
+              <Button size={'small'} variant={'text'} onClick={props.component.emphasize}>{i18n.t('sourceCode.emphasize')}</Button>
+              <Button size={'small'} variant={'text'}
+                      onClick={props.component.cancelEmphasize}>{i18n.t('sourceCode.cancelEmphasize')}</Button>
+            </div>
+          </ComponentToolbar>
         }
         <div class={[
           'xnote-source-code-container',

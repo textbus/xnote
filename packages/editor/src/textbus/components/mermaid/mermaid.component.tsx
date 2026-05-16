@@ -1,21 +1,21 @@
 import {
   Component,
   ComponentStateLiteral,
-  ContentType, debounceTime, fromEvent,
+  ContentType,
   Slot,
   Textbus,
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
-import { createDynamicRef, createSignal, inject, jsx, JSXNode } from '@viewfly/core'
+import { createSignal, inject, jsx, JSXNode } from '@viewfly/core'
 import { ComponentLoader } from '@textbus/platform-browser'
 import Mermaid from 'mermaid'
 import { Dropdown } from '@viewfly/ui-components'
 
 import './mermaid.component.scss'
-import { MermaidEditor } from './mermaid-editor'
 import { useOutput } from '../../hooks/use-output'
 import { useReadonly } from '../../hooks/use-readonly'
 import { I18nService } from '../../../services/i18n.service'
+import { SourceCodeEditor } from '../_common/source-code-editor'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const MATHML_NS = 'http://www.w3.org/1998/Math/MathML'
@@ -135,7 +135,6 @@ export class MermaidComponent extends Component<MermaidComponentState> {
     return new MermaidComponent(state)
   }
 
-
   constructor(state: MermaidComponentState = {
     text: ''
   }) {
@@ -247,28 +246,6 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
     return jsx(tagName, attrs)
   }
 
-  const selection = inject(Textbus)
-  const editorRef = createDynamicRef<HTMLElement>(node => {
-    const editor = new MermaidEditor(i18n)
-
-    editor.mount(node, props.component.state.text).then(() => {
-      editor.focus()
-    })
-    selection.blur()
-
-    const subscription = editor.onValueChange.pipe(debounceTime(300)).subscribe((value) => {
-      props.component.state.text = value
-      render()
-    }).add(
-      fromEvent(node, 'mousedown').subscribe(ev => ev.stopPropagation()),
-    )
-
-    return () => {
-      subscription.unsubscribe()
-      editor.destroy()
-    }
-  })
-
   const output = useOutput()
   const readonly = useReadonly()
 
@@ -311,6 +288,16 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
     }
   }
 
+  const textbus = inject(Textbus)
+
+  function onChange(text: string) {
+    props.component.state.text = text
+  }
+
+  function onReady() {
+    textbus.blur()
+  }
+
   return () => {
     const text = props.component.state.text
     const preview = mermaidPreview()
@@ -322,8 +309,12 @@ export function MermaidComponentView(props: ViewComponentProps<MermaidComponent>
             preview
             :
             <Dropdown block dropdown={
-              <div class="xnote-mermaid-input" ref={editorRef}>
-              </div>
+              <SourceCodeEditor i18n={i18n}
+                                sourceCode={text}
+                                language={''}
+                                onReady={onReady}
+                                helpLink={'https://mermaid.js.org/intro/'}
+                                onChange={onChange}/>
             }>
               <div class="xnote-mermaid-content">
                 {preview}
