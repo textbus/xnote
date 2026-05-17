@@ -1,4 +1,4 @@
-import { FileUploader, LLMService, Member, Organization, UserInfo } from '@textbus/xnote'
+import { CommentService, FileUploader, LLMService, Member, Organization, UserInfo } from '@textbus/xnote'
 import { AiService } from '../ai.service'
 
 const firstNameText = '王、李、张、刘、陈、杨、黄、赵、周、吴、徐、孙、马、胡、朱、郭、何、罗、高、林'.replace(/、/g, '')
@@ -80,6 +80,17 @@ export const providers = [
   {
     provide: LLMService,
     useValue: new AiService()
+  },
+  {
+    provide: CommentService,
+    useValue: {
+      createComment() {
+        return Promise.resolve({
+          id: 'test',
+          userId: 'test' + Math.random()
+        })
+      }
+    }
   },
   {
     provide: FileUploader,

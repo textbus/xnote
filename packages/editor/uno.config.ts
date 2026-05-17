@@ -110,6 +110,7 @@ export default defineConfig({
     'xnote-ai-popover-body': 'flex-1 overflow-y-auto p-2',
     'xnote-ai-popover-footer': 'flex justify-end gap-2 p-2',
     'xnote-link-tool-form': 'p-1',
+    'xnote-comment-tool-form': 'p-1',
     'xnote-source-code-toolbar-row': 'flex items-center text-[13px]',
     'xnote-insert-menu': 'w-46',
   },

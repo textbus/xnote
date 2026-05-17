@@ -55,6 +55,8 @@ import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
 import { Popover } from '@viewfly/ui-components'
 import { InsertTool } from '../tools/insert.tool'
+import { CommentTool } from '../tools/comment.tool'
+import { CommentService } from '../../services/comment.service'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -72,6 +74,7 @@ export const InlineToolbar = withAnnotation({
   const textbus = inject(Textbus)
   const editorService = inject(EditorService)
   const refreshService = inject(RefreshService)
+  const commentService = inject(CommentService, null)
 
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20),
@@ -277,12 +280,19 @@ export const InlineToolbar = withAnnotation({
                    <CleanFormatsTool/>
                    {
                      query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
-                           <SplitLine/>
-                           <MergeCellsTool/>
-                           <SplitCellsTool/>
-                           <CellBackgroundTool/>
-                           <CellAlignTool/>
-                       </Fragment>
+                       <SplitLine/>
+                       <MergeCellsTool/>
+                       <SplitCellsTool/>
+                       <CellBackgroundTool/>
+                       <CellAlignTool/>
+                     </Fragment>
+                   }
+                   {
+                     commentService &&
+                     <Fragment>
+                       <SplitLine/>
+                       <CommentTool hideToolbar={hideToolbar}/>
+                     </Fragment>
                    }
                  </div>
                }>

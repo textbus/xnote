@@ -5,6 +5,7 @@ import { IconGlyph } from '@viewfly/ui-icons'
 
 import { linkFormatter } from '../../textbus/formatters/link'
 import { useCommonState } from './_common/common-state'
+import { commentFormatter } from '../../textbus/formatters/comment'
 
 export function CleanFormatsTool() {
   const commonState = useCommonState()
@@ -12,7 +13,8 @@ export function CleanFormatsTool() {
 
   function clean() {
     commander.cleanFormats([
-      linkFormatter
+      linkFormatter,
+      commentFormatter,
     ])
   }
 

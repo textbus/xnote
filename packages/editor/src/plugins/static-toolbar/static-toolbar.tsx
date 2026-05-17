@@ -30,6 +30,8 @@ import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
+import { CommentService } from '../../services/comment.service'
+import { CommentTool } from '../tools/comment.tool'
 
 export interface StaticToolbarProps {
   theme?: 'dark' | 'light'
@@ -42,6 +44,7 @@ export const StaticToolbar = withAnnotation({
   const textbus = inject(Textbus)
   const query = inject(Query)
   const refreshService = inject(RefreshService)
+  const commentService = inject(CommentService, null)
   const instance = getCurrentInstance()
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
@@ -93,6 +96,13 @@ export const StaticToolbar = withAnnotation({
             <SplitCellsTool/>
             <CellBackgroundTool/>
             <CellAlignTool/>
+          </Fragment>
+        }
+        {
+          commentService &&
+          <Fragment>
+            <SplitLine/>
+            <CommentTool/>
           </Fragment>
         }
       </div>

@@ -85,7 +85,9 @@ const zhCN = {
   'step.defaultDesc': '描述信息...',
   'timeline.defaultTheme': '时间主题',
   'timeline.dateSample': ' 2020-02-02',
-  'timeline.defaultDesc': '描述信息...'
+  'timeline.defaultDesc': '描述信息...',
+  'comment.placeholder': '请输入批注内容',
+  'comment.confirm': '提交',
 } as const
 
 export type XnoteMessageKey = keyof typeof zhCN
@@ -177,7 +179,9 @@ const enUS: Record<XnoteMessageKey, string> = {
   'step.defaultDesc': 'Description…',
   'timeline.defaultTheme': 'Timeline title',
   'timeline.dateSample': ' 2020-02-02',
-  'timeline.defaultDesc': 'Description…'
+  'timeline.defaultDesc': 'Description…',
+  'comment.placeholder': 'Enter comment content',
+  'comment.confirm': 'OK',
 }
 
 export const xnoteMessageBundles: Record<'zh-CN' | 'en-US', Record<XnoteMessageKey, string>> = {

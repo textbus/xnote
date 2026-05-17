@@ -64,7 +64,7 @@ import {
   codeFormatLoader,
   codeFormatter,
   colorFormatLoader,
-  colorFormatter,
+  colorFormatter, commentFormatter,
   fontFamilyFormatLoader,
   fontFamilyFormatter,
   fontSizeFormatLoader,
@@ -312,7 +312,8 @@ export class Editor extends Textbus {
         strikeThroughFormatter,
         underlineFormatter,
         subscriptFormatter,
-        superscriptFormatter
+        superscriptFormatter,
+        commentFormatter,
       ],
       attributes: [
         cellBackgroundAttr,

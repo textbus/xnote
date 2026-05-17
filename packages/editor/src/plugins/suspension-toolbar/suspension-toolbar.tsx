@@ -31,6 +31,8 @@ import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
+import { CommentTool } from '../tools/comment.tool'
+import { CommentService } from '../../services/comment.service'
 
 export interface SuspensionToolbarProps {
   theme?: 'dark' | 'light'
@@ -45,6 +47,7 @@ export const SuspensionToolbar = withAnnotation({
   const refreshService = inject(RefreshService)
   const viewDocument = inject(VIEW_CONTAINER)
   const instance = getCurrentInstance()
+  const commentService = inject(CommentService, null)
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
   ).subscribe(() => {
@@ -121,6 +124,13 @@ export const SuspensionToolbar = withAnnotation({
               <SplitCellsTool/>
               <CellBackgroundTool/>
               <CellAlignTool/>
+            </Fragment>
+          }
+          {
+            commentService &&
+            <Fragment>
+              <SplitLine/>
+              <CommentTool/>
             </Fragment>
           }
         </div>

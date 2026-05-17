@@ -1,3 +1,4 @@
+export * from './comment.service'
 export * from './i18n.service'
 export * from './editor.service'
 export * from './llm.service'
