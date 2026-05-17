@@ -10,7 +10,11 @@ import { isInTable } from './help'
 import { useCommonState } from '../_common/common-state'
 import { I18nService } from '../../../services/i18n.service'
 
-export function CellAlignTool() {
+export interface ICellAlignToolProps {
+  inMenu?: boolean
+}
+
+export function CellAlignTool(props: ICellAlignToolProps) {
   const i18n = inject(I18nService)
   const currentValue = createSignal('')
 
@@ -75,6 +79,49 @@ export function CellAlignTool() {
 
   const commonState = useCommonState()
   return () => {
+    if (props.inMenu) {
+      return (
+        <Dropdown block disabled={commonState().readonly || commonState().inSourceCode}
+                  trigger={'hover'}
+                  orientation={'horizontal'}
+                  horizontalAlign={'left'}
+                  dropdown={
+                    <MenuList columnCompact={true} class="xnote-w-menu-40">
+                      <MenuItem density={'compact'} onClick={() => check('top')} icon={<IconGlyph name={'align-top'}/>}>
+                        <div class="xnote-flex-between">
+                          {i18n.t('cellAlign.top')}
+                          <span class="xnote-flex-center">
+                {currentValue() === 'top' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
+              </span>
+                        </div>
+                      </MenuItem>
+                      <MenuItem density={'compact'} onClick={() => check('middle')} icon={<IconGlyph name={'align-middle'}/>}>
+                        <div class="xnote-flex-between">
+                          {i18n.t('cellAlign.middle')}
+                          <span class="xnote-flex-center">
+                {currentValue() === 'middle' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
+              </span>
+                        </div>
+                      </MenuItem>
+                      <MenuItem density={'compact'} onClick={() => check('bottom')} icon={<IconGlyph name={'align-bottom'}/>}>
+                        <div class="xnote-flex-between">
+                          {i18n.t('cellAlign.bottom')}
+                          <span class="xnote-flex-center">
+                {currentValue() === 'bottom' && <IconGlyph class="xnote-menu-check-icon" name={'checkmark'}/>}
+              </span>
+                        </div>
+                      </MenuItem>
+                    </MenuList>
+                  }>
+          <MenuItem density={'compact'}
+                    disabled={commonState().readonly || commonState().inSourceCode}
+                    chevronRight={true} icon={<IconGlyph name={'align-' + (currentValue() || 'middle') as any}/>}>
+            {i18n.t('table.cellVerticalAlign')}
+          </MenuItem>
+        </Dropdown>
+
+      )
+    }
     return (
       <Dropdown disabled={commonState().readonly || commonState().inSourceCode}
                 trigger={'hover'}

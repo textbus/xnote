@@ -1,14 +1,20 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
-import { Button } from '@viewfly/ui-components'
+import { Button, MenuItem } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
 import { getTableSlotBySlot, isInTable } from './help'
 import { useCommonState } from '../_common/common-state'
+import { I18nService } from '../../../services/i18n.service'
 
-export function MergeCellsTool() {
+export interface MergeCellsToolProps {
+  inMenu?: boolean
+}
+
+export function MergeCellsTool(props: MergeCellsToolProps) {
+  const i18n = inject(I18nService)
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
@@ -44,6 +50,14 @@ export function MergeCellsTool() {
   const commonState = useCommonState()
 
   return () => {
+    if(props.inMenu) {
+      return (
+        <MenuItem density={'compact'} icon={<IconGlyph name={'merge-cells'}/>} onClick={merge}
+                  disabled={viewModel.disabled || commonState().readonly || commonState().inSourceCode}>
+          {i18n.t('table.mergeCells')}
+        </MenuItem>
+      )
+    }
     return <Button highlighted={viewModel.highlight}
                    size={'small'}
                    variant={'text'}

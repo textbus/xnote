@@ -14,11 +14,7 @@ import { AttrTool } from '../tools/attr.tool'
 import { FontSizeTool } from '../tools/font-size.tool'
 import { FontFamilyTool } from '../tools/font-family.tool'
 import { LinkTool } from '../tools/link.tool'
-import { MergeCellsTool } from '../tools/table/merge-cells.tool'
-import { SplitCellsTool } from '../tools/table/split-cells.tool'
-import { CellAlignTool } from '../tools/table/cell-align.tool'
 import { TableComponent } from '../../textbus/components/table/table.component'
-import { CellBackgroundTool } from '../tools/table/cell-background.tool'
 import { UndoTool } from '../tools/undo.tool'
 import { RedoTool } from '../tools/redo.tool'
 import { InsertTool } from '../tools/insert.tool'
@@ -33,6 +29,7 @@ import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
 import { CommentTool } from '../tools/comment.tool'
 import { CommentService } from '../../services/comment.service'
+import { TableTool } from '../tools/table/table-tool'
 
 export interface SuspensionToolbarProps {
   theme?: 'dark' | 'light'
@@ -84,11 +81,13 @@ export const SuspensionToolbar = withAnnotation({
   const llmService = inject(LLMService, null)
   return () => {
     return (
-      <div class={['xnote-suspension-toolbar', props.theme === 'dark' && 'vfui-dark dark xnote-suspension-toolbar--dark', styles.top !== 0 && 'xnote-suspension-toolbar--suspension']} style={{
-        top: styles.top + 'px',
-        opacity: styles.opacity,
-        pointerEvents: styles.opacity === 0 ? 'none' : 'initial',
-      }}>
+      <div
+        class={['xnote-suspension-toolbar', props.theme === 'dark' && 'vfui-dark dark xnote-suspension-toolbar--dark', styles.top !== 0 && 'xnote-suspension-toolbar--suspension']}
+        style={{
+          top: styles.top + 'px',
+          opacity: styles.opacity,
+          pointerEvents: styles.opacity === 0 ? 'none' : 'initial',
+        }}>
         <div class="xnote-suspension-toolbar-tools">
           <UndoTool/>
           <RedoTool/>
@@ -120,10 +119,7 @@ export const SuspensionToolbar = withAnnotation({
           {
             query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
               <SplitLine/>
-              <MergeCellsTool/>
-              <SplitCellsTool/>
-              <CellBackgroundTool/>
-              <CellAlignTool/>
+              <TableTool/>
             </Fragment>
           }
           {

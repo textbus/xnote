@@ -1,13 +1,19 @@
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
-import { Button } from '@viewfly/ui-components'
+import { Button, MenuItem } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
 import { useCommonState } from '../_common/common-state'
+import { I18nService } from '../../../services/i18n.service'
 
-export function SplitCellsTool() {
+export interface SplitCellsToolProps {
+  inMenu?: boolean
+}
+
+export function SplitCellsTool(props: SplitCellsToolProps) {
+  const i18n = inject(I18nService)
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
 
@@ -78,6 +84,14 @@ export function SplitCellsTool() {
 
   const commonState = useCommonState()
   return () => {
+    if (props.inMenu) {
+      return (
+        <MenuItem density={'compact'} icon={<IconGlyph name={'split-cells'}/>} onClick={split}
+                  disabled={viewModel.disabled || commonState().readonly || commonState().inSourceCode}>
+          {i18n.t('table.splitCells')}
+        </MenuItem>
+      )
+    }
     return <Button highlighted={viewModel.highlight}
                    size={'small'}
                    variant={'text'}

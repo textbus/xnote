@@ -13,11 +13,7 @@ import { AttrTool } from '../tools/attr.tool'
 import { FontSizeTool } from '../tools/font-size.tool'
 import { FontFamilyTool } from '../tools/font-family.tool'
 import { LinkTool } from '../tools/link.tool'
-import { MergeCellsTool } from '../tools/table/merge-cells.tool'
-import { SplitCellsTool } from '../tools/table/split-cells.tool'
-import { CellAlignTool } from '../tools/table/cell-align.tool'
 import { TableComponent } from '../../textbus/components/table/table.component'
-import { CellBackgroundTool } from '../tools/table/cell-background.tool'
 import { UndoTool } from '../tools/undo.tool'
 import { RedoTool } from '../tools/redo.tool'
 import { InsertTool } from '../tools/insert.tool'
@@ -32,6 +28,7 @@ import { AiTool } from '../tools/ai.tool'
 import { LLMService } from '../../services/llm.service'
 import { CommentService } from '../../services/comment.service'
 import { CommentTool } from '../tools/comment.tool'
+import { TableTool } from '../tools/table/table-tool'
 
 export interface StaticToolbarProps {
   theme?: 'dark' | 'light'
@@ -92,10 +89,7 @@ export const StaticToolbar = withAnnotation({
           query.queryComponent(TableComponent).state === QueryStateType.Enabled &&
           <Fragment key="table">
             <SplitLine/>
-            <MergeCellsTool/>
-            <SplitCellsTool/>
-            <CellBackgroundTool/>
-            <CellAlignTool/>
+            <TableTool/>
           </Fragment>
         }
         {

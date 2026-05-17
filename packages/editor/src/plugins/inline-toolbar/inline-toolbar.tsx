@@ -35,12 +35,8 @@ import { FontFamilyTool } from '../tools/font-family.tool'
 import { EditorService } from '../../services/editor.service'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
 import { LinkTool } from '../tools/link.tool'
-import { MergeCellsTool } from '../tools/table/merge-cells.tool'
-import { SplitCellsTool } from '../tools/table/split-cells.tool'
-import { CellAlignTool } from '../tools/table/cell-align.tool'
 import { TableComponent } from '../../textbus/components/table/table.component'
 import { sum } from '../../textbus/components/table/_utils'
-import { CellBackgroundTool } from '../tools/table/cell-background.tool'
 import { SplitLine } from '../tools/_common/split-line'
 import { SubscriptTool } from '../tools/subscript.tool'
 import { SuperscriptTool } from '../tools/superscript.tool'
@@ -57,6 +53,7 @@ import { Popover } from '@viewfly/ui-components'
 import { InsertTool } from '../tools/insert.tool'
 import { CommentTool } from '../tools/comment.tool'
 import { CommentService } from '../../services/comment.service'
+import { TableTool } from '../tools/table/table-tool'
 
 export interface InlineToolbarProps {
   theme?: 'dark' | 'light'
@@ -284,10 +281,7 @@ export const InlineToolbar = withAnnotation({
                    {
                      query.queryComponent(TableComponent).state === QueryStateType.Enabled && <Fragment key="table">
                        <SplitLine/>
-                       <MergeCellsTool/>
-                       <SplitCellsTool/>
-                       <CellBackgroundTool/>
-                       <CellAlignTool/>
+                       <TableTool/>
                      </Fragment>
                    }
                    {

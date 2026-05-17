@@ -1,7 +1,7 @@
 import { createSignal, inject, onUnmounted, reactive } from '@viewfly/core'
 import { Selection } from '@textbus/core'
 import { IconGlyph } from '@viewfly/ui-icons'
-import { Button, ColorPicker, Dropdown, Picker, Space } from '@viewfly/ui-components'
+import { Button, ColorPicker, Dropdown, MenuItem, Picker, Space } from '@viewfly/ui-components'
 
 import { RefreshService } from '../../../services/refresh.service'
 import { TableComponent } from '../../../textbus/components/table/table.component'
@@ -10,7 +10,11 @@ import { isInTable } from './help'
 import { useCommonState } from '../_common/common-state'
 import { I18nService } from '../../../services/i18n.service'
 
-export function CellBackgroundTool() {
+export interface CellBackgroundToolProps {
+  inMenu?: boolean
+}
+
+export function CellBackgroundTool(props: CellBackgroundToolProps) {
   const i18n = inject(I18nService)
   const refreshService = inject(RefreshService)
   const selection = inject(Selection)
@@ -83,6 +87,32 @@ export function CellBackgroundTool() {
 
   return () => {
     const disabled = viewModel.disabled || commonState().readonly || commonState().inSourceCode
+    if (props.inMenu) {
+      return (
+        <Dropdown disabled={disabled}
+                  block={true}
+                  orientation={'horizontal'}
+                  horizontalAlign={'left'}
+                  dropdown={
+                    <ColorPicker recentColorsLabel={i18n.t('colorPicker.recentColorsLabel')}
+                                 paletteTriggerLabel={i18n.t('colorPicker.paletteTriggerLabel')}
+                                 confirmLabel={i18n.t('colorPicker.confirmLabel')}
+                                 recentColorsName={'tableCellBackgroundColor'} recentColors={defaultColors} onSelected={setColor}/>
+                  }
+                  trigger={'hover'}>
+          <MenuItem chevronRight={true}
+                    density={'compact'}
+                    disabled={disabled}
+                    icon={<IconGlyph name={'palette'} style={{
+                      color: disabled ? '' : color()
+                    }}/>
+
+                    }>
+            {i18n.t('table.cellBackground')}
+          </MenuItem>
+        </Dropdown>
+      )
+    }
     return (
       <Space.Compact>
         <Button onClick={setCurrentColor}
