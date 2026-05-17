@@ -146,7 +146,10 @@ export const InlineToolbar = withAnnotation({
         const nativeNode = adapter.getNativeNodeByComponent(component)
         if (nativeNode) {
           const rect = nativeNode.getBoundingClientRect()
-          Object.assign(viewPosition, rect)
+          viewPosition.left = rect.left
+          viewPosition.top = rect.top
+          viewPosition.width = rect.width
+          viewPosition.height = rect.height
         }
       }
     } else {
