@@ -1,5 +1,14 @@
 # @textbus/xnote-playground
 
+## 0.2.6
+
+### Patch Changes
+
+- - feat: 优化表格工具
+  - fix: 修复图片选择合并样式不生效的 bug
+- Updated dependencies
+  - @textbus/xnote@1.4.7
+
 ## 0.2.5
 
 ### Patch Changes

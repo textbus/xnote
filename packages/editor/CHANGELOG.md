@@ -1,5 +1,12 @@
 # @textbus/xnote
 
+## 1.4.7
+
+### Patch Changes
+
+- - feat: 优化表格工具
+  - fix: 修复图片选择合并样式不生效的 bug
+
 ## 1.4.6
 
 ### Patch Changes
