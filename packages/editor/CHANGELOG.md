@@ -1,5 +1,12 @@
 # @textbus/xnote
 
+## 1.4.6
+
+### Patch Changes
+
+- - 添加批注功能
+  - 优化部分 UI 交互
+
 ## 1.4.5
 
 ### Patch Changes
