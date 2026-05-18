@@ -46,10 +46,8 @@ export function InsertMenu(props: InsertToolProps) {
     const component = props.slot?.parent
 
     function insertComponent(comp: Component<any>) {
-      if (props.replace) {
-        if (component) {
-          commander.replaceComponent(component!, comp)
-        }
+      if (props.replace && component) {
+        commander.replaceComponent(component!, comp)
       } else if (component && !(component instanceof RootComponent)) {
         commander.insertAfter(comp, component!)
       } else {
