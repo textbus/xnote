@@ -386,6 +386,9 @@ export const LeftToolbar = withAnnotation({
             <Dropdown
               verticalPanelAlign={'left'}
               onOpenChange={changeIgnoreMove}
+              getHorizontalTopMinFrom={() => {
+                return container
+              }}
               orientation={'horizontal'}
               horizontalPanelAlign={'middle'}
               trigger={'hover'}

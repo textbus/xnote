@@ -289,7 +289,7 @@ export function AiTool(props: AiToolProps) {
     const b = commonState().inSourceCode || commonState().readonly || selection.isCollapsed
     return (
       <Dropdown trigger={'hover'} menuColumnCompact={true} disabled={b} dropdown={
-        <MenuList class="xnote-w-menu-36">
+        <MenuList style={{width: '160px'}} class="xnote-w-menu-36">
           <MenuItem density={'compact'} icon={<IconGlyph name={'continuation'}/>}
                     onClick={continueContent}>{i18n.t('ai.continue')}</MenuItem>
           <MenuItem density={'compact'} icon={<IconGlyph name={'magic-wand'}/>} onClick={polish}>{i18n.t('ai.polish')}</MenuItem>

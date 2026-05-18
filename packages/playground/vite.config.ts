@@ -6,10 +6,12 @@ import UnoCSS from 'unocss/vite'
 import swc from 'vite-plugin-swc-transform'
 import checker from 'vite-plugin-checker'
 import viteScopedCssPlugin from '@viewfly/devtools/vite-scoped-css-plugin'
+import { viewflyHmrPlugin } from '@viewfly/devtools/vite-viewfly-hmr-plugin'
 
 export default defineConfig({
   plugins: [
     UnoCSS({ configFile: path.resolve(__dirname, '../../uno.config.ts') }),
+    viewflyHmrPlugin(),
     ...(viteScopedCssPlugin() as Plugin[]),
     swc({
       swcOptions: {
