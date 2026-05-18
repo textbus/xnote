@@ -1,4 +1,4 @@
-import { inject } from '@viewfly/core'
+import { createSignal, inject } from '@viewfly/core'
 import { Commander, Component, ContentType, Selection, Slot, Textbus } from '@textbus/core'
 
 import { ParagraphComponent } from '../../textbus/components/paragraph/paragraph.component'
@@ -6,7 +6,7 @@ import './insert-menu.scss'
 import { headingAttr } from '../../textbus/attributes/heading.attr'
 import { ListComponent } from '../../textbus/components/list/list.component'
 import { SourceCodeComponent } from '../../textbus/components/source-code/source-code.component'
-import { TableComponent } from '../../textbus/components/table/table.component'
+import { TableComponent, TableComponentState } from '../../textbus/components/table/table.component'
 import { TodolistComponent } from '../../textbus/components/todolist/todolist.component'
 import { HighlightBoxComponent } from '../../textbus/components/highlight-box/highlight-box.component'
 import { FileUploader } from '../../interfaces'
@@ -16,11 +16,13 @@ import { MenuHeading } from '../../components/menu-heading/menu-heading'
 import { KatexComponent } from '../../textbus/components/katex/katex.component'
 import { createTimelineItem, TimelineComponent } from '../../textbus/components/timeline/timeline.component'
 import { createStepItem, StepComponent } from '../../textbus/components/step/step.component'
-import { Button, Divider, MenuItem, MenuList } from '@viewfly/ui-components'
+import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 import { MermaidComponent } from '../../textbus/components/mermaid/mermaid.component'
 import { RootComponent } from '../../textbus/components/root/root.component'
 import { I18nService } from '../../services/i18n.service'
+import { CreateTable, TableParams } from './table/create-table'
+import { v4 } from 'uuid'
 
 export interface InsertToolProps {
   slot: Slot | null
@@ -34,6 +36,11 @@ export function InsertMenu(props: InsertToolProps) {
   const textbus = inject(Textbus)
   const fileUploader = inject(FileUploader, null)
   const i18n = inject(I18nService)
+
+  const tableParams = createSignal<TableParams>({
+    row: 0,
+    column: 0,
+  })
 
   function insert(type: string) {
     const component = props.slot?.parent
@@ -104,7 +111,30 @@ export function InsertMenu(props: InsertToolProps) {
       }
         break
       case 'table': {
-        const table = new TableComponent()
+        const params = tableParams()
+        if (params.row === 0 || params.row === 0) {
+          return
+        }
+        const data: TableComponentState = {
+          columnsConfig: Array.from<number>({ length: params.column }).fill(100),
+          rows: Array.from({ length: params.row }).map(() => {
+            return {
+              height: TableComponent.defaultRowHeight,
+              cells: Array.from({ length: params.column }).map(() => {
+                const slot = new Slot([
+                  ContentType.BlockComponent
+                ])
+                slot.insert(new ParagraphComponent())
+                return {
+                  id: v4(),
+                  slot
+                }
+              })
+            }
+          }),
+          mergeConfig: {}
+        }
+        const table = new TableComponent(data)
         insertComponent(table)
         textbus.nextTick(() => {
           selection.selectFirstPosition(table, true, true)
@@ -226,7 +256,14 @@ export function InsertMenu(props: InsertToolProps) {
       </div>
       <Divider spacing={'compact'}/>
       <MenuList columnCompact={true}>
-        <MenuItem density={'compact'} onClick={() => insert('table')} icon={<IconGlyph name={'table'}/>}>{i18n.t('insert.table')}</MenuItem>
+        <Dropdown trigger={'hover'} orientation={'horizontal'} horizontalAlign={'right'} block dropdown={
+          <CreateTable onChange={(params) => {
+            tableParams.set(params)
+            insert('table')
+          }}/>
+        }>
+          <MenuItem density={'compact'} chevronRight={true} icon={<IconGlyph name={'table'}/>}>{i18n.t('insert.table')}</MenuItem>
+        </Dropdown>
         <MenuItem density={'compact'} onClick={() => insert('todolist')}
                   icon={<IconGlyph name={'checkbox-checked'}/>}>{i18n.t('insert.todoList')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('image')} icon={<IconGlyph name={'image'}/>}>{i18n.t('insert.image')}</MenuItem>
@@ -235,7 +272,8 @@ export function InsertMenu(props: InsertToolProps) {
                   icon={<IconGlyph name={'hightlight-box'}/>}>{i18n.t('insert.highlightBox')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('katex')}
                   icon={<IconGlyph name={'function'}/>}>{i18n.t('insert.katex')}</MenuItem>
-        <MenuItem density={'compact'} onClick={() => insert('mermaid')} icon={<IconGlyph name={'flow-chart'}/>}>{i18n.t('insert.mermaid')}</MenuItem>
+        <MenuItem density={'compact'} onClick={() => insert('mermaid')}
+                  icon={<IconGlyph name={'flow-chart'}/>}>{i18n.t('insert.mermaid')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('step')} icon={<IconGlyph name={'step'}/>}>{i18n.t('insert.step')}</MenuItem>
         <MenuItem density={'compact'} onClick={() => insert('timeline')}
                   icon={<IconGlyph name={'timeline'}/>}>{i18n.t('insert.timeline')}</MenuItem>

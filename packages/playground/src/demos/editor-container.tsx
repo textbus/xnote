@@ -32,7 +32,7 @@ function createPluginsByRoute(route: ToolbarDemoRoute, staticToolbarHost?: HTMLE
 
   return [
     new StaticToolbarPlugin({
-      theme: 'dark',
+      // theme: 'dark',
       host: staticToolbarHost!
     })
   ]

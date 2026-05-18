@@ -1,0 +1,46 @@
+.xnote-create-table {
+  width: 201px;
+}
+
+.vfui-dark .xnote-create-table__grid {
+  div {
+    border-color: #555;
+  }
+
+  .xnote-create-table__grid-active {
+    border-color: var(--vfui-fg-muted);
+  }
+}
+
+.xnote-create-table__grid {
+  padding-left: 1px;
+  padding-top: 1px;
+  margin-right: -1px;
+  overflow: hidden;
+
+  div {
+    width: 21px;
+    height: 21px;
+    border: 1px solid #ddd;
+    margin-left: -1px;
+    margin-top: -1px;
+    float: left;
+    cursor: pointer;
+  }
+
+  .xnote-create-table__grid-active {
+    position: relative;
+    border-color: var(--vfui-color-primary);
+  }
+}
+
+
+.xnote-create-table__info {
+  padding: 6px 0 3px;
+  color: var(--vfui-fg-muted);
+
+  span {
+    margin-right: 2em;
+  }
+}
+

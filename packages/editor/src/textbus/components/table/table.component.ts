@@ -47,6 +47,9 @@ export class TableComponent extends Component<TableComponentState> {
   static componentName = 'TableComponent'
   static type = ContentType.BlockComponent
 
+  static defaultRowHeight = defaultRowHeight
+  static defaultColumnWidth = defaultColumnWidth
+
   static fromJSON(textbus: Textbus, json: ComponentStateLiteral<TableComponentState>) {
     const registry = textbus.get(Registry)
     return new TableComponent({
