@@ -4,6 +4,7 @@
   top: 0;
   z-index: 10;
   font-size: 15px;
+
   &--no-respond {
     pointer-events: none;
   }
@@ -23,4 +24,8 @@
   left: 0;
   top: 0;
   z-index: 1;
+}
+
+.xnote-anchor-tr .xnote-toolbar-compact-btn {
+  cursor: move;
 }
