@@ -1,4 +1,4 @@
-import { Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
+import { Component, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { inject, onUnmounted, reactive } from '@viewfly/core'
 
 import { headingAttr } from '../../textbus/attributes/heading.attr'
@@ -64,13 +64,15 @@ export function useActiveBlock() {
     subscription.unsubscribe()
   })
 
-  return function (slot: Slot | null = null) {
-    if (slot) {
+  return function (component: Component<any> | null = null) {
+    if (component) {
+      const slots = component.slots
+      const last = slots[slots.length - 1]
       updateCheckStates({
         startOffset: 0,
-        endOffset: slot.length,
-        startSlot: slot,
-        endSlot: slot
+        endOffset: last.length,
+        startSlot: slots[0],
+        endSlot: last
       })
     } else if (selection.isSelected) {
       updateCheckStates({

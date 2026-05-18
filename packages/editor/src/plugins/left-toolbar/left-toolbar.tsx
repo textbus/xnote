@@ -7,12 +7,12 @@ import {
   distinctUntilChanged,
   filter,
   fromEvent,
-  map,
   merge,
+  Observable,
+  Operator,
   RootComponentRef,
   sampleTime,
   Selection,
-  Slot,
   Subscription,
   Textbus,
 } from '@textbus/core'
@@ -35,6 +35,27 @@ import { ToolService } from '../tools/_common/tool.service'
 import { TextColorTool } from '../tools/text-color.tool'
 import { TextBackgroundColorTool } from '../tools/text-background-color.tool'
 import { I18nService } from '../../services/i18n.service'
+import { useBlockInsert } from '../hooks/block-insert'
+
+export function raduce<T, U>(fn: (prev: U, current: T) => U, initValue: U): Operator<T, U> {
+  return function (source: Observable<T>) {
+    let prevValue = initValue
+    return new Observable<U>(subscriber => {
+      return source.subscribe({
+        next(value) {
+          prevValue = fn(prevValue, value)
+          subscriber.next(prevValue)
+        },
+        error(err) {
+          subscriber.error(err)
+        },
+        complete() {
+          subscriber.complete()
+        }
+      })
+    })
+  }
+}
 
 export const LeftToolbar = withAnnotation({
   providers: [RefreshService, ToolService]
@@ -49,15 +70,20 @@ export const LeftToolbar = withAnnotation({
 
   const checkStates = useActiveBlock()
   const toBlock = useBlockTransform()
-  const activeSlot = createSignal<Slot | null>(null)
+  const insertBlock = useBlockInsert()
+  const activeComponent = createSignal<Component<any> | null>(null)
 
   function transform(v: string) {
-    const active = activeSlot()
+    const active = activeComponent()
     if (active) {
-      selection.setBaseAndExtent(active, 0, active, active.length)
+      selection.selectChildSlots(active)
       selection.restore()
-      toBlock(v)
-      activeSlot.set(selection.focusSlot)
+      if (active === rootComponentRef.component) {
+        insertBlock(v)
+      } else {
+        toBlock(v)
+      }
+      activeComponent.set(selection.commonAncestorComponent)
       refreshService.onRefresh.next()
     }
   }
@@ -86,39 +112,42 @@ export const LeftToolbar = withAnnotation({
       filter(() => {
         return !isIgnoreMove
       }),
-      map(ev => {
+      raduce((prev, ev) => {
         let currentNode = ev.target as Node | null
-        while (currentNode) {
+        if (currentNode) {
           const slot = adapter.getSlotByNativeNode(currentNode as HTMLElement)
-          if (slot) {
-            if (slot?.parent?.type === ContentType.InlineComponent) {
+          if (slot?.parent instanceof TableComponent) {
+            return prev
+          }
+        }
+        while (currentNode) {
+          const component = adapter.getComponentByNativeNode(currentNode as HTMLElement)
+          if (component) {
+            if (component.type === ContentType.InlineComponent) {
               currentNode = currentNode.parentNode
               continue
             }
-            return slot
+            return component
           }
           currentNode = currentNode.parentNode
         }
         return null
-      }),
+      }, null as null | Component<any>),
       distinctUntilChanged(),
-      filter(slot => {
-        return !slot || slot !== rootComponent.state.content
-      }),
       sampleTime(250),
       filter(() => {
         return !isShow
       })
-    ).subscribe(slot => {
-      activeSlot.set(slot)
-      if (slot) {
-        checkStates(slot)
+    ).subscribe(comp => {
+      activeComponent.set(comp)
+      if (comp) {
         isEmptyBlock.set(
-          (slot.parent instanceof ParagraphComponent && slot.isEmpty) ||
-          slot.parent instanceof SourceCodeComponent ||
-          slot.parent instanceof TableComponent
+          (comp instanceof ParagraphComponent && comp.state.slot.isEmpty) ||
+          comp instanceof SourceCodeComponent ||
+          comp instanceof TableComponent ||
+          comp instanceof RootComponent
         )
-        const nativeNode = adapter.getNativeNodeByComponent(slot.parent!)!
+        const nativeNode = adapter.getNativeNodeByComponent(comp)!
         const containerRect = docContentContainer.getBoundingClientRect()
         const currentRect = nativeNode.getBoundingClientRect()
         positionSignal.display = true
@@ -135,7 +164,7 @@ export const LeftToolbar = withAnnotation({
   const subscription = merge(textbus.onChange, selection.onChange).pipe(
     debounceTime(20)
   ).subscribe(() => {
-    if (activeSlot()) {
+    if (activeComponent()) {
       return
     }
     refreshService.onRefresh.next()
@@ -168,9 +197,9 @@ export const LeftToolbar = withAnnotation({
   })
 
   function applyBefore() {
-    const slot = activeSlot()
-    if (slot) {
-      selection.selectSlot(slot)
+    const component = activeComponent()
+    if (component) {
+      selection.selectChildSlots(component)
       textbus.nextTick(() => {
         refreshService.onRefresh.next()
       })
@@ -180,17 +209,17 @@ export const LeftToolbar = withAnnotation({
   const commander = inject(Commander)
 
   function copy() {
-    const slot = activeSlot()
-    if (!slot) {
+    const component = activeComponent()
+    if (!component) {
       return
     }
-    selection.selectComponent(slot.parent!, true)
+    selection.selectComponent(component, true)
     commander.copy()
   }
 
   function cut() {
-    const slot = activeSlot()
-    if (!slot) {
+    const component = activeComponent()
+    if (!component) {
       return
     }
     copy()
@@ -199,14 +228,14 @@ export const LeftToolbar = withAnnotation({
 
 
   function remove() {
-    const slot = activeSlot()
-    if (!slot) {
+    const component = activeComponent()
+    if (!component) {
       return
     }
-    if (slot.parent!.slots.length <= 1) {
-      commander.removeComponent(slot.parent!)
+    if (component.slots.length <= 1) {
+      commander.removeComponent(component)
     } else {
-      selection.selectSlot(slot)
+      selection.selectChildSlots(component)
       commander.delete()
     }
   }
@@ -257,12 +286,12 @@ export const LeftToolbar = withAnnotation({
       const move = fromEvent<MouseEvent>(document, 'mousemove').subscribe((ev) => {
         editorService.changeLeftToolbarVisible(false)
         if (!cloneNode) {
-          const slot = activeSlot()
-          if (!slot) {
+          const component = activeComponent()
+          if (!component) {
             return
           }
 
-          originComponent = slot.parent
+          originComponent = component
           const el = adapter.getNativeNodeByComponent(originComponent!) as HTMLElement
           originView = el
           originView.style.opacity = '0.5'
@@ -341,11 +370,11 @@ export const LeftToolbar = withAnnotation({
   })
 
   return () => {
-    const slot = activeSlot()
+    const component = activeComponent()
     let activeNode = <IconGlyph name={'pilcrow'}/>
-    const states = checkStates(slot)
+    const states = checkStates(component)
 
-    if (slot) {
+    if (component) {
       const types: [boolean, JSX.Element][] = [
         [states.paragraph, <IconGlyph name={'pilcrow'}/>],
         [states.sourceCode, <IconGlyph name={'source-code'}/>],
@@ -370,7 +399,7 @@ export const LeftToolbar = withAnnotation({
       }
     }
 
-    const activeParentComponent = activeSlot()?.parent
+    const activeParentComponent = activeComponent()?.parent
     const needInsert = activeParentComponent instanceof TableComponent || activeParentComponent instanceof SourceCodeComponent
     return (
       <div class={['xnote-left-toolbar', {
@@ -394,7 +423,7 @@ export const LeftToolbar = withAnnotation({
               trigger={'hover'}
               dropdown={
                 isEmptyBlock() ?
-                  <InsertMenu replace={!needInsert} slot={activeSlot()}/>
+                  <InsertMenu replace={!needInsert} component={activeComponent()}/>
                   :
                   <div class="xnote-w-menu-45">
                     <div class="xnote-toolbar-tools-wrap">
@@ -438,7 +467,7 @@ export const LeftToolbar = withAnnotation({
                     <MenuList columnCompact={true}>
                       <AttrTool
                         inLeftTool={true}
-                        slot={slot}
+                        component={component}
                         applyBefore={applyBefore}>
                         <MenuItem chevronRight={true} density={'compact'}
                                   icon={<IconGlyph name={'indent-decrease'}/>}>{i18n.t('toolbar.indentAlign')}</MenuItem>
@@ -467,7 +496,7 @@ export const LeftToolbar = withAnnotation({
                     <Dropdown block={true}
                               orientation={'horizontal'}
                               trigger={'hover'}
-                              dropdown={<InsertMenu hideTitle={true} slot={activeSlot()}/>}>
+                              dropdown={<InsertMenu hideTitle={true} component={activeComponent()}/>}>
                       <MenuItem density={'compact'} chevronRight={true}
                                 icon={<IconGlyph name={'plus'}/>}>{i18n.t('toolbar.addBelow')}</MenuItem>
                     </Dropdown>

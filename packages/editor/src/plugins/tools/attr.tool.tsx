@@ -1,5 +1,5 @@
 import { inject, onUnmounted, Props, reactive } from '@viewfly/core'
-import { Commander, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
+import { Commander, Component, Query, QueryStateType, Range, Selection, Slot } from '@textbus/core'
 import { HTMLAttributes } from '@viewfly/platform-browser'
 import { Button, Divider, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 
@@ -15,7 +15,7 @@ import { I18nService } from '../../services/i18n.service'
 export interface AttrToolProps extends Props {
   inLeftTool?: boolean
   style?: HTMLAttributes<HTMLElement>['style']
-  slot?: Slot | null
+  component?: Component<any> | null
 
   applyBefore?(): void
 }
@@ -33,19 +33,27 @@ export function AttrTool(props: AttrToolProps) {
   })
 
   function updateCheckStates() {
-    if (!props.slot && !selection.isSelected) {
+    const component = props.component
+    if (!component && !selection.isSelected) {
       return
     }
-    const range: Range = props.slot ? {
-      startSlot: props.slot,
-      endSlot: props.slot,
-      startOffset: 0,
-      endOffset: props.slot.length
-    } : {
-      startSlot: selection.startSlot!,
-      startOffset: selection.startOffset!,
-      endSlot: selection.endSlot!,
-      endOffset: selection.endOffset!
+    const slots = component?.slots
+    let range: Range
+    if (slots) {
+      const last = slots[slots.length - 1]
+      range = {
+        startSlot: slots[0],
+        endSlot: last,
+        startOffset: 0,
+        endOffset: last.length
+      }
+    } else {
+      range = {
+        startSlot: selection.startSlot!,
+        startOffset: selection.startOffset!,
+        endSlot: selection.endSlot!,
+        endOffset: selection.endOffset!
+      }
     }
     const textAlignState = query.queryAttributeByRange(textAlignAttr, range)
     const textIndentState = query.queryAttributeByRange(textIndentAttr, range)

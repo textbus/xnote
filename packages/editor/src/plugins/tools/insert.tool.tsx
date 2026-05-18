@@ -22,7 +22,7 @@ export function InsertTool() {
     const b = commonState().readonly
     return (
       <Dropdown trigger={'hover'} disabled={b} dropdown={
-        <InsertMenu replace={false} hideTitle={false} slot={selection.focusSlot}/>
+        <InsertMenu replace={false} hideTitle={false} component={selection.focusSlot?.parent}/>
       }>
         <Button size={'small'}
                 variant={'text'}
