@@ -89,7 +89,10 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
   const i18n = inject(I18nService)
   const ref = createDynamicRef<HTMLDivElement>(node => {
     const sub = props.component.onCompositionStart.subscribe(() => {
-      (node.children[0] as HTMLElement).dataset.placeholder = ''
+      const el = node.children[0] as HTMLElement
+      if (el) {
+        el.dataset.placeholder = ''
+      }
     })
     return () => {
       sub.unsubscribe()
