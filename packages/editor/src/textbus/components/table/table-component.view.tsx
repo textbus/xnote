@@ -168,16 +168,16 @@ export const TableComponentView = withAnnotation({
                 }
                 </tbody>
               </table>
-              <ResizeColumn
-                tableRef={tableRef}
-                component={props.component}
-                layoutWidth={layoutWidth}
-                onActiveStateChange={isActive => {
-                  isResizeColumn.set(isActive)
-                }}/>
               <SelectionMask tableRef={tableRef} component={props.component}/>
             </div>
           </Scroll>
+          <ResizeColumn
+            tableRef={tableRef}
+            component={props.component}
+            layoutWidth={layoutWidth}
+            onActiveStateChange={isActive => {
+              isResizeColumn.set(isActive)
+            }}/>
           <ResizeRow component={props.component} tableRef={tableRef}/>
         </div>
       </div>

@@ -50,7 +50,7 @@ export function SplitCellsTool(props: SplitCellsToolProps) {
       if (slots) {
         for (const item of slots) {
           for (const cell of item.cells) {
-            if (cell.visible && cell.colspan > 1 || cell.colspan > 1) {
+            if (cell.visible && (cell.rowspan > 1 || cell.colspan > 1)) {
               viewModel.disabled = false
               return
             }

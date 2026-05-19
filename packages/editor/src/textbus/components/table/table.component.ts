@@ -374,6 +374,7 @@ export class TableComponent extends Component<TableComponentState> {
       this.focus.next(true)
     })
     onFocusOut(() => {
+      this.ignoreSelectionChanges = false
       this.focus.next(false)
     })
 

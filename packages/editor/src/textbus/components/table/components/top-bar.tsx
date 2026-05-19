@@ -1,4 +1,4 @@
-import { createSignal, inject, onMounted, onUnmounted, Signal } from '@viewfly/core'
+import { createSignal, inject, onMounted, onUnmounted, Signal, watch } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { Button } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
@@ -79,6 +79,12 @@ export const TopBar = function TopBar(props: TopBarProps) {
     s.unsubscribe()
   })
 
+  watch(props.component.tableSelection, (v) => {
+    if (!v) {
+      selectedColumnRange.set(null)
+    }
+  })
+
   return () => {
     const { state, tableSelection } = props.component
 
@@ -107,12 +113,12 @@ export const TopBar = function TopBar(props: TopBarProps) {
                 padding: 0,
                 transform: 'translateX(-50%)'
               }}
-              visible={!!selectedColumnRange()}>
-                <Button style={{
-                  padding: '0 8px',
-                }} variant={'text'} type={'primary'} size={'small'} onClick={() => {
-                  props.component.deleteColumns()
-                }}><IconGlyph name={'bin'}/></Button>
+              visible={!!selectedColumnRange() && !!position}>
+              <Button style={{
+                padding: '0 8px',
+              }} variant={'text'} type={'primary'} size={'small'} onClick={() => {
+                props.component.deleteColumns()
+              }}><IconGlyph name={'bin'}/></Button>
             </ComponentToolbar>
             <table style={{
               transform: `translateX(${-leftDistance()}px)`

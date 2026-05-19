@@ -1,4 +1,4 @@
-import { createRef, inject, onMounted, Ref, Signal } from '@viewfly/core'
+import { createRef, createSignal, inject, onMounted, Ref, Signal } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { DomAdapter } from '@textbus/platform-browser'
 
@@ -24,20 +24,20 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
 
   onMounted(() => {
     const { tableRef } = props
-    let isDrag = false
     let ignoreMove = false
+    let isDragging = false
     const subscription = fromEvent(document, 'mousedown').subscribe(() => {
       ignoreMove = true
     }).add(fromEvent(document, 'mouseup').subscribe(() => {
       ignoreMove = false
     })).add(
-      fromEvent(tableRef.value!.parentNode as HTMLElement, 'mouseleave').subscribe(() => {
-        if (!isDrag) {
+      fromEvent(dragLineRef.value!, 'mouseleave').subscribe(() => {
+        if (!isDragging) {
           dragLineRef.value!.style.display = 'none'
         }
       }),
       fromEvent<MouseEvent>(tableRef.value!.parentNode as HTMLElement, 'mousemove').subscribe(ev => {
-        if (isDrag || ignoreMove) {
+        if (ignoreMove) {
           return
         }
         let cellView: HTMLElement | null = ev.target as HTMLElement
@@ -77,7 +77,8 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
           if (i > 0 && Math.abs(n) < 5) {
             Object.assign(dragLineRef.value!.style, {
               left: x + 'px',
-              display: 'block'
+              display: 'block',
+              height: props.tableRef.value!.offsetHeight + 'px'
             })
             activeCol = i
             break
@@ -88,7 +89,8 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
         }
       })
     ).add(fromEvent<MouseEvent>(dragLineRef.value!, 'mousedown').subscribe(downEvent => {
-      isDrag = true
+      isDragging = true
+      props.component.tableSelection.set(null)
       editorService.changeLeftToolbarVisible(false)
       props.onActiveStateChange(true)
 
@@ -109,7 +111,7 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
         layoutWidthArr[activeCol! - 1] = Math.max(initWidth + distanceX, minWidth)
         props.layoutWidth.set(layoutWidthArr.slice())
       }).add(fromEvent<MouseEvent>(document, 'mouseup').subscribe(upEvent => {
-        isDrag = false
+        isDragging = false
         editorService.changeLeftToolbarVisible(true)
         props.onActiveStateChange(false)
         moveEvent.unsubscribe()
@@ -126,6 +128,8 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
 
   const tableService = inject(TableService)
 
+  const offsetLeft = createSignal(0)
+
   onMounted(() => {
     const sub = tableService.onInsertColumnBefore.subscribe(n => {
       if (n === null) {
@@ -137,12 +141,21 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
 
       dragLineRef.value!.style.display = 'block'
       dragLineRef.value!.style.left = left + 'px'
+      dragLineRef.value!.style.height = props.tableRef.value!.offsetHeight + 'px'
     })
+
+    sub.add(
+      tableService.onScroll.subscribe(n => {
+        offsetLeft.set(n)
+      })
+    )
 
     return () => sub.unsubscribe()
   })
 
   return () => {
-    return <div ref={dragLineRef} class={['xnote-table-column-resize-handle']}/>
+    return <div ref={dragLineRef} style={{
+      transform: `translateX(${-offsetLeft()}px)`
+    }} class={['xnote-table-column-resize-handle']}/>
   }
 }

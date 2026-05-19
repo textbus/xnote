@@ -5,7 +5,7 @@ import {
   inject, onMounted,
   onUnmounted,
   onUpdated, Ref,
-  Signal,
+  Signal, watch,
 } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { Button } from '@viewfly/ui-components'
@@ -90,6 +90,12 @@ export const LeftBar = function LeftBar(props: TopBarProps) {
     props.component.selectRow(startIndex, endIndex + 1)
   }
 
+  watch(props.component.tableSelection, (v) => {
+    if (!v) {
+      selectedRowRange.set(null)
+    }
+  })
+
   return () => {
     const position = props.component.tableSelection()
     const normalizedData = props.component.getNormalizedData()
@@ -152,7 +158,7 @@ export const LeftBar = function LeftBar(props: TopBarProps) {
                             padding: 0,
                             transform: 'translateY(-50%)'
                           }}
-                          visible={deleteIndex() === index}>
+                          visible={deleteIndex() === index && !!position}>
                           <Button size={'small'} style={{
                             padding: '0 8px',
                           }} variant={'text'} type={'primary'} onClick={() => {
