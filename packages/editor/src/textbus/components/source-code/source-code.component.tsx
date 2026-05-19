@@ -18,7 +18,7 @@ import {
   VTextNode,
   ZenCodingGrammarInterceptor,
 } from '@textbus/core'
-import { ComponentLoader, DomAdapter, Input } from '@textbus/platform-browser'
+import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { createSignal, inject, onUnmounted } from '@viewfly/core'
@@ -465,12 +465,6 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
     }
   }
 
-  const input = inject(Input)
-
-  function updateCaret() {
-    input.caret.refresh()
-  }
-
   const readonly = useReadonly()
   const output = useOutput()
   return () => {
@@ -615,7 +609,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
           <div class="xnote-source-code-line-number-bg" style={{
             width: Math.max(String(slots.length).length, 2.5) + 'em'
           }}/>
-          <pre onScroll={updateCaret} class={{
+          <pre class={{
             'xnote-source-code-content': true,
             'xnote-source-code-content-highlight': blockHighlight
           }} style={{
