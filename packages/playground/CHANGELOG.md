@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.2.9
+
+### Patch Changes
+
+- 修复表格自定义选区失焦后不隐藏的 bug
+- Updated dependencies
+  - @textbus/xnote@1.4.11
+
 ## 0.2.8
 
 ### Patch Changes

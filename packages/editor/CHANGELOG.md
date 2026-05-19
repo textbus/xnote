@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.11
+
+### Patch Changes
+
+- 修复表格自定义选区失焦后不隐藏的 bug
+
 ## 1.4.9
 
 ### Patch Changes
