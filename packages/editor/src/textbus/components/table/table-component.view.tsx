@@ -154,7 +154,7 @@ export const TableComponentView = withAnnotation({
       )
     }
 
-    const showMask = isShowMask(props.component)
+    const showMask = isShowMask(props.component) && isFocus()
     return (
       <div class="xnote-table"
            data-component={props.component.name}
@@ -208,7 +208,7 @@ export const TableComponentView = withAnnotation({
                 }
                 </tbody>
               </table>
-              <SelectionMask tableRef={tableRef} component={props.component}/>
+              {showMask && <SelectionMask tableRef={tableRef} component={props.component}/>}
             </div>
           </Scroll>
           <ResizeColumn
