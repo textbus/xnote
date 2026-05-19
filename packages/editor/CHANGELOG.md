@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.9
+
+### Patch Changes
+
+- 优化表格交互
+
 ## 1.4.8
 
 ### Patch Changes
