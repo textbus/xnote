@@ -1,5 +1,7 @@
+import { createRef, inject, reactive } from '@viewfly/core'
+
+import { I18nService } from '../../../services/i18n.service'
 import './create-table.scss'
-import { createRef, reactive } from '@viewfly/core'
 
 export interface TableParams {
   row: number
@@ -11,6 +13,7 @@ export interface CreateTableProps {
 }
 
 export function CreateTable(props: CreateTableProps) {
+  const i18n = inject(I18nService)
   const viewModel = reactive({
     row: 0,
     column: 0,
@@ -54,8 +57,8 @@ export function CreateTable(props: CreateTableProps) {
           }
         </div>
         <div class="xnote-create-table__info">
-          <span>行: {viewModel.column}</span>
-          <span>列: {viewModel.row}</span>
+          <span>{i18n.t('tableCreate.rows')}: {viewModel.row}</span>
+          <span>{i18n.t('tableCreate.columns')}: {viewModel.column}</span>
         </div>
       </div>
     )

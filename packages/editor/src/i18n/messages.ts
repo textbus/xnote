@@ -92,6 +92,8 @@ const zhCN = {
   'timeline.defaultDesc': '描述信息...',
   'comment.placeholder': '请输入批注内容',
   'comment.confirm': '提交',
+  'tableCreate.rows': '行',
+  'tableCreate.columns': '列',
 } as const
 
 export type XnoteMessageKey = keyof typeof zhCN
@@ -190,6 +192,8 @@ const enUS: Record<XnoteMessageKey, string> = {
   'timeline.defaultDesc': 'Description…',
   'comment.placeholder': 'Enter comment content',
   'comment.confirm': 'OK',
+  'tableCreate.rows': 'rows',
+  'tableCreate.columns': 'columns',
 }
 
 export const xnoteMessageBundles: Record<'zh-CN' | 'en-US', Record<XnoteMessageKey, string>> = {
