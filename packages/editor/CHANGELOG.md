@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.8
+
+### Patch Changes
+
+- 优化工具条交互
+
 ## 1.4.7
 
 ### Patch Changes
