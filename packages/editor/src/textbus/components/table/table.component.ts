@@ -154,6 +154,20 @@ export class TableComponent extends Component<TableComponentState> {
     }
   }
 
+  canSplit() {
+    const slots = this.getSelectedNormalizedSlots()
+    if (slots) {
+      for (const item of slots) {
+        for (const cell of item.cells) {
+          if (cell.visible && (cell.colspan > 1 || cell.rowspan > 1)) {
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+
   splitCellBySlot(slot: Slot) {
     const slots = this.getNormalizedData()
     for (const item of slots) {

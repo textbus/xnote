@@ -62,3 +62,15 @@
     color: #333;
   }
 }
+
+.xnote-table-tool {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  button {
+    margin-bottom: 2px;
+  }
+}

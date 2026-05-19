@@ -1,8 +1,10 @@
-import { ContentType, createVNode, Slot, Textbus } from '@textbus/core'
+import { Commander, ContentType, createVNode, Slot, Textbus } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
 import { createRef, createSignal, inject, onUnmounted, withAnnotation } from '@viewfly/core'
 import { v4 } from 'uuid'
+import { Button, ColorPicker, Divider, Dropdown, MenuItem, MenuList, Picker } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import './table.component.scss'
 import { Row, TableComponent } from './table.component'
@@ -18,12 +20,18 @@ import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
 import { EditorService } from '../../../services/editor.service'
 import { autoComplete, TableCellConfig } from './tools/complete'
+import { I18nService } from '../../../services/i18n.service'
+import { cellAlignAttr } from '../../attributes/cell-align.attr'
+import { cellBackgroundAttr } from '../../attributes/cell-background.attr'
 
 export const TableComponentView = withAnnotation({
   providers: [TableService]
 }, function TableComponentView(props: ViewComponentProps<TableComponent>) {
   const adapter = inject(DomAdapter)
   const editorService = inject(EditorService)
+  const i18n = inject(I18nService)
+  const commander = inject(Commander)
+
   const isFocus = createSignal(false)
   const layoutWidth = createSignal(props.component.state.columnsConfig)
   const subscription = props.component.focus.subscribe(b => {
@@ -49,6 +57,38 @@ export const TableComponentView = withAnnotation({
 
   const readonly = useReadonly()
   const output = useOutput()
+
+  function setCellAlign(v: string) {
+    const slots = props.component.getSelectedNormalizedSlots() || []
+
+    slots.forEach(item => {
+      item.cells.forEach(cell => {
+        if (cell.visible) {
+          cell.raw.slot.setAttribute(cellAlignAttr, v)
+        }
+      })
+    })
+  }
+
+  function setColor(picker: Picker) {
+    const rgba = picker.rgba
+    const c = rgba ? `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` : ''
+    const slots = props.component.getSelectedNormalizedSlots()
+    if (slots) {
+      slots.map(i => {
+        return i.cells.filter(t => t.visible).map(i => i.raw.slot)
+      }).flat().forEach(slot => {
+        if (c) {
+          slot.setAttribute(cellBackgroundAttr, c, s => {
+            return slot === s
+          })
+        } else {
+          slot.removeAttribute(cellBackgroundAttr)
+        }
+      })
+    }
+  }
+
   return () => {
     const normalizedData = props.component.getNormalizedData()
     const state = props.component.state
@@ -179,6 +219,59 @@ export const TableComponentView = withAnnotation({
               isResizeColumn.set(isActive)
             }}/>
           <ResizeRow component={props.component} tableRef={tableRef}/>
+          {
+            isFocus() && (
+              <div class="xnote-table-tool">
+                <Button disabled={!showMask} inlineCompact={true} onClick={() => {
+                  props.component.mergeCellBySelection()
+                }}><IconGlyph name={'merge-cells'}/></Button>
+                <Button disabled={!props.component.canSplit()} inlineCompact={true} onClick={() => {
+                  props.component.splitCellsBySelection()
+                }}>
+                  <IconGlyph name={'split-cells'}/>
+                </Button>
+                <Dropdown trigger={'hover'} orientation={'horizontal'} horizontalPanelAlign={'middle'}
+                          horizontalAlign={'right'} dropdown={
+                  <MenuList columnCompact={true} class="xnote-w-menu-40">
+                    <MenuItem density={'compact'} onClick={() => setCellAlign('top')} icon={<IconGlyph name={'align-top'}/>}>
+                      <div class="xnote-flex-between">
+                        {i18n.t('cellAlign.top')}
+                      </div>
+                    </MenuItem>
+                    <MenuItem density={'compact'} onClick={() => setCellAlign('middle')} icon={<IconGlyph name={'align-middle'}/>}>
+                      <div class="xnote-flex-between">
+                        {i18n.t('cellAlign.middle')}
+                      </div>
+                    </MenuItem>
+                    <MenuItem density={'compact'} onClick={() => setCellAlign('bottom')} icon={<IconGlyph name={'align-bottom'}/>}>
+                      <div class="xnote-flex-between">
+                        {i18n.t('cellAlign.bottom')}
+                      </div>
+                    </MenuItem>
+                  </MenuList>
+                }>
+                  <Button chevronGapless={true} chevronDown={false} inlineCompact={true}><IconGlyph name={'align-middle'}/></Button>
+                </Dropdown>
+                <Dropdown trigger={'hover'}
+                          horizontalAlign={'right'}
+                          horizontalPanelAlign={'middle'}
+                          orientation={'horizontal'} dropdown={
+                  <ColorPicker recentColorsLabel={i18n.t('colorPicker.recentColorsLabel')}
+                               paletteTriggerLabel={i18n.t('colorPicker.paletteTriggerLabel')}
+                               confirmLabel={i18n.t('colorPicker.confirmLabel')}
+                               recentColorsName={'tableCellBackgroundColor'} onSelected={setColor}
+                  />}>
+                  <Button chevronGapless={true} chevronDown={false} inlineCompact={true}><IconGlyph name={'palette'}/></Button>
+                </Dropdown>
+                <Divider spacing={'compact'}/>
+                <Button inlineCompact={true} onClick={() => {
+                  commander.removeComponent(props.component)
+                }}>
+                  <IconGlyph name={'bin'}/>
+                </Button>
+              </div>
+            )
+          }
         </div>
       </div>
     )
