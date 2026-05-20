@@ -33,9 +33,9 @@
   overflow: hidden;
 
   &.xnote-source-code-auto-break .xnote-source-code-line {
-    word-break: break-all;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
     white-space: pre-wrap;
+    //word-break: break-word;
   }
 
 }

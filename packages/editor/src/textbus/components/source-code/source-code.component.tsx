@@ -17,6 +17,7 @@ import {
   useDynamicShortcut,
   VTextNode,
   ZenCodingGrammarInterceptor,
+  Decorator, VElement
 } from '@textbus/core'
 import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
@@ -524,7 +525,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
           <ComponentToolbar visible={isFocus()}>
             <div class="xnote-source-code-toolbar-row">
               <Dropdown trigger={'hover'} dropdown={
-                <MenuList style={{width: '140px'}} columnCompact={true}>
+                <MenuList style={{ width: '140px' }} columnCompact={true}>
                   {
                     languageList.map(item => {
                       return (
@@ -546,7 +547,7 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
 
               <span>{i18n.t('sourceCode.theme')}</span>
               <Dropdown trigger={'hover'} dropdown={
-                <MenuList style={{width: '160px'}} columnCompact={true}>
+                <MenuList style={{ width: '160px' }} columnCompact={true}>
                   {
                     sourceCodeThemes.map(item => {
                       return (
@@ -621,16 +622,35 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
                 return adapter.slotRender(item.slot, (children) => {
                   if (state.lang) {
                     const nodes = Array.from(results.shift()!.childNodes)
-                    children = nodesToVNodes(item.slot, nodes, 0)
-                    if (!children.length) {
+                    const oldChildren = children
+                    let newChildren: typeof children | null = null
+                    let insertIndex = 0
+                    for (const v of oldChildren) {
+                      if (v instanceof Decorator) {
+                        newChildren = nodesToVNodes(item.slot, nodes, 0, {
+                          index: insertIndex,
+                          decorator: v
+                        })
+                        break
+                      } else if (v instanceof Component) {
+                        insertIndex++
+                      } else if (v.location) {
+                        insertIndex = v.location.endIndex
+                      }
+                    }
+                    if (!newChildren) {
+                      newChildren = nodesToVNodes(item.slot, nodes, 0)
+                    }
+                    if (!newChildren.length) {
                       const br = createVNode('br')
                       br.location = {
                         slot: item.slot,
                         startIndex: 0,
                         endIndex: 1
                       }
-                      children.push(br)
+                      newChildren.push(br)
                     }
+                    children = newChildren
                   }
                   return createVNode('div', {
                     class: 'xnote-source-code-line' + (item.emphasize ? ' xnote-source-code-line-emphasize' : ''),
@@ -649,8 +669,16 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
   }
 }
 
-function nodesToVNodes(slot: Slot, nodes: Node[], index: number) {
-  return nodes.map(i => {
+function nodesToVNodes(slot: Slot,
+                       nodes: Node[],
+                       index: number,
+                       inputDecorator?: { decorator: Decorator, index: number }) {
+  const newNodes: Array<VElement | VTextNode | Decorator> = []
+  if (inputDecorator && inputDecorator.index === 0) {
+    newNodes.push(inputDecorator.decorator)
+    inputDecorator = undefined
+  }
+  nodes.forEach(i => {
     const location = {
       slot,
       startIndex: index,
@@ -660,18 +688,45 @@ function nodesToVNodes(slot: Slot, nodes: Node[], index: number) {
       const childNodes = Array.from(i.childNodes)
       const vEle = createVNode('span', {
         class: (i as HTMLElement).className
-      }, nodesToVNodes(slot, childNodes, index))
+      }, nodesToVNodes(slot, childNodes, index, inputDecorator))
       index = location.endIndex
-
-      vEle.location = { ...location }
-      return vEle
+      vEle.location = location
+      newNodes.push(vEle)
+      return
     }
     index = location.endIndex
 
+    if (inputDecorator) {
+      if (inputDecorator.index === location.endIndex) {
+        const textNode = new VTextNode(i.textContent!)
+        textNode.location = location
+        newNodes.push(textNode)
+        newNodes.push(inputDecorator.decorator)
+        return
+      }
+      if (inputDecorator.index > location.startIndex && inputDecorator.index < location.endIndex) {
+        const beforeTextNode = new VTextNode(i.textContent!.slice(0, inputDecorator.index - location.startIndex))
+        const afterTextNode = new VTextNode(i.textContent!.slice(inputDecorator.index - location.startIndex))
+        beforeTextNode.location = {
+          slot,
+          startIndex: location.startIndex,
+          endIndex: inputDecorator.index,
+        }
+        afterTextNode.location = {
+          slot,
+          startIndex: inputDecorator.index,
+          endIndex: location.endIndex,
+        }
+        newNodes.push(beforeTextNode, inputDecorator.decorator, afterTextNode)
+        return
+      }
+    }
     const textNode = new VTextNode(i.textContent!)
     textNode.location = location
-    return textNode
+    newNodes.push(textNode)
   })
+
+  return newNodes
 }
 
 export const sourceCodeComponentLoader: ComponentLoader = {
