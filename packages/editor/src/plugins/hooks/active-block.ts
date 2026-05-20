@@ -67,13 +67,24 @@ export function useActiveBlock() {
   return function (component: Component<any> | null = null) {
     if (component) {
       const slots = component.slots
-      const last = slots[slots.length - 1]
-      updateCheckStates({
-        startOffset: 0,
-        endOffset: last.length,
-        startSlot: slots[0],
-        endSlot: last
-      })
+      if (slots.length === 0) {
+        const parent = component.parent!
+        const index = parent.indexOf(component)
+        updateCheckStates({
+          startOffset: index,
+          endOffset: index + 1,
+          startSlot: parent,
+          endSlot: parent,
+        })
+      } else {
+        const last = slots[slots.length - 1]
+        updateCheckStates({
+          startOffset: 0,
+          endOffset: last.length,
+          startSlot: slots[0],
+          endSlot: last
+        })
+      }
     } else if (selection.isSelected) {
       updateCheckStates({
         startOffset: selection.startOffset!,

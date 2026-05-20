@@ -49,17 +49,17 @@ importers:
         specifier: ^0.5.21
         version: 0.5.21
       '@textbus/adapter-viewfly':
-        specifier: ^5.4.3
-        version: 5.4.3
+        specifier: ^5.4.5
+        version: 5.4.5
       '@textbus/collaborate':
-        specifier: ^5.4.3
-        version: 5.4.3(y-protocols@1.0.7(yjs@13.6.30))
+        specifier: ^5.4.5
+        version: 5.4.5(y-protocols@1.0.7(yjs@13.6.30))
       '@textbus/core':
-        specifier: ^5.4.3
-        version: 5.4.3
+        specifier: ^5.4.5
+        version: 5.4.5
       '@textbus/platform-browser':
-        specifier: ^5.4.3
-        version: 5.4.3
+        specifier: ^5.4.5
+        version: 5.4.5
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
@@ -124,13 +124,13 @@ importers:
   packages/playground:
     dependencies:
       '@textbus/collaborate':
-        specifier: ^5.4.3
-        version: 5.4.3(y-protocols@1.0.7(yjs@13.6.30))
+        specifier: ^5.4.5
+        version: 5.4.5(y-protocols@1.0.7(yjs@13.6.30))
       '@textbus/core':
-        specifier: ^5.4.3
-        version: 5.4.3
+        specifier: ^5.4.5
+        version: 5.4.5
       '@textbus/xnote':
-        specifier: workspace:^1.4.7
+        specifier: workspace:^1.4.11
         version: link:../editor
       '@viewfly/core':
         specifier: ^3.0.5
@@ -1098,20 +1098,20 @@ packages:
   '@tanbo/stream@1.2.7':
     resolution: {integrity: sha512-ATKVjpQFmr7x+iCKGOGWFzrtB5ZsNef6UKATWZs1R1eE16pyrBwl2AZrnALi+eQQTxOo5Ol6Rmck2BBBgBAnmA==}
 
-  '@textbus/adapter-viewfly@5.4.3':
-    resolution: {integrity: sha512-vsDMp/sL1ymy0hZsjcQ8VcZgbu9+haar8rKU4/p3XT3Mm8RtbpeZm4+0te8S71tlRrGvoPdcBufXfVxmIwB9bA==}
+  '@textbus/adapter-viewfly@5.4.5':
+    resolution: {integrity: sha512-taX2YGba6yALcMaubEGPU/z7aLtzUwXKZ2y+9+QGlgTiDLnnkdwL/hwHyT1rZnkFQXLhX6NKDIxTDB3aH0ZYZw==}
 
-  '@textbus/collaborate@5.4.3':
-    resolution: {integrity: sha512-jQOuiLiaOlBI5hx5ZooU5Pw8J/Hrmtn7eXKRHLa9MA0qeC45R25paVlpG51kh2LLscGF28T6JSHnNuXXHIfM2Q==}
+  '@textbus/collaborate@5.4.5':
+    resolution: {integrity: sha512-gJuHgaleWVSvJAlk0009R5czCQ3tKb0aGYrK+4kW7THCV0IaYIC8XcCFQ5g1zJk/TBUYhj3rR164JfLtkeA4lg==}
 
-  '@textbus/core@5.4.3':
-    resolution: {integrity: sha512-a0hAJ0ROgO087flmNQEmQVLepnGIvFY8suZXKgOdgKUeDH/VRZhOISO4ckI0w24WxDU1bA8W1REgzRa1Rj5eZg==}
+  '@textbus/core@5.4.5':
+    resolution: {integrity: sha512-xSnUwBc7mKf0ydzHqvPUEjyeXAMnX9RRVjd/17wtetyztMda3II0ZYnoBJ+ZZr4VPwQiz34R2W603TQ8a4V25w==}
 
-  '@textbus/platform-browser@5.4.3':
-    resolution: {integrity: sha512-fUIFnLiVIdJBz9AXd7VlthYyk/Qzy3aY2n293x2S7lgy7kPqYEVl7r69Ftns85h9QpYQwu9djCL5S5nERzMCnQ==}
+  '@textbus/platform-browser@5.4.5':
+    resolution: {integrity: sha512-qfkpQ8Qs78h+TOkK0yusEZUbWkcFpBt9/sVFyJ7WaH7Hesr50XRdvOjZSJo+3tV3Pj1WtG1amXONd8J4GIuwBw==}
 
-  '@textbus/platform-node@5.4.3':
-    resolution: {integrity: sha512-Mq1Fb5vbt8HZlP1/PKiUkKRifmZDdumKKAFbAFFL/9EFKj2lVgosK7X/7DIEVuEo6jbV0k1vf19FTruBTHrCyw==}
+  '@textbus/platform-node@5.4.5':
+    resolution: {integrity: sha512-GpYGalA5L9WPHVDrLWZqzjzZx4PiVpbFPF+XpNYG16spt6IFQFmscMrUkRxEYEu6poULwybaetxBAu4FlD/t+A==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -4760,20 +4760,20 @@ snapshots:
 
   '@tanbo/stream@1.2.7': {}
 
-  '@textbus/adapter-viewfly@5.4.3':
+  '@textbus/adapter-viewfly@5.4.5':
     dependencies:
       '@tanbo/stream': 1.2.7
-      '@textbus/core': 5.4.3
-      '@textbus/platform-browser': 5.4.3
-      '@textbus/platform-node': 5.4.3
+      '@textbus/core': 5.4.5
+      '@textbus/platform-browser': 5.4.5
+      '@textbus/platform-node': 5.4.5
       '@viewfly/core': 3.0.5
       '@viewfly/platform-browser': 3.0.5
 
-  '@textbus/collaborate@5.4.3(y-protocols@1.0.7(yjs@13.6.30))':
+  '@textbus/collaborate@5.4.5(y-protocols@1.0.7(yjs@13.6.30))':
     dependencies:
       '@hocuspocus/provider': 3.4.4(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)
       '@tanbo/stream': 1.2.7
-      '@textbus/core': 5.4.3
+      '@textbus/core': 5.4.5
       '@viewfly/core': 3.0.5
       y-websocket: 3.0.0(yjs@13.6.30)
       yjs: 13.6.30
@@ -4782,21 +4782,21 @@ snapshots:
       - utf-8-validate
       - y-protocols
 
-  '@textbus/core@5.4.3':
+  '@textbus/core@5.4.5':
     dependencies:
       '@tanbo/stream': 1.2.7
       '@viewfly/core': 3.0.5
 
-  '@textbus/platform-browser@5.4.3':
+  '@textbus/platform-browser@5.4.5':
     dependencies:
       '@tanbo/stream': 1.2.7
-      '@textbus/core': 5.4.3
+      '@textbus/core': 5.4.5
       '@viewfly/core': 3.0.5
 
-  '@textbus/platform-node@5.4.3':
+  '@textbus/platform-node@5.4.5':
     dependencies:
       '@tanbo/stream': 1.2.7
-      '@textbus/core': 5.4.3
+      '@textbus/core': 5.4.5
       '@viewfly/core': 3.0.5
       '@viewfly/platform-browser': 3.0.5
 
