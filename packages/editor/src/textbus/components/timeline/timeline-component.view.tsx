@@ -78,7 +78,7 @@ export const timelineComponentLoader: ComponentLoader = {
         ])
         return {
           theme: '',
-          slot: slotParser(slot, child.querySelector('div.xnote-timeline-content') || document.createElement('div'))
+          slot: slotParser(slot, child.querySelector('div.xnote-timeline-item-content') || document.createElement('div'))
         }
       })
     })
