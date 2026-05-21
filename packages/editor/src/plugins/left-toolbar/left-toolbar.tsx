@@ -470,7 +470,9 @@ export const LeftToolbar = withAnnotation({
                         component={component}
                         applyBefore={applyBefore}>
                         <MenuItem chevronRight={true} density={'compact'}
-                                  icon={<IconGlyph name={'indent-decrease'}/>}>{i18n.t('toolbar.indentAlign')}</MenuItem>
+                                  icon={<IconGlyph name={'indent-decrease'}/>}>
+                          <div style={{'white-space': 'nowrap'}}>{i18n.t('toolbar.indentAlign')}</div>
+                        </MenuItem>
                       </AttrTool>
                       <TextColorTool
                         inLeftTool={true}
