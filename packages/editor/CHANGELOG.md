@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.12
+
+### Patch Changes
+
+- 优化组件交互细节
+
 ## 1.4.11
 
 ### Patch Changes
