@@ -100,6 +100,7 @@ import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-al
 import { XNoteMessageBus } from './xnote-message-bus'
 import { cellBackgroundAttr, cellBackgroundAttrLoader } from './textbus/attributes/cell-background.attr'
 import { I18nService } from './services/i18n.service'
+import { XnoteMessageKey } from './i18n/messages'
 
 export interface XNoteCollaborateConfig extends CollaborateConfig {
   userinfo: {
@@ -122,7 +123,7 @@ export interface EditorConfig extends TextbusConfig {
   /** 界面语言，默认 zh-CN；支持 en、en-US 等映射到 en-US */
   locale?: string,
   /** 覆写内置文案，key 见 XnoteMessageKey */
-  messages?: Record<string, string>
+  messages?: Record<XnoteMessageKey, string>
 }
 
 export class Editor extends Textbus {
