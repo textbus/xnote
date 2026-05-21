@@ -39,7 +39,7 @@ export function AttrTool(props: AttrToolProps) {
     }
     const slots = component?.slots
     let range: Range
-    if (slots) {
+    if (slots?.length) {
       const last = slots[slots.length - 1]
       range = {
         startSlot: slots[0],
