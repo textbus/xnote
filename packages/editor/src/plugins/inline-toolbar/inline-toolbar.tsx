@@ -181,35 +181,40 @@ export const InlineToolbar = withAnnotation({
 
   function bindMouseup() {
     const docElement = adapter.getNativeNodeByComponent(rootComponentRef.component)!
-    mouseupSubscription = fromEvent<MouseEvent>(docElement, 'mouseup').pipe(
-      delay(),
-      filter(ev => {
-        const c = selection.commonAncestorComponent
-        if (c instanceof TableComponent) {
-          const b = !c.ignoreSelectionChanges
-          c.ignoreSelectionChanges = false
-          return b
-        }
-        return !ev.composedPath().includes(toolbarRef.value!)
-      }),
-      delay(100),
-      filter(() => {
-        return !selection.isCollapsed && !(selection.commonAncestorComponent instanceof SourceCodeComponent)
-      }),
-      delay(200),
-    ).subscribe(() => {
-      if (selection.isSelected && !selection.isCollapsed) {
-        updateRect()
-        viewPosition.open = true
-        editorService.changeLeftToolbarVisible(false)
-        setTimeout(() => {
-          refreshService.onRefresh.next()
-        })
-      } else {
-        viewPosition.open = false
-        editorService.changeLeftToolbarVisible(true)
-      }
+    mouseupSubscription = fromEvent(docElement, 'mousedown').subscribe(() => {
+      viewPosition.open = false
     })
+    mouseupSubscription.add(
+      fromEvent<MouseEvent>(docElement, 'mouseup').pipe(
+        delay(),
+        filter(ev => {
+          const c = selection.commonAncestorComponent
+          if (c instanceof TableComponent) {
+            const b = !c.ignoreSelectionChanges
+            c.ignoreSelectionChanges = false
+            return b
+          }
+          return !ev.composedPath().includes(toolbarRef.value!)
+        }),
+        delay(100),
+        filter(() => {
+          return !selection.isCollapsed && !(selection.commonAncestorComponent instanceof SourceCodeComponent)
+        }),
+        delay(200),
+      ).subscribe(() => {
+        if (selection.isSelected && !selection.isCollapsed) {
+          updateRect()
+          viewPosition.open = true
+          editorService.changeLeftToolbarVisible(false)
+          setTimeout(() => {
+            refreshService.onRefresh.next()
+          })
+        } else {
+          viewPosition.open = false
+          editorService.changeLeftToolbarVisible(true)
+        }
+      })
+    )
   }
 
   const mousedownSubscription = fromEvent<MouseEvent>(document, 'mousedown').subscribe((ev) => {
