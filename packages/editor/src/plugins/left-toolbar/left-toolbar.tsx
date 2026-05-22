@@ -369,6 +369,8 @@ export const LeftToolbar = withAnnotation({
     }
   })
 
+  const closeTick = createSignal(1)
+
   return () => {
     const component = activeComponent()
     let activeNode = <IconGlyph name={'pilcrow'}/>
@@ -418,6 +420,7 @@ export const LeftToolbar = withAnnotation({
               getHorizontalTopMinFrom={() => {
                 return container
               }}
+              closeTick={closeTick}
               orientation={'horizontal'}
               horizontalPanelAlign={'middle'}
               trigger={'hover'}
@@ -498,7 +501,9 @@ export const LeftToolbar = withAnnotation({
                     <Dropdown block={true}
                               orientation={'horizontal'}
                               trigger={'hover'}
-                              dropdown={<InsertMenu hideTitle={true} component={activeComponent()}/>}>
+                              dropdown={<InsertMenu onInserted={() => {
+                                closeTick.set(Math.random())
+                              }} hideTitle={true} component={activeComponent()}/>}>
                       <MenuItem density={'compact'} chevronRight={true}
                                 icon={<IconGlyph name={'plus'}/>}>{i18n.t('toolbar.addBelow')}</MenuItem>
                     </Dropdown>

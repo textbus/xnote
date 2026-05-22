@@ -1,6 +1,6 @@
 import { Application, createRef, getCurrentInstance, inject, onUnmounted, reactive } from '@viewfly/core'
 import { Parser, VIEW_DOCUMENT } from '@textbus/platform-browser'
-import { Commander, ContentType, distinctUntilChanged, map, Selection, Slot, Subscription } from '@textbus/core'
+import { Commander, ContentType, distinctUntilChanged, fromEvent, map, Selection, Slot, Subscription } from '@textbus/core'
 import { IconGlyph } from '@viewfly/ui-icons'
 import MarkdownIt from 'markdown-it'
 import { Button, Divider, Dropdown, MenuItem, MenuList, Popover } from '@viewfly/ui-components'
@@ -82,6 +82,12 @@ export function AiTool(props: AiToolProps) {
   })
   let subApp: Application | null = null
   const SubApp = function SubApp() {
+    const sub = fromEvent(document, 'mousedown').subscribe(() => {
+      viewModel.showModal = false
+    })
+    onUnmounted(() => {
+      sub.unsubscribe()
+    })
     return () => {
       return (
         <div class="xnote-ai-tool-host">
@@ -91,7 +97,7 @@ export function AiTool(props: AiToolProps) {
                    noPadding={true}
                    onOpenChange={(open) => {
                      viewModel.showModal = open
-                     if (isDestroy) {
+                     if (isDestroy && !open) {
                        editorService.hideInlineToolbar = false
                        editorService.changeLeftToolbarVisible(!open)
                        subApp?.destroy()
@@ -100,7 +106,7 @@ export function AiTool(props: AiToolProps) {
                    getReferenceBox={() => {
                      return popupPosition()!
                    }} content={
-            <div class="xnote-ai-popover">
+            <div class="xnote-ai-popover" onMouseDown={ev => ev.stopPropagation()}>
               <div class="xnote-ai-popover-body" ref={aiContentRef}>
                 {renderMarkdown(viewModel.content)}
               </div>
@@ -297,7 +303,7 @@ export function AiTool(props: AiToolProps) {
           <MenuItem density={'compact'} icon={<IconGlyph name={'enrich'}/>} onClick={enrich}>{i18n.t('ai.enrich')}</MenuItem>
           <Divider spacing={'compact'}/>
           <Dropdown trigger={'hover'} block orientation={'horizontal'} horizontalAlign={'right'} dropdown={
-            <div onMouseDown={ev => ev.stopPropagation()}>
+            <div style={{width: '140px'}} onMouseDown={ev => ev.stopPropagation()}>
               <MenuList>
                 {translationLanguages.map((lang) => {
                   return <MenuItem density={'compact'} onClick={() => translate(lang)} key={lang}>{lang}</MenuItem>

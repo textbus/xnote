@@ -1,5 +1,5 @@
 import { Application, createSignal, getCurrentInstance, inject, onUnmounted, watch } from '@viewfly/core'
-import { Commander, Selection } from '@textbus/core'
+import { Commander, fromEvent, Selection } from '@textbus/core'
 import { Button, Input, Popover } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
@@ -63,6 +63,12 @@ export function LinkTool(props: LinkToolProps) {
   })
 
   const SubApp = function SubApp() {
+    const sub = fromEvent(document, 'mousedown').subscribe(() => {
+     isShow.set(false)
+    })
+    onUnmounted(() => {
+      sub.unsubscribe()
+    })
     return () => {
       return (
         <div class="xnote-link-tool-host">
@@ -71,7 +77,7 @@ export function LinkTool(props: LinkToolProps) {
                    showArrow={false}
                    noPadding={true}
                    onOpenChange={open => {
-                     if (isDestroy) {
+                     if (isDestroy && !open) {
                        editorService.hideInlineToolbar = false
                        editorService.changeLeftToolbarVisible(!open)
                        subApp?.destroy()
@@ -79,7 +85,7 @@ export function LinkTool(props: LinkToolProps) {
                    }}
                    getReferenceBox={() => popupPosition()}
                    content={
-                     <form onSubmit={setLink} class="xnote-link-tool-form">
+                     <form onSubmit={setLink} class="xnote-link-tool-form" onMouseDown={ev => ev.stopPropagation()}>
                        <Input block={true} required size={'small'} placeholder={i18n.t('link.urlPlaceholder')} onChange={v => {
                          value.set(v)
                        }} suffix={<Button type={'primary'} size={'small'} htmlType="submit">{i18n.t('link.confirm')}</Button>}/>

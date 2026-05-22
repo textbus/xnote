@@ -263,7 +263,9 @@ export const InlineToolbar = withAnnotation({
                    {
                      llmService && <AiTool hideToolbar={hideToolbar}/>
                    }
-                   <InsertTool/>
+                   <InsertTool onInserted={() => {
+                     viewPosition.open = false
+                   }}/>
                    <BlockTool/>
                    <AttrTool/>
                    <SplitLine/>

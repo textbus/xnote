@@ -9,13 +9,14 @@ import { I18nService } from '../../services/i18n.service'
 import { CreateTable, TableParams } from './table/create-table'
 import { useBlockInsert } from '../hooks/block-insert'
 
-export interface InsertToolProps {
+export interface InsertMenuProps {
   component?: Component<any> | null
   hideTitle?: boolean
   replace?: boolean
+  onInserted?: () => void
 }
 
-export function InsertMenu(props: InsertToolProps) {
+export function InsertMenu(props: InsertMenuProps) {
   const i18n = inject(I18nService)
 
   const tableParams = createSignal<TableParams>({
@@ -28,6 +29,7 @@ export function InsertMenu(props: InsertToolProps) {
 
   function insert(type: string) {
     insertBlock(type, props.replace, props.component)
+    props.onInserted?.()
   }
 
   const closeTick = createSignal(0)
