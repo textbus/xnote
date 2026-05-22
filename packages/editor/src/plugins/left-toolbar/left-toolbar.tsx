@@ -413,7 +413,7 @@ export const LeftToolbar = withAnnotation({
         }}>
           <div class="xnote-anchor-tr">
             <Dropdown
-              verticalPanelAlign={'left'}
+              horizontalAlign={'left'}
               onOpenChange={changeIgnoreMove}
               getHorizontalTopMinFrom={() => {
                 return container

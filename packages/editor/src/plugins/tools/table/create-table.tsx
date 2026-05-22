@@ -38,7 +38,7 @@ export function CreateTable(props: CreateTableProps) {
     return (
       <div class="xnote-create-table">
         <div class="xnote-create-table__grid" ref={gridRef}
-             onClick={() => {
+             onMouseDown={() => {
                props.onChange({
                  row: viewModel.row,
                  column: viewModel.column,
