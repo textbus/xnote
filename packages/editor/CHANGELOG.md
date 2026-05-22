@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.13
+
+### Patch Changes
+
+- 升级依赖
+
 ## 1.4.12
 
 ### Patch Changes
