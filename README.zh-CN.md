@@ -11,6 +11,7 @@ Xnote 底层依赖于开源富文本框架 [Textbus](https://textbus.io) 和前�
 - [在线演示](#在线演示)
 - [安装](#安装)
 - [使用](#使用)
+- [编辑器插件](#编辑器插件)
 - [国际化（i18n）](#国际化i18n)
 - [文件上传](#文件上传)
 - [粘贴图片：Base64 转 URL](#粘贴图片base64-转-url)
@@ -47,6 +48,97 @@ editor.mount(document.getElementById('editor')!).then(() => {
   console.log('编辑器准备完成。')
 })
 ```
+
+## 编辑器插件
+
+XNote 提供了四种工具栏插件以适配不同的 UI 布局。编辑器默认包含 **`LeftToolbarPlugin`** 和 **`InlineToolbarPlugin`**。如需自定义启用的插件，传入你自己的 `plugins` 数组即可——这会**完全替换**默认插件。
+
+### InlineToolbarPlugin（默认启用）
+
+在文本选区附近出现的浮动工具栏。包含文本格式化工具（加粗、斜体、下划线、删除线、字号、字体、文字颜色、背景颜色），以及插入、链接、行内代码、表格上下文、AI 和批注工具——会根据当前选区自动适配显示内容。
+
+```ts
+import { Editor, InlineToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  // 覆盖默认插件列表
+  plugins: [
+    new InlineToolbarPlugin({ theme: 'dark' })
+  ]
+})
+```
+
+**配置项：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|--------|------|---------|-------------|
+| `theme` | `'dark' \| 'light'` | `'light'` | 工具栏色彩主题 |
+
+### LeftToolbarPlugin（默认启用）
+
+在内容区域左侧显示的块级工具栏，鼠标悬停在块组件上时出现。展示当前块类型（段落、标题、代码块、引用、待办事项、列表、表格），并提供下拉菜单切换为其他块类型。同时支持拖拽排序以及对选中块的复制/剪切/删除操作。
+
+```ts
+import { Editor, LeftToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  plugins: [
+    new LeftToolbarPlugin({ theme: 'dark' })
+  ]
+})
+```
+
+**配置项：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|--------|------|---------|-------------|
+| `theme` | `'dark' \| 'light'` | `'light'` | 工具栏色彩主题 |
+
+### StaticToolbarPlugin
+
+将固定工具栏渲染到你提供的 DOM 宿主元素中。包含与内联工具栏相同的格式化工具，外加撤销/重做按钮。适合放置在编辑器容器外部的静态工具栏区域（如编辑器顶部）。**默认不启用。**
+
+```ts
+import { Editor, StaticToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  plugins: [
+    new StaticToolbarPlugin({
+      host: document.getElementById('toolbar-host')!,
+      theme: 'light'
+    })
+  ]
+})
+```
+
+**配置项：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|--------|------|---------|-------------|
+| `host` | `HTMLElement` | *(必填)* | 渲染工具栏的 DOM 元素 |
+| `theme` | `'dark' \| 'light'` | `'light'` | 工具栏色彩主题 |
+
+### SuspensionToolbarPlugin
+
+一个浮动工具栏，在页面滚动时会吸附在视口顶部。滚动时渐隐，停止后渐显，始终保持在编辑器视口内可见。包含与 `StaticToolbarPlugin` 相同的工具集。**默认不启用。**
+
+```ts
+import { Editor, SuspensionToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  plugins: [
+    new SuspensionToolbarPlugin({ theme: 'light' })
+  ]
+})
+```
+
+**配置项：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|--------|------|---------|-------------|
+| `theme` | `'dark' \| 'light'` | `'light'` | 工具栏色彩主题 |
+
+> **注意：** 当你传入自定义 `plugins` 数组时，它会完全替换默认插件。例如，如果你需要 `LeftToolbarPlugin` + `SuspensionToolbarPlugin`，请显式传入两者。
 
 ## 国际化（i18n）
 

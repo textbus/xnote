@@ -11,6 +11,7 @@ XNote builds on the open-source rich-text framework [Textbus](https://textbus.io
 - [Live demo](#live-demo)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Editor plugins](#editor-plugins)
 - [Internationalization (i18n)](#internationalization-i18n)
 - [File upload](#file-upload)
 - [Paste images: Base64 to URL](#paste-images-base64-to-url)
@@ -47,6 +48,97 @@ editor.mount(document.getElementById('editor')!).then(() => {
   console.log('Editor is ready.')
 })
 ```
+
+## Editor plugins
+
+XNote provides four toolbar plugins for different UI layouts. By default the editor includes **`LeftToolbarPlugin`** and **`InlineToolbarPlugin`**. To customize which plugins are active, pass your own `plugins` array — this **replaces** the defaults.
+
+### InlineToolbarPlugin (included by default)
+
+A floating toolbar that appears near the text selection. It contains text-formatting tools (bold, italic, underline, strikethrough, font size, font family, text color, background color), plus insert, link, code-format, table-context, AI, and comment tools — adapting to what is selected.
+
+```ts
+import { Editor, InlineToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  // Override the default plugin list
+  plugins: [
+    new InlineToolbarPlugin({ theme: 'dark' })
+  ]
+})
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `theme` | `'dark' \| 'light'` | `'light'` | Toolbar color theme |
+
+### LeftToolbarPlugin (included by default)
+
+A block-level toolbar that appears on the left side of the content area when hovering over a block component. It shows the current block type (paragraph, heading, code block, blockquote, todo list, list, table) with a dropdown to convert to other block types. It also provides drag-to-reorder and copy/cut/delete operations for the selected block.
+
+```ts
+import { Editor, LeftToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  plugins: [
+    new LeftToolbarPlugin({ theme: 'dark' })
+  ]
+})
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `theme` | `'dark' \| 'light'` | `'light'` | Toolbar color theme |
+
+### StaticToolbarPlugin
+
+Renders a fixed toolbar into a DOM host element that you provide. It contains the same formatting tools as the inline toolbar plus undo/redo buttons. Designed to be placed outside the editor container in a static toolbar area (e.g., above the editor). **Not included by default.**
+
+```ts
+import { Editor, StaticToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  plugins: [
+    new StaticToolbarPlugin({
+      host: document.getElementById('toolbar-host')!,
+      theme: 'light'
+    })
+  ]
+})
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `host` | `HTMLElement` | *(required)* | The DOM element to render the toolbar into |
+| `theme` | `'dark' \| 'light'` | `'light'` | Toolbar color theme |
+
+### SuspensionToolbarPlugin
+
+A floating toolbar that sticks to the top of the viewport while scrolling. It fades in/out during scroll and stays visible when idle. Contains the same tools as `StaticToolbarPlugin`. **Not included by default.**
+
+```ts
+import { Editor, SuspensionToolbarPlugin } from '@textbus/xnote'
+
+const editor = new Editor({
+  plugins: [
+    new SuspensionToolbarPlugin({ theme: 'light' })
+  ]
+})
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `theme` | `'dark' \| 'light'` | `'light'` | Toolbar color theme |
+
+> **Note:** When you provide a custom `plugins` array it fully replaces the defaults. If you want `LeftToolbarPlugin` + `SuspensionToolbarPlugin`, for example, pass both explicitly.
 
 ## Internationalization (i18n)
 
