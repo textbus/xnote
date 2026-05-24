@@ -23,14 +23,13 @@ import { ComponentLoader, DomAdapter } from '@textbus/platform-browser'
 import highlightjs from 'highlight.js'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { createSignal, inject, onUnmounted } from '@viewfly/core'
-import { Button, Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
+import { Button, Dropdown, MenuItem, MenuList, Popover } from '@viewfly/ui-components'
 import { IconGlyph } from '@viewfly/ui-icons'
 
 import './source-code.component.scss'
 import { ParagraphComponent } from '../paragraph/paragraph.component'
 import { useReadonly } from '../../hooks/use-readonly'
 import { useOutput } from '../../hooks/use-output'
-import { ComponentToolbar } from '../../../components/component-toolbar/component-toolbar'
 import { I18nService } from '../../../services/i18n.service'
 
 export const languageList: Array<{ label: string, value: string }> = [{
@@ -522,7 +521,15 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
       >
         {
           (!readonly() && !output()) &&
-          <ComponentToolbar visible={isFocus()}>
+          <Popover noPadding={true}
+                   flip={false}
+                   gap={0}
+                   showArrow={false}
+                   placement={'top-start'}
+                   open={isFocus()}
+                   style={{
+                     padding: '3px 6px'
+                   }} content={
             <div class="xnote-source-code-toolbar-row">
               <Dropdown trigger={'hover'} dropdown={
                 <MenuList style={{ width: '140px' }} columnCompact={true}>
@@ -598,7 +605,8 @@ export function SourceCodeView(props: ViewComponentProps<SourceCodeComponent>) {
               <Button size={'small'} variant={'text'}
                       onClick={props.component.cancelEmphasize}>{i18n.t('sourceCode.cancelEmphasize')}</Button>
             </div>
-          </ComponentToolbar>
+          }>
+          </Popover>
         }
         <div class={[
           'xnote-source-code-container',

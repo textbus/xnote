@@ -6,7 +6,7 @@ import { IconGlyph } from '@viewfly/ui-icons'
 import './top-bar.scss'
 import { EditorService } from '../../../../services/editor.service'
 import { TableComponent } from '../table.component'
-import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
+import { ComponentToolbar } from './component-toolbar'
 import { TableService } from '../table.service'
 import { sum } from '../_utils'
 

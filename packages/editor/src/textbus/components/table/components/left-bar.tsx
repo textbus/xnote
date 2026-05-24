@@ -9,13 +9,13 @@ import {
 } from '@viewfly/core'
 import { fromEvent } from '@textbus/core'
 import { Button } from '@viewfly/ui-components'
+import { IconGlyph } from '@viewfly/ui-icons'
 
 import './left-bar.scss'
 import { TableComponent } from '../table.component'
 import { TableService } from '../table.service'
-import { ComponentToolbar } from '../../../../components/component-toolbar/component-toolbar'
+import { ComponentToolbar } from './component-toolbar'
 import { EditorService } from '../../../../services/editor.service'
-import { IconGlyph } from '@viewfly/ui-icons'
 
 export interface TopBarProps {
   tableRef: Ref<HTMLTableElement | null>
