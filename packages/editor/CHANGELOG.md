@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.16
+
+### Patch Changes
+
+- 优化 UI
+
 ## 1.4.15
 
 ### Patch Changes
