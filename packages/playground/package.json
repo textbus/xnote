@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@textbus/collaborate": "^5.4.7",
-    "@textbus/core": "^5.4.7",
+    "@textbus/collaborate": "^5.4.8",
+    "@textbus/core": "^5.4.8",
     "@textbus/xnote": "workspace:^1.4.14",
     "@viewfly/core": "^3.0.5",
     "@viewfly/platform-browser": "^3.0.5",
