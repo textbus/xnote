@@ -1,5 +1,13 @@
 # @textbus/xnote-playground
 
+## 0.2.13
+
+### Patch Changes
+
+- 优化 UI
+- Updated dependencies
+  - @textbus/xnote@1.4.15
+
 ## 0.2.12
 
 ### Patch Changes
