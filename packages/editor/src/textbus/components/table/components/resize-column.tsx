@@ -89,6 +89,7 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
         }
       })
     ).add(fromEvent<MouseEvent>(dragLineRef.value!, 'mousedown').subscribe(downEvent => {
+      downEvent.preventDefault()
       isDragging = true
       props.component.tableSelection.set(null)
       editorService.changeLeftToolbarVisible(false)
@@ -105,6 +106,7 @@ export const ResizeColumn = function ResizeColumn(props: ResizeColumnProps) {
 
       const layoutWidthArr = layoutWidth.slice()
       const moveEvent = fromEvent<MouseEvent>(document, 'mousemove').subscribe(moveEvent => {
+        moveEvent.preventDefault()
         const distanceX = moveEvent.clientX - x
 
         dragLineRef.value!.style.left = Math.max(initLeft + distanceX, minLeft) + 'px'
