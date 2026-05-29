@@ -342,7 +342,7 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
               (component.state.type === 'UnorderedList' || readonly() || output()) ?
                 <span>{iconEl}</span>
                 :
-                <Dropdown trigger={'hover'} orientation={'horizontal'} dropdown={
+                <Dropdown trigger={'click'} orientation={'horizontal'} dropdown={
                   <div style={{
                     width: '120px'
                   }}>
