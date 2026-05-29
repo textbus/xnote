@@ -1,6 +1,6 @@
 {
   "name": "@textbus/xnote-playground",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "@textbus/collaborate": "^5.5.1",
     "@textbus/core": "^5.5.1",
-    "@textbus/xnote": "workspace:^1.4.16",
+    "@textbus/xnote": "workspace:^1.4.17",
     "@viewfly/core": "^3.0.6",
     "@viewfly/platform-browser": "^3.0.6",
     "@viewfly/router": "^3.0.6",
