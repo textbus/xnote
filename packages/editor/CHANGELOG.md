@@ -1,5 +1,11 @@
 # @textbus/xnote
 
+## 1.4.18
+
+### Patch Changes
+
+- 优化列表项交互
+
 ## 1.4.17
 
 ### Patch Changes
