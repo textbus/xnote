@@ -126,3 +126,9 @@ code, kbd, pre, samp {
   font-size: 13px;
   padding: 4px 10px;
 }
+
+.xnote-source-code-toolbar {
+  height: 0;
+  position: relative;
+  top: -10px;
+}
