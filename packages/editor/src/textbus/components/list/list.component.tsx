@@ -17,7 +17,7 @@ import {
 import { inject } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { ComponentLoader, DomAdapter, SlotParser } from '@textbus/platform-browser'
-import { Dropdown, MenuItem } from '@viewfly/ui-components'
+import { Dropdown, MenuItem, MenuList } from '@viewfly/ui-components'
 
 import './list.component.scss'
 import { textIndentAttr } from '../../attributes/text-indent.attr'
@@ -342,13 +342,15 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
               (component.state.type === 'UnorderedList' || readonly() || output()) ?
                 <span>{iconEl}</span>
                 :
-                <Dropdown trigger={'click'} orientation={'horizontal'} dropdown={
-                  <div style={{
-                    width: '120px'
-                  }}>
-                    <MenuItem onClick={() => reorder(false)}>{i18n.t('list.continueNumbering')}</MenuItem>
-                    <MenuItem onClick={() => reorder(true)}>{i18n.t('list.restartNumbering')}</MenuItem>
-                  </div>
+                <Dropdown trigger={'click'}
+                          orientation={'horizontal'}
+                          horizontalAlign={'left'}
+                          horizontalPanelAlign={'top'}
+                          dropdown={
+                  <MenuList columnCompact={true}>
+                    <MenuItem density={'compact'} onClick={() => reorder(false)}>{i18n.t('list.continueNumbering')}</MenuItem>
+                    <MenuItem density={'compact'} onClick={() => reorder(true)}>{i18n.t('list.restartNumbering')}</MenuItem>
+                  </MenuList>
                 }>
                   <span class="xnote-order-btn">{iconEl}</span>
                 </Dropdown>

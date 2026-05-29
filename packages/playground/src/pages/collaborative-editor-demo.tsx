@@ -10,7 +10,6 @@ export function CollaborativeEditorDemo() {
 
   onMounted(() => {
     editor = new Editor({
-      locale: 'en-US',
       readonly: false,
       collaborateConfig: {
         userinfo: user,
