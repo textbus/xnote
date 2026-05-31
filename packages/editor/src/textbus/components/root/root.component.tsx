@@ -11,7 +11,7 @@ import {
   Registry, onSlotSetAttribute, onSlotApplyFormat, Selection, useContext, Commander,
 } from '@textbus/core'
 import { ComponentLoader, SlotParser } from '@textbus/platform-browser'
-import { createDynamicRef, createRef, inject } from '@viewfly/core'
+import { createDynamicRef, createRef, createSignal, inject, onMounted } from '@viewfly/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 
 import './root.component.scss'
@@ -23,6 +23,7 @@ import { ListComponent } from '../list/list.component'
 import { TodolistComponent } from '../todolist/todolist.component'
 import { SlotRender } from '../SlotRender'
 import { I18nService } from '../../../services/i18n.service'
+import { CommentService } from '../../../services/comment.service'
 
 export interface RootComponentState {
   content: Slot
@@ -113,6 +114,22 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
     }
   }
 
+  const commentActiveStyle = createSignal('')
+
+  const commentService = inject(CommentService, null)
+
+  onMounted(() => {
+    if (!commentService) {
+      return
+    }
+    const sub = commentService.onActive.subscribe(v => {
+      commentActiveStyle.set(v?.id || '')
+    })
+
+    return () => sub.unsubscribe()
+  })
+
+
   return () => {
     const { rootRef } = props
     const { content } = props.component.state
@@ -126,6 +143,17 @@ export function RootView(props: ViewComponentProps<RootComponent>) {
            dir="auto"
            ref={[rootRef, containerRef, ref]}
            data-component={props.component.name}>
+        {
+          commentActiveStyle() && (
+            <style>
+              {
+                `[data-comment-id="${commentActiveStyle()}"] {
+                ${commentService?.getActiveCSSText?.() || 'background-color: rgb(255 153 0 / 0.2)'}
+              }`
+              }
+            </style>
+          )
+        }
         <SlotRender
           slot={content}
           tag="div"
