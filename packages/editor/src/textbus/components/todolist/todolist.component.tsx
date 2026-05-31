@@ -80,6 +80,11 @@ export class TodolistComponent extends Component<TodolistComponentState> {
     onBreak(ev => {
       const slot = ev.target.cut(ev.data.index)
       slot.removeAttribute(headingAttr)
+      if (slot.isEmpty) {
+        slot.cleanFormats(f => {
+          return f.inheritable
+        })
+      }
       if (ev.target.isEmpty && slot.isEmpty) {
         const beforeIndex = this.parent!.indexOf(this)
         const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)

@@ -148,6 +148,11 @@ export class ListComponent extends Component<ListComponentState> {
     onBreak(ev => {
       const slot = ev.target.cut(ev.data.index)
       slot.removeAttribute(headingAttr)
+      if (slot.isEmpty) {
+        slot.cleanFormats(f => {
+          return f.inheritable
+        })
+      }
       if (ev.target.isEmpty && slot.isEmpty) {
         const beforeIndex = this.parent!.indexOf(this)
         const beforeComponent = this.parent!.getContentAtIndex(beforeIndex - 1)
@@ -347,11 +352,11 @@ export function ListComponentView(props: ViewComponentProps<ListComponent>) {
                           horizontalAlign={'left'}
                           horizontalPanelAlign={'top'}
                           dropdown={
-                  <MenuList columnCompact={true}>
-                    <MenuItem density={'compact'} onClick={() => reorder(false)}>{i18n.t('list.continueNumbering')}</MenuItem>
-                    <MenuItem density={'compact'} onClick={() => reorder(true)}>{i18n.t('list.restartNumbering')}</MenuItem>
-                  </MenuList>
-                }>
+                            <MenuList columnCompact={true}>
+                              <MenuItem density={'compact'} onClick={() => reorder(false)}>{i18n.t('list.continueNumbering')}</MenuItem>
+                              <MenuItem density={'compact'} onClick={() => reorder(true)}>{i18n.t('list.restartNumbering')}</MenuItem>
+                            </MenuList>
+                          }>
                   <span class="xnote-order-btn">{iconEl}</span>
                 </Dropdown>
             }</div>

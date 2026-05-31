@@ -65,6 +65,12 @@ export class ParagraphComponent extends Component<ParagraphComponentState> {
         slot: afterSlot
       })
 
+      if (afterSlot.isEmpty) {
+        afterSlot.cleanFormats(f => {
+          return f.inheritable
+        })
+      }
+
       if (isEmpty && (
         this.parentComponent instanceof BlockquoteComponent ||
         this.parentComponent instanceof HighlightBoxComponent ||
