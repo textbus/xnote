@@ -12,7 +12,8 @@
   }
 
   &-inner {
-    display: table-row;
+    display: inline-flex;
+    min-width: 0;
   }
 }
 
@@ -30,7 +31,6 @@ ul.xnote-list .xnote-list-type {
   box-sizing: border-box;
   flex-shrink: 0;
   user-select: none;
-  display: table-cell;
 }
 
 .xnote-order-btn {
@@ -48,7 +48,9 @@ ul.xnote-list .xnote-list-type {
 }
 
 .xnote-list-content {
-  display: table-cell;
+  //display: table-cell;
+  flex: 1;
+  min-width: 0;
 }
 
 .xnote-list-content[style*=text-indent] {
