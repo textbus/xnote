@@ -1,5 +1,5 @@
 import { ContentType, fromEvent, Slot, Subject, Textbus } from '@textbus/core'
-import { BrowserModule } from '@textbus/platform-browser'
+import { BrowserModule, isMobileBrowser } from '@textbus/platform-browser'
 import { ViewflyAdapter } from '@textbus/adapter-viewfly'
 import { createApp } from '@viewfly/platform-browser'
 import { createDynamicRef, ReflectiveInjector } from '@viewfly/core'
@@ -32,6 +32,7 @@ class Editor extends Textbus {
     })
     const browserModule = new BrowserModule({
       adapter,
+      useContentEditable: isMobileBrowser(),
       renderTo: () => {
         return this.host
       }

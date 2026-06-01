@@ -5,10 +5,9 @@ import {
   BrowserModule,
   DomAdapter,
   Parser,
-  ViewOptions,
   isMobileBrowser, CollaborateCursor
 } from '@textbus/platform-browser'
-import { CollaborateConfig, CollaborateModule, MessageBus } from '@textbus/collaborate'
+import { CollaborateModule, MessageBus } from '@textbus/collaborate'
 import {
   Component,
   ComponentStateLiteral,
@@ -18,7 +17,6 @@ import {
   Selection,
   Slot,
   Textbus,
-  TextbusConfig
 } from '@textbus/core'
 import { ReflectiveInjector } from '@viewfly/core'
 
@@ -100,31 +98,7 @@ import { cellAlignAttr, cellAlignAttrLoader } from './textbus/attributes/cell-al
 import { XNoteMessageBus } from './xnote-message-bus'
 import { cellBackgroundAttr, cellBackgroundAttrLoader } from './textbus/attributes/cell-background.attr'
 import { I18nService } from './services/i18n.service'
-import { XnoteMessageKey } from './i18n/messages'
-
-export interface XNoteCollaborateConfig extends CollaborateConfig {
-  userinfo: {
-    username: string
-    color: string
-    id: string
-  }
-}
-
-/**
- * XNote 配置项
- */
-export interface EditorConfig extends TextbusConfig {
-  /** 默认 HTML 内容*/
-  content?: string | ComponentStateLiteral<RootComponentState>,
-  /** 协作服务配置 */
-  collaborateConfig?: XNoteCollaborateConfig,
-  /** 视图配置项 */
-  viewOptions?: Partial<ViewOptions>,
-  /** 界面语言，默认 zh-CN；支持 en、en-US 等映射到 en-US */
-  locale?: string,
-  /** 覆写内置文案，key 见 XnoteMessageKey */
-  messages?: Record<XnoteMessageKey, string>
-}
+import { EDITOR_CONFIG, EditorConfig } from './interfaces'
 
 export class Editor extends Textbus {
   translator = new OutputTranslator()
@@ -349,6 +323,10 @@ export class Editor extends Textbus {
         {
           provide: I18nService,
           useValue: i18nService
+        },
+        {
+          provide: EDITOR_CONFIG,
+          useValue: editorConfig
         }
       ]
     })
