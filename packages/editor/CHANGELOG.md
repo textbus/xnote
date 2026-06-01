@@ -1,5 +1,12 @@
 # @textbus/xnote
 
+## 1.5.0
+
+### Minor Changes
+
+- - 批注支持焦点高亮并发送事件
+  - 优化换行时继承样式行为
+
 ## 1.4.18
 
 ### Patch Changes

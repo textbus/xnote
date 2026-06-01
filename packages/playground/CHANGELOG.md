@@ -1,5 +1,17 @@
 # @textbus/xnote-playground
 
+## 0.3.0
+
+### Minor Changes
+
+- - 批注支持焦点高亮并发送事件
+  - 优化换行时继承样式行为
+
+### Patch Changes
+
+- Updated dependencies
+  - @textbus/xnote@1.5.0
+
 ## 0.2.16
 
 ### Patch Changes
