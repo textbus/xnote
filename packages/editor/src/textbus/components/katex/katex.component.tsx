@@ -7,7 +7,7 @@ import {
 } from '@textbus/core'
 import { ViewComponentProps } from '@textbus/adapter-viewfly'
 import { inject, jsx, JSXNode } from '@viewfly/core'
-import { ComponentLoader } from '@textbus/platform-browser'
+import { ComponentLoader, isMobileBrowser } from '@textbus/platform-browser'
 // @ts-ignore
 import Katex from 'katex'
 import { Dropdown } from '@viewfly/ui-components'
@@ -115,7 +115,7 @@ export function KatexComponentView(props: ViewComponentProps<KatexComponent>) {
                                helpLink={'https://katex.org/docs/supported'}
                                onChange={onChange}/>
            }>
-             {domToVDom(toDOM(text))}
+             {isMobileBrowser() ? <span contenteditable={false}>{domToVDom(toDOM(text))}</span> : domToVDom(toDOM(text))}
            </Dropdown>
        }
       </span>
